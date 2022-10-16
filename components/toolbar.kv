@@ -1,0 +1,55 @@
+#: import Factory kivy.factory.Factory
+#: import Keypad components.keypad
+#: import AppSettings components.appsettings
+
+
+<ToolbarButton>:
+  font_size: 16
+  font_name: "fonts/Manrope-Bold.ttf"
+
+<Toolbar>:
+  current_units: app.current_units
+  test: "0"
+  size_hint_x: None
+  size_hint_y: 1
+  width: 64
+  orientation: "vertical"
+#  ToolbarButton:
+#    font_name: "fonts/Font Awesome 6 Free-Solid-900.otf"
+#    font_size: 32
+#    text: "\uf085"
+#    id: settings_button
+#    on_release: Factory.DroSettings().open()
+#  ToolbarButton:
+#    text: "Comm"
+#    id: comm_button
+#    on_release: app.toggle_communication()
+#  ToolbarButton:
+#    text: root.current_units
+#    id: units_button
+#    on_release: root.toggle_units()
+#  ToolbarButton:
+#    text: "Tool 0"
+#    id: toolbar_button
+#  ToolbarButton:
+#    text: "Inc"
+#    id: mode_button
+  ToolbarButton:
+    font_name: "fonts/Font Awesome 6 Free-Solid-900.otf"
+    font_size: 32
+    text: "\uf085"
+    id: settings_button
+    on_release: Factory.AppSettings().open()
+  ToolbarButton:
+    text: "mm"
+    id: test_button
+#    on_release: Factory.Keypad().show(app.setter("desired_angle"))
+
+  ToolbarButton:
+    text: "ABS"
+    id: test_button
+#    on_release: Factory.Keypad().show(app.setter("desired_angle"))
+  ToolbarButton:
+    text: "DIV"
+    id: test_button
+#    on_release: Factory.ViewPopup().open()

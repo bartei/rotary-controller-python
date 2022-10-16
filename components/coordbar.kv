@@ -1,0 +1,81 @@
+#: import Factory kivy.factory.Factory
+#: import Keypad components.keypad
+
+<CoordBar>:
+  axis_name: "X"
+  axis_pos: 0
+  axis_speed: 0
+  formatted_axis_pos: ""
+  formatted_axis_speed: ""
+
+  metric_pos_format: app.metric_pos_format
+  metric_speed_format: app.metric_speed_format
+  imperial_pos_format: app.imperial_pos_format
+  imperial_speed_format: app.imperial_speed_format
+
+  current_units: app.current_units
+
+  orientation: "horizontal"
+  height: 100
+  size_hint_y: None
+  Button:
+    text: root.axis_name
+    width: 100
+    size_hint_x: None
+    font_size: 72
+    font_style: "bold"
+    on_release: Factory.Keypad().show(app.setter(root.input_name))
+  BoxLayout:
+    orientation: "horizontal"
+    BoxLayout:
+      size_hint_x: 0.8
+      orientation: "vertical"
+      Label:
+        text: root.position_label
+        text_size: self.size
+        size_hint_y: 0.2
+        font_size: 16
+        color: app.display_color
+        halign: 'left'
+        valign: 'bottom'
+      Label:
+        id: pos_label
+        size_hint_y: 0.8
+        font_name: "fonts/Manrope-Bold.ttf"
+        font_size: 60
+        font_style: "bold"
+        color: app.display_color
+        text: root.formatted_axis_pos
+        text_size: self.size
+        halign: 'left'
+        valign: 'bottom'
+    BoxLayout:
+      size_hint_x: 0.3
+      orientation: 'vertical'
+      Label:
+        text: root.speed_label
+        text_size: self.size
+        size_hint_y: 0.2
+        font_size: 16
+        color: app.display_color
+        halign: 'right'
+        valign: 'top'
+      Label:
+        id: speed_label
+        size_hint_y: 0.8
+        font_name: "fonts/Manrope-Bold.ttf"
+        font_size: 32
+        font_style: "bold"
+        color: app.display_color
+        text: root.formatted_axis_speed
+        text_size: self.size
+        halign: 'right'
+        valign: 'top'
+  Button:
+    text: "Zero"
+    font_size: 24
+    font_style: "bold"
+    background_color: [1, 0.2, 0.2, 1]
+    width: 100
+    size_hint_x: None
+    on_release: root.axis_pos = "0"

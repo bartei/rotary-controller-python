@@ -1,0 +1,74 @@
+[
+    {
+        "type": "title",
+        "title": "Input 1"
+    },
+    {
+        "type": "string",
+        "title": "Scale Resolution",
+        "desc": "The scale resolution in steps per millimeter",
+        "section": "input_1",
+        "key": "resolution"
+    },
+    {
+        "type": "string",
+        "title": "Scale Direction",
+        "desc": "The scale direction, set to 1 for direct, -1 to inverted",
+        "section": "input_1",
+        "key": "direction"
+    },
+    {
+        "type": "title",
+        "title": "Input 2"
+    },
+    {
+        "type": "string",
+        "title": "Scale Resolution",
+        "desc": "The scale resolution in steps per millimeter",
+        "section": "input_2",
+        "key": "resolution"
+    },
+    {
+        "type": "string",
+        "title": "Scale Direction",
+        "desc": "The scale direction, set to 1 for direct, -1 to inverted",
+        "section": "input_2",
+        "key": "direction"
+    },
+    {
+        "type": "title",
+        "title": "Input 3"
+    },
+    {
+        "type": "string",
+        "title": "Scale Resolution",
+        "desc": "The scale resolution in steps per millimeter",
+        "section": "input_3",
+        "key": "resolution"
+    },
+    {
+        "type": "string",
+        "title": "Scale Direction",
+        "desc": "The scale direction, set to 1 for direct, -1 to inverted",
+        "section": "input_3",
+        "key": "direction"
+    },
+    {
+        "type": "title",
+        "title": "Input 4"
+    },
+    {
+        "type": "string",
+        "title": "Scale Resolution",
+        "desc": "The scale resolution in steps per millimeter",
+        "section": "input_4",
+        "key": "resolution"
+    },
+    {
+        "type": "string",
+        "title": "Scale Direction",
+        "desc": "The scale direction, set to 1 for direct, -1 to inverted",
+        "section": "input_4",
+        "key": "direction"
+    }
+]

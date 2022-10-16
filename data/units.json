@@ -1,0 +1,48 @@
+[
+    {
+        "type": "title",
+        "title": "Formatting"
+    },
+    {
+        "type": "string",
+        "title": "Metric Position Format",
+        "desc": "Units formatting when displaying metric values",
+        "section": "formatting",
+        "key": "metric"
+    },
+    {
+        "type": "string",
+        "title": "Metric Speed Format",
+        "desc": "Units formatting when displaying metric speeds",
+        "section": "formatting",
+        "key": "metric_speed"
+    },
+    {
+        "type": "string",
+        "title": "Imperial Position Format",
+        "desc": "Units formatting when displaying imperial values",
+        "section": "formatting",
+        "key": "imperial"
+    },
+    {
+        "type": "string",
+        "title": "Imperial Speed Format",
+        "desc": "Units formatting when displaying imperial speeds",
+        "section": "formatting",
+        "key": "imperial_speed"
+    },
+    {
+        "type": "string",
+        "title": "Angle Position Format",
+        "desc": "Units formatting when displaying angle values",
+        "section": "formatting",
+        "key": "angle"
+    },
+    {
+        "type": "color",
+        "title": "Display Color",
+        "desc": "Font color to use for the unit displays",
+        "section": "formatting",
+        "key": "display_color"
+    }
+]

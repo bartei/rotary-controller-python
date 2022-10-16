@@ -1,0 +1,39 @@
+#: import Toolbar components.toolbar
+#: import CoordBar components.coordbar
+#: import RotaryBar components.rotarybar
+
+<Home>:
+  orientation: "horizontal"
+  size_hint: 1, 1
+  Toolbar:
+    id: toolbar
+  BoxLayout:
+    orientation: "vertical"
+    Label:
+      text: "Digital Read Out Values"
+      height: 20
+    CoordBar:
+      id: x_coords
+      input_name: "x_axis"
+      axis_name: "X"
+    CoordBar:
+      id: x_coords
+      input_name: "y_axis"
+      axis_name: "Y"
+    CoordBar:
+      id: x_coords
+      input_name: "z_axis"
+      axis_name: "Z"
+    Label:
+      text: "Rotary Axis Control"
+    RotaryBar:
+      id: rotary_a
+      input_name: "current_position"
+      axis_name: "A"
+      current_position: app.current_position
+      desired_position: app.desired_position
+
+BoxLayout:
+  orientation: "vertical"
+  Home:
+    id: home
