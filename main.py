@@ -1,8 +1,12 @@
+import os
+
 from kivy.app import App
+from kivy.clock import Clock
 from kivy.properties import StringProperty, NumericProperty, ConfigParserProperty
 from kivy.uix.boxlayout import BoxLayout
 
 from components.appsettings import config
+from utils import communication
 
 
 class Home(BoxLayout):
@@ -59,8 +63,17 @@ class MainApp(App):
     division_index = NumericProperty(0)
     division_offset = NumericProperty(0.0)
 
+    device = communication.DeviceManager()
+
+    def update(self, *args, **kwargs):
+        self.current_position = self.device.get_current_position() / 400 * 360
+
+    def on_desired_position(self, instance, value):
+        self.device.set_final_position(int(value / 360 * 400))
+
     def build(self):
         home = Home()
+        Clock.schedule_interval(self.update, 1.0 / 10)
         return home
 
 

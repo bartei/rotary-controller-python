@@ -1,3 +1,4 @@
+import ctypes
 import decimal
 import time
 from enum import Enum
@@ -11,6 +12,13 @@ from pydantic import BaseModel
 
 log = logging.getLogger(__file__)
 terminate_event = Event()
+
+REG_MODE = 0
+REG_CURRENT_POSITION = 2
+REG_FINAL_POSITION = 4
+REG_SPINDLE_POSITION = 6
+REG_X_POSITION_UNITS = 7
+REG_ACCELERATION = 11
 
 
 class DeviceMode(Enum):
@@ -34,55 +42,56 @@ class DeviceManager:
             slaveaddress=17,
             debug=False
         )
-        self.device.serial.baudrate = 38400
-        self.device.serial.bytesize = 8
-        self.device.serial.parity = serial.PARITY_NONE
-        self.device.serial.stopbits = 1
-        self.device.serial.timeout = 1
+        self.device.serial.baudrate = 9600
 
-    def read_struct(self) -> DeviceRegisters:
-        # STRUCTURE FROM STM32
-        #     uint16_t mode;
-        #     int32_t current_position;
-        #     int32_t final_position;
-        #     int16_t spindle_position;
-        #     int32_t x_position;
-        values = self.device.read_string(0, 8)
-        (
-            mode,
-            current_position,
-            desired_position,
-            spindle_position,
-            x_position
-        ) = struct.unpack(">HllHl", bytes(values, encoding="LATIN1"))
-        return DeviceRegisters(
-            mode=mode,
-            current_position=decimal.Decimal(current_position) / 100,
-            desired_position=decimal.Decimal(desired_position) / 100,
-            spindle_position=decimal.Decimal(spindle_position) / 10,
-            x_position=decimal.Decimal(x_position) / 1000
-        )
-
-    def set_current_position(self, position: decimal.Decimal):
-        value = int(position * 100)
-        raw_string = struct.pack(">l", value).decode(encoding="LATIN1")
+    def get_final_position(self) -> int or None:
         try:
-            self.device.write_string(1, raw_string, 2)
+            value = self.device.read_register(REG_FINAL_POSITION)
+            value = value + self.device.read_register(REG_FINAL_POSITION + 1) << 16
+            return ctypes.c_long(value).value
         except Exception as e:
-            log.exception(f"Modbus Error: {e.__str__()}")
+            log.exception(e.__str__())
+            return None
 
-    def set_desired_position(self, position: decimal.Decimal):
-        value = int(position * 100)
-        raw_string = struct.pack(">l", value).decode(encoding="LATIN1")
+    def set_final_position(self, value: int):
         try:
-            self.device.write_string(3, raw_string, 2)
+            values = [
+                value & 0xFFFF,
+                value >> 16 & 0xFFFF
+            ]
+            self.device.write_registers(REG_FINAL_POSITION, values)
         except Exception as e:
-            log.exception(f"Modbus Error: {e.__str__()}")
+            log.exception(e.__str__())
 
-    def set_mode(self, mode: DeviceMode):
-        value = int(mode.value)
-        raw_string = struct.pack(">H", value).decode(encoding="LATIN1")
+    def get_current_position(self) -> int or None:
         try:
-            self.device.write_string(0, raw_string, 1)
+            value = self.device.read_register(REG_CURRENT_POSITION)
+            value = value + (self.device.read_register(REG_CURRENT_POSITION + 1) << 16)
+            return ctypes.c_long(value).value
         except Exception as e:
-            log.exception(f"Modbus Error: {e.__str__()}")
+            log.exception(e.__str__())
+            return None
+
+    def set_current_position(self, value: int):
+        try:
+            values = [
+                value & 0xFFFF,
+                value >> 16 & 0xFFFF
+            ]
+            self.device.write_registers(REG_CURRENT_POSITION, values)
+        except Exception as e:
+            log.exception(e.__str__())
+
+    def get_acceleration(self) -> int or None:
+        try:
+            value = self.device.read_register(REG_ACCELERATION, 0)
+            return value
+        except Exception as e:
+            log.exception(e.__str__())
+            return None
+
+    def set_acceleration(self, value: int):
+        try:
+            self.device.write_register(REG_ACCELERATION, value)
+        except Exception as e:
+            log.exception(e.__str__())

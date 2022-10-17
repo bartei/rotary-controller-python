@@ -1,5 +1,6 @@
 import logging
 import time
+import ctypes
 
 import minimalmodbus
 import serial
@@ -14,26 +15,34 @@ adam = minimalmodbus.Instrument(
     debug=False
 )
 
-adam.serial.baudrate = 38400
+adam.serial.baudrate = 9600
 adam.serial.bytesize = 8
 adam.serial.parity = serial.PARITY_NONE
 adam.serial.stopbits = 1
 adam.serial.timeout = 1
 
 REG_MODE = 0
-REG_CURRENT_POSITION = 1
-REG_FINAL_POSITION = 2
-REG_SPINDLE_POSITION = 3
-REG_X_POSITION_UNITS = 4
-REG_X_POSITION_DECIMALS = 5
-REG_SPARE_1 = 6
-REG_SPARE_2 = 7
+REG_CURRENT_POSITION = 2
+REG_FINAL_POSITION = 4
+REG_SPINDLE_POSITION = 6
+REG_X_POSITION_UNITS = 7
+REG_ACCELERATION = 11
 
 
 def set_final_position(final_position_steps: int):
     try:
-        adam.write_string(0, b''.decode(encoding="LATIN1"))
-        adam.write_register(REG_FINAL_POSITION, final_position_steps)
+        values = [
+            final_position_steps & 0xFFFF,
+            final_position_steps >> 16 & 0xFFFF
+        ]
+        adam.write_registers(REG_FINAL_POSITION, values)
+    except Exception as e:
+        log.exception(e.__str__())
+
+
+def set_acceleration(value: int):
+    try:
+        adam.write_register(REG_ACCELERATION, value)
     except Exception as e:
         log.exception(e.__str__())
 
@@ -41,7 +50,8 @@ def set_final_position(final_position_steps: int):
 def get_final_position() -> int or None:
     try:
         value = adam.read_register(REG_FINAL_POSITION)
-        return value
+        value = value + adam.read_register(REG_FINAL_POSITION + 1) << 16
+        return ctypes.c_long(value).value
     except Exception as e:
         log.exception(e.__str__())
         return None
@@ -50,6 +60,16 @@ def get_final_position() -> int or None:
 def get_current_position() -> int or None:
     try:
         value = adam.read_register(REG_CURRENT_POSITION)
+        value = value + (adam.read_register(REG_CURRENT_POSITION + 1) << 16)
+        return ctypes.c_long(value).value
+    except Exception as e:
+        log.exception(e.__str__())
+        return None
+
+
+def get_acceleration() -> int or None:
+    try:
+        value = adam.read_register(REG_ACCELERATION, 0)
         return value
     except Exception as e:
         log.exception(e.__str__())
@@ -57,34 +77,15 @@ def get_current_position() -> int or None:
 
 
 if __name__ == '__main__':
-    import struct
-    values = adam.read_string(0, 8)
-    converted_values = struct.unpack(">HllHl", bytes(values, encoding="LATIN1"))
-    print(converted_values)
     while True:
-        destination = input("Destination")
+        print(f"Current position: {get_current_position()}")
+        destination = input("Destination: ")
+        acc = input("Acceleration: ")
+        set_acceleration(int(acc))
         set_final_position(int(destination))
-        while get_current_position() != int(destination):
-            print(f"Current Position: {get_current_position()}")
-            time.sleep(.1)
-    # try:
-    #     adam.write_register(0, new_value)
-    #     (
-    #         mode,
-    #         current_position,
-    #         final_position,
-    #         spindle_position,
-    #         x_position_units,
-    #         x_position_decimals,
-    #         spare_1,
-    #         spare_2
-    #     ) = adam.read_registers(0, 8)
-    #
-    #     if read_back == new_value:
-    #         # pass
-    #         print(f"OK: {read_back}")
-    #     else:
-    #         print(f"ERROR: {read_back} != {new_value}")
-    # except Exception as e:
-    #     print(f"Error: {e.__str__()}")
-    #     pass
+        cur = get_current_position()
+        while cur != int(destination):
+            cur = get_current_position()
+            print(f"Current Position: {cur}, acc: {get_acceleration()}")
+            time.sleep(.01)
+

@@ -3,6 +3,7 @@ import logging
 
 from kivy.uix.popup import Popup
 from kivy.lang import Builder
+from kivy.app import App
 
 log = logging.getLogger(__file__)
 kv_file = os.path.join(os.path.dirname(__file__), __file__.replace(".py", ".kv"))
@@ -17,11 +18,13 @@ class Keypad(Popup):
 
     def show(self, reference):
         self.title += "{:+0.4f}".format(getattr(reference.args[0], reference.args[1]))
-        self.old_value = getattr(reference.args[0], reference.args[1])
-        self.ids['value'].bind(text=reference)
+        self.reference = reference
+        # self.reference = getattr(reference.args[0], reference.args[1])
+        # self.ids['value'].bind(text=reference)
         self.open()
 
     def confirm(self):
+        self.reference = self.ids.value.text
         self.dismiss()
 
     def cancel(self):

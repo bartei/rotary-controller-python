@@ -5,9 +5,6 @@
   axis_name: "A"
   pos_format: app.angle_format
 
-  current_position: 0.0
-  desired_position: 0.0
-
   divisions: app.divisions
   division_index: app.division_index
   division_offset: app.division_offset
@@ -47,7 +44,7 @@
           font_size: 48
           font_style: "bold"
           color: app.display_color
-          text: root.pos_format.format(root.current_position)
+          text: root.pos_format.format(app.current_position)
           text_size: self.size
           halign: 'left'
           valign: 'bottom'
@@ -70,7 +67,7 @@
           font_size: 48
           font_style: "bold"
           color: app.display_color
-          text: root.pos_format.format(root.desired_position)
+          text: root.pos_format.format(app.desired_position)
           text_size: self.size
           halign: 'left'
           valign: 'bottom'
