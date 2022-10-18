@@ -63,40 +63,28 @@ class MainApp(App):
     division_index = NumericProperty(0)
     division_offset = NumericProperty(0.0)
 
-    # device = communication.DeviceManager()
-
-    def set_current_position(self, value):
-        self.current_position = value
-
-    def set_desired_position(self, value):
-        self.desired_position = value
-
-    def set_division_offset(self, value):
-        self.division_offset = value
-
-    def set_division_index(self, value):
-        self.division_index = value
-
-    def set_divisions(self, value):
-        self.divisions = value
-
-    def update_desired_position(self, *args, **kwargs):
-        self.desired_position = 360 / self.divisions * self.division_index + self.division_offset
-        self.division_index = self.division_index % self.divisions
-        return True
+    device = communication.DeviceManager()
 
     def update(self, *args, **kwargs):
-        self.current_position = self.device.get_current_position() / 400 * 360
+        self.current_position = self.device.current_position
 
-    # def on_desired_position(self, instance, value):
-    #     self.device.set_final_position(int(value / 360 * 400))
+    def on_desired_position(self, instance, value):
+        self.device.final_position = value
+
+    def update_desired_position(self):
+        self
 
     def build(self):
         home = Home()
         self.bind(divisions=self.update_desired_position)
         self.bind(division_index=self.update_desired_position)
         self.bind(division_offset=self.update_desired_position)
-        # Clock.schedule_interval(self.update, 1.0 / 10)
+        self.device.ratio_num = 360
+        self.device.ratio_den = 1600
+        self.device.acceleration = 10
+        self.device.max_speed = 3600
+        self.device.min_speed = 300
+        Clock.schedule_interval(self.update, 1.0 / 10)
         return home
 
 
