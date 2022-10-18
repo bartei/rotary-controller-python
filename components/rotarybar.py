@@ -22,23 +22,9 @@ if os.path.exists(kv_file):
 
 class RotaryBar(BoxLayout):
     input_name = StringProperty()
-    desired_position = NumericProperty()
-    divisions = NumericProperty()
-    division_index = NumericProperty()
-    division_offset = NumericProperty()
     display_color = ConfigParserProperty(
         defaultvalue="#ffffffff",
         section="formatting",
         key="display_color",
         config=config
     )
-
-    def update_desired_position(self, *args, **kwargs):
-        self.desired_position = 360 / self.divisions * self.division_index + self.division_offset
-        return True
-
-    def __init__(self, *args, **kv):
-        super(RotaryBar, self).__init__(**kv)
-        self.bind(divisions=self.update_desired_position)
-        self.bind(division_index=self.update_desired_position)
-        self.bind(division_offset=self.update_desired_position)

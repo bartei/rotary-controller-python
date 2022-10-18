@@ -5,9 +5,6 @@
   axis_name: "A"
   pos_format: app.angle_format
 
-  divisions: app.divisions
-  division_index: app.division_index
-  division_offset: app.division_offset
   orientation: "vertical"
   size_hint_y: None
   height: 200
@@ -22,7 +19,6 @@
       size_hint_x: None
       font_size: 72
       font_style: "bold"
-      on_release: Factory.Keypad().show(app.setter("current_position"))
     BoxLayout:
       orientation: "horizontal"
       BoxLayout:
@@ -48,6 +44,7 @@
           text_size: self.size
           halign: 'left'
           valign: 'bottom'
+          on_release: Factory.Keypad().show(app.set_current_position)
       BoxLayout:
         size_hint_x: 0.4
         orientation: "vertical"
@@ -71,6 +68,7 @@
           text_size: self.size
           halign: 'left'
           valign: 'bottom'
+          on_release: Factory.Keypad().show(app.set_desired_position)
 
     Button:
       text: "Set"
@@ -79,7 +77,6 @@
       background_color: [0.2, 0.8, 0.2, 1]
       width: 100
       size_hint_x: None
-      on_release: Factory.Keypad().show(app.setter("desired_position"))
   BoxLayout:
     size_hint_y: None
     height: 100
@@ -93,7 +90,7 @@
       background_color: [0.2, 0.8, 0.2, 1]
       width: 100
       size_hint_x: None
-      on_release: root.division_index = (root.division_index - 1 + root.divisions) % root.divisions
+      on_release: app.division_index = (app.division_index - 1 + app.divisions) % app.divisions
 
     BoxLayout:
       size_hint_x: 0.5
@@ -113,10 +110,10 @@
         font_size: 48
         font_style: "bold"
         color: app.display_color
-        text: str(int(root.division_index))
+        text: str(int(app.division_index))
         text_size: self.size
         halign: 'left'
-        on_release: Factory.Keypad().show(app.setter("division_index"))
+        on_release: Factory.Keypad().show(app.set_division_index)
     BoxLayout:
       size_hint_x: 0.5
       orientation: "vertical"
@@ -135,10 +132,10 @@
         font_size: 48
         font_style: "bold"
         color: app.display_color
-        text: str(int(root.divisions))
+        text: str(int(app.divisions))
         text_size: self.size
         halign: 'left'
-        on_release: Factory.Keypad().show(app.setter("divisions"))
+        on_release: Factory.Keypad().show(app.set_divisions)
     BoxLayout:
       size_hint_x: 0.5
       orientation: "vertical"
@@ -157,11 +154,10 @@
         font_size: 48
         font_style: "bold"
         color: app.display_color
-        text: root.pos_format.format(root.division_offset)
+        text: root.pos_format.format(app.division_offset)
         text_size: self.size
         halign: 'left'
-        on_release: Factory.Keypad().show(app.setter("division_offset"))
-
+        on_release: Factory.Keypad().show(app.set_division_offset)
 
     Button:
       font_name: "fonts/Font Awesome 6 Free-Solid-900.otf"
@@ -171,7 +167,7 @@
       background_color: [0.2, 0.8, 0.2, 1]
       width: 100
       size_hint_x: None
-      on_release: root.division_index = (root.division_index+1) % root.divisions
+      on_release: app.division_index = (app.division_index+1) % app.divisions
 #    Switch:
 #      id: switch_me
 #      title: "test"

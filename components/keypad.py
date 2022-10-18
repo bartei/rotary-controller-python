@@ -1,10 +1,11 @@
 import os
 import logging
 
+from kivy.properties import NumericProperty
 from kivy.uix.popup import Popup
 from kivy.lang import Builder
 from kivy.app import App
-
+from kivy.uix.textinput import TextInput
 log = logging.getLogger(__file__)
 kv_file = os.path.join(os.path.dirname(__file__), __file__.replace(".py", ".kv"))
 if os.path.exists(kv_file):
@@ -13,23 +14,20 @@ if os.path.exists(kv_file):
 
 
 class Keypad(Popup):
-    reference = None
-    old_value = None
+    set_method = None
 
-    def show(self, reference):
-        self.title += "{:+0.4f}".format(getattr(reference.args[0], reference.args[1]))
-        self.reference = reference
-        # self.reference = getattr(reference.args[0], reference.args[1])
-        # self.ids['value'].bind(text=reference)
+    def show(self, set_method):
+        self.set_method = set_method
         self.open()
 
     def confirm(self):
-        self.reference = self.ids.value.text
+        current = self.ids['value'].text
+        self.set_method(current)
         self.dismiss()
 
     def cancel(self):
-        if self.old_value is not None:
-            self.ids['value'].text = "{:+0.4f}".format(self.old_value)
+        # if self.old_value is not None:
+        #     self.ids['value'].text = "{:+0.4f}".format(self.old_value)
         self.dismiss()
 
     def dot_key(self, *args):
