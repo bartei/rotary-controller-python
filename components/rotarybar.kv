@@ -2,23 +2,19 @@
 #: import Keypad components.keypad
 
 <RotaryBar>:
-  axis_name: "A"
   pos_format: app.angle_format
 
   orientation: "vertical"
-  size_hint_y: None
-  height: 200
-
+  canvas.before:
+    Color:
+      rgba: (0,0,0,1)
+    Rectangle:
+      pos: self.pos
+      size: self.size
   BoxLayout:
     orientation: "horizontal"
-    height: 100
+    height: 80
     size_hint_y: None
-    Button:
-      text: root.axis_name
-      width: 100
-      size_hint_x: None
-      font_size: 72
-      font_style: "bold"
     BoxLayout:
       orientation: "horizontal"
       BoxLayout:
@@ -27,15 +23,14 @@
         Label:
           text: "Current Angle"
           text_size: self.size
-          size_hint_y: 0.2
+          size_hint_y: 0.3
           font_size: 16
           color: app.display_color
           halign: 'left'
           valign: 'bottom'
         Button:
           id: current_angle_button
-          background_color: 0, 0, 0, 1
-          size_hint_y: 0.8
+          background_color: 0.1, 0.1, 0.1, 1
           font_name: "fonts/Manrope-Bold.ttf"
           font_size: 48
           font_style: "bold"
@@ -45,21 +40,21 @@
           halign: 'left'
           valign: 'bottom'
           on_release: Factory.Keypad().show(app.set_current_position)
+          disabled: app.in_motion
       BoxLayout:
         size_hint_x: 0.4
         orientation: "vertical"
         Label:
           text: "Desired Angle"
           text_size: self.size
-          size_hint_y: 0.2
+          size_hint_y: 0.3
           font_size: 16
           color: app.display_color
           halign: 'left'
           valign: 'bottom'
         Button:
           id: desired_angle_button
-          background_color: 0, 0, 0, 1
-          size_hint_y: 0.8
+          background_color: 0.1, 0.1, 0.1, 1
           font_name: "fonts/Manrope-Bold.ttf"
           font_size: 48
           font_style: "bold"
@@ -69,17 +64,27 @@
           halign: 'left'
           valign: 'bottom'
           on_release: Factory.Keypad().show(app.set_desired_position)
-
-    Button:
-      text: "Set"
-      font_size: 24
-      font_style: "bold"
-      background_color: [0.2, 0.8, 0.2, 1]
-      width: 100
+          disabled: app.in_motion
+    BoxLayout:
+      canvas.before:
+        Color:
+          rgba: (0.3, 0.1, 0.1, 1)
+        Rectangle:
+          pos: self.pos
+          size: self.size
       size_hint_x: None
+      width: 160
+      orientation: "vertical"
+      Label:
+        size_hint_y: 0.3
+        text: "Motion Enable"
+      Switch:
+        active: app.motion_enable
+        on_active: app.motion_enable = self.active
+
   BoxLayout:
     size_hint_y: None
-    height: 100
+    height: 80
     orientation: "horizontal"
 
     Button:
@@ -88,9 +93,10 @@
       font_size: 48
       font_style: "bold"
       background_color: [0.2, 0.8, 0.2, 1]
-      width: 100
+      width: 80
       size_hint_x: None
       on_release: app.division_index = (app.division_index - 1 + app.divisions) % app.divisions
+      disabled: app.in_motion
 
     BoxLayout:
       size_hint_x: 0.5
@@ -98,14 +104,13 @@
       Label:
         text: "Index"
         text_size: self.size
-        size_hint_y: 0.2
+        size_hint_y: 0.3
         font_size: 16
         color: app.display_color
         halign: 'left'
         valign: 'bottom'
       Button:
         background_color: 0.1, 0.1, 0.1, 1
-        size_hint_y: 0.8
         font_name: "fonts/Manrope-Bold.ttf"
         font_size: 48
         font_style: "bold"
@@ -114,20 +119,20 @@
         text_size: self.size
         halign: 'left'
         on_release: Factory.Keypad().show(app.set_division_index)
+        disabled: app.in_motion
     BoxLayout:
       size_hint_x: 0.5
       orientation: "vertical"
       Label:
         text: "Divisions"
         text_size: self.size
-        size_hint_y: 0.2
+        size_hint_y: 0.3
         font_size: 16
         color: app.display_color
         halign: 'left'
         valign: 'bottom'
       Button:
         background_color: 0.1, 0.1, 0.1, 1
-        size_hint_y: 0.8
         font_name: "fonts/Manrope-Bold.ttf"
         font_size: 48
         font_style: "bold"
@@ -136,20 +141,20 @@
         text_size: self.size
         halign: 'left'
         on_release: Factory.Keypad().show(app.set_divisions)
+        disabled: app.in_motion
     BoxLayout:
       size_hint_x: 0.5
       orientation: "vertical"
       Label:
         text: "Offset"
         text_size: self.size
-        size_hint_y: 0.2
+        size_hint_y: 0.3
         font_size: 16
         color: app.display_color
         halign: 'left'
         valign: 'bottom'
       Button:
         background_color: 0.1, 0.1, 0.1, 1
-        size_hint_y: 0.8
         font_name: "fonts/Manrope-Bold.ttf"
         font_size: 48
         font_style: "bold"
@@ -158,17 +163,14 @@
         text_size: self.size
         halign: 'left'
         on_release: Factory.Keypad().show(app.set_division_offset)
-
+        disabled: app.in_motion
     Button:
       font_name: "fonts/Font Awesome 6 Free-Solid-900.otf"
       text: "\u002b"
       font_size: 48
       font_style: "bold"
       background_color: [0.2, 0.8, 0.2, 1]
-      width: 100
+      width: 80
       size_hint_x: None
       on_release: app.division_index = (app.division_index+1) % app.divisions
-#    Switch:
-#      id: switch_me
-#      title: "test"
-#      text: "test"
+      disabled: app.in_motion
