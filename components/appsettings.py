@@ -25,6 +25,7 @@ class AppSettings(Popup):
         self.settings = Settings()
         self.settings.add_json_panel("Units", config, "data/units.json")
         self.settings.add_json_panel("Inputs", config, "data/inputs.json")
+        self.settings.add_json_panel("Rotary", config, "data/rotary.json")
         self.settings.add_kivy_panel()
         self.settings.bind(on_close=self.close)
         self.add_widget(self.settings)

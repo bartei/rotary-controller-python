@@ -50,6 +50,43 @@ class MainApp(App):
         key="angle",
         config=config
     )
+
+    min_speed = ConfigParserProperty(
+        defaultvalue="150.0",
+        section="rotary",
+        key="min_speed",
+        config=config,
+        val_type=float,
+    )
+    max_speed = ConfigParserProperty(
+        defaultvalue="3600.0",
+        section="rotary",
+        key="max_speed",
+        config=config,
+        val_type=float,
+    )
+    acceleration = ConfigParserProperty(
+        defaultvalue="5.0",
+        section="rotary",
+        key="acceleration",
+        config=config,
+        val_type=float,
+    )
+    ratio_num = ConfigParserProperty(
+        defaultvalue="360",
+        section="rotary",
+        key="ratio_num",
+        config=config,
+        val_type=int,
+    )
+    ratio_den = ConfigParserProperty(
+        defaultvalue="1600",
+        section="rotary",
+        key="ratio_den",
+        config=config,
+        val_type=int,
+    )
+
     current_units = StringProperty("mm")
     current_origin = StringProperty("Origin 0")
     x_axis = NumericProperty(10)
@@ -65,26 +102,59 @@ class MainApp(App):
 
     device = communication.DeviceManager()
 
+    def set_current_position(self, value):
+        self.current_position = value
+
+    def set_desired_position(self, value):
+        self.desired_position = value
+
+    def set_division_offset(self, value):
+        self.division_offset = value
+
+    def set_division_index(self, value):
+        self.division_index = value
+
+    def set_divisions(self, value):
+        self.divisions = value
+
+    def update_desired_position(self, *args, **kwargs):
+        self.desired_position = 360 / self.divisions * self.division_index + self.division_offset
+        # self.division_index = self.division_index % self.divisions
+        return True
+
     def update(self, *args, **kwargs):
-        self.current_position = self.device.current_position
+        self.x_axis = self.device.x_position
+        self.current_position = self.device.current_position * self.ratio_num / self.ratio_den
 
     def on_desired_position(self, instance, value):
-        self.device.final_position = value
+        self.device.final_position = int(value / self.ratio_num * self.ratio_den)
 
-    def update_desired_position(self):
-        self
+    def on_ratio_num(self, instance, value):
+        self.device.ratio_num = value
+
+    def on_ratio_den(self, instance, value):
+        self.device.ratio_den = value
+
+    def on_acceleration(self, instance, value):
+        self.device.acceleration = float(value)
+
+    def on_min_speed(self, instance, value):
+        self.device.min_speed = float(value)
+
+    def on_max_speed(self, instance, value):
+        self.device.max_speed = float(value)
 
     def build(self):
         home = Home()
         self.bind(divisions=self.update_desired_position)
         self.bind(division_index=self.update_desired_position)
         self.bind(division_offset=self.update_desired_position)
-        self.device.ratio_num = 360
-        self.device.ratio_den = 1600
-        self.device.acceleration = 10
-        self.device.max_speed = 3600
-        self.device.min_speed = 300
-        Clock.schedule_interval(self.update, 1.0 / 10)
+        self.device.ratio_num = self.ratio_num
+        self.device.ratio_den = self.ratio_den
+        self.device.acceleration = self.acceleration
+        self.device.max_speed = self.max_speed
+        self.device.min_speed = self.min_speed
+        Clock.schedule_interval(self.update, 1.0 / 25)
         return home
 
 

@@ -90,7 +90,7 @@
       background_color: [0.2, 0.8, 0.2, 1]
       width: 100
       size_hint_x: None
-      on_release: app.division_index = (app.division_index - 1 + app.divisions) % app.divisions
+      on_release: app.division_index = (app.division_index - 1)
 
     BoxLayout:
       size_hint_x: 0.5
@@ -167,7 +167,7 @@
       background_color: [0.2, 0.8, 0.2, 1]
       width: 100
       size_hint_x: None
-      on_release: app.division_index = (app.division_index+1) % app.divisions
+      on_release: app.division_index = (app.division_index+1)
 #    Switch:
 #      id: switch_me
 #      title: "test"

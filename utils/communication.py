@@ -26,6 +26,7 @@ REG_MODE = 0
 REG_CURRENT_POSITION = 2
 REG_FINAL_POSITION = 4
 REG_SPINDLE_POSITION = 6
+REG_X_POSITION = 8
 REG_STEP = 12
 REG_TOTAL_STEPS = 14
 REG_MAX_SPEED = 16
@@ -59,7 +60,16 @@ class DeviceManager:
             return value
         except Exception as e:
             log.exception(e.__str__())
-            return None
+            return 999999
+
+    @property
+    def x_position(self):
+        try:
+            value = self.device.read_register(REG_X_POSITION)
+            return value
+        except Exception as e:
+            log.exception(e.__str__())
+            return 999999
 
     @mode.setter
     def mode(self, value: int):
@@ -74,14 +84,15 @@ class DeviceManager:
     @property
     def current_position(self):
         try:
-            value = self.device.read_float(
+            value = self.device.read_long(
                 REG_CURRENT_POSITION,
-                byteorder=minimalmodbus.BYTEORDER_LITTLE_SWAP
+                byteorder=minimalmodbus.BYTEORDER_LITTLE_SWAP,
+                signed=True
             )
             return value
         except Exception as e:
             log.exception(e.__str__())
-            return None
+            return 999999
 
     @current_position.setter
     def current_position(self, value):
@@ -89,10 +100,11 @@ class DeviceManager:
             if self.mode != 0:
                 raise Exception("Current position can be changed only if mode is 0")
 
-            self.device.write_float(
+            self.device.write_long(
                 REG_CURRENT_POSITION,
                 value,
-                byteorder=minimalmodbus.BYTEORDER_LITTLE_SWAP
+                byteorder=minimalmodbus.BYTEORDER_LITTLE_SWAP,
+                signed=True
             )
         except Exception as e:
             log.exception(e.__str__())
@@ -100,22 +112,24 @@ class DeviceManager:
     @property
     def final_position(self):
         try:
-            value = self.device.read_float(
+            value = self.device.read_long(
                 REG_FINAL_POSITION,
-                byteorder=minimalmodbus.BYTEORDER_LITTLE_SWAP
+                byteorder=minimalmodbus.BYTEORDER_LITTLE_SWAP,
+                signed=True
             )
             return value
         except Exception as e:
             log.exception(e.__str__())
-            return None
+            return 999999
 
     @final_position.setter
     def final_position(self, value):
         try:
-            self.device.write_float(
+            self.device.write_long(
                 REG_FINAL_POSITION,
                 value,
-                byteorder=minimalmodbus.BYTEORDER_LITTLE_SWAP
+                byteorder=minimalmodbus.BYTEORDER_LITTLE_SWAP,
+                signed=True
             )
         except Exception as e:
             log.exception(e.__str__())
@@ -130,7 +144,7 @@ class DeviceManager:
             return value
         except Exception as e:
             log.exception(e.__str__())
-            return None
+            return 999999
 
     @spindle_position.setter
     def spindle_position(self, value):
@@ -152,7 +166,7 @@ class DeviceManager:
             return value
         except Exception as e:
             log.exception(e.__str__())
-            return None
+            return 999999
 
     @property
     def total_steps(self):
@@ -164,7 +178,7 @@ class DeviceManager:
             return value
         except Exception as e:
             log.exception(e.__str__())
-            return None
+            return 999999
 
     @property
     def max_speed(self):
@@ -176,7 +190,7 @@ class DeviceManager:
             return value
         except Exception as e:
             log.exception(e.__str__())
-            return None
+            return 999999
 
     @max_speed.setter
     def max_speed(self, value):
@@ -199,7 +213,7 @@ class DeviceManager:
             return value
         except Exception as e:
             log.exception(e.__str__())
-            return None
+            return 999999
 
     @min_speed.setter
     def min_speed(self, value):
@@ -222,7 +236,7 @@ class DeviceManager:
             return value
         except Exception as e:
             log.exception(e.__str__())
-            return None
+            return 999999
 
     @property
     def acceleration(self):
@@ -234,7 +248,7 @@ class DeviceManager:
             return value
         except Exception as e:
             log.exception(e.__str__())
-            return None
+            return 999999
 
     @acceleration.setter
     def acceleration(self, value):
@@ -257,7 +271,7 @@ class DeviceManager:
             return value
         except Exception as e:
             log.exception(e.__str__())
-            return None
+            return 999999
 
     @ratio_num.setter
     def ratio_num(self, value):
@@ -281,7 +295,7 @@ class DeviceManager:
             return value
         except Exception as e:
             log.exception(e.__str__())
-            return None
+            return 999999
 
     @ratio_den.setter
     def ratio_den(self, value):
