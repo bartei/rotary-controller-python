@@ -1,4 +1,5 @@
 import os
+import time
 
 from kivy.app import App
 from kivy.clock import Clock
@@ -127,6 +128,19 @@ class MainApp(App):
         self.current_position = self.device.current_position * self.ratio_num / self.ratio_den
 
     def on_desired_position(self, instance, value):
+        # Wait until any ongoing positioning is still in progress before sending the new requested position
+        while self.device.final_position != self.device.current_position:
+            time.sleep(0.1)
+
+        # Always send out the motion settings
+        self.device.min_speed = self.min_speed
+        self.device.max_speed = self.max_speed
+        self.device.acceleration = self.acceleration
+        self.device.ratio_num = self.ratio_num
+        self.device.ratio_den = self.ratio_den
+        self.device.mode = 0
+
+        # Send the destination converted to steps
         self.device.final_position = int(value / self.ratio_num * self.ratio_den)
 
     def on_ratio_num(self, instance, value):
