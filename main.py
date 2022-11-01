@@ -1,3 +1,4 @@
+import logging
 import os
 import time
 
@@ -124,13 +125,11 @@ class MainApp(App):
         return True
 
     def update(self, *args, **kwargs):
-        self.x_axis = self.device.x_position
+        self.x_axis = self.device.x_position / 4096
         self.current_position = self.device.current_position * self.ratio_num / self.ratio_den
 
     def on_desired_position(self, instance, value):
-        # Wait until any ongoing positioning is still in progress before sending the new requested position
-        while self.device.final_position != self.device.current_position:
-            time.sleep(0.1)
+        # TODO: Wait until any ongoing positioning is still in progress before sending the new requested position
 
         # Always send out the motion settings
         self.device.min_speed = self.min_speed
@@ -157,6 +156,13 @@ class MainApp(App):
 
     def on_max_speed(self, instance, value):
         self.device.max_speed = float(value)
+
+    def test_sync(self):
+        self.device.syn_ratio_num = 4096
+        self.device.syn_ratio_den = 3600
+        self.device.request_sync_init()
+
+        logging.warning("Sync called")
 
     def build(self):
         home = Home()
