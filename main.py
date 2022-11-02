@@ -1,5 +1,6 @@
 import logging
 import os
+import time
 
 from kivy.app import App
 from kivy.clock import Clock
@@ -53,6 +54,43 @@ class MainApp(App):
         key="angle",
         config=config
     )
+
+    min_speed = ConfigParserProperty(
+        defaultvalue="150.0",
+        section="rotary",
+        key="min_speed",
+        config=config,
+        val_type=float,
+    )
+    max_speed = ConfigParserProperty(
+        defaultvalue="3600.0",
+        section="rotary",
+        key="max_speed",
+        config=config,
+        val_type=float,
+    )
+    acceleration = ConfigParserProperty(
+        defaultvalue="5.0",
+        section="rotary",
+        key="acceleration",
+        config=config,
+        val_type=float,
+    )
+    ratio_num = ConfigParserProperty(
+        defaultvalue="360",
+        section="rotary",
+        key="ratio_num",
+        config=config,
+        val_type=int,
+    )
+    ratio_den = ConfigParserProperty(
+        defaultvalue="1600",
+        section="rotary",
+        key="ratio_den",
+        config=config,
+        val_type=int,
+    )
+
     current_units = StringProperty("mm")
     current_origin = StringProperty("Origin 0")
     x_axis = NumericProperty(10)
@@ -74,7 +112,8 @@ class MainApp(App):
     jog_forward = BooleanProperty(False)
     jog_backward = BooleanProperty(False)
 
-    # device = communication.DeviceManager()
+    device = communication.DeviceManager()
+
     home = None
 
     def set_current_position(self, value):
@@ -103,31 +142,60 @@ class MainApp(App):
             self.divisions = 1
 
         self.desired_position = 360 / self.divisions * self.division_index + self.division_offset
-        self.division_index = self.division_index % self.divisions
+        # self.division_index = self.division_index % self.divisions
         return True
 
     def update(self, *args, **kwargs):
-        if (abs(self.current_position - self.desired_position) > 0.1) and self.motion_enable:
-            self.in_motion = True
-        else:
-            self.in_motion = False
-
-        print(self.jog_backward, self.jog_forward)
+        self.x_axis = self.device.x_position / 4096
+        self.current_position = self.device.current_position * self.ratio_num / self.ratio_den
 
     def on_desired_position(self, instance, value):
-        pass
-        # self.device.set_final_position(value)
+        # TODO: Wait until any ongoing positioning is still in progress before sending the new requested position
 
-    def on_motion_enable(self, instance, value):
-        log.info("Motion enable status: {}".format(self.motion_enable))
-        pass
+        # Always send out the motion settings
+        self.device.min_speed = self.min_speed
+        self.device.max_speed = self.max_speed
+        self.device.acceleration = self.acceleration
+        self.device.ratio_num = self.ratio_num
+        self.device.ratio_den = self.ratio_den
+        self.device.mode = 0
+
+        # Send the destination converted to steps
+        self.device.final_position = int(value / self.ratio_num * self.ratio_den)
+
+    def on_ratio_num(self, instance, value):
+        self.device.ratio_num = value
+
+    def on_ratio_den(self, instance, value):
+        self.device.ratio_den = value
+
+    def on_acceleration(self, instance, value):
+        self.device.acceleration = float(value)
+
+    def on_min_speed(self, instance, value):
+        self.device.min_speed = float(value)
+
+    def on_max_speed(self, instance, value):
+        self.device.max_speed = float(value)
+
+    def test_sync(self):
+        self.device.syn_ratio_num = 4096
+        self.device.syn_ratio_den = 3600
+        self.device.request_sync_init()
+
+        logging.warning("Sync called")
 
     def build(self):
         self.home = Home()
         self.bind(divisions=self.update_desired_position)
         self.bind(division_index=self.update_desired_position)
         self.bind(division_offset=self.update_desired_position)
-        Clock.schedule_interval(self.update, 1.0 / 10)
+        self.device.ratio_num = self.ratio_num
+        self.device.ratio_den = self.ratio_den
+        self.device.acceleration = self.acceleration
+        self.device.max_speed = self.max_speed
+        self.device.min_speed = self.min_speed
+        Clock.schedule_interval(self.update, 1.0 / 25)
         return self.home
 
 
