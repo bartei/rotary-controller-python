@@ -1,7 +1,9 @@
 #: import Toolbar components.toolbar
 #: import CoordBar components.coordbar
-#: import RotaryBar components.rotarybar
+#: import DirectIndexing components.directindexing
 #: import Jog components.jog
+#: import Synchro components.synchro
+
 <Home>:
   orientation: "horizontal"
   Toolbar:
@@ -33,7 +35,7 @@
             Rectangle:
               pos: self.pos
               size: self.size
-        RotaryBar:
+        DirectIndexing:
           id: rotary_a
           input_name: "current_position"
           axis_name: "A"
@@ -46,7 +48,7 @@
             Rectangle:
               pos: self.pos
               size: self.size
-          text: "Abs Mode"
+        Synchro:
       TabbedPanelItem:
         text: "Jog"
         Label:

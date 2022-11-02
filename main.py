@@ -112,8 +112,10 @@ class MainApp(App):
     jog_forward = BooleanProperty(False)
     jog_backward = BooleanProperty(False)
 
-    device = communication.DeviceManager()
+    sync_numerator = NumericProperty(defaultvalue=1024)
+    sync_denominator = NumericProperty(defaultvalue=36000)
 
+    device = None
     home = None
 
     def set_current_position(self, value):
@@ -137,6 +139,12 @@ class MainApp(App):
     def set_jog_accel(self, value):
         self.jog_accel = value
 
+    def set_sync_numerator(self, value):
+        self.sync_numerator = abs(int(value))
+
+    def set_sync_denominator(self, value):
+        self.sync_denominator = int(value)
+
     def update_desired_position(self, *args, **kwargs):
         if not self.divisions > 0:
             self.divisions = 1
@@ -146,22 +154,24 @@ class MainApp(App):
         return True
 
     def update(self, *args, **kwargs):
-        self.x_axis = self.device.x_position / 4096
-        self.current_position = self.device.current_position * self.ratio_num / self.ratio_den
+        if self.device is not None:
+            self.x_axis = self.device.x_position / 4096
+            self.current_position = self.device.current_position * self.ratio_num / self.ratio_den
 
     def on_desired_position(self, instance, value):
         # TODO: Wait until any ongoing positioning is still in progress before sending the new requested position
 
-        # Always send out the motion settings
-        self.device.min_speed = self.min_speed
-        self.device.max_speed = self.max_speed
-        self.device.acceleration = self.acceleration
-        self.device.ratio_num = self.ratio_num
-        self.device.ratio_den = self.ratio_den
-        self.device.mode = 0
+        if self.device is not None:
+            # Always send out the motion settings
+            self.device.min_speed = self.min_speed
+            self.device.max_speed = self.max_speed
+            self.device.acceleration = self.acceleration
+            self.device.ratio_num = self.ratio_num
+            self.device.ratio_den = self.ratio_den
+            self.device.mode = 0
 
-        # Send the destination converted to steps
-        self.device.final_position = int(value / self.ratio_num * self.ratio_den)
+            # Send the destination converted to steps
+            self.device.final_position = int(value / self.ratio_num * self.ratio_den)
 
     def on_ratio_num(self, instance, value):
         self.device.ratio_num = value
@@ -181,7 +191,7 @@ class MainApp(App):
     def test_sync(self):
         self.device.syn_ratio_num = 4096
         self.device.syn_ratio_den = 3600
-        self.device.request_sync_init()
+        self.device.control.request_sync_init = True
 
         logging.warning("Sync called")
 
@@ -190,11 +200,19 @@ class MainApp(App):
         self.bind(divisions=self.update_desired_position)
         self.bind(division_index=self.update_desired_position)
         self.bind(division_offset=self.update_desired_position)
-        self.device.ratio_num = self.ratio_num
-        self.device.ratio_den = self.ratio_den
-        self.device.acceleration = self.acceleration
-        self.device.max_speed = self.max_speed
-        self.device.min_speed = self.min_speed
+
+        try:
+            self.device = communication.DeviceManager()
+        except Exception as e:
+            log.error(e.__str__())
+
+        if self.device is not None:
+            self.device.ratio_num = self.ratio_num
+            self.device.ratio_den = self.ratio_den
+            self.device.acceleration = self.acceleration
+            self.device.max_speed = self.max_speed
+            self.device.min_speed = self.min_speed
+
         Clock.schedule_interval(self.update, 1.0 / 25)
         return self.home
 

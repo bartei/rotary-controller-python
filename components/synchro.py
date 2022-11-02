@@ -11,6 +11,7 @@ from kivy.properties import StringProperty, ConfigParserProperty, NumericPropert
 from kivy.uix.boxlayout import BoxLayout
 from kivy.app import App
 from components.appsettings import config
+from typing import Callable
 
 
 log = logging.getLogger(__file__)
@@ -20,11 +21,10 @@ if os.path.exists(kv_file):
     Builder.load_file(kv_file)
 
 
-class RotaryBar(BoxLayout):
-    input_name = StringProperty()
-    display_color = ConfigParserProperty(
-        defaultvalue="#ffffffff",
-        section="formatting",
-        key="display_color",
-        config=config
-    )
+class LabelButton(BoxLayout):
+    release_function: Callable
+    pass
+
+
+class Synchro(BoxLayout):
+    pass
