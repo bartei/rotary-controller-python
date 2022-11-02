@@ -1,10 +1,10 @@
-from enum import Enum
+from typing import Callable
 
+import cachetools.func
 import minimalmodbus
 import logging
-import struct
-import ctypes
-
+from utils.bitfields import BaseStructureManager
+from utils import structures
 
 log = logging.getLogger(__file__)
 
@@ -46,49 +46,74 @@ REG_RATIO_DEN = 26
 REG_STEP_RATIO = 28
 REG_SYN_RATIO_NUM = 30
 REG_SYN_RATIO_DEN = 32
-REG_CTRL_STATUS = 34
-REG_CTRL_CONTROL = 36
+REG_STATUS = 34
+REG_CONTROL = 36
 
 
-class ControllerStatus(ctypes.BigEndianStructure):
-    """
-    unsigned int ready : 1;
-    unsigned int alarm : 1;
-    unsigned int run_index : 1;
-    unsigned int run_sync : 1;
-    unsigned int unused : 12;
-    """
-    _fields_ = [
-        ("unused", ctypes.c_uint32, 12),
-        ("run_sync", ctypes.c_uint32, 1),
-        ("run_index", ctypes.c_uint32, 1),
-        ("alarm", ctypes.c_uint32, 1),
-        ("ready", ctypes.c_uint32, 1),
-    ]
+class ControlManager(BaseStructureManager):
+    def __init__(self, device: minimalmodbus.Instrument):
+        super(ControlManager, self).__init__(
+            device=device,
+            control_structure=structures.ControllerControl,
+            register_address=REG_CONTROL
+        )
+
+    @property
+    def reset(self) -> bool:
+        return self._get_bit_value("alarm")
+
+    @reset.setter
+    def reset(self, value: bool):
+        self._set_bit_value("alarm", value)
+
+    @property
+    def emergency(self) -> bool:
+        return self._get_bit_value("emergency")
+
+    @emergency.setter
+    def emergency(self, value: bool):
+        self._set_bit_value("emergency", value)
+
+    @property
+    def enable(self) -> bool:
+        return self._get_bit_value("enable")
+
+    @enable.setter
+    def enable(self, value: bool):
+        self._set_bit_value("enable", value)
+
+    @property
+    def request_sync_init(self) -> bool:
+        return self._get_bit_value("request_sync_init")
+
+    @request_sync_init.setter
+    def request_sync_init(self, value: bool):
+        self._set_bit_value("request_sync_init", value)
 
 
-class ControllerControl(ctypes.BigEndianStructure):
-    """
-    unsigned int reset : 1;
-    unsigned int emergency : 1;
-    unsigned int enable : 1;
-    unsigned int request_sync_init: 1;
-    unsigned int unused : 12;
-    """
-    _fields_ = [
-        ("unused", ctypes.c_uint32, 12),
-        ("request_sync_init", ctypes.c_uint32, 1),
-        ("enable", ctypes.c_uint32, 1),
-        ("emergency", ctypes.c_uint32, 1),
-        ("reset", ctypes.c_uint32, 1),
-    ]
+class StatusManager(BaseStructureManager):
+    def __init__(self, device: minimalmodbus.Instrument):
+        super(StatusManager, self).__init__(
+            device=device,
+            control_structure=structures.ControllerStatus,
+            register_address=REG_STATUS
+        )
 
+    @property
+    def ready(self) -> bool:
+        return self._get_bit_value("ready")
 
-class DeviceMode(Enum):
-    OFF = 0
-    DIRECT = 1
-    DIVIDE = 2
-    DIVIDE_SYNC = 3
+    @property
+    def alarm(self) -> bool:
+        return self._get_bit_value("alarm")
+
+    @property
+    def run_index(self) -> bool:
+        return self._get_bit_value("run_index")
+
+    @property
+    def run_sync(self) -> bool:
+        return self._get_bit_value("run_sync")
 
 
 class DeviceManager:
@@ -100,71 +125,9 @@ class DeviceManager:
         )
         self.device.serial.baudrate = baudrate
 
-    @property
-    def status(self) -> ControllerStatus:
-        try:
-            value = self.device.read_long()
-            value = self.device.read_register(REG_CTRL_STATUS)
-            cs = ControllerStatus()
-            struct.pack_into(
-                '!H',
-                cs,
-                0,
-                value
-            )
-
-            return cs
-        except Exception as e:
-            # Log error at debug level with stack trace
-            log.debug(e.__str__(), stack_info=True)
-            cs = ControllerStatus()
-            return cs
-
-    @property
-    def control(self) -> ControllerControl:
-        try:
-            value = self.device.read_long(
-                REG_CTRL_CONTROL,
-                byteorder=minimalmodbus.BYTEORDER_LITTLE_SWAP,
-                signed=False
-            )
-            # value = self.device.read_register(REG_CTRL_CONTROL)
-            cs = ControllerControl()
-            struct.pack_into(
-                '!H',
-                cs,
-                0,
-                value
-            )
-            return cs
-        except Exception as e:
-            # Log error at debug level with stack trace
-            log.debug(e.__str__(), stack_info=True)
-            cs = ControllerControl()
-            return cs
-
-    @control.setter
-    def control(self, value: ControllerControl):
-        try:
-            cs_value, = struct.unpack_from('!H', value)
-            self.device.write_long(
-                REG_CTRL_CONTROL,
-                cs_value,
-                byteorder=minimalmodbus.BYTEORDER_LITTLE_SWAP,
-                signed=True
-            )
-            # self.device.write_register(
-            #     REG_CTRL_CONTROL,
-            #     cs_value,
-            # )
-        except Exception as e:
-            log.exception(e.__str__())
-
-    def request_sync_init(self):
-        control = self.control
-        control.request_sync_init = 1
-        self.control = control
-
+        # Create status reference
+        self.status = StatusManager(device=self.device)
+        self.control = ControlManager(device=self.device)
 
     @property
     def mode(self):
@@ -191,10 +154,7 @@ class DeviceManager:
     @mode.setter
     def mode(self, value: int):
         try:
-            self.device.write_register(
-                REG_MODE,
-                value,
-            )
+            self.device.write_register(REG_MODE, value)
         except Exception as e:
             log.exception(e.__str__())
 
