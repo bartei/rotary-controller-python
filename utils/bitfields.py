@@ -51,7 +51,7 @@ class BaseStructureManager:
             return value
         except Exception as e:
             log.exception(e.__str__())
-            return 999999
+            return 0
 
     def set_register(self, value: int):
         """
