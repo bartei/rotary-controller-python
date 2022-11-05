@@ -60,11 +60,11 @@ class ControlManager(BaseStructureManager):
 
     @property
     def reset(self) -> bool:
-        return self._get_bit_value("alarm")
+        return self._get_bit_value("reset")
 
     @reset.setter
     def reset(self, value: bool):
-        self._set_bit_value("alarm", value)
+        self._set_bit_value("reset", value)
 
     @property
     def emergency(self) -> bool:

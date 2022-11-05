@@ -1,0 +1,26 @@
+
+<LabelCheckBox>:
+  label: "Label"
+  checkbox_value: True
+  current_color: (1, 1, 1, 1)
+
+  BoxLayout:
+    canvas.before:
+      Color:
+        rgba: root.current_color
+      Rectangle:
+        pos: self.pos
+        size: self.size
+      Color:
+        rgba: (0.6,0.6,0.6,1)
+#      Line:
+#        points: self.pos[0], self.pos[1], self.pos[0]+self.width-2, self.pos[1]
+      Line:
+        points: self.pos[0], self.pos[1], self.pos[0], self.pos[1]+self.height
+#      Line:
+#        points: self.pos[0], self.pos[1]+self.height, self.pos[0]+self.width-2, self.pos[1]+self.height
+      Line:
+        points: self.pos[0]+self.width-2, self.pos[1]+self.height, self.pos[0]+self.width-2, self.pos[1]
+    orientation: "vertical"
+    Label:
+      text: root.label

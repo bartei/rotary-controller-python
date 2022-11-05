@@ -1,6 +1,7 @@
 #: import Factory kivy.factory.Factory
 #: import Keypad components.keypad
 #: import LabelButton components.labelbutton
+#: import LabelCheckBox components.labelcheckbox
 
 <Synchro>:
   orientation: "vertical"
@@ -16,24 +17,31 @@
     size_hint_y: None
     LabelButton:
       label: "Current Position (deg)"
+      text_halign: "center"
       format: app.angle_format
       value: app.current_position
       release_function: app.set_current_position
 
-    BoxLayout:
-      canvas.before:
-        Color:
-          rgba: (0.3, 0.1, 0.1, 1)
-        Rectangle:
-          pos: self.pos
-          size: self.size
+    LabelCheckBox:
       size_hint_x: None
-      width: 160
-      orientation: "vertical"
-      Label:
-        size_hint_y: 0.3
-        text: "Test"
-
+      width: 100
+      label: "Testing"
+      checkbox_value: app.ready
+    Button:
+      size_hint_x: None
+      width: 100
+      text: "Enable Synchro"
+      on_release: app.request_syn_mode()
+    Button:
+      size_hint_x: None
+      width: 100
+      text: "Emergency"
+      on_release: app.toggle_emergency()
+    Button:
+      size_hint_x: None
+      width: 100
+      text: "Enable"
+      on_release: app.toggle_enable()
 
   BoxLayout:
     orientation: "horizontal"
@@ -42,10 +50,10 @@
     LabelButton:
       label: "Numerator"
       format: "{}"
-      value: app.sync_numerator
+      value: app.syn_ratio_num
       release_function: app.set_sync_numerator
     LabelButton:
       label: "Denominator"
       format: "{}"
-      value: app.sync_denominator
+      value: app.syn_ratio_den
       release_function: app.set_sync_denominator

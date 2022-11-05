@@ -9,6 +9,7 @@ from kivy.clock import Clock
 from kivy.lang import Builder
 from kivy.properties import StringProperty, ConfigParserProperty, NumericProperty
 from kivy.uix.boxlayout import BoxLayout
+from kivy.uix.togglebutton import ToggleButton
 from kivy.app import App
 from components.appsettings import config
 from typing import Callable

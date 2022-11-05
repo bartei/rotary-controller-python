@@ -112,8 +112,13 @@ class MainApp(App):
     jog_forward = BooleanProperty(False)
     jog_backward = BooleanProperty(False)
 
-    sync_numerator = NumericProperty(defaultvalue=1024)
-    sync_denominator = NumericProperty(defaultvalue=36000)
+    syn_ratio_num = NumericProperty(defaultvalue=1024)
+    syn_ratio_den = NumericProperty(defaultvalue=36000)
+
+    syn_mode = BooleanProperty(defaultvalue=False)
+    ready = BooleanProperty(False)
+    alarm = BooleanProperty(False)
+    ready_state = StringProperty("normal")
 
     device = None
     home = None
@@ -140,10 +145,10 @@ class MainApp(App):
         self.jog_accel = value
 
     def set_sync_numerator(self, value):
-        self.sync_numerator = abs(int(value))
+        self.syn_ratio_num = abs(int(value))
 
     def set_sync_denominator(self, value):
-        self.sync_denominator = int(value)
+        self.syn_ratio_den = int(value)
 
     def update_desired_position(self, *args, **kwargs):
         if not self.divisions > 0:
@@ -157,6 +162,9 @@ class MainApp(App):
         if self.device is not None:
             self.x_axis = self.device.x_position / 4096
             self.current_position = self.device.current_position * self.ratio_num / self.ratio_den
+            self.syn_mode = self.device.status.run_sync
+            # self.ready = self.device.status.ready
+            # self.alarm = self.device.status.alarm
 
     def on_desired_position(self, instance, value):
         # TODO: Wait until any ongoing positioning is still in progress before sending the new requested position
@@ -188,12 +196,32 @@ class MainApp(App):
     def on_max_speed(self, instance, value):
         self.device.max_speed = float(value)
 
-    def test_sync(self):
-        self.device.syn_ratio_num = 4096
-        self.device.syn_ratio_den = 3600
+    def request_syn_mode(self):
+        self.device.syn_ratio_num = self.syn_ratio_num
+        self.device.syn_ratio_den = self.syn_ratio_den
         self.device.control.request_sync_init = True
-
         logging.warning("Sync called")
+        logging.warning(f"Mode: {self.device.mode}, {self.device.status.run_sync}, {self.device.status.run_index}")
+
+    def toggle_emergency(self):
+        self.device.control.emergency = not self.device.control.emergency
+
+    def toggle_enable(self):
+        self.device.control.enable = not self.device.control.enable
+        self.ready = self.device.control.enable
+
+    def on_syn_ratio_num(self, instance, value):
+        self.device.syn_ratio_num = value
+
+    def on_syn_ratio_den(self, instance, value):
+        self.device.syn_ratio_den = value
+
+    # def test_sync(self):
+    #     self.device.syn_ratio_num = 4096
+    #     self.device.syn_ratio_den = 3600
+    #     self.device.control.request_sync_init = True
+    #
+    #     logging.warning("Sync called")
 
     def build(self):
         self.home = Home()

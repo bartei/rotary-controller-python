@@ -11,11 +11,11 @@ class ControllerStatus(ctypes.BigEndianStructure):
     """
     pack_format = ">H"
     _fields_ = [
-        ("ready", ctypes.c_uint32, 1),
-        ("alarm", ctypes.c_uint32, 1),
-        ("run_index", ctypes.c_uint32, 1),
-        ("run_sync", ctypes.c_uint32, 1),
         ("unused", ctypes.c_uint32, 12),
+        ("run_sync", ctypes.c_uint32, 1),
+        ("run_index", ctypes.c_uint32, 1),
+        ("alarm", ctypes.c_uint32, 1),
+        ("ready", ctypes.c_uint32, 1),
     ]
 
 
@@ -29,9 +29,9 @@ class ControllerControl(ctypes.BigEndianStructure):
     """
     pack_format = ">H"
     _fields_ = [
-        ("reset", ctypes.c_uint32, 1),
-        ("emergency", ctypes.c_uint32, 1),
-        ("enable", ctypes.c_uint32, 1),
-        ("request_sync_init", ctypes.c_uint32, 1),
         ("unused", ctypes.c_uint32, 12),
+        ("request_sync_init", ctypes.c_uint32, 1),
+        ("enable", ctypes.c_uint32, 1),
+        ("emergency", ctypes.c_uint32, 1),
+        ("reset", ctypes.c_uint32, 1),
     ]

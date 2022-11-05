@@ -5,7 +5,7 @@
 
 <ToolbarButton>:
   size_hint_y: None
-  height: 64
+  height: self.width
   font_size: 16
   font_name: "fonts/Manrope-Bold.ttf"
 
@@ -14,25 +14,35 @@
 
   size_hint_x: None
   size_hint_y: 1
-  width: 64
+  width: 80
   orientation: "vertical"
+
+  ToolbarButton:
+    background_color: (1, 0, 0, 1)
+    disabled: False
+    text: "RST"
+    state: "normal"
+
+  ToggleButton:
+    background_color: (1, 0, 0, 1)
+    disabled: False
+    state: app.ready_state
+    text: "STA"
+
+
+  ToggleButton:
+    text: "ALM"
+    active: app.alarm
+
+  ToolbarButton:
+    text: "mm"
+
+  ToolbarButton:
+    text: "ABS"
 
   ToolbarButton:
     font_name: "fonts/Font Awesome 6 Free-Solid-900.otf"
     font_size: 32
     text: "\uf085"
-    id: settings_button
-    on_release: Factory.AppSettings().open()
-  ToolbarButton:
-    text: "mm"
-    id: test_button
-#    on_release: Factory.Keypad().show(app.setter("desired_angle"))
 
-  ToolbarButton:
-    text: "ABS"
-    id: test_button
-#    on_release: Factory.Keypad().show(app.setter("desired_angle"))
-  ToolbarButton:
-    text: "DIV"
-    id: test_button
-    on_release: app.test_sync()
+    on_release: Factory.AppSettings().open()
