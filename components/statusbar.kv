@@ -37,7 +37,31 @@
     size_hint_x: None
     width: 64
     label: "IDX"
-    checkbox_value: (app.ready and app.blink)
+    checkbox_value: (app.ready or app.blink)
+
+  LedButton:
+    # RUN JOG LED
+    height: self.width
+    size_hint_x: None
+    width: 64
+    label: "JOG"
+    checkbox_value: app.jog_mode
+
+  LedButton:
+    # RUN JOG LED
+    height: self.width
+    size_hint_x: None
+    width: 64
+    label: "BWD"
+    checkbox_value: app.jog_backward
+
+  LedButton:
+    # RUN JOG LED
+    height: self.width
+    size_hint_x: None
+    width: 64
+    label: "FWD"
+    checkbox_value: app.jog_forward
 
   LedButton:
     # ERROR LED

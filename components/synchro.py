@@ -1,7 +1,9 @@
 import logging
 import os
+from decimal import Decimal
 
 from kivy.lang import Builder
+from kivy.properties import NumericProperty, StringProperty
 from kivy.uix.boxlayout import BoxLayout
 
 

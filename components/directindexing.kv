@@ -3,7 +3,6 @@
 
 <DirectIndexing>:
   axis_name: "A"
-  pos_format: app.angle_format
 
   orientation: "vertical"
   canvas.before:
@@ -42,7 +41,7 @@
           font_size: 48
           font_style: "bold"
           color: app.display_color
-          text: root.pos_format.format(app.current_position)
+          text: app.angle_format.format(app.current_position)
           text_size: self.size
           halign: 'left'
           valign: 'bottom'
@@ -66,7 +65,7 @@
           font_size: 48
           font_style: "bold"
           color: app.display_color
-          text: root.pos_format.format(app.desired_position)
+          text: app.angle_format.format(app.desired_position)
           text_size: self.size
           halign: 'left'
           valign: 'bottom'
@@ -96,7 +95,16 @@
       size_hint_x: None
       on_release: app.division_index = (app.division_index - 1 + app.divisions) % app.divisions
       disabled: app.in_motion
-
+    Button:
+      font_name: "fonts/Font Awesome 6 Free-Solid-900.otf"
+      text: "\u002b"
+      font_size: 48
+      font_style: "bold"
+      background_color: [0.2, 0.8, 0.2, 1]
+      width: 80
+      size_hint_x: None
+      on_release: app.division_index = (app.division_index+1) % app.divisions
+      disabled: app.in_motion
     BoxLayout:
       size_hint_x: 0.5
       orientation: "vertical"
@@ -158,18 +166,15 @@
         font_size: 48
         font_style: "bold"
         color: app.display_color
-        text: root.pos_format.format(app.division_offset)
+        text: app.angle_format.format(app.division_offset)
         text_size: self.size
         halign: 'left'
         on_release: Factory.Keypad().show(app.set_division_offset)
         disabled: app.in_motion
     Button:
-      font_name: "fonts/Font Awesome 6 Free-Solid-900.otf"
-      text: "\u002b"
-      font_size: 48
-      font_style: "bold"
-      background_color: [0.2, 0.8, 0.2, 1]
-      width: 80
+      background_color: (0, 1, 0, 1)
       size_hint_x: None
-      on_release: app.division_index = (app.division_index+1) % app.divisions
-      disabled: app.in_motion
+      width: self.height
+      text: "Request\nIndexing"
+      text_halign: "center"
+      on_release: app.request_syn_mode()

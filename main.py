@@ -111,6 +111,7 @@ class MainApp(App):
     jog_accel = NumericProperty(0.01)
     jog_forward = BooleanProperty(False)
     jog_backward = BooleanProperty(False)
+    jog_mode = BooleanProperty(True)
 
     syn_ratio_num = NumericProperty(defaultvalue=1024)
     syn_ratio_den = NumericProperty(defaultvalue=36000)

@@ -44,15 +44,12 @@
     text: "Enable"
     on_release: app.ready = True if self.state == "down" else False
 
-#  LedButton:
-#    font_name: "fonts/Font Awesome 6 Free-Solid-900.otf"
-#    font_size: 32
-#    label: "\uf011"
-
-
-
-  ToolbarButton:
-    text: "mm"
+  ToggleButton:
+    # Enable
+    height: self.width
+    size_hint_y: None
+    text: "MM"
+    on_release: app.jog_mode = True if self.state == "down" else False
 
   ToolbarButton:
     text: "ABS"

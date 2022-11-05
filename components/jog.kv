@@ -3,6 +3,7 @@
 #: import LabelButton components.labelbutton
 
 <Jog>:
+  axis_name: "A"
   orientation: "vertical"
   canvas.before:
     Color:
@@ -14,28 +15,45 @@
     orientation: "horizontal"
     height: 80
     size_hint_y: None
-    LabelButton:
-      label: "Current Position (deg)"
-      format: app.angle_format
-      value: app.current_position
-      release_function: app.set_current_position
-
-    BoxLayout:
-      canvas.before:
-        Color:
-          rgba: (0.3, 0.1, 0.1, 1)
-        Rectangle:
-          pos: self.pos
-          size: self.size
+    Label:
+      text: root.axis_name
+      width: 80
       size_hint_x: None
-      width: 160
+      font_size: 64
+      font_style: "bold"
+    BoxLayout:
+      size_hint_x: 0.4
       orientation: "vertical"
       Label:
+        text: "Current Angle"
+        text_size: self.size
         size_hint_y: 0.3
-        text: "Motion Enable"
-      Switch:
-        active: app.motion_enable
-        on_active: app.motion_enable = self.active
+        font_size: 16
+        color: app.display_color
+        halign: 'left'
+        valign: 'bottom'
+      Button:
+        id: current_angle_button
+        background_color: 0.1, 0.1, 0.1, 1
+        font_name: "fonts/Manrope-Bold.ttf"
+        font_size: 48
+        font_style: "bold"
+        color: app.display_color
+        text: app.angle_format.format(app.current_position)
+        text_size: self.size
+        halign: 'left'
+        valign: 'bottom'
+        on_release: Factory.Keypad().show(app.set_current_position)
+        disabled: app.in_motion
+    Button:
+      text: "Zero"
+      font_size: 24
+      font_style: "bold"
+      background_color: [1, 0.2, 0.2, 1]
+      width: 80
+      size_hint_x: None
+      on_release: root.axis_pos = "0"
+
 
   BoxLayout:
     orientation: "horizontal"
@@ -52,17 +70,6 @@
       on_press: app.jog_backward = True
       on_release: app.jog_backward = False
       disabled: app.in_motion
-
-    LabelButton:
-      label: "Accel (deg/s^2)"
-      format: "{:+.2f}"
-      value: app.jog_accel
-      release_function: app.set_jog_accel
-    LabelButton:
-      label: "Speed (deg/s)"
-      format: "{:+.2f}"
-      value: app.jog_speed
-      release_function: app.set_jog_speed
     Button:
       font_name: "fonts/Font Awesome 6 Free-Solid-900.otf"
       text: "\u002b"
@@ -74,3 +81,20 @@
       on_press: app.jog_forward = True
       on_release: app.jog_forward = False
       disabled: app.in_motion
+    LabelButton:
+      label: "Accel (deg/s^2)"
+      format: "{:+.2f}"
+      value: app.jog_accel
+      release_function: app.set_jog_accel
+    LabelButton:
+      label: "Speed (deg/s)"
+      format: "{:+.2f}"
+      value: app.jog_speed
+      release_function: app.set_jog_speed
+    Button:
+      background_color: (0, 1, 0, 1)
+      size_hint_x: None
+      width: self.height
+      text: "Request\nJog"
+      text_halign: "center"
+      on_release: app.request_syn_mode()

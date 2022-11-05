@@ -5,6 +5,8 @@
 
 <Synchro>:
   axis_name: "A"
+  pos_format: app.angle_format
+
   orientation: "vertical"
   canvas.before:
     Color:
@@ -22,12 +24,31 @@
       size_hint_x: None
       font_size: 64
       font_style: "bold"
-    LabelButton:
-      label: "Current Position (deg)"
-      text_halign: "center"
-      format: app.angle_format
-      value: app.current_position
-      release_function: app.set_current_position
+    BoxLayout:
+      size_hint_x: 0.4
+      orientation: "vertical"
+
+      Label:
+        text: "Current Angle"
+        text_size: self.size
+        size_hint_y: 0.3
+        font_size: 16
+        color: app.display_color
+        halign: 'left'
+        valign: 'bottom'
+      Button:
+        id: current_angle_button
+        background_color: 0.1, 0.1, 0.1, 1
+        font_name: "fonts/Manrope-Bold.ttf"
+        font_size: 48
+        font_style: "bold"
+        color: app.display_color
+        text: root.pos_format.format(app.current_position)
+        text_size: self.size
+        halign: 'left'
+        valign: 'bottom'
+        on_release: Factory.Keypad().show(app.set_current_position)
+        disabled: app.in_motion
     Button:
       text: "Zero"
       font_size: 24
