@@ -1,9 +1,10 @@
 #: import Factory kivy.factory.Factory
 #: import Keypad components.keypad
 #: import LabelButton components.labelbutton
-#: import LabelCheckBox components.labelcheckbox
+#: import LedButton components.ledbutton
 
 <Synchro>:
+  axis_name: "A"
   orientation: "vertical"
   canvas.before:
     Color:
@@ -15,33 +16,26 @@
     orientation: "horizontal"
     height: 80
     size_hint_y: None
+    Label:
+      text: root.axis_name
+      width: 80
+      size_hint_x: None
+      font_size: 64
+      font_style: "bold"
     LabelButton:
       label: "Current Position (deg)"
       text_halign: "center"
       format: app.angle_format
       value: app.current_position
       release_function: app.set_current_position
-
-    LabelCheckBox:
-      size_hint_x: None
-      width: 100
-      label: "Testing"
-      checkbox_value: app.ready
     Button:
+      text: "Zero"
+      font_size: 24
+      font_style: "bold"
+      background_color: [1, 0.2, 0.2, 1]
+      width: 80
       size_hint_x: None
-      width: 100
-      text: "Enable Synchro"
-      on_release: app.request_syn_mode()
-    Button:
-      size_hint_x: None
-      width: 100
-      text: "Emergency"
-      on_release: app.toggle_emergency()
-    Button:
-      size_hint_x: None
-      width: 100
-      text: "Enable"
-      on_release: app.toggle_enable()
+      on_release: root.axis_pos = "0"
 
   BoxLayout:
     orientation: "horizontal"
@@ -57,3 +51,10 @@
       format: "{}"
       value: app.syn_ratio_den
       release_function: app.set_sync_denominator
+    Button:
+      background_color: (0, 1, 0, 1)
+      size_hint_x: None
+      width: self.height
+      text: "Request\nSynchro"
+      text_halign: "center"
+      on_release: app.request_syn_mode()

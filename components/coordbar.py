@@ -21,7 +21,7 @@ if os.path.exists(kv_file):
 
 
 class CoordBar(BoxLayout):
-    input_name = StringProperty()
+    release_function = None
     axis_pos = NumericProperty(0.0)
     formatted_axis_pos = StringProperty("0.000")
     formatted_axis_speed = StringProperty("0.000")

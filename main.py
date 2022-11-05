@@ -118,7 +118,9 @@ class MainApp(App):
     syn_mode = BooleanProperty(defaultvalue=False)
     ready = BooleanProperty(False)
     alarm = BooleanProperty(False)
+    blink = BooleanProperty(False)
     ready_state = StringProperty("normal")
+    communication_alarm = BooleanProperty(False)
 
     device = None
     home = None
@@ -150,6 +152,18 @@ class MainApp(App):
     def set_sync_denominator(self, value):
         self.syn_ratio_den = int(value)
 
+    def set_new_x(self, *args, **kwargs):
+        # TODO: Implement method to configure axis position between stm and python
+        pass
+
+    def set_new_y(self, *args, **kwargs):
+        # TODO: Implement method to configure axis position between stm and python
+        pass
+
+    def set_new_z(self, *args, **kwargs):
+        # TODO: Implement method to configure axis position between stm and python
+        pass
+
     def update_desired_position(self, *args, **kwargs):
         if not self.divisions > 0:
             self.divisions = 1
@@ -168,6 +182,7 @@ class MainApp(App):
 
     def on_desired_position(self, instance, value):
         # TODO: Wait until any ongoing positioning is still in progress before sending the new requested position
+        # TODO: Move this code into the clock event
 
         if self.device is not None:
             # Always send out the motion settings
@@ -197,18 +212,19 @@ class MainApp(App):
         self.device.max_speed = float(value)
 
     def request_syn_mode(self):
-        self.device.syn_ratio_num = self.syn_ratio_num
-        self.device.syn_ratio_den = self.syn_ratio_den
-        self.device.control.request_sync_init = True
-        logging.warning("Sync called")
-        logging.warning(f"Mode: {self.device.mode}, {self.device.status.run_sync}, {self.device.status.run_index}")
+        if self.device is not None:
+            self.device.syn_ratio_num = self.syn_ratio_num
+            self.device.syn_ratio_den = self.syn_ratio_den
+            self.device.control.request_sync_init = True
 
     def toggle_emergency(self):
         self.device.control.emergency = not self.device.control.emergency
 
     def toggle_enable(self):
-        self.device.control.enable = not self.device.control.enable
-        self.ready = self.device.control.enable
+        if self.device is not None:
+            self.device.control.enable = not self.device.control.enable
+            self.ready = self.device.control.enable
+        self.ready = not self.ready
 
     def on_syn_ratio_num(self, instance, value):
         self.device.syn_ratio_num = value
@@ -216,12 +232,8 @@ class MainApp(App):
     def on_syn_ratio_den(self, instance, value):
         self.device.syn_ratio_den = value
 
-    # def test_sync(self):
-    #     self.device.syn_ratio_num = 4096
-    #     self.device.syn_ratio_den = 3600
-    #     self.device.control.request_sync_init = True
-    #
-    #     logging.warning("Sync called")
+    def blinker(self, *args):
+        self.blink = not self.blink
 
     def build(self):
         self.home = Home()
@@ -240,8 +252,13 @@ class MainApp(App):
             self.device.acceleration = self.acceleration
             self.device.max_speed = self.max_speed
             self.device.min_speed = self.min_speed
+            self.communication_alarm = False
+
+        else:
+            self.communication_alarm = True
 
         Clock.schedule_interval(self.update, 1.0 / 25)
+        Clock.schedule_interval(self.blinker, 1.0 / 4)
         return self.home
 
 

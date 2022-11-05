@@ -1,7 +1,7 @@
 #: import Factory kivy.factory.Factory
 #: import Keypad components.keypad
 #: import AppSettings components.appsettings
-
+#: import LedButton components.ledbutton
 
 <ToolbarButton>:
   size_hint_y: None
@@ -17,22 +17,39 @@
   width: 80
   orientation: "vertical"
 
-  ToolbarButton:
-    background_color: (1, 0, 0, 1)
-    disabled: False
-    text: "RST"
-    state: "normal"
+  LedButton:
+    # Alarm
+    font_name: "fonts/Font Awesome 6 Free-Solid-900.otf"
+    font_size: 32
+    height: self.width
+    size_hint_y: None
+    label: "\uf071"
+    checkbox_value: (app.alarm and app.blink)
+#    on_release: Factory.AppSettings().open()
+
+  LedButton:
+    # Ready
+    font_name: "fonts/Font Awesome 6 Free-Solid-900.otf"
+    font_size: 32
+    color_on: "#62ff4ccc"
+    height: self.width
+    size_hint_y: None
+    label: "\uf058"
+    checkbox_value: app.ready
 
   ToggleButton:
-    background_color: (1, 0, 0, 1)
-    disabled: False
-    state: app.ready_state
-    text: "STA"
+    # Enable
+    height: self.width
+    size_hint_y: None
+    text: "Enable"
+    on_release: app.ready = True if self.state == "down" else False
+
+#  LedButton:
+#    font_name: "fonts/Font Awesome 6 Free-Solid-900.otf"
+#    font_size: 32
+#    label: "\uf011"
 
 
-  ToggleButton:
-    text: "ALM"
-    active: app.alarm
 
   ToolbarButton:
     text: "mm"

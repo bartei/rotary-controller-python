@@ -1,0 +1,48 @@
+#: import LedButton components.ledbutton
+
+<StatusBar>:
+  size_hint_x: 1
+  size_hint_y: None
+  height: 32
+  orientation: "horizontal"
+
+  LedButton:
+    # Communication Alarm
+    height: self.width
+    size_hint_x: None
+    width: 64
+    label: "COM"
+    checkbox_value: app.communication_alarm and app.blink
+
+  LedButton:
+    # READY LED
+    height: self.width
+    size_hint_x: None
+    valign: "top"
+    width: 64
+    label: "RDY"
+    checkbox_value: app.ready
+
+  LedButton:
+    # RUN SYN LED
+    height: self.width
+    size_hint_x: None
+    width: 64
+    label: "SYN"
+    checkbox_value: app.ready
+
+  LedButton:
+    # RUN INDEX LED
+    height: self.width
+    size_hint_x: None
+    width: 64
+    label: "IDX"
+    checkbox_value: (app.ready and app.blink)
+
+  LedButton:
+    # ERROR LED
+    height: self.width
+    size_hint_x: None
+    width: 64
+    label: "ERR"
+    checkbox_value: app.ready

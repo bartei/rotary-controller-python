@@ -2,6 +2,7 @@
 #: import Keypad components.keypad
 
 <DirectIndexing>:
+  axis_name: "A"
   pos_format: app.angle_format
 
   orientation: "vertical"
@@ -17,6 +18,12 @@
     size_hint_y: None
     BoxLayout:
       orientation: "horizontal"
+      Label:
+        text: root.axis_name
+        width: 80
+        size_hint_x: None
+        font_size: 64
+        font_style: "bold"
       BoxLayout:
         size_hint_x: 0.4
         orientation: "vertical"
@@ -65,22 +72,14 @@
           valign: 'bottom'
           on_release: Factory.Keypad().show(app.set_desired_position)
           disabled: app.in_motion
-    BoxLayout:
-      canvas.before:
-        Color:
-          rgba: (0.3, 0.1, 0.1, 1)
-        Rectangle:
-          pos: self.pos
-          size: self.size
-      size_hint_x: None
-      width: 160
-      orientation: "vertical"
-      Label:
-        size_hint_y: 0.3
-        text: "Motion Enable"
-      Switch:
-        active: app.motion_enable
-        on_active: app.motion_enable = self.active
+      Button:
+        text: "Zero"
+        font_size: 24
+        font_style: "bold"
+        background_color: [1, 0.2, 0.2, 1]
+        width: 80
+        size_hint_x: None
+        on_release: root.axis_pos = "0"
 
   BoxLayout:
     size_hint_y: None

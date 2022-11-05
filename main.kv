@@ -3,24 +3,22 @@
 #: import DirectIndexing components.directindexing
 #: import Jog components.jog
 #: import Synchro components.synchro
-
+#: import StatusBar components.statusbar
 <Home>:
   orientation: "horizontal"
   Toolbar:
     id: toolbar
   BoxLayout:
     orientation: "vertical"
+    StatusBar:
     CoordBar:
-      id: x_coords
-      input_name: "x_axis"
+      release_function: app.set_new_x
       axis_name: "X"
     CoordBar:
-      id: x_coords
-      input_name: "y_axis"
+      release_function: app.set_new_y
       axis_name: "Y"
     CoordBar:
-      id: x_coords
-      input_name: "z_axis"
+      release_function: app.set_new_z
       axis_name: "Z"
     TabbedPanel:
       do_default_tab: False

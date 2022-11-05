@@ -19,13 +19,12 @@
   orientation: "horizontal"
   height: 80
   size_hint_y: None
-  Button:
+  Label:
     text: root.axis_name
     width: 80
     size_hint_x: None
     font_size: 64
     font_style: "bold"
-    on_release: Factory.Keypad().show(app.setter(root.input_name))
   BoxLayout:
     orientation: "horizontal"
     BoxLayout:
@@ -39,7 +38,8 @@
         color: app.display_color
         halign: 'left'
         valign: 'bottom'
-      Label:
+      Button:
+        background_color: (0, 0, 0, 1)
         id: pos_label
         size_hint_y: 0.8
         font_name: "fonts/Manrope-Bold.ttf"
@@ -50,6 +50,8 @@
         text_size: self.size
         halign: 'left'
         valign: 'bottom'
+        on_release: Factory.Keypad().show(root.release_function)
+
     BoxLayout:
       size_hint_x: 0.3
       orientation: 'vertical'

@@ -1,0 +1,21 @@
+#: import ColorProperty kivy.properties
+<LedButton>:
+  current_color: self.color_off
+  label: ""
+  checkbox_value: True
+  font_name: "fonts/Manrope-Bold.ttf"
+  font_size: 16
+
+  BoxLayout:
+    canvas.before:
+      Color:
+        rgba: root.current_color
+      Rectangle:
+        pos: self.pos[0] + 4, self.pos[1] + 4
+        size: self.size[0] - 9, self.size[1] - 8
+
+    orientation: "vertical"
+    Label:
+      font_name: root.font_name
+      font_size: root.font_size
+      text: root.label
