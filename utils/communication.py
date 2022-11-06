@@ -3,28 +3,7 @@ import logging
 
 log = logging.getLogger(__file__)
 
-# typedef struct {
-# 0    uint16_t mode;
-# 2    int32_t current_position;
-# 4    int32_t final_position;
-# 6    int16_t spindle_position;
-# 8    int32_t x_position;
-# 10    uint16_t acc;
-# 12    int32_t step;
-# 14    int32_t total_steps;
-# 16    float max_speed;
-# 18    float min_speed;
-# 20    float current_speed;
-# 22    float acceleration;
-# 24    int32_t step_ratio_num;
-# 26    int32_t step_ratio_den;
-# 28    float step_ratio;
-# 30    int32_t syn_ratio_num;
-# 32    int32_t syn_ratio_den;
-# 34    controller_status_t status;
-# 36    controller_control_t control;
-# } rotary_controller_t;
-
+# Register addresses as per the current firmware version
 REG_MODE = 0
 REG_CURRENT_POSITION = 2
 REG_FINAL_POSITION = 4
@@ -41,6 +20,18 @@ REG_RATIO_DEN = 26
 REG_STEP_RATIO = 28
 REG_SYN_RATIO_NUM = 30
 REG_SYN_RATIO_DEN = 32
+
+# Summary of the currently available device modes from the current firmware
+MODE_HALT = 0
+MODE_INDEX = 10
+MODE_INDEX_INIT = 11
+MODE_SYNCHRO = 20
+MODE_SYNCHRO_INIT = 21
+MODE_JOG = 30
+MODE_JOG_FW = 31
+MODE_JOG_BW = 32
+MODE_SYNCHRO_BAD_RATIO = 101
+MODE_DISCONNECTED = 255
 
 
 class DeviceManager:

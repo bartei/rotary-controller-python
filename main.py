@@ -171,7 +171,7 @@ class MainApp(App):
             self.current_position = self.device.current_position * self.ratio_num / self.ratio_den
             self.mode = self.device.mode
         else:
-            self.mode = 255
+            self.mode = communication.MODE_DISCONNECTED
 
     def on_desired_position(self, instance, value):
         # TODO: Wait until any ongoing positioning is still in progress before sending the new requested position
