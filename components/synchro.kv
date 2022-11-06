@@ -48,7 +48,7 @@
         halign: 'left'
         valign: 'bottom'
         on_release: Factory.Keypad().show(app.set_current_position)
-        disabled: app.in_motion
+        disabled: app.mode != 0
     Button:
       text: "Zero"
       font_size: 24

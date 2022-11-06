@@ -24,7 +24,7 @@
     height: self.width
     size_hint_y: None
     label: "\uf071"
-    checkbox_value: (app.alarm and app.blink)
+    checkbox_value: (app.mode >= 100 and app.blink)
 #    on_release: Factory.AppSettings().open()
 
   LedButton:
@@ -35,7 +35,7 @@
     height: self.width
     size_hint_y: None
     label: "\uf058"
-    checkbox_value: app.ready
+    checkbox_value: app.mode < 100
 
   ToggleButton:
     # Enable

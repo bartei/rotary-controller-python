@@ -44,7 +44,7 @@
         halign: 'left'
         valign: 'bottom'
         on_release: Factory.Keypad().show(app.set_current_position)
-        disabled: app.in_motion
+        disabled: app.mode != 0
     Button:
       text: "Zero"
       font_size: 24
@@ -69,7 +69,7 @@
       size_hint_x: None
       on_press: app.jog_backward = True
       on_release: app.jog_backward = False
-      disabled: app.in_motion
+      disabled: app.mode != 0
     Button:
       font_name: "fonts/Font Awesome 6 Free-Solid-900.otf"
       text: "\u002b"
@@ -80,7 +80,7 @@
       size_hint_x: None
       on_press: app.jog_forward = True
       on_release: app.jog_forward = False
-      disabled: app.in_motion
+      disabled: app.mode != 0
     LabelButton:
       label: "Accel (deg/s^2)"
       format: "{:+.2f}"

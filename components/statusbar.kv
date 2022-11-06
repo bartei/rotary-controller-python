@@ -12,7 +12,7 @@
     size_hint_x: None
     width: 64
     label: "COM"
-    checkbox_value: app.communication_alarm and app.blink
+    checkbox_value: app.connected or app.blink
 
   LedButton:
     # READY LED
@@ -21,7 +21,7 @@
     valign: "top"
     width: 64
     label: "RDY"
-    checkbox_value: app.ready
+    checkbox_value: app.mode == 0
 
   LedButton:
     # RUN SYN LED
@@ -29,7 +29,7 @@
     size_hint_x: None
     width: 64
     label: "SYN"
-    checkbox_value: app.ready
+    checkbox_value: app.mode == 20
 
   LedButton:
     # RUN INDEX LED
@@ -37,7 +37,7 @@
     size_hint_x: None
     width: 64
     label: "IDX"
-    checkbox_value: (app.ready or app.blink)
+    checkbox_value: app.mode == 10
 
   LedButton:
     # RUN JOG LED
@@ -45,15 +45,15 @@
     size_hint_x: None
     width: 64
     label: "JOG"
-    checkbox_value: app.jog_mode
+    checkbox_value: app.mode >= 30 and app.mode < 40
 
   LedButton:
     # RUN JOG LED
     height: self.width
     size_hint_x: None
     width: 64
-    label: "BWD"
-    checkbox_value: app.jog_backward
+    label: "REV"
+    checkbox_value: app.mode == 32
 
   LedButton:
     # RUN JOG LED
@@ -61,7 +61,7 @@
     size_hint_x: None
     width: 64
     label: "FWD"
-    checkbox_value: app.jog_forward
+    checkbox_value: app.mode == 31
 
   LedButton:
     # ERROR LED
@@ -69,4 +69,4 @@
     size_hint_x: None
     width: 64
     label: "ERR"
-    checkbox_value: app.ready
+    checkbox_value: app.mode >= 100

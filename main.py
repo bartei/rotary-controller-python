@@ -1,6 +1,4 @@
 import logging
-import os
-import time
 
 from kivy.app import App
 from kivy.clock import Clock
@@ -97,9 +95,6 @@ class MainApp(App):
     y_axis = NumericProperty(20)
     z_axis = NumericProperty(20)
 
-    in_motion = BooleanProperty(False)
-    motion_enable = BooleanProperty(False)  # Normal = False, down = True
-
     desired_position = NumericProperty(0.0)
     current_position = NumericProperty(0.0)
 
@@ -116,12 +111,9 @@ class MainApp(App):
     syn_ratio_num = NumericProperty(defaultvalue=1024)
     syn_ratio_den = NumericProperty(defaultvalue=36000)
 
-    syn_mode = BooleanProperty(defaultvalue=False)
-    ready = BooleanProperty(False)
-    alarm = BooleanProperty(False)
+    mode = NumericProperty(0)
     blink = BooleanProperty(False)
-    ready_state = StringProperty("normal")
-    communication_alarm = BooleanProperty(False)
+    connected = BooleanProperty(False)
 
     device = None
     home = None
@@ -177,14 +169,13 @@ class MainApp(App):
         if self.device is not None:
             self.x_axis = self.device.x_position / 4096
             self.current_position = self.device.current_position * self.ratio_num / self.ratio_den
-            self.syn_mode = self.device.status.run_sync
-            # self.ready = self.device.status.ready
-            # self.alarm = self.device.status.alarm
+            self.mode = self.device.mode
+        else:
+            self.mode = 255
 
     def on_desired_position(self, instance, value):
         # TODO: Wait until any ongoing positioning is still in progress before sending the new requested position
         # TODO: Move this code into the clock event
-
         if self.device is not None:
             # Always send out the motion settings
             self.device.min_speed = self.min_speed
@@ -193,9 +184,10 @@ class MainApp(App):
             self.device.ratio_num = self.ratio_num
             self.device.ratio_den = self.ratio_den
             self.device.mode = 0
-
             # Send the destination converted to steps
             self.device.final_position = int(value / self.ratio_num * self.ratio_den)
+        else:
+            self.connected = True
 
     def on_ratio_num(self, instance, value):
         self.device.ratio_num = value
@@ -216,16 +208,7 @@ class MainApp(App):
         if self.device is not None:
             self.device.syn_ratio_num = self.syn_ratio_num
             self.device.syn_ratio_den = self.syn_ratio_den
-            self.device.control.request_sync_init = True
-
-    def toggle_emergency(self):
-        self.device.control.emergency = not self.device.control.emergency
-
-    def toggle_enable(self):
-        if self.device is not None:
-            self.device.control.enable = not self.device.control.enable
-            self.ready = self.device.control.enable
-        self.ready = not self.ready
+            self.device.mode = 21 # SYN_INIT
 
     def on_syn_ratio_num(self, instance, value):
         self.device.syn_ratio_num = value
@@ -236,27 +219,36 @@ class MainApp(App):
     def blinker(self, *args):
         self.blink = not self.blink
 
-    def build(self):
-        self.home = Home()
-        self.bind(divisions=self.update_desired_position)
-        self.bind(division_index=self.update_desired_position)
-        self.bind(division_offset=self.update_desired_position)
-
+    def configure_device(self, *args):
         try:
             self.device = communication.DeviceManager()
         except Exception as e:
+            # Retry in 5 seconds if the connection failed
+            Clock.schedule_once(self.configure_device, timeout=5)
+            self.device = None
             log.error(e.__str__())
 
+        # Initialize parameters on the firmware
         if self.device is not None:
             self.device.ratio_num = self.ratio_num
             self.device.ratio_den = self.ratio_den
             self.device.acceleration = self.acceleration
             self.device.max_speed = self.max_speed
             self.device.min_speed = self.min_speed
-            self.communication_alarm = False
+
+            self.connected = self.device.connected
 
         else:
-            self.communication_alarm = True
+            self.connected = False
+
+    def build(self):
+        self.home = Home()
+        self.bind(divisions=self.update_desired_position)
+        self.bind(division_index=self.update_desired_position)
+        self.bind(division_offset=self.update_desired_position)
+
+        # Configure the modbus communication
+        self.configure_device()
 
         Clock.schedule_interval(self.update, 1.0 / 25)
         Clock.schedule_interval(self.blinker, 1.0 / 4)

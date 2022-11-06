@@ -46,7 +46,7 @@
           halign: 'left'
           valign: 'bottom'
           on_release: Factory.Keypad().show(app.set_current_position)
-          disabled: app.in_motion
+          disabled: app.mode != 0
       BoxLayout:
         size_hint_x: 0.4
         orientation: "vertical"
@@ -70,7 +70,7 @@
           halign: 'left'
           valign: 'bottom'
           on_release: Factory.Keypad().show(app.set_desired_position)
-          disabled: app.in_motion
+          disabled: app.mode != 0
       Button:
         text: "Zero"
         font_size: 24
@@ -94,7 +94,7 @@
       width: 80
       size_hint_x: None
       on_release: app.division_index = (app.division_index - 1 + app.divisions) % app.divisions
-      disabled: app.in_motion
+      disabled: app.mode != 0
     Button:
       font_name: "fonts/Font Awesome 6 Free-Solid-900.otf"
       text: "\u002b"
@@ -104,7 +104,7 @@
       width: 80
       size_hint_x: None
       on_release: app.division_index = (app.division_index+1) % app.divisions
-      disabled: app.in_motion
+      disabled: app.mode != 0
     BoxLayout:
       size_hint_x: 0.5
       orientation: "vertical"
@@ -126,7 +126,7 @@
         text_size: self.size
         halign: 'left'
         on_release: Factory.Keypad().show(app.set_division_index)
-        disabled: app.in_motion
+        disabled: app.mode != 0
     BoxLayout:
       size_hint_x: 0.5
       orientation: "vertical"
@@ -148,7 +148,7 @@
         text_size: self.size
         halign: 'left'
         on_release: Factory.Keypad().show(app.set_divisions)
-        disabled: app.in_motion
+        disabled: app.mode != 0
     BoxLayout:
       size_hint_x: 0.5
       orientation: "vertical"
@@ -170,7 +170,7 @@
         text_size: self.size
         halign: 'left'
         on_release: Factory.Keypad().show(app.set_division_offset)
-        disabled: app.in_motion
+        disabled: app.mode != 0
     Button:
       background_color: (0, 1, 0, 1)
       size_hint_x: None

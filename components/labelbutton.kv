@@ -23,4 +23,4 @@
     halign: 'left'
     valign: 'bottom'
     on_release: Factory.Keypad().show(root.release_function)
-    disabled: app.in_motion
+    disabled: app.mode != 0
