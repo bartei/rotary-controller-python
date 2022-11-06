@@ -1,10 +1,5 @@
-from typing import Callable
-
-import cachetools.func
 import minimalmodbus
 import logging
-from utils.bitfields import BaseStructureManager
-from utils import structures
 
 log = logging.getLogger(__file__)
 
@@ -33,8 +28,8 @@ log = logging.getLogger(__file__)
 REG_MODE = 0
 REG_CURRENT_POSITION = 2
 REG_FINAL_POSITION = 4
-REG_SPINDLE_POSITION = 6
-REG_X_POSITION = 8
+REG_UNUSED_6 = 6
+REG_ENCODER_POSITION = 8
 REG_STEP = 12
 REG_TOTAL_STEPS = 14
 REG_MAX_SPEED = 16
@@ -46,74 +41,6 @@ REG_RATIO_DEN = 26
 REG_STEP_RATIO = 28
 REG_SYN_RATIO_NUM = 30
 REG_SYN_RATIO_DEN = 32
-REG_STATUS = 34
-REG_CONTROL = 36
-
-
-class ControlManager(BaseStructureManager):
-    def __init__(self, device: minimalmodbus.Instrument):
-        super(ControlManager, self).__init__(
-            device=device,
-            control_structure=structures.ControllerControl,
-            register_address=REG_CONTROL
-        )
-
-    @property
-    def reset(self) -> bool:
-        return self._get_bit_value("reset")
-
-    @reset.setter
-    def reset(self, value: bool):
-        self._set_bit_value("reset", value)
-
-    @property
-    def emergency(self) -> bool:
-        return self._get_bit_value("emergency")
-
-    @emergency.setter
-    def emergency(self, value: bool):
-        self._set_bit_value("emergency", value)
-
-    @property
-    def enable(self) -> bool:
-        return self._get_bit_value("enable")
-
-    @enable.setter
-    def enable(self, value: bool):
-        self._set_bit_value("enable", value)
-
-    @property
-    def request_sync_init(self) -> bool:
-        return self._get_bit_value("request_sync_init")
-
-    @request_sync_init.setter
-    def request_sync_init(self, value: bool):
-        self._set_bit_value("request_sync_init", value)
-
-
-class StatusManager(BaseStructureManager):
-    def __init__(self, device: minimalmodbus.Instrument):
-        super(StatusManager, self).__init__(
-            device=device,
-            control_structure=structures.ControllerStatus,
-            register_address=REG_STATUS
-        )
-
-    @property
-    def ready(self) -> bool:
-        return self._get_bit_value("ready")
-
-    @property
-    def alarm(self) -> bool:
-        return self._get_bit_value("alarm")
-
-    @property
-    def run_index(self) -> bool:
-        return self._get_bit_value("run_index")
-
-    @property
-    def run_sync(self) -> bool:
-        return self._get_bit_value("run_sync")
 
 
 class DeviceManager:
@@ -124,39 +51,43 @@ class DeviceManager:
             debug=debug
         )
         self.device.serial.baudrate = baudrate
-
-        # Create status reference
-        self.status = StatusManager(device=self.device)
-        self.control = ControlManager(device=self.device)
+        self.connected = True
+        self.last_error = ""
 
     @property
     def mode(self):
         try:
             value = self.device.read_register(REG_MODE)
+            self.connected = True
             return value
         except Exception as e:
-            log.exception(e.__str__())
-            return 999999
+            self.connected = False
+            self.last_error = e.__str__()
+            return 0
 
     @property
     def x_position(self):
         try:
             value = self.device.read_long(
-                REG_X_POSITION,
+                REG_ENCODER_POSITION,
                 byteorder=minimalmodbus.BYTEORDER_LITTLE_SWAP,
                 signed=True
             )
+            self.connected = True
             return value
         except Exception as e:
-            log.exception(e.__str__())
-            return 999999
+            self.connected = False
+            self.last_error = e.__str__()
+            return 0
 
     @mode.setter
     def mode(self, value: int):
         try:
             self.device.write_register(REG_MODE, value)
+            self.connected = True
         except Exception as e:
-            log.exception(e.__str__())
+            self.connected = False
+            self.last_error = e.__str__()
 
     @property
     def current_position(self):
@@ -166,10 +97,12 @@ class DeviceManager:
                 byteorder=minimalmodbus.BYTEORDER_LITTLE_SWAP,
                 signed=True
             )
+            self.connected = True
             return value
         except Exception as e:
-            log.exception(e.__str__())
-            return 999999
+            self.connected = False
+            self.last_error = e.__str__()
+            return 0
 
     @current_position.setter
     def current_position(self, value):
@@ -183,8 +116,10 @@ class DeviceManager:
                 byteorder=minimalmodbus.BYTEORDER_LITTLE_SWAP,
                 signed=True
             )
+            self.connected = True
         except Exception as e:
-            log.exception(e.__str__())
+            self.connected = False
+            self.last_error = e.__str__()
 
     @property
     def final_position(self):
@@ -194,10 +129,12 @@ class DeviceManager:
                 byteorder=minimalmodbus.BYTEORDER_LITTLE_SWAP,
                 signed=True
             )
+            self.connected = True
             return value
         except Exception as e:
-            log.exception(e.__str__())
-            return 999999
+            self.connected = False
+            self.last_error = e.__str__()
+            return 0
 
     @final_position.setter
     def final_position(self, value):
@@ -208,30 +145,36 @@ class DeviceManager:
                 byteorder=minimalmodbus.BYTEORDER_LITTLE_SWAP,
                 signed=True
             )
+            self.connected = True
         except Exception as e:
-            log.exception(e.__str__())
+            self.connected = False
+            self.last_error = e.__str__()
 
     @property
     def spindle_position(self):
         try:
             value = self.device.read_register(
-                REG_SPINDLE_POSITION,
+                REG_UNUSED_6,
                 signed=False
             )
+            self.connected = True
             return value
         except Exception as e:
-            log.exception(e.__str__())
-            return 999999
+            self.connected = False
+            self.last_error = e.__str__()
+            return 0
 
     @spindle_position.setter
     def spindle_position(self, value):
         try:
             self.device.write_register(
-                REG_SPINDLE_POSITION,
+                REG_UNUSED_6,
                 value,
             )
+            self.connected = True
         except Exception as e:
-            log.exception(e.__str__())
+            self.connected = False
+            self.last_error = e.__str__()
 
     @property
     def step(self):
@@ -240,10 +183,12 @@ class DeviceManager:
                 REG_STEP,
                 signed=True
             )
+            self.connected = True
             return value
         except Exception as e:
-            log.exception(e.__str__())
-            return 999999
+            self.connected = False
+            self.last_error = e.__str__()
+            return 0
 
     @property
     def total_steps(self):
@@ -252,10 +197,12 @@ class DeviceManager:
                 REG_TOTAL_STEPS,
                 signed=True
             )
+            self.connected = True
             return value
         except Exception as e:
-            log.exception(e.__str__())
-            return 999999
+            self.connected = False
+            self.last_error = e.__str__()
+            return 0
 
     @property
     def max_speed(self):
@@ -264,10 +211,12 @@ class DeviceManager:
                 REG_MAX_SPEED,
                 byteorder=minimalmodbus.BYTEORDER_LITTLE_SWAP
             )
+            self.connected = True
             return value
         except Exception as e:
-            log.exception(e.__str__())
-            return 999999
+            self.connected = False
+            self.last_error = e.__str__()
+            return 0
 
     @max_speed.setter
     def max_speed(self, value):
@@ -277,8 +226,10 @@ class DeviceManager:
                 value,
                 byteorder=minimalmodbus.BYTEORDER_LITTLE_SWAP
             )
+            self.connected = True
         except Exception as e:
-            log.exception(e.__str__())
+            self.connected = False
+            self.last_error = e.__str__()
 
     @property
     def min_speed(self):
@@ -287,10 +238,12 @@ class DeviceManager:
                 REG_MIN_SPEED,
                 byteorder=minimalmodbus.BYTEORDER_LITTLE_SWAP
             )
+            self.connected = True
             return value
         except Exception as e:
-            log.exception(e.__str__())
-            return 999999
+            self.connected = False
+            self.last_error = e.__str__()
+            return 0
 
     @min_speed.setter
     def min_speed(self, value):
@@ -300,8 +253,10 @@ class DeviceManager:
                 value,
                 byteorder=minimalmodbus.BYTEORDER_LITTLE_SWAP
             )
+            self.connected = True
         except Exception as e:
-            log.exception(e.__str__())
+            self.connected = False
+            self.last_error = e.__str__()
 
     @property
     def current_speed(self):
@@ -310,10 +265,12 @@ class DeviceManager:
                 REG_CURRENT_SPEED,
                 byteorder=minimalmodbus.BYTEORDER_LITTLE_SWAP
             )
+            self.connected = True
             return value
         except Exception as e:
-            log.exception(e.__str__())
-            return 999999
+            self.connected = False
+            self.last_error = e.__str__()
+            return 0
 
     @property
     def acceleration(self):
@@ -322,10 +279,12 @@ class DeviceManager:
                 REG_ACCELERATION,
                 byteorder=minimalmodbus.BYTEORDER_LITTLE_SWAP
             )
+            self.connected = True
             return value
         except Exception as e:
-            log.exception(e.__str__())
-            return 999999
+            self.connected = False
+            self.last_error = e.__str__()
+            return 0
 
     @acceleration.setter
     def acceleration(self, value):
@@ -335,8 +294,10 @@ class DeviceManager:
                 value,
                 byteorder=minimalmodbus.BYTEORDER_LITTLE_SWAP
             )
+            self.connected = True
         except Exception as e:
-            log.exception(e.__str__())
+            self.connected = False
+            self.last_error = e.__str__()
 
     @property
     def ratio_num(self):
@@ -345,10 +306,12 @@ class DeviceManager:
                 REG_RATIO_NUM,
                 signed=True
             )
+            self.connected = True
             return value
         except Exception as e:
-            log.exception(e.__str__())
-            return 999999
+            self.connected = False
+            self.last_error = e.__str__()
+            return 0
 
     @ratio_num.setter
     def ratio_num(self, value):
@@ -359,8 +322,10 @@ class DeviceManager:
                 signed=True,
                 byteorder=minimalmodbus.BYTEORDER_LITTLE_SWAP
             )
+            self.connected = True
         except Exception as e:
-            log.exception(e.__str__())
+            self.connected = False
+            self.last_error = e.__str__()
 
     @property
     def ratio_den(self):
@@ -369,10 +334,12 @@ class DeviceManager:
                 REG_RATIO_DEN,
                 signed=True
             )
+            self.connected = True
             return value
         except Exception as e:
-            log.exception(e.__str__())
-            return 999999
+            self.connected = False
+            self.last_error = e.__str__()
+            return 0
 
     @ratio_den.setter
     def ratio_den(self, value):
@@ -383,8 +350,10 @@ class DeviceManager:
                 signed=True,
                 byteorder=minimalmodbus.BYTEORDER_LITTLE_SWAP
             )
+            self.connected = True
         except Exception as e:
-            log.exception(e.__str__())
+            self.connected = False
+            self.last_error = e.__str__()
 
     @property
     def syn_ratio_num(self):
@@ -393,10 +362,12 @@ class DeviceManager:
                 REG_SYN_RATIO_NUM,
                 signed=True
             )
+            self.connected = True
             return value
         except Exception as e:
-            log.exception(e.__str__())
-            return 999999
+            self.connected = False
+            self.last_error = e.__str__()
+            return 0
 
     @syn_ratio_num.setter
     def syn_ratio_num(self, value):
@@ -407,8 +378,10 @@ class DeviceManager:
                 signed=True,
                 byteorder=minimalmodbus.BYTEORDER_LITTLE_SWAP
             )
+            self.connected = True
         except Exception as e:
-            log.exception(e.__str__())
+            self.connected = False
+            self.last_error = e.__str__()
 
     @property
     def syn_ratio_den(self):
@@ -417,10 +390,12 @@ class DeviceManager:
                 REG_SYN_RATIO_DEN,
                 signed=True
             )
+            self.connected = True
             return value
         except Exception as e:
-            log.exception(e.__str__())
-            return 999999
+            self.connected = False
+            self.last_error = e.__str__()
+            return 0
 
     @syn_ratio_den.setter
     def syn_ratio_den(self, value):
@@ -431,5 +406,7 @@ class DeviceManager:
                 signed=True,
                 byteorder=minimalmodbus.BYTEORDER_LITTLE_SWAP
             )
+            self.connected = True
         except Exception as e:
-            log.exception(e.__str__())
+            self.connected = False
+            self.last_error = e.__str__()
