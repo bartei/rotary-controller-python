@@ -9,15 +9,16 @@ REG_CURRENT_POSITION = 2
 REG_FINAL_POSITION = 4
 REG_UNUSED_6 = 6
 REG_ENCODER_POSITION = 8
-REG_STEP = 12
-REG_TOTAL_STEPS = 14
+REG_UNUSED_10 = 10
+REG_ENCODER_PRESET_VALUE = 12
+REG_UNUSED_14 = 14
 REG_MAX_SPEED = 16
 REG_MIN_SPEED = 18
 REG_CURRENT_SPEED = 20
 REG_ACCELERATION = 22
 REG_RATIO_NUM = 24
 REG_RATIO_DEN = 26
-REG_STEP_RATIO = 28
+REG_UNUSED_28 = 28
 REG_SYN_RATIO_NUM = 30
 REG_SYN_RATIO_DEN = 32
 
@@ -30,9 +31,9 @@ MODE_SYNCHRO_INIT = 21
 MODE_JOG = 30
 MODE_JOG_FW = 31
 MODE_JOG_BW = 32
+MODE_SET_ENCODER = 40
 MODE_SYNCHRO_BAD_RATIO = 101
 MODE_DISCONNECTED = 255
-
 
 class DeviceManager:
     def __init__(self, serial_device="/dev/serial0", baudrate=57600, address=17, debug=False):
@@ -393,6 +394,34 @@ class DeviceManager:
         try:
             self.device.write_long(
                 REG_SYN_RATIO_DEN,
+                value,
+                signed=True,
+                byteorder=minimalmodbus.BYTEORDER_LITTLE_SWAP
+            )
+            self.connected = True
+        except Exception as e:
+            self.connected = False
+            self.last_error = e.__str__()
+
+    @property
+    def encoder_preset_value(self):
+        try:
+            value = self.device.read_long(
+                REG_ENCODER_PRESET_VALUE,
+                signed=True
+            )
+            self.connected = True
+            return value
+        except Exception as e:
+            self.connected = False
+            self.last_error = e.__str__()
+            return 0
+
+    @encoder_preset_value.setter
+    def encoder_preset_value(self, value):
+        try:
+            self.device.write_long(
+                REG_ENCODER_PRESET_VALUE,
                 value,
                 signed=True,
                 byteorder=minimalmodbus.BYTEORDER_LITTLE_SWAP

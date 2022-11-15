@@ -1,3 +1,4 @@
+from decimal import Decimal
 import logging
 
 from kivy.app import App
@@ -89,9 +90,24 @@ class MainApp(App):
         val_type=int,
     )
 
-    current_units = StringProperty("mm")
-    current_origin = StringProperty("Origin 0")
+    # X Axis properties
+    x_axis_encoder_ratio_num = ConfigParserProperty(
+        defaultvalue="360",
+        section="input_1",
+        key="ratio_num",
+        config=config,
+        val_type=int,
+    )
+    x_axis_encoder_ratio_den = ConfigParserProperty(
+        defaultvalue="1024",
+        section="rotary",
+        key="ratio_den",
+        config=config,
+        val_type=int,
+    )
     x_axis = NumericProperty(10)
+
+    # Other Axis to be implemented
     y_axis = NumericProperty(20)
     z_axis = NumericProperty(20)
 
@@ -116,11 +132,15 @@ class MainApp(App):
     blink = BooleanProperty(False)
     connected = BooleanProperty(False)
 
+    current_units = StringProperty("mm")
+    current_origin = StringProperty("Origin 0")
+
     device = None
     home = None
 
     def set_current_position(self, value):
-        self.current_position = value
+        if self.connected:
+            self.device.current_position = int(value / self.ratio_den * self.ratio_num)
 
     def set_desired_position(self, value):
         self.desired_position = value
@@ -146,16 +166,26 @@ class MainApp(App):
     def set_sync_denominator(self, value):
         self.syn_ratio_den = int(value)
 
-    def set_new_x(self, *args, **kwargs):
+    def set_new_x(self, value):
         # TODO: Implement method to configure axis position between stm and python
+        log.warning(f"Set New X to: {value}")
+        decimal_value = Decimal(1024) / Decimal(360) * Decimal(value)
+        int_value = int(decimal_value)
+        if self.connected:
+            self.device.encoder_preset_value = int_value
+            self.device.mode = communication.MODE_SET_ENCODER
+            self.device.x_position = int_value
+        else:
+            log.error("Device disconnected, cannot set encoder value")
+
+    def set_new_y(self, value):
+        # TODO: Implement method to configure axis position between stm and python
+        log.warning(f"Set New Y to: {value}")
         pass
 
-    def set_new_y(self, *args, **kwargs):
+    def set_new_z(self, value):
         # TODO: Implement method to configure axis position between stm and python
-        pass
-
-    def set_new_z(self, *args, **kwargs):
-        # TODO: Implement method to configure axis position between stm and python
+        log.warning(f"Set New Z to: {value}")
         pass
 
     def update_desired_position(self, *args, **kwargs):
@@ -168,15 +198,17 @@ class MainApp(App):
 
     def update(self, *args, **kwargs):
         if self.device is not None:
-            self.x_axis = (self.device.x_position / 4096.0) * 360.0
+            if self.x_axis_encoder_ratio_den != 0:
+                self.x_axis = (self.device.x_position * self.x_axis_encoder_ratio_num / self.x_axis_encoder_ratio_den)
+            else:
+                self.x_axis = 0
+
             self.current_position = self.device.current_position * self.ratio_num / self.ratio_den
             self.mode = self.device.mode
         else:
             self.mode = communication.MODE_DISCONNECTED
 
     def on_desired_position(self, instance, value):
-        # TODO: Wait until any ongoing positioning is still in progress before sending the new requested position
-        # TODO: Move this code into the clock event
         if self.device is not None:
             # Always send out the motion settings
             self.device.min_speed = self.min_speed
@@ -236,9 +268,7 @@ class MainApp(App):
             self.device.acceleration = self.acceleration
             self.device.max_speed = self.max_speed
             self.device.min_speed = self.min_speed
-
             self.connected = self.device.connected
-
         else:
             self.connected = False
 

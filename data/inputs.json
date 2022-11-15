@@ -49,5 +49,5 @@
         "desc": "The scale resolution in steps per millimeter",
         "section": "input_4",
         "key": "resolution"
-    },
+    }
 ]
