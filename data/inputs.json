@@ -7,14 +7,14 @@
         "type": "numeric",
         "title": "Scale Ratio Numerator",
         "desc": "The scale/encoder numerator when converting counts to units",
-        "section": "input_1",
+        "section": "input1",
         "key": "ratio_num"
     },
     {
         "type": "numeric",
         "title": "Scale Ratio Denominator",
         "desc": "The scale/encoder denominator when converting counts to units",
-        "section": "input_1",
+        "section": "input1",
         "key": "ratio_den"
     },
     {
@@ -25,7 +25,7 @@
         "type": "string",
         "title": "Scale Resolution",
         "desc": "The scale resolution in steps per millimeter",
-        "section": "input_2",
+        "section": "input2",
         "key": "resolution"
     },
     {
@@ -36,7 +36,7 @@
         "type": "string",
         "title": "Scale Resolution",
         "desc": "The scale resolution in steps per millimeter",
-        "section": "input_3",
+        "section": "input3",
         "key": "resolution"
     },
     {
@@ -47,7 +47,7 @@
         "type": "string",
         "title": "Scale Resolution",
         "desc": "The scale resolution in steps per millimeter",
-        "section": "input_4",
+        "section": "input4",
         "key": "resolution"
     }
 ]

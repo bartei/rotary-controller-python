@@ -92,15 +92,15 @@ class MainApp(App):
 
     # X Axis properties
     x_axis_encoder_ratio_num = ConfigParserProperty(
-        defaultvalue="360",
-        section="input_1",
+        defaultvalue=360,
+        section="input1",
         key="ratio_num",
         config=config,
         val_type=int,
     )
     x_axis_encoder_ratio_den = ConfigParserProperty(
-        defaultvalue="1024",
-        section="rotary",
+        defaultvalue=1024,
+        section="input1",
         key="ratio_den",
         config=config,
         val_type=int,
@@ -138,9 +138,13 @@ class MainApp(App):
     device = None
     home = None
 
-    def set_current_position(self, value):
-        if self.connected:
-            self.device.current_position = int(value / self.ratio_den * self.ratio_num)
+    def set_current_position(self, *args, **kwargs):
+        print(args)
+        print(kwargs)
+        # if self.connected:
+        #     new_position = int(float(value) / float(self.ratio_den) * float(self.ratio_num))
+        #     self.device.current_position = new_position
+        #     log.warning(f"Setting current position for device to: {new_position} , {float(self.ratio_den)}, {float(self.ratio_num)}")
 
     def set_desired_position(self, value):
         self.desired_position = value
@@ -199,7 +203,7 @@ class MainApp(App):
     def update(self, *args, **kwargs):
         if self.device is not None:
             if self.x_axis_encoder_ratio_den != 0:
-                self.x_axis = (self.device.x_position * self.x_axis_encoder_ratio_num / self.x_axis_encoder_ratio_den)
+                self.x_axis = float(self.device.x_position) * float(self.x_axis_encoder_ratio_num) / float(self.x_axis_encoder_ratio_den)
             else:
                 self.x_axis = 0
 
@@ -209,7 +213,7 @@ class MainApp(App):
             self.mode = communication.MODE_DISCONNECTED
 
     def on_desired_position(self, instance, value):
-        if self.device is not None:
+        if self.connected:
             # Always send out the motion settings
             self.device.min_speed = self.min_speed
             self.device.max_speed = self.max_speed
@@ -219,8 +223,6 @@ class MainApp(App):
             self.device.mode = 0
             # Send the destination converted to steps
             self.device.final_position = int(value / self.ratio_num * self.ratio_den)
-        else:
-            self.connected = True
 
     def on_ratio_num(self, instance, value):
         self.device.ratio_num = value
@@ -238,10 +240,14 @@ class MainApp(App):
         self.device.max_speed = float(value)
 
     def request_syn_mode(self):
-        if self.device is not None:
+        if self.connected:
             self.device.syn_ratio_num = self.syn_ratio_num
             self.device.syn_ratio_den = self.syn_ratio_den
-            self.device.mode = 21 # SYN_INIT
+            self.device.mode = communication.MODE_SYNCHRO_INIT
+
+    def request_index_mode(self):
+        if self.connected:
+            self.device.mode = communication.MODE_INDEX_INIT
 
     def on_syn_ratio_num(self, instance, value):
         self.device.syn_ratio_num = value
@@ -258,6 +264,7 @@ class MainApp(App):
         except Exception as e:
             # Retry in 5 seconds if the connection failed
             Clock.schedule_once(self.configure_device, timeout=5)
+            log.warning("Retrying to connect in 5 seconds")
             self.device = None
             log.error(e.__str__())
 
@@ -269,6 +276,7 @@ class MainApp(App):
             self.device.max_speed = self.max_speed
             self.device.min_speed = self.min_speed
             self.connected = self.device.connected
+            log.warning(f"Device connection: {self.device.connected}")
         else:
             self.connected = False
 

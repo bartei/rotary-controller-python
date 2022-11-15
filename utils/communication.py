@@ -35,6 +35,7 @@ MODE_SET_ENCODER = 40
 MODE_SYNCHRO_BAD_RATIO = 101
 MODE_DISCONNECTED = 255
 
+
 class DeviceManager:
     def __init__(self, serial_device="/dev/serial0", baudrate=57600, address=17, debug=False):
         self.device: minimalmodbus.Instrument = minimalmodbus.Instrument(
@@ -57,6 +58,15 @@ class DeviceManager:
             self.last_error = e.__str__()
             return 0
 
+    @mode.setter
+    def mode(self, value: int):
+        try:
+            self.device.write_register(REG_MODE, value)
+            self.connected = True
+        except Exception as e:
+            self.connected = False
+            self.last_error = e.__str__()
+
     @property
     def x_position(self):
         try:
@@ -72,14 +82,6 @@ class DeviceManager:
             self.last_error = e.__str__()
             return 0
 
-    @mode.setter
-    def mode(self, value: int):
-        try:
-            self.device.write_register(REG_MODE, value)
-            self.connected = True
-        except Exception as e:
-            self.connected = False
-            self.last_error = e.__str__()
 
     @property
     def current_position(self):
@@ -168,33 +170,6 @@ class DeviceManager:
             self.connected = False
             self.last_error = e.__str__()
 
-    @property
-    def step(self):
-        try:
-            value = self.device.read_long(
-                REG_STEP,
-                signed=True
-            )
-            self.connected = True
-            return value
-        except Exception as e:
-            self.connected = False
-            self.last_error = e.__str__()
-            return 0
-
-    @property
-    def total_steps(self):
-        try:
-            value = self.device.read_long(
-                REG_TOTAL_STEPS,
-                signed=True
-            )
-            self.connected = True
-            return value
-        except Exception as e:
-            self.connected = False
-            self.last_error = e.__str__()
-            return 0
 
     @property
     def max_speed(self):
