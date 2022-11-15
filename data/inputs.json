@@ -4,18 +4,18 @@
         "title": "Input 1"
     },
     {
-        "type": "string",
-        "title": "Scale Resolution",
-        "desc": "The scale resolution in steps per millimeter",
+        "type": "numeric",
+        "title": "Scale Ratio Numerator",
+        "desc": "The scale/encoder numerator when converting counts to units",
         "section": "input_1",
-        "key": "resolution"
+        "key": "ratio_num"
     },
     {
-        "type": "string",
-        "title": "Scale Direction",
-        "desc": "The scale direction, set to 1 for direct, -1 to inverted",
+        "type": "numeric",
+        "title": "Scale Ratio Denominator",
+        "desc": "The scale/encoder denominator when converting counts to units",
         "section": "input_1",
-        "key": "direction"
+        "key": "ratio_den"
     },
     {
         "type": "title",
@@ -29,13 +29,6 @@
         "key": "resolution"
     },
     {
-        "type": "string",
-        "title": "Scale Direction",
-        "desc": "The scale direction, set to 1 for direct, -1 to inverted",
-        "section": "input_2",
-        "key": "direction"
-    },
-    {
         "type": "title",
         "title": "Input 3"
     },
@@ -45,13 +38,6 @@
         "desc": "The scale resolution in steps per millimeter",
         "section": "input_3",
         "key": "resolution"
-    },
-    {
-        "type": "string",
-        "title": "Scale Direction",
-        "desc": "The scale direction, set to 1 for direct, -1 to inverted",
-        "section": "input_3",
-        "key": "direction"
     },
     {
         "type": "title",
@@ -64,11 +50,4 @@
         "section": "input_4",
         "key": "resolution"
     },
-    {
-        "type": "string",
-        "title": "Scale Direction",
-        "desc": "The scale direction, set to 1 for direct, -1 to inverted",
-        "section": "input_4",
-        "key": "direction"
-    }
 ]
