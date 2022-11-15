@@ -101,6 +101,7 @@ class MainApp(App):
     divisions = NumericProperty(16)
     division_index = NumericProperty(0)
     division_offset = NumericProperty(0.0)
+    index_mode = BooleanProperty(False)
 
     jog_speed = NumericProperty(0.1)
     jog_accel = NumericProperty(0.01)
@@ -167,7 +168,7 @@ class MainApp(App):
 
     def update(self, *args, **kwargs):
         if self.device is not None:
-            self.x_axis = self.device.x_position / 4096
+            self.x_axis = (self.device.x_position / 4096.0) * 360.0
             self.current_position = self.device.current_position * self.ratio_num / self.ratio_den
             self.mode = self.device.mode
         else:

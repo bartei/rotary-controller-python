@@ -21,7 +21,7 @@
   size_hint_y: None
   Label:
     text: root.axis_name
-    width: 80
+    width: self.height
     size_hint_x: None
     font_size: 64
     font_style: "bold"
@@ -79,6 +79,6 @@
     font_size: 24
     font_style: "bold"
     background_color: [1, 0.2, 0.2, 1]
-    width: 80
+    width: self.height
     size_hint_x: None
     on_release: root.axis_pos = "0"
