@@ -22,32 +22,53 @@
         "title": "Input 2"
     },
     {
-        "type": "string",
-        "title": "Scale Resolution",
-        "desc": "The scale resolution in steps per millimeter",
+        "type": "numeric",
+        "title": "Scale Ratio Numerator",
+        "desc": "The scale/encoder numerator when converting counts to units",
         "section": "input2",
-        "key": "resolution"
+        "key": "ratio_num"
+    },
+    {
+        "type": "numeric",
+        "title": "Scale Ratio Denominator",
+        "desc": "The scale/encoder denominator when converting counts to units",
+        "section": "input2",
+        "key": "ratio_den"
     },
     {
         "type": "title",
         "title": "Input 3"
     },
     {
-        "type": "string",
-        "title": "Scale Resolution",
-        "desc": "The scale resolution in steps per millimeter",
+        "type": "numeric",
+        "title": "Scale Ratio Numerator",
+        "desc": "The scale/encoder numerator when converting counts to units",
         "section": "input3",
-        "key": "resolution"
+        "key": "ratio_num"
+    },
+    {
+        "type": "numeric",
+        "title": "Scale Ratio Denominator",
+        "desc": "The scale/encoder denominator when converting counts to units",
+        "section": "input3",
+        "key": "ratio_den"
     },
     {
         "type": "title",
         "title": "Input 4"
     },
     {
-        "type": "string",
-        "title": "Scale Resolution",
-        "desc": "The scale resolution in steps per millimeter",
+        "type": "numeric",
+        "title": "Scale Ratio Numerator",
+        "desc": "The scale/encoder numerator when converting counts to units",
         "section": "input4",
-        "key": "resolution"
+        "key": "ratio_num"
+    },
+    {
+        "type": "numeric",
+        "title": "Scale Ratio Denominator",
+        "desc": "The scale/encoder denominator when converting counts to units",
+        "section": "input4",
+        "key": "ratio_den"
     }
 ]
