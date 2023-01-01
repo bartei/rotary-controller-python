@@ -105,11 +105,56 @@ class MainApp(App):
         config=config,
         val_type=int,
     )
-    x_axis = NumericProperty(10)
 
-    # Other Axis to be implemented
+    y_axis_encoder_ratio_num = ConfigParserProperty(
+        defaultvalue=360,
+        section="input2",
+        key="ratio_num",
+        config=config,
+        val_type=int,
+    )
+    y_axis_encoder_ratio_den = ConfigParserProperty(
+        defaultvalue=1024,
+        section="input2",
+        key="ratio_den",
+        config=config,
+        val_type=int,
+    )
+
+    z_axis_encoder_ratio_num = ConfigParserProperty(
+        defaultvalue=360,
+        section="input3",
+        key="ratio_num",
+        config=config,
+        val_type=int,
+    )
+    z_axis_encoder_ratio_den = ConfigParserProperty(
+        defaultvalue=1024,
+        section="input3",
+        key="ratio_den",
+        config=config,
+        val_type=int,
+    )
+
+    a_axis_encoder_ratio_num = ConfigParserProperty(
+        defaultvalue=360,
+        section="input4",
+        key="ratio_num",
+        config=config,
+        val_type=int,
+    )
+    a_axis_encoder_ratio_den = ConfigParserProperty(
+        defaultvalue=1024,
+        section="input4",
+        key="ratio_den",
+        config=config,
+        val_type=int,
+    )
+
+    x_axis = NumericProperty(10)
     y_axis = NumericProperty(20)
     z_axis = NumericProperty(20)
+    a_axis = NumericProperty(30)
 
     desired_position = NumericProperty(0.0)
     current_position = NumericProperty(0.0)
@@ -171,25 +216,41 @@ class MainApp(App):
         self.syn_ratio_den = int(value)
 
     def set_new_x(self, value):
-        # TODO: Implement method to configure axis position between stm and python
         log.warning(f"Set New X to: {value}")
         decimal_value = Decimal(1024) / Decimal(360) * Decimal(value)
         int_value = int(decimal_value)
         if self.connected:
+            self.device.encoder_preset_index = 0  # 0 is the index for the X axis for now
             self.device.encoder_preset_value = int_value
+
             self.device.mode = communication.MODE_SET_ENCODER
-            self.device.x_position = int_value
         else:
             log.error("Device disconnected, cannot set encoder value")
 
     def set_new_y(self, value):
         # TODO: Implement method to configure axis position between stm and python
         log.warning(f"Set New Y to: {value}")
-        pass
+        decimal_value = Decimal(1024) / Decimal(360) * Decimal(value)
+        int_value = int(decimal_value)
+        if self.connected:
+            self.device.encoder_preset_index = 1
+            self.device.encoder_preset_value = int_value
+
+            self.device.mode = communication.MODE_SET_ENCODER
+        else:
+            log.error("Device disconnected, cannot set encoder value")
 
     def set_new_z(self, value):
         # TODO: Implement method to configure axis position between stm and python
-        log.warning(f"Set New Z to: {value}")
+        decimal_value = Decimal(1024) / Decimal(360) * Decimal(value)
+        int_value = int(decimal_value)
+        if self.connected:
+            self.device.encoder_preset_index = 2
+            self.device.encoder_preset_value = int_value
+
+            self.device.mode = communication.MODE_SET_ENCODER
+        else:
+            log.error("Device disconnected, cannot set encoder value")
         pass
 
     def update_desired_position(self, *args, **kwargs):
@@ -202,13 +263,35 @@ class MainApp(App):
 
     def update(self, *args, **kwargs):
         if self.device is not None:
+            scales = self.device.scales
+            # scales = [1, 2, 3, 4]
             if self.x_axis_encoder_ratio_den != 0:
-                self.x_axis = float(self.device.x_position) * float(self.x_axis_encoder_ratio_num) / float(self.x_axis_encoder_ratio_den)
+                self.x_axis = float(scales[0]) * float(self.x_axis_encoder_ratio_num) / float(self.x_axis_encoder_ratio_den)
             else:
                 self.x_axis = 0
 
+            if self.y_axis_encoder_ratio_den != 0:
+                self.y_axis = float(scales[1]) * float(self.y_axis_encoder_ratio_num) / float(self.y_axis_encoder_ratio_den)
+            else:
+                self.y_axis = 0
+
+            if self.z_axis_encoder_ratio_den != 0:
+                self.z_axis = float(scales[2]) * float(self.z_axis_encoder_ratio_num) / float(self.z_axis_encoder_ratio_den)
+            else:
+                self.z_axis = 0
+
+            if self.a_axis_encoder_ratio_den != 0:
+                self.a_axis = float(scales[3]) * float(self.a_axis_encoder_ratio_num) / float(self.a_axis_encoder_ratio_den)
+            else:
+                self.a_axis = 0
+
+
             self.current_position = self.device.current_position * self.ratio_num / self.ratio_den
-            self.mode = self.device.mode
+
+            if not self.device.connected:
+                self.mode = communication.MODE_DISCONNECTED
+            else:
+                self.mode = self.device.mode
         else:
             self.mode = communication.MODE_DISCONNECTED
 
