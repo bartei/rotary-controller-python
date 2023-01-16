@@ -28,52 +28,92 @@
   BoxLayout:
     orientation: "horizontal"
     BoxLayout:
-      size_hint_x: 0.8
+      size_hint_x: 0.5
       orientation: "vertical"
-      Label:
-        text: root.position_label
-        text_size: self.size
-        size_hint_y: 0.2
-        font_size: 16
-        color: app.display_color
-        halign: 'left'
-        valign: 'bottom'
       Button:
         background_color: (0, 0, 0, 1)
         id: pos_label
-        size_hint_y: 0.8
-        font_name: "fonts/Manrope-Bold.ttf"
-        font_size: 60
+        size_hint_y: 0.7
+        font_name: "fonts/iosevka-regular.ttf"
+        font_size: 48
         font_style: "bold"
         color: app.display_color
         text: root.formatted_axis_pos
         text_size: self.size
-        halign: 'left'
-        valign: 'bottom'
-        on_release: Factory.Keypad().show(root.release_function)
-
-    BoxLayout:
-      size_hint_x: 0.3
-      orientation: 'vertical'
-      Label:
-        text: root.speed_label
-        text_size: self.size
-        size_hint_y: 0.2
-        font_size: 16
-        color: app.display_color
         halign: 'right'
-        valign: 'top'
+        valign: 'center'
+        on_release: Factory.Keypad().show(root.release_function)
       Label:
-        id: speed_label
-        size_hint_y: 0.8
-        font_name: "fonts/Manrope-Bold.ttf"
-        font_size: 32
+        size_hint_y: 0.3
+        font_name: "fonts/iosevka-regular.ttf"
+        font_size: 16
         font_style: "bold"
         color: app.display_color
         text: root.formatted_axis_speed
         text_size: self.size
         halign: 'right'
         valign: 'top'
+
+    BoxLayout:
+      size_hint_x: 0.20
+      orientation: 'vertical'
+      Label:
+        text: "Num"
+        text_size: self.size
+        size_hint_y: 0.3
+        font_size: 16
+        color: app.display_color
+        halign: 'center'
+        valign: 'top'
+      Button:
+        size_hint_y: 0.7
+        font_name: "fonts/iosevka-regular.ttf"
+        font_size: 32
+        font_style: "bold"
+        background_color: [0.2, 0.2, 0.2, 1]
+        color: app.display_color
+        text: "100"
+        text_size: self.size
+        halign: 'center'
+        valign: 'middle'
+
+    BoxLayout:
+      size_hint_x: 0.20
+      orientation: 'vertical'
+      Label:
+        text: "Den"
+        text_size: self.size
+        size_hint_y: 0.3
+        font_size: 16
+        color: app.display_color
+        halign: 'center'
+        valign: 'top'
+      Button:
+        size_hint_y: 0.7
+        font_name: "fonts/iosevka-regular.ttf"
+        font_size: 32
+        font_style: "bold"
+        background_color: [0.2, 0.2, 0.2, 1]
+        color: app.display_color
+        text: "100"
+        text_size: self.size
+        halign: 'center'
+        valign: 'middle'
+
+    BoxLayout:
+      size_hint_x: 0.10
+      orientation: 'vertical'
+      Label:
+        text: "SYNC"
+        text_size: self.size
+        size_hint_y: 0.3
+        font_size: 16
+        color: app.display_color
+        halign: 'center'
+        valign: 'top'
+      ToggleButton:
+        text: "ON"
+
   Button:
     text: "Zero"
     font_size: 24

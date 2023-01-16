@@ -35,9 +35,6 @@ class CoordBar(BoxLayout):
 
     current_units = StringProperty("mm")
 
-    position_label = StringProperty("Pos (mm)")
-    speed_label = StringProperty("Speed (m/min)")
-
     display_color = ConfigParserProperty(
         defaultvalue="#ffffffff",
         section="formatting",
@@ -78,9 +75,11 @@ class CoordBar(BoxLayout):
             decimal_value = Decimal(self.axis_pos)
 
             if self.current_units == "in":
-                self.formatted_axis_pos = self.imperial_pos_format.format(decimal_value / Decimal("25.4"))
+                self.formatted_axis_pos = (
+                    self.imperial_pos_format.format(decimal_value / Decimal("25.4")).replace("+", " ")
+                )
             else:
-                self.formatted_axis_pos = self.metric_pos_format.format(decimal_value)
+                self.formatted_axis_pos = self.metric_pos_format.format(decimal_value).replace("+", " ")
 
         except Exception as e:
             log.exception(e.__str__())
