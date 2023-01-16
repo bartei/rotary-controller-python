@@ -183,13 +183,13 @@ class MainApp(App):
     device = None
     home = None
 
-    def set_current_position(self, *args, **kwargs):
-        print(args)
-        print(kwargs)
-        # if self.connected:
-        #     new_position = int(float(value) / float(self.ratio_den) * float(self.ratio_num))
-        #     self.device.current_position = new_position
-        #     log.warning(f"Setting current position for device to: {new_position} , {float(self.ratio_den)}, {float(self.ratio_num)}")
+    # def set_current_position(self, *args, **kwargs):
+    #     print(args)
+    #     print(kwargs)
+    #     # if self.connected:
+    #     #     new_position = int(float(value) / float(self.ratio_den) * float(self.ratio_num))
+    #     #     self.device.current_position = new_position
+    #     #     log.warning(f"Setting current position for device to: {new_position} , {float(self.ratio_den)}, {float(self.ratio_num)}")
 
     def set_desired_position(self, value):
         self.desired_position = value
@@ -217,10 +217,11 @@ class MainApp(App):
 
     def set_new_x(self, value):
         log.warning(f"Set New X to: {value}")
-        decimal_value = Decimal(1024) / Decimal(360) * Decimal(value)
+        decimal_value = Decimal(self.x_axis_encoder_ratio_den) / Decimal(self.x_axis_encoder_ratio_num) * Decimal(value)
         int_value = int(decimal_value)
+        log.warning(f"Raw value set to to: {int_value}")
         if self.connected:
-            self.device.encoder_preset_index = 0  # 0 is the index for the X axis for now
+            self.device.encoder_preset_index = 0
             self.device.encoder_preset_value = int_value
 
             self.device.mode = communication.MODE_SET_ENCODER
@@ -228,10 +229,10 @@ class MainApp(App):
             log.error("Device disconnected, cannot set encoder value")
 
     def set_new_y(self, value):
-        # TODO: Implement method to configure axis position between stm and python
         log.warning(f"Set New Y to: {value}")
-        decimal_value = Decimal(1024) / Decimal(360) * Decimal(value)
+        decimal_value = Decimal(self.y_axis_encoder_ratio_den) / Decimal(self.y_axis_encoder_ratio_num) * Decimal(value)
         int_value = int(decimal_value)
+        log.warning(f"Raw value set to to: {int_value}")
         if self.connected:
             self.device.encoder_preset_index = 1
             self.device.encoder_preset_value = int_value
@@ -241,9 +242,10 @@ class MainApp(App):
             log.error("Device disconnected, cannot set encoder value")
 
     def set_new_z(self, value):
-        # TODO: Implement method to configure axis position between stm and python
-        decimal_value = Decimal(1024) / Decimal(360) * Decimal(value)
+        log.warning(f"Set New Z to: {value}")
+        decimal_value = Decimal(self.z_axis_encoder_ratio_den) / Decimal(self.z_axis_encoder_ratio_num) * Decimal(value)
         int_value = int(decimal_value)
+        log.warning(f"Raw value set to to: {int_value}")
         if self.connected:
             self.device.encoder_preset_index = 2
             self.device.encoder_preset_value = int_value
@@ -264,7 +266,6 @@ class MainApp(App):
     def update(self, *args, **kwargs):
         if self.device is not None:
             scales = self.device.scales
-            # scales = [1, 2, 3, 4]
             if self.x_axis_encoder_ratio_den != 0:
                 self.x_axis = float(scales[0]) * float(self.x_axis_encoder_ratio_num) / float(self.x_axis_encoder_ratio_den)
             else:
@@ -284,7 +285,6 @@ class MainApp(App):
                 self.a_axis = float(scales[3]) * float(self.a_axis_encoder_ratio_num) / float(self.a_axis_encoder_ratio_den)
             else:
                 self.a_axis = 0
-
 
             self.current_position = self.device.current_position * self.ratio_num / self.ratio_den
 
