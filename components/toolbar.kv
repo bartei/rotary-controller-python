@@ -38,21 +38,21 @@
     checkbox_value: app.mode < 100
 
   ToggleButton:
-    # Enable
-    height: self.width
-    size_hint_y: None
-    text: "Enable"
-    on_release: app.ready = True if self.state == "down" else False
-
-  ToggleButton:
-    # Enable
-    height: self.width
-    size_hint_y: None
-    text: "MM"
-    on_release: app.jog_mode = True if self.state == "down" else False
+    # TOOL
+    font_size: 32
+    text: "T{:d}".format(int(app.tool))
+    on_release: Factory.Keypad().show(app, 'tool')
 
   ToolbarButton:
-    text: "ABS"
+    # IN/MM
+    font_size: 32
+    text: app.current_units
+    on_release: app.current_units = "mm" if app.current_units == "in" else "in"
+
+  ToolbarButton:
+    font_size: 32
+    text: app.abs_inc
+    on_release: app.abs_inc = "ABS" if app.abs_inc == "INC" else "INC"
 
   ToolbarButton:
     font_name: "fonts/Font Awesome 6 Free-Solid-900.otf"

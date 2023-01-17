@@ -3,6 +3,18 @@
 #: import appsettings components
 
 <CoordBar>:
+  axis_name: "X"
+  axis_pos: 0
+  axis_speed: 0
+  formatted_axis_pos: ""
+  formatted_axis_speed: ""
+
+  metric_speed_format: app.metric_speed_format
+  imperial_pos_format: app.imperial_pos_format
+  imperial_speed_format: app.imperial_speed_format
+
+  current_units: app.current_units
+
   orientation: "horizontal"
   height: 80
   size_hint_y: None
@@ -25,7 +37,7 @@
         font_size: 48
         font_style: "bold"
         color: app.display_color
-        text: app.pos_format.format(root.data.position / app.unit_factor)
+        text: app.metric_pos_format.format(root.data.position)
         text_size: self.size
         halign: 'right'
         valign: 'center'
@@ -36,7 +48,7 @@
         font_size: 16
         font_style: "bold"
         color: app.display_color
-        text: app.speed_format.format(root.formatted_axis_speed)
+        text: app.metric_speed_format.format(root.axis_speed)
         text_size: self.size
         halign: 'right'
         valign: 'top'

@@ -12,54 +12,27 @@
     orientation: "vertical"
     StatusBar:
     CoordBar:
-      input_name: "x_axis"
       axis_name: "X"
-      data: app.x_data
+      data: app.data[0]
     CoordBar:
-      input_name: "y_axis"
       axis_name: "Y"
-      data: app.y_data
+      data: app.data[1]
     CoordBar:
-      input_name: "z_axis"
       axis_name: "Z"
-      data: app.z_data
-    TabbedPanel:
-      do_default_tab: False
-      tab_pos: "bottom_left"
-      tab_width: 140
-      TabbedPanelItem:
-        text: "Indexing"
-        Label:
-          canvas.before:
-            Color:
-              rgba: (0, 0, 0, 1)
-            Rectangle:
-              pos: self.pos
-              size: self.size
-        DirectIndexing:
-          id: rotary_a
-          input_name: "current_position"
-          axis_name: "A"
-      TabbedPanelItem:
-        text: "Axis Syncro"
-        Label:
-          canvas.before:
-            Color:
-              rgba: (0, 0, 0, 1)
-            Rectangle:
-              pos: self.pos
-              size: self.size
-        Synchro:
-      TabbedPanelItem:
-        text: "Jog"
-        Label:
-          canvas.before:
-            Color:
-              rgba: (0, 0, 0, 1)
-            Rectangle:
-              pos: self.pos
-              size: self.size
-        Jog:
+      data: app.data[2]
+    CoordBar:
+      axis_name: "A"
+      data: app.data[3]
+
+#servo:
+# current position
+# current speed
+# offset
+# divisions
+# current division
+# enable
+# mode
+#
 
 BoxLayout:
   orientation: "vertical"

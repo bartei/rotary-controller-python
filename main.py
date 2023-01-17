@@ -4,7 +4,7 @@ import logging
 from kivy.app import App
 from kivy.clock import Clock
 from kivy.event import EventDispatcher
-from kivy.properties import StringProperty, NumericProperty, ConfigParserProperty, BooleanProperty
+from kivy.properties import StringProperty, NumericProperty, ConfigParserProperty, BooleanProperty, ListProperty
 from kivy.uix.boxlayout import BoxLayout
 from components.appsettings import config
 from utils.communication import device, configure_device
@@ -78,6 +78,8 @@ class MainApp(App):
     imperial_pos_format = ConfigParserProperty(defaultvalue="{:+0.4f}", section="formatting", key="imperial", config=config)
     imperial_speed_format = ConfigParserProperty(defaultvalue="{:+0.3f}", section="formatting", key="imperial_speed", config=config)
     angle_format = ConfigParserProperty(defaultvalue="{:+0.3f}", section="formatting", key="angle", config=config)
+    pos_format = StringProperty("{}")
+    speed_format = StringProperty("{}")
 
     min_speed = ConfigParserProperty(defaultvalue="150.0", section="rotary", key="min_speed", config=config, val_type=float)
     max_speed = ConfigParserProperty(defaultvalue="3600.0", section="rotary", key="max_speed", config=config, val_type=float)
@@ -86,9 +88,12 @@ class MainApp(App):
     ratio_den = ConfigParserProperty(defaultvalue="1600", section="rotary", key="ratio_den", config=config, val_type=int)
 
     # X Axis properties
-    x_data = classes[0]()
-    y_data = classes[1]()
-    z_data = classes[2]()
+    data = ListProperty([
+        classes[0](),
+        classes[1](),
+        classes[2](),
+        classes[3](),
+    ])
 
     desired_position = NumericProperty(0.0)
     current_position = NumericProperty(0.0)
@@ -111,11 +116,24 @@ class MainApp(App):
     blink = BooleanProperty(False)
     connected = BooleanProperty(False)
 
-    current_units = StringProperty("mm")
+    current_units = ConfigParserProperty(defaultvalue="mm", section="global", key="current_units", config=config, val_type=str)
+    abs_inc = ConfigParserProperty(defaultvalue="ABS", section="global", key="abs_inc", config=config, val_type=str)
+    unit_factor = NumericProperty(1.0)
     current_origin = StringProperty("Origin 0")
+    tool = NumericProperty(0)
 
     device = None
     home = None
+
+    def on_current_units(self, instance, value):
+        if value == "in":
+            self.pos_format = self.imperial_pos_format
+            self.speed_format = self.imperial_speed_format
+            self.unit_factor = 25.4
+        else:
+            self.pos_format = self.metric_pos_format
+            self.speed_format = self.metric_speed_format
+            self.unit_factor = 1
 
     def set_desired_position(self, value):
         self.desired_position = value
@@ -146,31 +164,23 @@ class MainApp(App):
             self.divisions = 1
 
         self.desired_position = 360 / self.divisions * self.division_index + self.division_offset
-        # self.division_index = self.division_index % self.divisions
         return True
 
     def update(self, *args, **kwargs):
         if self.device is not None:
             scales = self.device.scales
 
-            self.x_data.update_raw_scale = scales[0]
-            self.y_data.update_raw_scale = scales[1]
-            self.z_data.update_raw_scale = scales[2]
-            # self.a_data.update_raw_scale = scales[3]
-
-            # if self.a_axis_encoder_ratio_den != 0:
-            #     self.a_axis = float(scales[3]) * float(self.a_axis_encoder_ratio_num) / float(self.a_axis_encoder_ratio_den)
-            # else:
-            #     self.a_axis = 0
-            #
-            # self.current_position = self.device.current_position * self.ratio_num / self.ratio_den
+            for count, scale in enumerate(scales):
+                self.data[count].update_raw_scale = scale
 
             if not self.device.connected:
                 self.mode = communication.MODE_DISCONNECTED
             else:
                 self.mode = self.device.mode
         else:
-            self.x_data.position = (self.x_data.position + 0.01) % 100
+            for axis in self.data:
+                axis.update_raw_scale = 100
+
             self.mode = communication.MODE_DISCONNECTED
 
     def on_desired_position(self, instance, value):
@@ -240,6 +250,15 @@ class MainApp(App):
 
     def build(self):
         self.home = Home()
+        if self.current_units == "mm":
+            self.pos_format = self.metric_pos_format
+            self.speed_format = self.metric_speed_format
+            self.unit_factor = 1.0
+        else:
+            self.pos_format = self.imperial_pos_format
+            self.speed_format = self.imperial_speed_format
+            self.unit_factor = 25.4
+
         self.bind(divisions=self.update_desired_position)
         self.bind(division_index=self.update_desired_position)
         self.bind(division_offset=self.update_desired_position)
