@@ -4,7 +4,7 @@ import logging
 from kivy.app import App
 from kivy.clock import Clock
 from kivy.event import EventDispatcher
-from kivy.properties import StringProperty, NumericProperty, ConfigParserProperty, BooleanProperty, ListProperty
+from kivy.properties import StringProperty, NumericProperty, ConfigParserProperty, BooleanProperty, ListProperty, ObjectProperty
 from kivy.uix.boxlayout import BoxLayout
 from components.appsettings import config
 from utils.communication import device, configure_device
@@ -46,7 +46,6 @@ def input_class_factory():
 
             @set_position.setter
             def set_position(self, value):
-                from utils.communication import device
                 try:
                     log.warning(f"Set New position to: {value} for {self.scale_input}")
                     decimal_value = Decimal(self.ratio_den) / Decimal(self.ratio_num) * Decimal(value)
@@ -65,6 +64,41 @@ def input_class_factory():
 
 
 classes = input_class_factory()
+
+
+class ServoData(EventDispatcher):
+    name = ConfigParserProperty(defaultvalue="R", section="rotary", key="name", config=config, val_type=str)
+    min_speed = ConfigParserProperty(defaultvalue="150.0", section="rotary", key="min_speed", config=config, val_type=float)
+    max_speed = ConfigParserProperty(defaultvalue="3600.0", section="rotary", key="max_speed", config=config, val_type=float)
+    acceleration = ConfigParserProperty(defaultvalue="5.0", section="rotary", key="acceleration", config=config, val_type=float)
+    ratio_num = ConfigParserProperty(defaultvalue="360", section="rotary", key="ratio_num", config=config, val_type=int)
+    ratio_den = ConfigParserProperty(defaultvalue="1600", section="rotary", key="ratio_den", config=config, val_type=int)
+
+    current_position = NumericProperty(0.0)
+    desired_position = NumericProperty(0.0)
+
+    # Offset to add to the sync and index calculated values
+    offset = ConfigParserProperty(defaultvalue="0.0", section="rotary", key="offset", config=config, val_type=float)
+    divisions = ConfigParserProperty(defaultvalue="0", section="rotary", key="divisions", config=config, val_type=int)
+    index = ConfigParserProperty(defaultvalue="0", section="rotary", key="index", config=config, val_type=int)
+    enable = BooleanProperty(False)
+
+    # def on_index(self, instance, value):
+    #     self.index = self.index % self.divisions
+
+    def on_desired_position(self, instance, value):
+        try:
+            log.warning(f"Update desired position to: {value}")
+            device.min_speed = self.min_speed
+            device.max_speed = self.max_speed
+            device.acceleration = self.acceleration
+            device.ratio_num = self.ratio_num
+            device.ratio_den = self.ratio_den
+            device.mode = communication.MODE_HALT
+            # Send the destination converted to steps
+            device.final_position = int(value / self.ratio_num * self.ratio_den)
+        except Exception as e:
+            log.exception(e.__str__())
 
 
 class Home(BoxLayout):
@@ -95,8 +129,10 @@ class MainApp(App):
         classes[3](),
     ])
 
+    servo = ObjectProperty(ServoData())
+
     desired_position = NumericProperty(0.0)
-    current_position = NumericProperty(0.0)
+    # current_position = NumericProperty(0.0)
 
     divisions = NumericProperty(16)
     division_index = NumericProperty(0)
@@ -135,36 +171,12 @@ class MainApp(App):
             self.speed_format = self.metric_speed_format
             self.unit_factor = 1
 
-    def set_desired_position(self, value):
-        self.desired_position = value
-
-    def set_division_offset(self, value):
-        self.division_offset = value
-
-    def set_division_index(self, value):
-        self.division_index = value
-
-    def set_divisions(self, value):
-        self.divisions = value
-
-    def set_jog_speed(self, value):
-        self.jog_speed = value
-
-    def set_jog_accel(self, value):
-        self.jog_accel = value
-
-    def set_sync_numerator(self, value):
-        self.syn_ratio_num = abs(int(value))
-
-    def set_sync_denominator(self, value):
-        self.syn_ratio_den = int(value)
-
-    def update_desired_position(self, *args, **kwargs):
-        if not self.divisions > 0:
-            self.divisions = 1
-
-        self.desired_position = 360 / self.divisions * self.division_index + self.division_offset
-        return True
+    # def update_desired_position(self, *args, **kwargs):
+    #     if not self.divisions > 0:
+    #         self.divisions = 1
+    #
+    #     self.desired_position = 360 / self.divisions * self.division_index + self.division_offset
+    #     return True
 
     def update(self, *args, **kwargs):
         if self.device is not None:
@@ -182,18 +194,6 @@ class MainApp(App):
                 axis.update_raw_scale = 100
 
             self.mode = communication.MODE_DISCONNECTED
-
-    def on_desired_position(self, instance, value):
-        if self.connected:
-            # Always send out the motion settings
-            self.device.min_speed = self.min_speed
-            self.device.max_speed = self.max_speed
-            self.device.acceleration = self.acceleration
-            self.device.ratio_num = self.ratio_num
-            self.device.ratio_den = self.ratio_den
-            self.device.mode = 0
-            # Send the destination converted to steps
-            self.device.final_position = int(value / self.ratio_num * self.ratio_den)
 
     def on_ratio_num(self, instance, value):
         self.device.ratio_num = value
@@ -258,10 +258,6 @@ class MainApp(App):
             self.pos_format = self.imperial_pos_format
             self.speed_format = self.imperial_speed_format
             self.unit_factor = 25.4
-
-        self.bind(divisions=self.update_desired_position)
-        self.bind(division_index=self.update_desired_position)
-        self.bind(division_offset=self.update_desired_position)
 
         # Configure the modbus communication
         self.configure_device()

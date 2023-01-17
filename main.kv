@@ -4,6 +4,8 @@
 #: import Jog components.jog
 #: import Synchro components.synchro
 #: import StatusBar components.statusbar
+#: import ServoBar components.servobar
+
 <Home>:
   orientation: "horizontal"
   Toolbar:
@@ -12,17 +14,15 @@
     orientation: "vertical"
     StatusBar:
     CoordBar:
-      axis_name: "X"
       data: app.data[0]
     CoordBar:
-      axis_name: "Y"
       data: app.data[1]
     CoordBar:
-      axis_name: "Z"
       data: app.data[2]
     CoordBar:
-      axis_name: "A"
       data: app.data[3]
+    ServoBar:
+      data: app.servo
 
 #servo:
 # current position

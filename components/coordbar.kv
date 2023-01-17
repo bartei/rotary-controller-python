@@ -103,13 +103,14 @@
       ToggleButton:
         text: "ON" if self.state == "down" else "OFF"
         state: root.data.sync_enable
+        background_color: [0.2, 1, 0.2, 1] if self.state == "down" else [1, 0.2, 0.2, 1]
         on_release: root.data.sync_enable = self.state
 
   Button:
     text: "Zero"
     font_size: 24
     font_style: "bold"
-    background_color: [1, 0.2, 0.2, 1]
+    background_color: [0.5, 0.5, 0.5, 1]
     width: self.height
     size_hint_x: None
     on_release: root.data.set_position = 0

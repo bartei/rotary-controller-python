@@ -18,22 +18,36 @@ config = ConfigParser()
 config.read(os.path.dirname(__file__) + "/../config.ini")
 
 
-def generate_input_defaults(my_config: ConfigParser):
-    for item in range(INPUTS_COUNT):
-        my_config.setdefaults(
-            section=f"input{item+1}",
-            keyvalues={
-                "axis_name": "X",
-                "ratio_num": 1,
-                "ratio_den": 100,
-                "sync_num": 1,
-                "sync_den": 100,
-                "sync_enable": "normal",
-            }
-        )
-
-
-generate_input_defaults(config)
+# def generate_input_defaults(my_config: ConfigParser):
+#     my_config.setdefaults(
+#         section="formatting",
+#         keyvalues={
+#             "angle": "{:0.2f}"
+#         }
+#     )
+#     my_config.setdefaults(
+#         section="rotary",
+#         keyvalues={
+#             "divisions": 10
+#         }
+#     )
+#
+#
+#     for item in range(INPUTS_COUNT):
+#         my_config.setdefaults(
+#             section=f"input{item+1}",
+#             keyvalues={
+#                 "axis_name": "X",
+#                 "ratio_num": 1,
+#                 "ratio_den": 100,
+#                 "sync_num": 1,
+#                 "sync_den": 100,
+#                 "sync_enable": "normal",
+#             }
+#         )
+#
+#
+# generate_input_defaults(config)
 
 
 def generate_input_json() -> str:
@@ -60,42 +74,13 @@ def generate_input_json() -> str:
             "section": section,
             "key": "ratio_num"
         })
-        result_dict.append(
-            {
+        result_dict.append({
                 "type": "numeric",
                 "title": "Scale Ratio Denominator",
                 "desc": "The scale/encoder denominator when converting counts to units",
                 "section": section,
                 "key": "ratio_den"
-            }
-        )
-        result_dict.append(
-            {
-                "type": "numeric",
-                "title": "Synchro mode ratio Numerator",
-                "desc": "The ratio numerator when using this input as a synchro reference",
-                "section": section,
-                "key": "sync_num"
-            }
-        )
-        result_dict.append(
-            {
-                "type": "numeric",
-                "title": "Synchro mode ratio Denominator",
-                "desc": "The ratio denominator when using this input as a synchro reference",
-                "section": section,
-                "key": "sync_den"
-            }
-        )
-        result_dict.append(
-            {
-                "type": "string",
-                "title": "Enable Sync Mode",
-                "desc": "Enable flag to use this input for the sync mode",
-                "section": section,
-                "key": "sync_enable"
-            }
-        )
+        })
 
     result_json = json.dumps(result_dict)
     return result_json
