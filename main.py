@@ -20,6 +20,7 @@ def input_class_factory():
         section = f"input{item + 1}"
 
         class InputClass(EventDispatcher):
+            scale_input = item
             axis_name = ConfigParserProperty(defaultvalue="X", section=section, key="axis_name", config=config, val_type=str)
             ratio_num = ConfigParserProperty(defaultvalue=360, section=section, key="ratio_num", config=config, val_type=int)
             ratio_den = ConfigParserProperty(defaultvalue=1, section=section, key="ratio_den", config=config, val_type=int)
@@ -47,12 +48,13 @@ def input_class_factory():
             def set_position(self, value):
                 from utils.communication import device
                 try:
-                    log.warning(f"Set New position to: {value} for {section}")
+                    log.warning(f"Set New position to: {value} for {self.scale_input}")
                     decimal_value = Decimal(self.ratio_den) / Decimal(self.ratio_num) * Decimal(value)
                     int_value = int(decimal_value)
                     log.warning(f"Raw value set to to: {int_value}")
-                    device.encoder_preset_index = item
+                    device.encoder_preset_index = self.scale_input
                     device.encoder_preset_value = int_value
+                    device.mode = communication.MODE_SET_ENCODER
                 except Exception as e:
                     log.exception(e.__str__())
                     self.position = 9999.99
@@ -218,9 +220,10 @@ class MainApp(App):
         self.blink = not self.blink
 
     def configure_device(self, *args):
+        from utils.communication import device
         configure_device()
 
-        if self.device is None:
+        if device is None:
             # Retry in 5 seconds if the connection failed
             Clock.schedule_once(self.configure_device, timeout=5)
             log.warning("Retrying to connect in 5 seconds")
