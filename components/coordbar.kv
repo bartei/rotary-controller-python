@@ -9,7 +9,6 @@
   formatted_axis_pos: ""
   formatted_axis_speed: ""
 
-  metric_pos_format: app.metric_pos_format
   metric_speed_format: app.metric_speed_format
   imperial_pos_format: app.imperial_pos_format
   imperial_speed_format: app.imperial_speed_format
@@ -20,7 +19,7 @@
   height: 80
   size_hint_y: None
   Label:
-    text: root.axis_name
+    text: root.data.axis_name
     width: self.height
     size_hint_x: None
     font_size: 64
@@ -38,18 +37,18 @@
         font_size: 48
         font_style: "bold"
         color: app.display_color
-        text: root.formatted_axis_pos
+        text: app.metric_pos_format.format(root.data.position)
         text_size: self.size
         halign: 'right'
         valign: 'center'
-        on_release: Factory.Keypad().show(root.release_function)
+        on_release: Factory.Keypad().show(root.data, 'set_position')
       Label:
         size_hint_y: 0.3
         font_name: "fonts/iosevka-regular.ttf"
         font_size: 16
         font_style: "bold"
         color: app.display_color
-        text: root.formatted_axis_speed
+        text: app.metric_speed_format.format(root.axis_speed)
         text_size: self.size
         halign: 'right'
         valign: 'top'
@@ -72,10 +71,11 @@
         font_style: "bold"
         background_color: [0.2, 0.2, 0.2, 1]
         color: app.display_color
-        text: "100"
+        text: str(root.data.sync_num)
         text_size: self.size
         halign: 'center'
         valign: 'middle'
+        on_release: Factory.Keypad().show(root.data, 'sync_num')
 
     BoxLayout:
       size_hint_x: 0.20
@@ -95,10 +95,11 @@
         font_style: "bold"
         background_color: [0.2, 0.2, 0.2, 1]
         color: app.display_color
-        text: "100"
+        text: str(root.data.sync_den)
         text_size: self.size
         halign: 'center'
         valign: 'middle'
+        on_release: Factory.Keypad().show(root.data, 'sync_den')
 
     BoxLayout:
       size_hint_x: 0.10
@@ -112,7 +113,9 @@
         halign: 'center'
         valign: 'top'
       ToggleButton:
-        text: "ON"
+        text: "ON" if self.state == "down" else "OFF"
+        state: root.data.sync_enable
+        on_release: root.data.sync_enable = self.state
 
   Button:
     text: "Zero"
@@ -121,4 +124,4 @@
     background_color: [1, 0.2, 0.2, 1]
     width: self.height
     size_hint_x: None
-    on_release: root.release_function(0)
+    on_release: root.data.set_position = 0

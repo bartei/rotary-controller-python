@@ -1,11 +1,8 @@
 import os
 import logging
 
-from kivy.properties import NumericProperty
 from kivy.uix.popup import Popup
 from kivy.lang import Builder
-from kivy.app import App
-from kivy.uix.textinput import TextInput
 log = logging.getLogger(__file__)
 kv_file = os.path.join(os.path.dirname(__file__), __file__.replace(".py", ".kv"))
 if os.path.exists(kv_file):
@@ -15,14 +12,16 @@ if os.path.exists(kv_file):
 
 class Keypad(Popup):
     set_method = None
+    container = None
 
-    def show(self, set_method):
+    def show(self, container, set_method):
         self.set_method = set_method
+        self.container = container
         self.open()
 
     def confirm(self):
         current = self.ids['value'].text
-        self.set_method(current)
+        setattr(self.container, self.set_method, current)
         self.dismiss()
 
     def cancel(self):

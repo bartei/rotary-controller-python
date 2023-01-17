@@ -7,10 +7,13 @@ from decimal import Decimal
 
 from kivy.clock import Clock
 from kivy.lang import Builder
-from kivy.properties import StringProperty, ConfigParserProperty, NumericProperty
+from kivy.properties import StringProperty, ConfigParserProperty, NumericProperty, ObjectProperty, BooleanProperty
 from kivy.uix.boxlayout import BoxLayout
+from kivy.uix.switch import Switch
 from kivy.app import App
 from components.appsettings import config
+
+current_app = App.get_running_app()
 
 
 log = logging.getLogger(__file__)
@@ -21,8 +24,7 @@ if os.path.exists(kv_file):
 
 
 class CoordBar(BoxLayout):
-    release_function = None
-    input_name = StringProperty()
+    # input_name = StringProperty()
     axis_pos = NumericProperty(0.0)
     formatted_axis_pos = StringProperty("0.000")
     formatted_axis_speed = StringProperty("0.000")
@@ -42,6 +44,9 @@ class CoordBar(BoxLayout):
         config=config
     )
 
+    from main import classes
+    data = ObjectProperty(rebind=True, defaultvalue=classes[0]())
+
     def __init__(self, *args, **kv):
         super(CoordBar, self).__init__(**kv)
 
@@ -54,13 +59,6 @@ class CoordBar(BoxLayout):
         self.bind(current_units=self.on_axis_pos)
         self.bind(current_units=self.update_labels)
         Clock.schedule_interval(self.update_speed, 1.0 / 10)
-
-    def on_input_name(self, instance, value):
-        if self.input_name != '':
-            bind_definition = dict()
-            bind_definition[self.input_name] = self.setter('axis_pos')
-            app = App.get_running_app()
-            app.bind(**bind_definition)
 
     def update_labels(self, *args, **kv):
         if self.current_units == "in":

@@ -12,17 +12,17 @@
     orientation: "vertical"
     StatusBar:
     CoordBar:
-      release_function: app.set_new_x
       input_name: "x_axis"
       axis_name: "X"
+      data: app.x_data
     CoordBar:
-      release_function: app.set_new_y
       input_name: "y_axis"
       axis_name: "Y"
+      data: app.y_data
     CoordBar:
-      release_function: app.set_new_z
       input_name: "z_axis"
       axis_name: "Z"
+      data: app.z_data
     TabbedPanel:
       do_default_tab: False
       tab_pos: "bottom_left"

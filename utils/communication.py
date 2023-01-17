@@ -452,3 +452,20 @@ class DeviceManager:
         except Exception as e:
             self.connected = False
             self.last_error = e.__str__()
+
+
+device: DeviceManager or None = None
+
+
+def configure_device():
+    global device
+    try:
+        device = DeviceManager()
+    except Exception as e:
+        # Retry in 5 seconds if the connection failed
+        log.warning("Retry to connect")
+        device = None
+        log.error(e.__str__())
+
+    if device is not None:
+        log.warning(f"Device connection: {device.connected}")
