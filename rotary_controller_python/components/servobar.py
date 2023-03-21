@@ -1,16 +1,10 @@
 import logging
 import os
-import time
-import collections
 
-from decimal import Decimal
-
-from kivy.clock import Clock
 from kivy.lang import Builder
-from kivy.properties import StringProperty, ConfigParserProperty, NumericProperty, ObjectProperty
+from kivy.properties import ObjectProperty
 from kivy.uix.boxlayout import BoxLayout
 from kivy.app import App
-from components.appsettings import config
 
 current_app = App.get_running_app()
 log = logging.getLogger(__file__)
@@ -21,7 +15,7 @@ if os.path.exists(kv_file):
 
 
 class ServoBar(BoxLayout):
-    from main import ServoData
+    from rotary_controller_python.main import ServoData
     servo = ObjectProperty(rebind=True, defaultvalue=ServoData())
 
     def __init__(self, *args, **kv):
