@@ -1,0 +1,30 @@
+[tool.poetry]
+name = "rotary-controller-python"
+version = "0.0.0"
+description = "Rotary Controller Python"
+authors = ["Stefano Bertelli <bartei81@gmail.com>"]
+license = "MIT"
+readme = "README.md"
+packages = [{include = "rotary_controller_python"}]
+
+[tool.poetry.dependencies]
+python = "^3.9"
+kivy = "^2.1.0"
+pydantic = "^1.10.6"
+pyyaml = "^6.0"
+minimalmodbus = "^2.0.1"
+cachetools = "^5.3.0"
+
+
+[build-system]
+requires = ["poetry-core"]
+build-backend = "poetry.core.masonry.api"
+
+[tool.semantic_release]
+version_variable = ["pyproject.toml:version"]
+patch_without_tag = true
+branch = "main"
+hvcs = "gitlab"
+remove_dist = false
+upload_to_pypi = false
+build_command = "pip install poetry && poetry build"
