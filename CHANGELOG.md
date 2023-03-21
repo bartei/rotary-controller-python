@@ -2,6 +2,10 @@
 
 <!--next-version-placeholder-->
 
+## v0.1.1 (2023-03-21)
+### Fix
+* Restructure app to be a proper package module ([`1cff346`](https://gitlab.provvedo.com/sbertelli/rotary-controller-python/-/commit/1cff34637cc011be19afa0102fcd65c5b4190dbe))
+
 ## v0.1.0 (2023-03-21)
 ### Feature
 * Use poetry ([`b714f2b`](https://gitlab.provvedo.com/sbertelli/rotary-controller-python/-/commit/b714f2b33a163b1b577932af25c7fb0b49fea93d))
