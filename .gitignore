@@ -15,7 +15,6 @@ dist/
 downloads/
 eggs/
 .eggs/
-rotary_controller_python/utils/
 lib64/
 parts/
 sdist/
