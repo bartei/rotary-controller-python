@@ -2,6 +2,11 @@
 
 <!--next-version-placeholder-->
 
+## v0.1.2 (2023-03-23)
+### Fix
+* Add missing code and update module refs ([`d2cd9cc`](https://gitlab.provvedo.com/sbertelli/rotary-controller-python/-/commit/d2cd9cc0ff4056a34abc9e94a4d911db8fd06328))
+* Update gitignore ([`916d840`](https://gitlab.provvedo.com/sbertelli/rotary-controller-python/-/commit/916d840042e874c5bad26f35c066ef574e81290e))
+
 ## v0.1.1 (2023-03-21)
 ### Fix
 * Restructure app to be a proper package module ([`1cff346`](https://gitlab.provvedo.com/sbertelli/rotary-controller-python/-/commit/1cff34637cc011be19afa0102fcd65c5b4190dbe))
