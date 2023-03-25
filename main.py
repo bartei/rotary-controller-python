@@ -46,6 +46,7 @@ def input_class_factory():
 
             @set_position.setter
             def set_position(self, value):
+                from utils.communication import device
                 try:
                     log.warning(f"Set New position to: {value} for {self.scale_input}")
                     decimal_value = Decimal(self.ratio_den) / Decimal(self.ratio_num) * Decimal(value)
