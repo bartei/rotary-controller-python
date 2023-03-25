@@ -38,3 +38,71 @@ operation of the touchscreen, keyboard, etc. etc.
 Instructions will eventually be placed here for completeness to assist in the configuration of raspbian.
 
 #TODO: Put here instructions for raspbian
+
+## Communication protocol
+
+The rotary controller software running on the Raspberry PI is connected
+to the peripheral interface board using MODBUS RTU carried by RS485.
+
+There is another project for the generation of a suitable raspberry
+operating system image which already has all the proper settings configured
+to enable the embedded UART controller for use as the communication channel
+for this application.
+
+### TODO: Provide links
+The rotary controller is tested using a dedicated power supply and communication
+board which is also available in another project if you wanna build it yourself.
+
+
+## Device address and communication settings
+
+The daughter board has fixed communication settings configured from the embedded
+software, there are no user accessible ways to change the configuration. 
+
+It is possible to change the communication settings if needed by modifying the 
+configuration file for the firmware and by uploading the updated software to the 
+daughter board.
+
+The current settings are the following:
+- Modbus RTU slave node address: 17
+- Bitrate: 115200
+- Party: N
+- Stop Bits: 1
+
+## Modbus Registers
+
+The status and control of the daugther board is achieved by reading/writing Modbus 
+registers. 
+
+There are some limitations to the maximum number of registers that can be transferred
+in a single operation. The current Python UI doesn't require large amounts of data to be
+transferred in a single operation, but such limitations shall be taken into account if 
+shall the user decided to implement a different control software, or use a PLC device
+to communicate with the daughter board.
+
+A summary of such registers is provided here with the associated data type.
+
+### 00: ramps_mode_t mode; // 0
+Defines the current operation mode for the device
+
+### 02: int32_t currentPosition; // 2
+### int32_t finalPosition; // 4
+### int16_t unused_6;
+### int32_t unused_8;
+### uint16_t encoderPresetIndex;
+### int32_t encoderPresetValue;
+### int32_t unused_14;
+### float maxSpeed;
+### float minSpeed;
+### float currentSpeed;
+### float acceleration;
+### int32_t stepRatioNum;
+### int32_t stepRatioDen;
+### float unused_28;
+### int32_t synRatioNum;
+### int32_t synRatioDen;
+### int32_t synOffset;
+### uint16_t synScaleIndex;
+### int32_t scalesPosition[SCALES_COUNT];
+
+```
