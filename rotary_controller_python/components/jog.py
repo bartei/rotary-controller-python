@@ -1,16 +1,8 @@
 import logging
 import os
-import time
-import collections
 
-from decimal import Decimal
-
-from kivy.clock import Clock
 from kivy.lang import Builder
-from kivy.properties import StringProperty, ConfigParserProperty, NumericProperty
 from kivy.uix.boxlayout import BoxLayout
-from kivy.app import App
-from components.appsettings import config
 from typing import Callable
 
 

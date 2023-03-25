@@ -6,9 +6,9 @@ from kivy.clock import Clock
 from kivy.event import EventDispatcher
 from kivy.properties import StringProperty, NumericProperty, ConfigParserProperty, BooleanProperty, ListProperty, ObjectProperty
 from kivy.uix.boxlayout import BoxLayout
-from components.appsettings import config
-from utils.communication import device, configure_device
-from utils import communication
+from rotary_controller_python.components.appsettings import config
+from rotary_controller_python.utils.communication import device, configure_device
+from rotary_controller_python.utils import communication
 
 log = logging.getLogger(__file__)
 
@@ -231,7 +231,7 @@ class MainApp(App):
         self.blink = not self.blink
 
     def configure_device(self, *args):
-        from utils.communication import device
+        from rotary_controller_python.utils.communication import device
         configure_device()
 
         if device is None:
