@@ -101,6 +101,9 @@ class ServoData(EventDispatcher):
         except Exception as e:
             log.exception(e.__str__())
 
+    def on_enable(self, instance, value):
+        log.warning(f"The status of the synchro is set to: {self.enable}")
+
 
 class Home(BoxLayout):
     pass
