@@ -1,10 +1,24 @@
 import struct
-from typing import List
+from typing import List, Optional
 
 import minimalmodbus
 import logging
 
 log = logging.getLogger(__file__)
+
+# REG_MODE Flag Masks
+MODE_BIT_GLOBAL_ENABLE = 0b0000000000000001
+MODE_BIT_SERVO_ENABLE = 0b0000000000000010
+MODE_BIT_SYNC_INPUT_1 = 0b0000000000000100
+MODE_BIT_SYNC_INPUT_2 = 0b0000000000001000
+MODE_BIT_SYNC_INPUT_3 = 0b0000000000010000
+MODE_BIT_SYNC_INPUT_4 = 0b0000000000100000
+MODE_BIT_SET_ENCODER = 0b0000100000000000
+MODE_BIT_RQ_SYNCHRO_INIT = 0b0001000000000000
+MODE_BIT_MODE_SYNCHRO = 0b0010000000000000
+MODE_BIT_MODE_INDEX = 0b0100000000000000
+MODE_BIT_RQ_INDEX_INIT = 0b1000000000000000
+
 
 # Register addresses as per the current firmware version
 REG_MODE = 0
@@ -47,8 +61,20 @@ MODE_SYNCHRO_BAD_RATIO = 101
 MODE_DISCONNECTED = 255
 
 
+def set_bit(var: int, mask: int, value: bool) -> int:
+    """
+    Sets the bit identified by @mask to the @value specified in the @var
+    """
+    if value is True:
+        var = var | mask
+    else:
+        var = var & ~mask
+    return var
+
+
 class DeviceManager:
-    def __init__(self, serial_device="/dev/serial0", baudrate=57600, address=17, debug=False):
+    # def __init__(self, serial_device="/dev/serial0", baudrate=57600, address=17, debug=False):
+    def __init__(self, serial_device="/dev/ttyUSB0", baudrate=115200, address=17, debug=False):
         self.device: minimalmodbus.Instrument = minimalmodbus.Instrument(
             port=serial_device,
             slaveaddress=address,
@@ -78,6 +104,29 @@ class DeviceManager:
         except Exception as e:
             self.connected = False
             self.last_error = e.__str__()
+
+    @property
+    def global_enable(self):
+        return (self.mode & MODE_BIT_GLOBAL_ENABLE) == MODE_BIT_GLOBAL_ENABLE
+
+    @global_enable.setter
+    def global_enable(self, value: bool):
+        self.mode = set_bit(self.mode, MODE_BIT_GLOBAL_ENABLE, value)
+        log.warning("Mode set to: {:#016b}".format(self.mode))
+
+    def request_index(self):
+        self.mode = set_bit(self.mode, MODE_BIT_RQ_INDEX_INIT, True)
+        log.warning("Mode set to: {:#016b}".format(self.mode))
+
+    def sync_enable(self, input: int, value: bool):
+        if input == 0:
+            self.mode = set_bit(self.mode, MODE_BIT_SYNC_INPUT_1, value)
+        elif input == 1:
+            self.mode = set_bit(self.mode, MODE_BIT_SYNC_INPUT_2, value)
+        elif input == 2:
+            self.mode = set_bit(self.mode, MODE_BIT_SYNC_INPUT_3, value)
+        elif input == 3:
+            self.mode = set_bit(self.mode, MODE_BIT_SYNC_INPUT_4, value)
 
     @property
     def scales(self) -> List[int]:
@@ -454,7 +503,7 @@ class DeviceManager:
             self.last_error = e.__str__()
 
 
-device: DeviceManager or None = None
+device: Optional[DeviceManager] = None
 
 
 def configure_device():

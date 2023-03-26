@@ -83,7 +83,14 @@ to communicate with the daughter board.
 A summary of such registers is provided here with the associated data type.
 
 ### 00: ramps_mode_t mode; // 0
-Defines the current operation mode for the device
+Defines the current operation mode for the device. the mode is configured by means of bit flags that
+determine which features are enabled:
+- Bit 0: Global Enable
+- Bit 1: Servo Output Enable
+- Bit 2: Sync enable for Input 1
+- Bit 3: Sync enable for Input 2
+- Bit 4: Sync enable for Input 3
+- Bit 5: Sync enable for Input 4
 
 ### 02: int32_t currentPosition; // 2
 ### int32_t finalPosition; // 4

@@ -29,6 +29,17 @@ def input_class_factory():
             sync_enable = ConfigParserProperty(defaultvalue="normal", section=section, key="sync_enable", config=config, val_type=str)
             position = NumericProperty(123.123)
 
+            def on_sync_enable(self, instance, value):
+                from rotary_controller_python.utils.communication import device
+                if device is not None:
+                    log.error(f"Enable sync for axis {self.scale_input}: {value}")
+                    device.sync_enable(
+                        input=self.scale_input,
+                        value=True if value == "down" else False
+                    )
+                else:
+                    print(device)
+
             @property
             def update_raw_scale(self):
                 return 0
@@ -87,7 +98,19 @@ class ServoData(EventDispatcher):
     # def on_index(self, instance, value):
     #     self.index = self.index % self.divisions
 
+    @property
+    def update_current_position(self):
+        return 0
+
+    @update_current_position.setter
+    def update_current_position(self, value):
+        if self.ratio_den != 0:
+            self.current_position = float(value) * float(self.ratio_num) / float(self.ratio_den)
+        else:
+            self.current_position = 0
+
     def on_desired_position(self, instance, value):
+        from rotary_controller_python.utils.communication import device
         try:
             log.warning(f"Update desired position to: {value}")
             device.min_speed = self.min_speed
@@ -95,14 +118,23 @@ class ServoData(EventDispatcher):
             device.acceleration = self.acceleration
             device.ratio_num = self.ratio_num
             device.ratio_den = self.ratio_den
-            device.mode = communication.MODE_HALT
             # Send the destination converted to steps
             device.final_position = int(value / self.ratio_num * self.ratio_den)
+            device.request_index()
         except Exception as e:
             log.exception(e.__str__())
 
     def on_enable(self, instance, value):
-        log.warning(f"The status of the synchro is set to: {self.enable}")
+        from rotary_controller_python.utils.communication import device
+        if device is not None:
+            log.warning(f"The status of the synchro is set to: {self.enable}")
+            device.global_enable = value
+
+    def on_index(self, instance, value):
+        from rotary_controller_python.utils.communication import device
+        log.warning(f"The index changed to: {value}")
+        if device is not None and self.divisions > 0:
+            self.desired_position = 360 / self.divisions * self.index + self.offset
 
 
 class Home(BoxLayout):
@@ -133,10 +165,7 @@ class MainApp(App):
         classes[3](),
     ])
 
-    servo = ObjectProperty(ServoData())
-
-    desired_position = NumericProperty(0.0)
-    # current_position = NumericProperty(0.0)
+    servo = ServoData()
 
     divisions = NumericProperty(16)
     division_index = NumericProperty(0)
@@ -188,6 +217,8 @@ class MainApp(App):
 
             for count, scale in enumerate(scales):
                 self.data[count].update_raw_scale = scale
+
+            self.servo.update_current_position = self.device.current_position
 
             if not self.device.connected:
                 self.mode = communication.MODE_DISCONNECTED

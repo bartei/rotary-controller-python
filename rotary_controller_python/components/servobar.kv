@@ -2,16 +2,6 @@
 #: import Keypad components.keypad
 #: import appsettings components
 
-#servo:
-# current position
-# current speed
-# offset
-# divisions
-# current division
-# enable
-# mode
-#
-
 <ServoBar>:
   orientation: "horizontal"
   height: 128
@@ -40,7 +30,7 @@
       font_style: "bold"
       background_color: [0.2, 0.2, 0.2, 1]
       color: app.display_color
-      text: str(root.servo.current_position)
+      text: app.angle_format.format(app.servo.current_position)
       text_size: self.size
       halign: 'center'
       valign: 'middle'
@@ -60,7 +50,7 @@
       font_style: "bold"
       background_color: [0.2, 0.2, 0.2, 1]
       color: app.display_color
-      text: str(root.servo.desired_position)
+      text: app.angle_format.format(root.servo.desired_position)
       text_size: self.size
       halign: 'center'
       valign: 'middle'

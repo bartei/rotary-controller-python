@@ -10,6 +10,7 @@ from kivy.lang import Builder
 from kivy.properties import NumericProperty, ObjectProperty
 from kivy.uix.boxlayout import BoxLayout
 from kivy.app import App
+from rotary_controller_python.components.appsettings import config
 
 log = logging.getLogger(__file__)
 app = App.get_running_app()
