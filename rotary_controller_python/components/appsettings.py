@@ -1,6 +1,5 @@
 import os.path
 
-from kivy.config import ConfigParser
 from kivy.lang import Builder
 from kivy.uix.popup import Popup
 from kivy.uix.settings import Settings
@@ -8,46 +7,11 @@ import logging
 
 INPUTS_COUNT = 4
 
-log = logging.getLogger(__file__)
+log = logging.getLogger(__name__)
 kv_file = os.path.join(os.path.dirname(__file__), __file__.replace(".py", ".kv"))
 if os.path.exists(kv_file):
     log.info(f"Loading KV file: {kv_file}")
     Builder.load_file(kv_file)
-
-config = ConfigParser()
-config.read(os.path.dirname(__file__) + "/../config.ini")
-
-
-# def generate_input_defaults(my_config: ConfigParser):
-#     my_config.setdefaults(
-#         section="formatting",
-#         keyvalues={
-#             "angle": "{:0.2f}"
-#         }
-#     )
-#     my_config.setdefaults(
-#         section="rotary",
-#         keyvalues={
-#             "divisions": 10
-#         }
-#     )
-#
-#
-#     for item in range(INPUTS_COUNT):
-#         my_config.setdefaults(
-#             section=f"input{item+1}",
-#             keyvalues={
-#                 "axis_name": "X",
-#                 "ratio_num": 1,
-#                 "ratio_den": 100,
-#                 "sync_num": 1,
-#                 "sync_den": 100,
-#                 "sync_enable": "normal",
-#             }
-#         )
-#
-#
-# generate_input_defaults(config)
 
 
 def generate_input_json() -> str:
@@ -90,11 +54,12 @@ class AppSettings(Popup):
     settings = None
 
     def __init__(self, **kwargs):
+        from rotary_controller_python.config import config
         super().__init__(**kwargs)
         self.settings = Settings()
-        self.settings.add_json_panel("Units", config, "data/units.json")
+        self.settings.add_json_panel("Units", config, "rotary_controller_python/data/units.json")
         self.settings.add_json_panel("Inputs", config, data=generate_input_json())
-        self.settings.add_json_panel("Rotary", config, "data/rotary.json")
+        self.settings.add_json_panel("Rotary", config, "rotary_controller_python/data/rotary.json")
         self.settings.add_kivy_panel()
         self.settings.bind(on_close=self.close)
         self.add_widget(self.settings)
