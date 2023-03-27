@@ -3,22 +3,24 @@ from typing import List, Optional
 
 import minimalmodbus
 import logging
+from cachetools.func import ttl_cache
+
 
 log = logging.getLogger(__file__)
 
 # REG_MODE Flag Masks
-MODE_BIT_GLOBAL_ENABLE = 0b0000000000000001
-MODE_BIT_SERVO_ENABLE = 0b0000000000000010
-MODE_BIT_SYNC_INPUT_1 = 0b0000000000000100
-MODE_BIT_SYNC_INPUT_2 = 0b0000000000001000
-MODE_BIT_SYNC_INPUT_3 = 0b0000000000010000
-MODE_BIT_SYNC_INPUT_4 = 0b0000000000100000
-MODE_BIT_SET_ENCODER = 0b0000100000000000
-MODE_BIT_RQ_SYNCHRO_INIT = 0b0001000000000000
-MODE_BIT_MODE_SYNCHRO = 0b0010000000000000
-MODE_BIT_MODE_INDEX = 0b0100000000000000
-MODE_BIT_RQ_INDEX_INIT = 0b1000000000000000
-
+MODE_BIT_GLOBAL_ENABLE = 1 << 0
+MODE_BIT_SERVO_ENABLE = 1 << 1
+MODE_BIT_SYNC_INPUT_START = 1 << 2
+MODE_BIT_SYNC_INPUT_1 = 1 << 2
+MODE_BIT_SYNC_INPUT_2 = 1 << 3
+MODE_BIT_SYNC_INPUT_3 = 1 << 4
+MODE_BIT_SYNC_INPUT_4 = 1 << 5
+MODE_BIT_SET_ENCODER = 1 << 11
+MODE_BIT_RQ_SYNCHRO_INIT = 1 << 12
+MODE_BIT_MODE_SYNCHRO = 1 << 13
+MODE_BIT_MODE_INDEX = 1 << 14
+MODE_BIT_RQ_INDEX_INIT = 1 << 15
 
 # Register addresses as per the current firmware version
 REG_MODE = 0
@@ -47,18 +49,19 @@ REG_SCALE_1 = 38
 
 SCALES_COUNT = 4
 
+
 # Summary of the currently available device modes from the current firmware
-MODE_HALT = 0
-MODE_INDEX = 10
-MODE_INDEX_INIT = 11
-MODE_SYNCHRO = 20
-MODE_SYNCHRO_INIT = 21
-MODE_JOG = 30
-MODE_JOG_FW = 31
-MODE_JOG_BW = 32
-MODE_SET_ENCODER = 40
-MODE_SYNCHRO_BAD_RATIO = 101
-MODE_DISCONNECTED = 255
+# MODE_HALT = 0
+# MODE_INDEX = 10
+# MODE_INDEX_INIT = 11
+# MODE_SYNCHRO = 20
+# MODE_SYNCHRO_INIT = 21
+# MODE_JOG = 30
+# MODE_JOG_FW = 31
+# MODE_JOG_BW = 32
+# MODE_SET_ENCODER = 40
+# MODE_SYNCHRO_BAD_RATIO = 101
+# MODE_DISCONNECTED = 255
 
 
 def set_bit(var: int, mask: int, value: bool) -> int:
@@ -70,6 +73,10 @@ def set_bit(var: int, mask: int, value: bool) -> int:
     else:
         var = var & ~mask
     return var
+
+
+def get_bit(var: int, mask: int) -> bool:
+    return (var & mask) == mask
 
 
 class DeviceManager:
@@ -85,7 +92,7 @@ class DeviceManager:
         self.last_error = ""
 
     @property
-    def mode(self):
+    def status(self):
         try:
             value = self.device.read_register(REG_MODE)
             self.connected = True
@@ -96,8 +103,8 @@ class DeviceManager:
             print(self.last_error)
             return 0
 
-    @mode.setter
-    def mode(self, value: int):
+    @status.setter
+    def status(self, value: int):
         try:
             self.device.write_register(REG_MODE, value)
             self.connected = True
@@ -107,50 +114,41 @@ class DeviceManager:
 
     @property
     def global_enable(self):
-        return (self.mode & MODE_BIT_GLOBAL_ENABLE) == MODE_BIT_GLOBAL_ENABLE
+        return (self.status & MODE_BIT_GLOBAL_ENABLE) == MODE_BIT_GLOBAL_ENABLE
 
     @global_enable.setter
     def global_enable(self, value: bool):
-        self.mode = set_bit(self.mode, MODE_BIT_GLOBAL_ENABLE, value)
-        log.warning("Mode set to: {:#016b}".format(self.mode))
+        self.status = set_bit(self.status, MODE_BIT_GLOBAL_ENABLE, value)
+        log.warning("Mode set to: {:#016b}".format(self.status))
 
     def request_index(self):
-        self.mode = set_bit(self.mode, MODE_BIT_RQ_INDEX_INIT, True)
-        log.warning("Mode set to: {:#016b}".format(self.mode))
-
-    def sync_enable(self, input: int, value: bool):
-        if input == 0:
-            self.mode = set_bit(self.mode, MODE_BIT_SYNC_INPUT_1, value)
-        elif input == 1:
-            self.mode = set_bit(self.mode, MODE_BIT_SYNC_INPUT_2, value)
-        elif input == 2:
-            self.mode = set_bit(self.mode, MODE_BIT_SYNC_INPUT_3, value)
-        elif input == 3:
-            self.mode = set_bit(self.mode, MODE_BIT_SYNC_INPUT_4, value)
+        self.status = set_bit(self.status, MODE_BIT_RQ_INDEX_INIT, True)
+        log.warning("Mode set to: {:#016b}".format(self.status))
 
     @property
+    @ttl_cache(maxsize=10, ttl=0.05)
     def scales(self) -> List[int]:
-            result = []
-            try:
-                raw_data = self.device.read_registers(REG_SCALE_1, SCALES_COUNT * 2)
-                self.connected = True
-            except Exception as e:
-                self.connected = False
-                self.last_error = e.__str__()
-                result.append(0)
-                return [0, 0, 0, 0]
+        result = []
+        try:
+            raw_data = self.device.read_registers(REG_SCALE_1, SCALES_COUNT * 2)
+            self.connected = True
+        except Exception as e:
+            self.connected = False
+            self.last_error = e.__str__()
+            result.append(0)
+            return [0, 0, 0, 0]
 
-            raw_byte = bytearray()
-            format = ">"
-            for i in range(SCALES_COUNT):
-                raw_byte.append((raw_data[i*2+1] >> 8) & 255)
-                raw_byte.append((raw_data[i*2+1]) & 255)
-                raw_byte.append((raw_data[i*2] >> 8) & 255)
-                raw_byte.append((raw_data[i*2]) & 255)
-                format += "l"
+        raw_byte = bytearray()
+        format = ">"
+        for i in range(SCALES_COUNT):
+            raw_byte.append((raw_data[i * 2 + 1] >> 8) & 255)
+            raw_byte.append((raw_data[i * 2 + 1]) & 255)
+            raw_byte.append((raw_data[i * 2] >> 8) & 255)
+            raw_byte.append((raw_data[i * 2]) & 255)
+            format += "l"
 
-            result = struct.unpack(format, raw_byte)
-            return result
+        result = struct.unpack(format, raw_byte)
+        return result
 
     @property
     def current_position(self):
@@ -170,7 +168,7 @@ class DeviceManager:
     @current_position.setter
     def current_position(self, value):
         try:
-            if self.mode != 0:
+            if self.status != 0:
                 raise Exception("Current position can be changed only if mode is 0")
 
             self.device.write_long(
@@ -238,7 +236,6 @@ class DeviceManager:
         except Exception as e:
             self.connected = False
             self.last_error = e.__str__()
-
 
     @property
     def max_speed(self):
@@ -502,12 +499,17 @@ class DeviceManager:
             self.connected = False
             self.last_error = e.__str__()
 
+    def set_encoder_value(self, encoder_index: int, encoder_value: int):
+        if self.status & MODE_BIT_SET_ENCODER != 0:
+            log.error("Another request for set_encoder_value is in progress!")
+            return
 
-device: Optional[DeviceManager] = None
+        self.encoder_preset_value = encoder_value
+        self.encoder_preset_index = encoder_index
+        self.status = set_bit(self.status, mask=MODE_BIT_SET_ENCODER, value=True)
 
 
-def configure_device():
-    global device
+def configure_device() -> DeviceManager:
     try:
         device = DeviceManager()
     except Exception as e:
@@ -518,3 +520,5 @@ def configure_device():
 
     if device is not None:
         log.warning(f"Device connection: {device.connected}")
+
+    return device

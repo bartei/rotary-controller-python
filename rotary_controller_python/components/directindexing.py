@@ -4,7 +4,7 @@ import os
 from kivy.lang import Builder
 from kivy.properties import StringProperty, ConfigParserProperty
 from kivy.uix.boxlayout import BoxLayout
-from rotary_controller_python.components.appsettings import config
+from rotary_controller_python.config import config
 
 
 log = logging.getLogger(__file__)

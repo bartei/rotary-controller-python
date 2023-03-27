@@ -1,6 +1,6 @@
 #: import Toolbar components.toolbar
 #: import CoordBar components.coordbar
-#: import DirectIndexing components.directindexing
+
 #: import Jog components.jog
 #: import Synchro components.synchro
 #: import StatusBar components.statusbar
@@ -13,26 +13,20 @@
   BoxLayout:
     orientation: "vertical"
     StatusBar:
+      device: app.device
     CoordBar:
-      data: app.data[0]
+      scale_input: 0
+      section: "input1"
     CoordBar:
-      data: app.data[1]
+      scale_input: 1
+      section: "input2"
     CoordBar:
-      data: app.data[2]
+      scale_input: 2
+      section: "input3"
     CoordBar:
-      data: app.data[3]
+      scale_input: 3
+      section: "input4"
     ServoBar:
-      data: app.servo
-
-#servo:
-# current position
-# current speed
-# offset
-# divisions
-# current division
-# enable
-# mode
-#
 
 BoxLayout:
   orientation: "vertical"

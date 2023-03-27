@@ -1,8 +1,13 @@
 import os
 import logging
 
+from kivy.clock import Clock
+from kivy.properties import ObjectProperty, BooleanProperty
 from kivy.uix.boxlayout import BoxLayout
 from kivy.lang import Builder
+
+from rotary_controller_python.device_event_dispatcher import DeviceEventDispatcher
+from rotary_controller_python.utils import communication
 
 log = logging.getLogger(__file__)
 kv_file = os.path.join(os.path.dirname(__file__), __file__.replace(".py", ".kv"))
@@ -13,4 +18,4 @@ if os.path.exists(kv_file):
 
 
 class StatusBar(BoxLayout):
-    pass
+    device: DeviceEventDispatcher = ObjectProperty(DeviceEventDispatcher())
