@@ -1,4 +1,5 @@
 import logging
+import timeit
 
 from kivy.event import EventDispatcher
 from kivy.clock import Clock
@@ -53,6 +54,7 @@ class DeviceEventDispatcher(EventDispatcher):
 
     def refresh(self, instance, **kwargs):
         # Create a device if needed
+        start = timeit.default_timer()
         if self.device is None:
             try:
                 self.device = communication.DeviceManager(
@@ -99,6 +101,8 @@ class DeviceEventDispatcher(EventDispatcher):
         # self.rq_index_init = communication.get_bit(self.status, communication.MODE_BIT_RQ_INDEX_INIT),
         # self.mode_synchro = communication.get_bit(self.status, communication.MODE_BIT_MODE_SYNCHRO),
         # self.mode_index = communication.get_bit(self.status, communication.MODE_BIT_MODE_INDEX),
+        end = timeit.default_timer()
+        print(end-start)
 
     def set_encoder_value(self, encoder_index: int, encoder_value: int):
         log.warning(f"Set New position for input {encoder_index} to {encoder_value}")
