@@ -48,7 +48,7 @@ MODE_DISCONNECTED = 255
 
 
 class DeviceManager:
-    def __init__(self, serial_device="/dev/serial0", baudrate=57600, address=17, debug=False):
+    def __init__(self, serial_device="/dev/serial0", baudrate=115200, address=17, debug=False):
         self.device: minimalmodbus.Instrument = minimalmodbus.Instrument(
             port=serial_device,
             slaveaddress=address,
