@@ -2,6 +2,10 @@
 
 <!--next-version-placeholder-->
 
+## v0.1.3 (2023-03-29)
+### Fix
+* Speed ([`980243a`](https://gitlab.provvedo.com/sbertelli/rotary-controller-python/-/commit/980243ad806a29a289f62f239ae81998c12010f0))
+
 ## v0.1.2 (2023-03-23)
 ### Fix
 * Add missing code and update module refs ([`d2cd9cc`](https://gitlab.provvedo.com/sbertelli/rotary-controller-python/-/commit/d2cd9cc0ff4056a34abc9e94a4d911db8fd06328))
