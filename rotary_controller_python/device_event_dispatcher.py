@@ -61,7 +61,7 @@ class DeviceEventDispatcher(EventDispatcher):
                     address=17,
                     debug=False
                 )
-                self.refresh_task.timeout = 0.02
+                self.refresh_task.timeout = 0.1
                 self.connected = True
             except Exception as e:
                 log.error(e, exc_info=True)
@@ -83,8 +83,7 @@ class DeviceEventDispatcher(EventDispatcher):
         self.current_position = self.device.current_position
         self.status = self.device.status
         # self.spindle_position = self.device.spindle_position
-        # self.position = self.device.scales
-
+        self.position = self.device.scales
         # self.enable = communication.get_bit(self.status, communication.MODE_BIT_GLOBAL_ENABLE)
         # self.servo_enable = communication.get_bit(self.status, communication.MODE_BIT_SERVO_ENABLE)
 
