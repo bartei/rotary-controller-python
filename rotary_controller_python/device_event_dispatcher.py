@@ -59,7 +59,7 @@ class DeviceEventDispatcher(EventDispatcher):
                     serial_device=self.serial_port,
                     baudrate=self.baudrate,
                     address=17,
-                    debug=True
+                    debug=False
                 )
                 self.refresh_task.timeout = 0.05
                 self.connected = True
