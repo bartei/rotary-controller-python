@@ -63,7 +63,7 @@ class DeviceEventDispatcher(EventDispatcher):
                     address=17,
                     debug=False
                 )
-                self.refresh_task.timeout = 0.1
+                self.refresh_task.timeout = 1.0 / 25.0
                 self.connected = True
             except Exception as e:
                 log.error(e, exc_info=True)
