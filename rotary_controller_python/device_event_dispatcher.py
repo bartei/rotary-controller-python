@@ -61,7 +61,7 @@ class DeviceEventDispatcher(EventDispatcher):
                     address=17,
                     debug=False
                 )
-                self.refresh_task.timeout = 0.05
+                self.refresh_task.timeout = 0.02
                 self.connected = True
             except Exception as e:
                 log.error(e, exc_info=True)
@@ -82,24 +82,24 @@ class DeviceEventDispatcher(EventDispatcher):
 
         self.current_position = self.device.current_position
         self.status = self.device.status
-        self.spindle_position = self.device.spindle_position
-        self.position = self.device.scales
+        # self.spindle_position = self.device.spindle_position
+        # self.position = self.device.scales
 
-        self.enable = communication.get_bit(self.status, communication.MODE_BIT_GLOBAL_ENABLE)
-        self.servo_enable = communication.get_bit(self.status,communication.MODE_BIT_SERVO_ENABLE)
+        # self.enable = communication.get_bit(self.status, communication.MODE_BIT_GLOBAL_ENABLE)
+        # self.servo_enable = communication.get_bit(self.status, communication.MODE_BIT_SERVO_ENABLE)
 
-        self.sync_input = [
-            communication.get_bit(self.status, communication.MODE_BIT_SYNC_INPUT_1),
-            communication.get_bit(self.status, communication.MODE_BIT_SYNC_INPUT_2),
-            communication.get_bit(self.status, communication.MODE_BIT_SYNC_INPUT_3),
-            communication.get_bit(self.status, communication.MODE_BIT_SYNC_INPUT_4),
-        ]
-
-        self.set_encoder = communication.get_bit(self.status, communication.MODE_BIT_SYNC_INPUT_4),
-        self.rq_synchro_init = communication.get_bit(self.status, communication.MODE_BIT_RQ_SYNCHRO_INIT),
-        self.rq_index_init = communication.get_bit(self.status, communication.MODE_BIT_RQ_INDEX_INIT),
-        self.mode_synchro = communication.get_bit(self.status, communication.MODE_BIT_MODE_SYNCHRO),
-        self.mode_index = communication.get_bit(self.status, communication.MODE_BIT_MODE_INDEX),
+        # self.sync_input = [
+        #     communication.get_bit(self.status, communication.MODE_BIT_SYNC_INPUT_1),
+        #     communication.get_bit(self.status, communication.MODE_BIT_SYNC_INPUT_2),
+        #     communication.get_bit(self.status, communication.MODE_BIT_SYNC_INPUT_3),
+        #     communication.get_bit(self.status, communication.MODE_BIT_SYNC_INPUT_4),
+        # ]
+        #
+        # self.set_encoder = communication.get_bit(self.status, communication.MODE_BIT_SYNC_INPUT_4),
+        # self.rq_synchro_init = communication.get_bit(self.status, communication.MODE_BIT_RQ_SYNCHRO_INIT),
+        # self.rq_index_init = communication.get_bit(self.status, communication.MODE_BIT_RQ_INDEX_INIT),
+        # self.mode_synchro = communication.get_bit(self.status, communication.MODE_BIT_MODE_SYNCHRO),
+        # self.mode_index = communication.get_bit(self.status, communication.MODE_BIT_MODE_INDEX),
 
     def set_encoder_value(self, encoder_index: int, encoder_value: int):
         log.warning(f"Set New position for input {encoder_index} to {encoder_value}")
