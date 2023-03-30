@@ -12,7 +12,7 @@
     size_hint_x: None
     width: 64
     label: "COM"
-    checkbox_value: root.device.connected or app.blink
+    checkbox_value: app.connected or app.blink
 
   LedButton:
     # READY LED
@@ -21,7 +21,7 @@
     valign: "top"
     width: 64
     label: "RDY"
-    checkbox_value: root.device.connected
+    checkbox_value: app.connected
 
   LedButton:
     # RUN SYN LED
@@ -29,7 +29,7 @@
     size_hint_x: None
     width: 64
     label: "SYN"
-    checkbox_value: (root.device.rq_synchro_init and app.blink) or root.device.mode_synchro
+    checkbox_value: (app.rq_synchro_init and app.blink) or app.mode_synchro
 
   LedButton:
     # RUN INDEX LED
@@ -37,7 +37,7 @@
     size_hint_x: None
     width: 64
     label: "IDX"
-    checkbox_value: (root.device.rq_index_init and app.blink) or root.device.mode_index
+    checkbox_value: (app.rq_index_init and app.blink) or app.mode_index
 
   LedButton:
     # RUN JOG LED
@@ -67,4 +67,4 @@
     size_hint_x: None
     width: 64
     label: "ERR"
-    checkbox_value: root.device.error and app.blink
+    checkbox_value: app.error and app.blink

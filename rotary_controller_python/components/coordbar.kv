@@ -25,7 +25,7 @@
         font_size: 48
         font_style: "bold"
         color: app.display_color
-        text: app.pos_format.format(root.device.position[root.scale_input] / app.unit_factor)
+        text: app.pos_format.format(app.scale_positions[root.scale_input] / app.unit_factor)
         text_size: self.size
         halign: 'right'
         valign: 'center'

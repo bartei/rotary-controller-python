@@ -8,11 +8,10 @@ from decimal import Decimal
 from kivy.clock import Clock
 from kivy.config import ConfigParser
 from kivy.lang import Builder
-from kivy.properties import NumericProperty, StringProperty, ObjectProperty
+from kivy.properties import NumericProperty, StringProperty, ObjectProperty, ListProperty
 from kivy.uix.boxlayout import BoxLayout
 from kivy.app import App
 
-from rotary_controller_python.device_event_dispatcher import DeviceEventDispatcher
 from rotary_controller_python.config import config
 
 log = logging.getLogger(__file__)
@@ -26,6 +25,7 @@ if os.path.exists(kv_file):
 class CoordBar(BoxLayout):
     # Configuration Values
     scale_input = NumericProperty(defaultvalue=0)
+    scale_positions = ListProperty()
     section = StringProperty(defaultvalue="axis")
     axis_name = StringProperty(defaultvalue="NN")
     ratio_num = NumericProperty(defaultvalue=1)
@@ -33,8 +33,6 @@ class CoordBar(BoxLayout):
     sync_num = NumericProperty(defaultvalue=1)
     sync_den = NumericProperty(defaultvalue=100)
     sync_enable = StringProperty(defaultvalue="normal")
-
-    device: DeviceEventDispatcher = ObjectProperty(DeviceEventDispatcher())
 
     # Those get loaded and managed at runtime
     formatted_axis_speed = NumericProperty(0.000)
@@ -88,7 +86,7 @@ class CoordBar(BoxLayout):
 
         # Calculate axis speed
         self.speed_history.append(
-            (Decimal(self.device.position[self.scale_input]) - self.previous_axis_pos) /
+            (Decimal(self.scale_positions[self.scale_input]) - self.previous_axis_pos) /
             Decimal(current_time - self.previous_axis_time)
         )
 
@@ -102,14 +100,14 @@ class CoordBar(BoxLayout):
             self.formatted_axis_speed = float(average * 60 / 1000)
 
         self.previous_axis_time = current_time
-        self.previous_axis_pos = Decimal(self.device.position[self.scale_input])
+        self.previous_axis_pos = Decimal(self.scale_positions[self.scale_input])
 
     def on_sync_enable(self, instance, value):
         self.save_properties()
-        self.device.set_sync(
-            encoder_index=self.scale_input,
-            sync_status=True if value == "down" else False
-        )
+        # self.device.set_sync(
+        #     encoder_index=self.scale_input,
+        #     sync_status=True if value == "down" else False
+        # )
 
     @property
     def set_position(self):
