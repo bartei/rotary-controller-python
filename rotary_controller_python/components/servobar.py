@@ -15,9 +15,6 @@ if os.path.exists(kv_file):
 
 
 class ServoBar(BoxLayout):
-    from rotary_controller_python.main import ServoData
-    servo = ObjectProperty(rebind=True, defaultvalue=ServoData())
-
     def __init__(self, *args, **kv):
         super(ServoBar, self).__init__(**kv)
 

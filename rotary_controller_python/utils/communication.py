@@ -6,11 +6,29 @@ import logging
 
 log = logging.getLogger(__file__)
 
+#
+# CONTROL FLAGS
+CONTROL_BIT_ENABLE = 1 << 0
+CONTROL_BIT_RQ_SET_ENCODER = 1 << 1
+CONTROL_BIT_RQ_SYNCHRO_MODE = 1 << 2
+CONTROL_BIT_RQ_INDEX = 1 << 3
+
+STATUS_BIT_READY = 1 << 0
+STATUS_BIT_FORWARD = 1 << 1
+STATUS_BIT_REVERSE = 1 << 2
+STATUS_BIT_ERROR_BAD_RATIO = 1 << 3
+STATUS_BIT_ACK_SET_ENCODER = 1 << 4
+STATUS_BIT_ACK_SYNCHRO_MODE = 1 << 5
+STATUS_BIT_ACK_INDEX_MODE = 1 << 6
+STATUS_BIT_ACK_JOG_MODE = 1 << 7
+STATUS_BIT_INDEX_MODE = 1 << 8
+STATUS_BIT_SYNCHRO_MODE = 1 << 9
+
 # Register addresses as per the current firmware version
-REG_MODE = 0
-REG_CURRENT_POSITION = 2
-REG_FINAL_POSITION = 4
-REG_UNUSED_6 = 6
+REG_CONTROL = 0
+REG_STATUS = 2
+REG_CURRENT_POSITION = 4
+REG_FINAL_POSITION = 6
 REG_UNUSED_8 = 8
 REG_ENCODER_PRESET_INDEX = 10
 REG_ENCODER_PRESET_VALUE = 12
@@ -47,6 +65,21 @@ MODE_SYNCHRO_BAD_RATIO = 101
 MODE_DISCONNECTED = 255
 
 
+def set_bit(var: int, mask: int, value: bool) -> int:
+    """
+    Sets the bit identified by @mask to the @value specified in the @var
+    """
+    if value is True:
+        var = var | mask
+    else:
+        var = var & ~mask
+    return var
+
+
+def get_bit(var: int, mask: int) -> bool:
+    return (var & mask) == mask
+
+
 class DeviceManager:
     def __init__(self, serial_device="/dev/serial0", baudrate=115200, address=17, debug=False):
         self.device: minimalmodbus.Instrument = minimalmodbus.Instrument(
@@ -59,9 +92,9 @@ class DeviceManager:
         self.last_error = ""
 
     @property
-    def mode(self):
+    def status(self):
         try:
-            value = self.device.read_register(REG_MODE)
+            value = self.device.read_register(REG_STATUS)
             self.connected = True
             return value
         except Exception as e:
@@ -70,10 +103,30 @@ class DeviceManager:
             print(self.last_error)
             return 0
 
-    @mode.setter
-    def mode(self, value: int):
+    @property
+    def enable(self):
+        return get_bit(self.control, CONTROL_BIT_ENABLE)
+
+    @enable.setter
+    def enable(self, value):
+        self.control = set_bit(self.control, CONTROL_BIT_ENABLE, value)
+
+    @property
+    def control(self):
         try:
-            self.device.write_register(REG_MODE, value)
+            value = self.device.read_register(REG_CONTROL)
+            self.connected = True
+            return value
+        except Exception as e:
+            self.connected = False
+            self.last_error = e.__str__()
+            print(self.last_error)
+            return 0
+
+    @control.setter
+    def control(self, value: int):
+        try:
+            self.device.write_register(REG_CONTROL, value)
             self.connected = True
         except Exception as e:
             self.connected = False
@@ -121,7 +174,7 @@ class DeviceManager:
     @current_position.setter
     def current_position(self, value):
         try:
-            if self.mode != 0:
+            if self.control != 0:
                 raise Exception("Current position can be changed only if mode is 0")
 
             self.device.write_long(

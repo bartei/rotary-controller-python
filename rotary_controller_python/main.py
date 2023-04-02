@@ -1,3 +1,4 @@
+import time
 from decimal import Decimal
 import logging
 
@@ -7,7 +8,9 @@ from kivy.event import EventDispatcher
 from kivy.properties import StringProperty, NumericProperty, ConfigParserProperty, BooleanProperty, ListProperty, ObjectProperty
 from kivy.uix.boxlayout import BoxLayout
 from rotary_controller_python.components.appsettings import config
-from rotary_controller_python.utils.communication import device, configure_device
+from rotary_controller_python.servo_data import ServoData
+from rotary_controller_python.status_data import StatusData
+from rotary_controller_python.utils.communication import DeviceManager
 from rotary_controller_python.utils import communication
 
 log = logging.getLogger(__file__)
@@ -46,14 +49,24 @@ def input_class_factory():
 
             @set_position.setter
             def set_position(self, value):
+                from kivy.app import App
                 try:
+                    app = App.get_running_app()
+                    device: DeviceManager = app.device
+                    if device is None:
+                        return
+
                     log.warning(f"Set New position to: {value} for {self.scale_input}")
                     decimal_value = Decimal(self.ratio_den) / Decimal(self.ratio_num) * Decimal(value)
                     int_value = int(decimal_value)
                     log.warning(f"Raw value set to to: {int_value}")
                     device.encoder_preset_index = self.scale_input
                     device.encoder_preset_value = int_value
-                    device.mode = communication.MODE_SET_ENCODER
+                    device.control = communication.set_bit(device.control, communication.CONTROL_BIT_RQ_SET_ENCODER, True)
+                    while not communication.get_bit(device.status, communication.STATUS_BIT_ACK_SET_ENCODER):
+                        time.sleep(0.1)
+                    device.control = communication.set_bit(device.control, communication.CONTROL_BIT_RQ_SET_ENCODER, False)
+
                 except Exception as e:
                     log.exception(e.__str__())
                     self.position = 9999.99
@@ -64,41 +77,6 @@ def input_class_factory():
 
 
 classes = input_class_factory()
-
-
-class ServoData(EventDispatcher):
-    name = ConfigParserProperty(defaultvalue="R", section="rotary", key="name", config=config, val_type=str)
-    min_speed = ConfigParserProperty(defaultvalue="150.0", section="rotary", key="min_speed", config=config, val_type=float)
-    max_speed = ConfigParserProperty(defaultvalue="3600.0", section="rotary", key="max_speed", config=config, val_type=float)
-    acceleration = ConfigParserProperty(defaultvalue="5.0", section="rotary", key="acceleration", config=config, val_type=float)
-    ratio_num = ConfigParserProperty(defaultvalue="360", section="rotary", key="ratio_num", config=config, val_type=int)
-    ratio_den = ConfigParserProperty(defaultvalue="1600", section="rotary", key="ratio_den", config=config, val_type=int)
-
-    current_position = NumericProperty(0.0)
-    desired_position = NumericProperty(0.0)
-
-    # Offset to add to the sync and index calculated values
-    offset = ConfigParserProperty(defaultvalue="0.0", section="rotary", key="offset", config=config, val_type=float)
-    divisions = ConfigParserProperty(defaultvalue="0", section="rotary", key="divisions", config=config, val_type=int)
-    index = ConfigParserProperty(defaultvalue="0", section="rotary", key="index", config=config, val_type=int)
-    enable = BooleanProperty(False)
-
-    # def on_index(self, instance, value):
-    #     self.index = self.index % self.divisions
-
-    def on_desired_position(self, instance, value):
-        try:
-            log.warning(f"Update desired position to: {value}")
-            device.min_speed = self.min_speed
-            device.max_speed = self.max_speed
-            device.acceleration = self.acceleration
-            device.ratio_num = self.ratio_num
-            device.ratio_den = self.ratio_den
-            device.mode = communication.MODE_HALT
-            # Send the destination converted to steps
-            device.final_position = int(value / self.ratio_num * self.ratio_den)
-        except Exception as e:
-            log.exception(e.__str__())
 
 
 class Home(BoxLayout):
@@ -121,7 +99,8 @@ class MainApp(App):
     ratio_num = ConfigParserProperty(defaultvalue="360", section="rotary", key="ratio_num", config=config, val_type=int)
     ratio_den = ConfigParserProperty(defaultvalue="1600", section="rotary", key="ratio_den", config=config, val_type=int)
 
-    # X Axis properties
+    serial_port = ConfigParserProperty(defaultvalue="/dev/serial0", section="device", key="serial_port", config=config)
+    # Scales data
     data = ListProperty([
         classes[0](),
         classes[1](),
@@ -129,7 +108,8 @@ class MainApp(App):
         classes[3](),
     ])
 
-    servo = ObjectProperty(ServoData())
+    status = StatusData()
+    servo = ServoData()
 
     desired_position = NumericProperty(0.0)
     # current_position = NumericProperty(0.0)
@@ -161,6 +141,10 @@ class MainApp(App):
     device = None
     home = None
 
+    task_update_scales = None
+    task_update_control = None
+    device_lock = False
+
     def on_current_units(self, instance, value):
         if value == "in":
             self.pos_format = self.imperial_pos_format
@@ -171,29 +155,41 @@ class MainApp(App):
             self.speed_format = self.metric_speed_format
             self.unit_factor = 1
 
-    # def update_desired_position(self, *args, **kwargs):
-    #     if not self.divisions > 0:
-    #         self.divisions = 1
-    #
-    #     self.desired_position = 360 / self.divisions * self.division_index + self.division_offset
-    #     return True
-
-    def update(self, *args, **kwargs):
-        if self.device is not None:
-            scales = self.device.scales
-
-            for count, scale in enumerate(scales):
+    def update_scales(self, *args):
+        if self.device is not None and self.device.connected:
+            self.connected = True
+            for count, scale in enumerate(self.device.scales):
                 self.data[count].update_raw_scale = scale
 
-            if not self.device.connected:
-                self.mode = communication.MODE_DISCONNECTED
-            else:
-                self.mode = self.device.mode
+            self.servo.current_position = self.device.current_position
         else:
-            for axis in self.data:
-                axis.update_raw_scale = 100
+            try:
+                self.device = DeviceManager(
+                    serial_device=self.serial_port,
+                    baudrate=115200,
+                    address=17
+                )
+                status = self.device.status
+                if not self.device.connected:
+                    raise Exception("No Connection")
 
-            self.mode = communication.MODE_DISCONNECTED
+                self.device.ratio_num = self.ratio_num
+                self.device.ratio_den = self.ratio_den
+                self.device.acceleration = self.acceleration
+                self.device.max_speed = self.max_speed
+                self.device.min_speed = self.min_speed
+                self.connected = True
+                log.warning(f"Device connection: {self.device.connected}")
+                self.task_update_scales.timeout = 1.0 / 25
+            except Exception as e:
+                self.connected = False
+                logging.error(e.__str__())
+                self.device = None
+                self.task_update_scales.timeout = 2.0
+
+    def update_control(self, *args):
+        if self.device is not None:
+            self.status.update(self.device.status)
 
     def on_ratio_num(self, instance, value):
         self.device.ratio_num = value
@@ -210,16 +206,6 @@ class MainApp(App):
     def on_max_speed(self, instance, value):
         self.device.max_speed = float(value)
 
-    def request_syn_mode(self):
-        if self.connected:
-            self.device.syn_ratio_num = self.syn_ratio_num
-            self.device.syn_ratio_den = self.syn_ratio_den
-            self.device.mode = communication.MODE_SYNCHRO_INIT
-
-    def request_index_mode(self):
-        if self.connected:
-            self.device.mode = communication.MODE_INDEX_INIT
-
     def on_syn_ratio_num(self, instance, value):
         self.device.syn_ratio_num = value
 
@@ -228,25 +214,6 @@ class MainApp(App):
 
     def blinker(self, *args):
         self.blink = not self.blink
-
-    def configure_device(self, *args):
-        from rotary_controller_python.utils.communication import device
-        configure_device()
-
-        if device is None:
-            # Retry in 5 seconds if the connection failed
-            Clock.schedule_once(self.configure_device, timeout=5)
-            log.warning("Retrying to connect in 5 seconds")
-            self.connected = False
-        else:
-            self.device = device
-            self.device.ratio_num = self.ratio_num
-            self.device.ratio_den = self.ratio_den
-            self.device.acceleration = self.acceleration
-            self.device.max_speed = self.max_speed
-            self.device.min_speed = self.min_speed
-            self.connected = self.device.connected
-            log.warning(f"Device connection: {self.device.connected}")
 
     def build(self):
         self.home = Home()
@@ -260,9 +227,14 @@ class MainApp(App):
             self.unit_factor = 25.4
 
         # Configure the modbus communication
-        self.configure_device()
+        # self.configure_device()
+        # Print out values for formattings
+        log.info(f"Current imperial_pos_format: {self.imperial_pos_format}")
+        log.info(f"Current imperial_speed_format: {self.imperial_speed_format}")
+        log.info(f"Current angle_format: {self.angle_format}")
 
-        Clock.schedule_interval(self.update, 1.0 / 25)
+        self.task_update_scales = Clock.schedule_interval(self.update_scales, 1.0 / 25)
+        self.task_update_control = Clock.schedule_interval(self.update_control, 1.0 / 5)
         Clock.schedule_interval(self.blinker, 1.0 / 4)
         return self.home
 

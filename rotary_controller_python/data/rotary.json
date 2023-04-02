@@ -4,6 +4,13 @@
         "title": "Rotary"
     },
     {
+        "type": "string",
+        "title": "Servo Axis Name",
+        "desc": "Servo Axis name shown on the home page",
+        "section": "rotary",
+        "key": "name"
+    },
+    {
         "type": "numeric",
         "title": "Minimum Speed",
         "desc": "Minimum speed in deg/s",
