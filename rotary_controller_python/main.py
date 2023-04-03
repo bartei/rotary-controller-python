@@ -46,14 +46,19 @@ def input_class_factory():
 
             @set_position.setter
             def set_position(self, value):
+                from kivy.app import App
+                app = App.get_running_app()
                 try:
+                    if app.device is None:
+                        return
+
                     log.warning(f"Set New position to: {value} for {self.scale_input}")
                     decimal_value = Decimal(self.ratio_den) / Decimal(self.ratio_num) * Decimal(value)
                     int_value = int(decimal_value)
                     log.warning(f"Raw value set to to: {int_value}")
-                    device.encoder_preset_index = self.scale_input
-                    device.encoder_preset_value = int_value
-                    device.mode = communication.MODE_SET_ENCODER
+                    app.device.encoder_preset_index = self.scale_input
+                    app.device.encoder_preset_value = int_value
+                    app.device.mode = communication.MODE_SET_ENCODER
                 except Exception as e:
                     log.exception(e.__str__())
                     self.position = 9999.99
@@ -83,22 +88,30 @@ class ServoData(EventDispatcher):
     index = ConfigParserProperty(defaultvalue="0", section="rotary", key="index", config=config, val_type=int)
     enable = BooleanProperty(False)
 
-    # def on_index(self, instance, value):
-    #     self.index = self.index % self.divisions
-
     def on_desired_position(self, instance, value):
+        from kivy.app import App
+        app = App.get_running_app()
+        if app.device is None:
+            return
         try:
             log.warning(f"Update desired position to: {value}")
-            device.min_speed = self.min_speed
-            device.max_speed = self.max_speed
-            device.acceleration = self.acceleration
-            device.ratio_num = self.ratio_num
-            device.ratio_den = self.ratio_den
-            device.mode = communication.MODE_HALT
+            app.device.min_speed = self.min_speed
+            app.device.max_speed = self.max_speed
+            app.device.acceleration = self.acceleration
+            app.device.ratio_num = self.ratio_num
+            app.device.ratio_den = self.ratio_den
+            app.device.mode = communication.MODE_HALT
             # Send the destination converted to steps
-            device.final_position = int(value / self.ratio_num * self.ratio_den)
+            app.device.final_position = int(value / self.ratio_num * self.ratio_den)
+            app.device.mode = communication.MODE_INDEX_INIT
         except Exception as e:
             log.exception(e.__str__())
+
+    def on_index(self, instance, value):
+        if self.divisions != 0:
+            self.desired_position = 360.0 / self.divisions * self.index + self.offset
+        else:
+            log.error("Divisions must be != 0")
 
 
 class Home(BoxLayout):
@@ -129,7 +142,7 @@ class MainApp(App):
         classes[3](),
     ])
 
-    servo = ObjectProperty(ServoData())
+    servo = ServoData()
 
     desired_position = NumericProperty(0.0)
     # current_position = NumericProperty(0.0)
@@ -158,8 +171,11 @@ class MainApp(App):
     current_origin = StringProperty("Origin 0")
     tool = NumericProperty(0)
 
+    serial_port = ConfigParserProperty(defaultvalue="/dev/serial0", section="device", key="serial_port", config=config)
     device = None
     home = None
+
+    task_update = None
 
     def on_current_units(self, instance, value):
         if value == "in":
@@ -171,29 +187,37 @@ class MainApp(App):
             self.speed_format = self.metric_speed_format
             self.unit_factor = 1
 
-    # def update_desired_position(self, *args, **kwargs):
-    #     if not self.divisions > 0:
-    #         self.divisions = 1
-    #
-    #     self.desired_position = 360 / self.divisions * self.division_index + self.division_offset
-    #     return True
-
-    def update(self, *args, **kwargs):
-        if self.device is not None:
-            scales = self.device.scales
-
-            for count, scale in enumerate(scales):
+    def update(self, *args):
+        if self.device is not None and self.device.connected:
+            for count, scale in enumerate(self.device.scales):
                 self.data[count].update_raw_scale = scale
-
-            if not self.device.connected:
-                self.mode = communication.MODE_DISCONNECTED
-            else:
-                self.mode = self.device.mode
+            ratio_den = self.device.ratio_den
+            if ratio_den != 0:
+                self.servo.current_position = self.device.current_position * self.device.ratio_num / ratio_den
         else:
-            for axis in self.data:
-                axis.update_raw_scale = 100
+            try:
+                self.device = communication.DeviceManager(
+                    serial_device=self.serial_port,
+                    baudrate=115200,
+                    address=17
+                )
+                mode = self.device.mode
+                if not self.device.connected:
+                    raise Exception("No Connection")
 
-            self.mode = communication.MODE_DISCONNECTED
+                self.device.ratio_num = self.ratio_num
+                self.device.ratio_den = self.ratio_den
+                self.device.acceleration = self.acceleration
+                self.device.max_speed = self.max_speed
+                self.device.min_speed = self.min_speed
+                self.connected = True
+                log.warning(f"Device connection: {self.device.connected}")
+                self.task_update.timeout = 1.0 / 25
+            except Exception as e:
+                self.connected = False
+                logging.error(e.__str__())
+                self.device = None
+                self.task_update.timeout = 2.0
 
     def on_ratio_num(self, instance, value):
         self.device.ratio_num = value
@@ -229,25 +253,6 @@ class MainApp(App):
     def blinker(self, *args):
         self.blink = not self.blink
 
-    def configure_device(self, *args):
-        from rotary_controller_python.utils.communication import device
-        configure_device()
-
-        if device is None:
-            # Retry in 5 seconds if the connection failed
-            Clock.schedule_once(self.configure_device, timeout=5)
-            log.warning("Retrying to connect in 5 seconds")
-            self.connected = False
-        else:
-            self.device = device
-            self.device.ratio_num = self.ratio_num
-            self.device.ratio_den = self.ratio_den
-            self.device.acceleration = self.acceleration
-            self.device.max_speed = self.max_speed
-            self.device.min_speed = self.min_speed
-            self.connected = self.device.connected
-            log.warning(f"Device connection: {self.device.connected}")
-
     def build(self):
         self.home = Home()
         if self.current_units == "mm":
@@ -259,10 +264,7 @@ class MainApp(App):
             self.speed_format = self.imperial_speed_format
             self.unit_factor = 25.4
 
-        # Configure the modbus communication
-        self.configure_device()
-
-        Clock.schedule_interval(self.update, 1.0 / 25)
+        self.task_update = Clock.schedule_interval(self.update, 1.0 / 25)
         Clock.schedule_interval(self.blinker, 1.0 / 4)
         return self.home
 
