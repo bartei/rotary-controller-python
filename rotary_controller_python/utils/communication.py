@@ -10,7 +10,7 @@ log = logging.getLogger(__file__)
 REG_MODE = 0
 REG_CURRENT_POSITION = 2
 REG_FINAL_POSITION = 4
-REG_UNUSED_6 = 6
+REG_INDEX_DELTA_STEPS = 6
 REG_UNUSED_8 = 8
 REG_ENCODER_PRESET_INDEX = 10
 REG_ENCODER_PRESET_VALUE = 12
@@ -35,8 +35,6 @@ SCALES_COUNT = 4
 
 # Summary of the currently available device modes from the current firmware
 MODE_HALT = 0
-MODE_INDEX = 10
-MODE_INDEX_INIT = 11
 MODE_SYNCHRO = 20
 MODE_SYNCHRO_INIT = 21
 MODE_JOG = 30
@@ -81,27 +79,27 @@ class DeviceManager:
 
     @property
     def scales(self) -> List[int]:
-            result = []
-            try:
-                raw_data = self.device.read_registers(REG_SCALE_1, SCALES_COUNT * 2)
-                self.connected = True
-            except Exception as e:
-                self.connected = False
-                self.last_error = e.__str__()
-                result.append(0)
-                return [0, 0, 0, 0]
+        result = []
+        try:
+            raw_data = self.device.read_registers(REG_SCALE_1, SCALES_COUNT * 2)
+            self.connected = True
+        except Exception as e:
+            self.connected = False
+            self.last_error = e.__str__()
+            result.append(0)
+            return [0, 0, 0, 0]
 
-            raw_byte = bytearray()
-            format = ">"
-            for i in range(SCALES_COUNT):
-                raw_byte.append((raw_data[i*2+1] >> 8) & 255)
-                raw_byte.append((raw_data[i*2+1]) & 255)
-                raw_byte.append((raw_data[i*2] >> 8) & 255)
-                raw_byte.append((raw_data[i*2]) & 255)
-                format += "l"
+        raw_byte = bytearray()
+        format = ">"
+        for i in range(SCALES_COUNT):
+            raw_byte.append((raw_data[i * 2 + 1] >> 8) & 255)
+            raw_byte.append((raw_data[i * 2 + 1]) & 255)
+            raw_byte.append((raw_data[i * 2] >> 8) & 255)
+            raw_byte.append((raw_data[i * 2]) & 255)
+            format += "l"
 
-            result = struct.unpack(format, raw_byte)
-            return result
+        result = struct.unpack(format, raw_byte)
+        return result
 
     @property
     def current_position(self):
@@ -126,6 +124,93 @@ class DeviceManager:
 
             self.device.write_long(
                 REG_CURRENT_POSITION,
+                value,
+                byteorder=minimalmodbus.BYTEORDER_LITTLE_SWAP,
+                signed=True
+            )
+            self.connected = True
+        except Exception as e:
+            self.connected = False
+            self.last_error = e.__str__()
+
+    @property
+    def index_delta_steps(self):
+        try:
+            value = self.device.read_long(
+                REG_INDEX_DELTA_STEPS,
+                byteorder=minimalmodbus.BYTEORDER_LITTLE_SWAP,
+                signed=True
+            )
+            self.connected = True
+            return value
+        except Exception as e:
+            self.connected = False
+            self.last_error = e.__str__()
+            return 0
+
+    @index_delta_steps.setter
+    def index_delta_steps(self, value):
+        try:
+            self.device.write_long(
+                REG_INDEX_DELTA_STEPS,
+                value,
+                byteorder=minimalmodbus.BYTEORDER_LITTLE_SWAP,
+                signed=True
+            )
+            self.connected = True
+        except Exception as e:
+            self.connected = False
+            self.last_error = e.__str__()
+
+    @property
+    def syn_offset(self):
+        try:
+            value = self.device.read_long(
+                REG_SYN_OFFSET,
+                byteorder=minimalmodbus.BYTEORDER_LITTLE_SWAP,
+                signed=True
+            )
+            self.connected = True
+            return value
+        except Exception as e:
+            self.connected = False
+            self.last_error = e.__str__()
+            return 0
+
+    @syn_offset.setter
+    def syn_offset(self, value):
+        try:
+            self.device.write_long(
+                REG_SYN_OFFSET,
+                value,
+                byteorder=minimalmodbus.BYTEORDER_LITTLE_SWAP,
+                signed=True
+            )
+            self.connected = True
+        except Exception as e:
+            self.connected = False
+            self.last_error = e.__str__()
+
+    @property
+    def syn_scale_index(self):
+        try:
+            value = self.device.read_long(
+                REG_SYN_SCALE_INDEX,
+                byteorder=minimalmodbus.BYTEORDER_LITTLE_SWAP,
+                signed=True
+            )
+            self.connected = True
+            return value
+        except Exception as e:
+            self.connected = False
+            self.last_error = e.__str__()
+            return 0
+
+    @syn_scale_index.setter
+    def syn_scale_index(self, value):
+        try:
+            self.device.write_long(
+                REG_SYN_SCALE_INDEX,
                 value,
                 byteorder=minimalmodbus.BYTEORDER_LITTLE_SWAP,
                 signed=True
@@ -189,7 +274,6 @@ class DeviceManager:
         except Exception as e:
             self.connected = False
             self.last_error = e.__str__()
-
 
     @property
     def max_speed(self):
