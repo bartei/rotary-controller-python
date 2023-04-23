@@ -22,8 +22,7 @@ if os.path.exists(kv_file):
 class CoordBar(BoxLayout):
     formatted_axis_speed = NumericProperty(0.000)
 
-    from rotary_controller_python.main import classes
-    data = ObjectProperty(rebind=True, defaultvalue=classes[0]())
+    data = ObjectProperty(rebind=True, defaultvalue=app.data[0])
 
     def __init__(self, *args, **kv):
         super(CoordBar, self).__init__(**kv)

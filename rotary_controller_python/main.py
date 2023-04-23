@@ -4,10 +4,9 @@ import logging
 from kivy.app import App
 from kivy.clock import Clock
 from kivy.event import EventDispatcher
-from kivy.properties import StringProperty, NumericProperty, ConfigParserProperty, BooleanProperty, ListProperty, ObjectProperty
+from kivy.properties import StringProperty, NumericProperty, ConfigParserProperty, BooleanProperty, ListProperty
 from kivy.uix.boxlayout import BoxLayout
 from rotary_controller_python.components.appsettings import config
-from rotary_controller_python.utils.communication import device, configure_device
 from rotary_controller_python.utils import communication
 
 log = logging.getLogger(__file__)
@@ -28,6 +27,37 @@ def input_class_factory():
             sync_den = ConfigParserProperty(defaultvalue=100, section=section, key="sync_den", config=config, val_type=int)
             sync_enable = ConfigParserProperty(defaultvalue="normal", section=section, key="sync_enable", config=config, val_type=str)
             position = NumericProperty(123.123)
+
+            def on_sync_enable(self, instance, value):
+                app = App.get_running_app()
+                if value == "down":
+                    for data_instance in app.data:
+                        if data_instance.scale_input != instance.scale_input:
+                            data_instance.sync_enable = "normal"
+                        else:
+                            pass
+
+                    app.device: communication.DeviceManager
+                    app.device.syn_scale_index = instance.scale_input
+                    app.device.syn_ratio_num = instance.sync_num
+                    app.device.syn_ratio_den = instance.sync_den
+                    app.device.mode = communication.MODE_SYNCHRO_INIT
+                    log.info(f"Setting syn scale index to: {instance.scale_input}")
+                else:
+                    app.device.mode = communication.MODE_HALT
+
+            def on_sync_num(self, instance, value):
+                app = App.get_running_app()
+                if instance.sync_enable == "down":
+                    app.device.syn_ratio_num = value
+                    app.device.mode = communication.MODE_SYNCHRO_INIT
+
+            def on_sync_den(self, instance, value):
+                app = App.get_running_app()
+                if instance.sync_enable == "down":
+                    app.device.syn_ratio_den = value
+                    app.device.mode = communication.MODE_SYNCHRO_INIT
+
 
             @property
             def update_raw_scale(self):
@@ -100,18 +130,28 @@ class ServoData(EventDispatcher):
             app.device.acceleration = self.acceleration
             app.device.ratio_num = self.ratio_num
             app.device.ratio_den = self.ratio_den
-            app.device.mode = communication.MODE_HALT
+            # app.device.mode = communication.MODE_HALT
+
             # Send the destination converted to steps
-            app.device.final_position = int(value / self.ratio_num * self.ratio_den)
-            app.device.mode = communication.MODE_INDEX_INIT
+            current_position = app.device.current_position * self.ratio_num / self.ratio_den
+            final_position = value
+            delta = final_position - current_position
+            if abs(delta) > 180.0:
+                delta = 360 - delta
+
+            index_delta_steps = int(delta / self.ratio_num * self.ratio_den)
+            app.device.index_delta_steps = index_delta_steps
+            app.device.mode = communication.MODE_SYNCHRO_INIT
         except Exception as e:
             log.exception(e.__str__())
+        return True
 
     def on_index(self, instance, value):
         if self.divisions != 0:
             self.desired_position = 360.0 / self.divisions * self.index + self.offset
         else:
             log.error("Divisions must be != 0")
+        return True
 
 
 class Home(BoxLayout):
