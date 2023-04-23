@@ -1,113 +1,31 @@
 from decimal import Decimal
-import logging
+
+from kivy.uix.popup import Popup
+from loguru import logger as log
 
 from kivy.app import App
 from kivy.clock import Clock
 from kivy.event import EventDispatcher
 from kivy.properties import StringProperty, NumericProperty, ConfigParserProperty, BooleanProperty, ListProperty
 from kivy.uix.boxlayout import BoxLayout
-from rotary_controller_python.components.appsettings import config
+from rotary_controller_python.components.appsettings import config, AppSettings
 from rotary_controller_python.utils import communication
 
-log = logging.getLogger(__file__)
+from rotary_controller_python.components.appsettings import config
+from rotary_controller_python.input_class import InputClass
 
 
-def input_class_factory():
-    input_classes = []
-
-    for item in range(4):
-        section = f"input{item + 1}"
-
-        class InputClass(EventDispatcher):
-            scale_input = item
-            axis_name = ConfigParserProperty(defaultvalue="X", section=section, key="axis_name", config=config, val_type=str)
-            ratio_num = ConfigParserProperty(defaultvalue=360, section=section, key="ratio_num", config=config, val_type=int)
-            ratio_den = ConfigParserProperty(defaultvalue=1, section=section, key="ratio_den", config=config, val_type=int)
-            sync_num = ConfigParserProperty(defaultvalue=1, section=section, key="sync_num", config=config, val_type=int)
-            sync_den = ConfigParserProperty(defaultvalue=100, section=section, key="sync_den", config=config, val_type=int)
-            sync_enable = ConfigParserProperty(defaultvalue="normal", section=section, key="sync_enable", config=config, val_type=str)
-            position = NumericProperty(123.123)
-
-            def on_sync_enable(self, instance, value):
-                app = App.get_running_app()
-                if value == "down":
-                    for data_instance in app.data:
-                        if data_instance.scale_input != instance.scale_input:
-                            data_instance.sync_enable = "normal"
-                        else:
-                            pass
-
-                    app.device: communication.DeviceManager
-                    app.device.syn_scale_index = instance.scale_input
-                    app.device.syn_ratio_num = instance.sync_num
-                    app.device.syn_ratio_den = instance.sync_den
-                    app.device.mode = communication.MODE_SYNCHRO_INIT
-                    log.info(f"Setting syn scale index to: {instance.scale_input}")
-                else:
-                    app.device.mode = communication.MODE_HALT
-
-            def on_sync_num(self, instance, value):
-                app = App.get_running_app()
-                if instance.sync_enable == "down":
-                    app.device.syn_ratio_num = value
-                    app.device.mode = communication.MODE_SYNCHRO_INIT
-
-            def on_sync_den(self, instance, value):
-                app = App.get_running_app()
-                if instance.sync_enable == "down":
-                    app.device.syn_ratio_den = value
-                    app.device.mode = communication.MODE_SYNCHRO_INIT
-
-
-            @property
-            def update_raw_scale(self):
-                return 0
-
-            @update_raw_scale.setter
-            def update_raw_scale(self, value):
-                if self.ratio_den != 0:
-                    self.position = float(value) * float(self.ratio_num) / float(self.ratio_den)
-                else:
-                    self.position = 0
-
-            @property
-            def set_position(self):
-                return 0
-
-            @set_position.setter
-            def set_position(self, value):
-                from kivy.app import App
-                app = App.get_running_app()
-                try:
-                    if app.device is None:
-                        return
-
-                    log.warning(f"Set New position to: {value} for {self.scale_input}")
-                    decimal_value = Decimal(self.ratio_den) / Decimal(self.ratio_num) * Decimal(value)
-                    int_value = int(decimal_value)
-                    log.warning(f"Raw value set to to: {int_value}")
-                    app.device.encoder_preset_index = self.scale_input
-                    app.device.encoder_preset_value = int_value
-                    app.device.mode = communication.MODE_SET_ENCODER
-                except Exception as e:
-                    log.exception(e.__str__())
-                    self.position = 9999.99
-
-        input_classes.append(InputClass)
-
-    return input_classes
-
-
-classes = input_class_factory()
-
-
-class ServoData(EventDispatcher):
+class ServoClass(EventDispatcher):
     name = ConfigParserProperty(defaultvalue="R", section="rotary", key="name", config=config, val_type=str)
-    min_speed = ConfigParserProperty(defaultvalue="150.0", section="rotary", key="min_speed", config=config, val_type=float)
-    max_speed = ConfigParserProperty(defaultvalue="3600.0", section="rotary", key="max_speed", config=config, val_type=float)
-    acceleration = ConfigParserProperty(defaultvalue="5.0", section="rotary", key="acceleration", config=config, val_type=float)
+    min_speed = ConfigParserProperty(defaultvalue="150.0", section="rotary", key="min_speed", config=config,
+                                     val_type=float)
+    max_speed = ConfigParserProperty(defaultvalue="3600.0", section="rotary", key="max_speed", config=config,
+                                     val_type=float)
+    acceleration = ConfigParserProperty(defaultvalue="5.0", section="rotary", key="acceleration", config=config,
+                                        val_type=float)
     ratio_num = ConfigParserProperty(defaultvalue="360", section="rotary", key="ratio_num", config=config, val_type=int)
-    ratio_den = ConfigParserProperty(defaultvalue="1600", section="rotary", key="ratio_den", config=config, val_type=int)
+    ratio_den = ConfigParserProperty(defaultvalue="1600", section="rotary", key="ratio_den", config=config,
+                                     val_type=int)
 
     current_position = NumericProperty(0.0)
     desired_position = NumericProperty(0.0)
@@ -159,30 +77,36 @@ class Home(BoxLayout):
 
 
 class MainApp(App):
-    display_color = ConfigParserProperty(defaultvalue="#ffffffff", section="formatting", key="display_color", config=config)
+    display_color = ConfigParserProperty(defaultvalue="#ffffffff", section="formatting", key="display_color",
+                                         config=config)
     metric_pos_format = ConfigParserProperty(defaultvalue="{:+0.3f}", section="formatting", key="metric", config=config)
-    metric_speed_format = ConfigParserProperty(defaultvalue="{:+0.3f}", section="formatting", key="metric_speed", config=config)
-    imperial_pos_format = ConfigParserProperty(defaultvalue="{:+0.4f}", section="formatting", key="imperial", config=config)
-    imperial_speed_format = ConfigParserProperty(defaultvalue="{:+0.3f}", section="formatting", key="imperial_speed", config=config)
+    metric_speed_format = ConfigParserProperty(defaultvalue="{:+0.3f}", section="formatting", key="metric_speed",
+                                               config=config)
+    imperial_pos_format = ConfigParserProperty(defaultvalue="{:+0.4f}", section="formatting", key="imperial",
+                                               config=config)
+    imperial_speed_format = ConfigParserProperty(defaultvalue="{:+0.3f}", section="formatting", key="imperial_speed",
+                                                 config=config)
     angle_format = ConfigParserProperty(defaultvalue="{:+0.3f}", section="formatting", key="angle", config=config)
     pos_format = StringProperty("{}")
     speed_format = StringProperty("{}")
 
-    min_speed = ConfigParserProperty(defaultvalue="150.0", section="rotary", key="min_speed", config=config, val_type=float)
-    max_speed = ConfigParserProperty(defaultvalue="3600.0", section="rotary", key="max_speed", config=config, val_type=float)
-    acceleration = ConfigParserProperty(defaultvalue="5.0", section="rotary", key="acceleration", config=config, val_type=float)
+    min_speed = ConfigParserProperty(defaultvalue="150.0", section="rotary", key="min_speed", config=config,
+                                     val_type=float)
+    max_speed = ConfigParserProperty(defaultvalue="3600.0", section="rotary", key="max_speed", config=config,
+                                     val_type=float)
+    acceleration = ConfigParserProperty(defaultvalue="5.0", section="rotary", key="acceleration", config=config,
+                                        val_type=float)
     ratio_num = ConfigParserProperty(defaultvalue="360", section="rotary", key="ratio_num", config=config, val_type=int)
-    ratio_den = ConfigParserProperty(defaultvalue="1600", section="rotary", key="ratio_den", config=config, val_type=int)
+    ratio_den = ConfigParserProperty(defaultvalue="1600", section="rotary", key="ratio_den", config=config,
+                                     val_type=int)
 
-    # X Axis properties
     data = ListProperty([
-        classes[0](),
-        classes[1](),
-        classes[2](),
-        classes[3](),
+        InputClass(0),
+        InputClass(1),
+        InputClass(2),
+        InputClass(3),
     ])
-
-    servo = ServoData()
+    servo = ServoClass()
 
     desired_position = NumericProperty(0.0)
     # current_position = NumericProperty(0.0)
@@ -205,7 +129,8 @@ class MainApp(App):
     blink = BooleanProperty(False)
     connected = BooleanProperty(False)
 
-    current_units = ConfigParserProperty(defaultvalue="mm", section="global", key="current_units", config=config, val_type=str)
+    current_units = ConfigParserProperty(defaultvalue="mm", section="global", key="current_units", config=config,
+                                         val_type=str)
     abs_inc = ConfigParserProperty(defaultvalue="ABS", section="global", key="abs_inc", config=config, val_type=str)
     unit_factor = NumericProperty(1.0)
     current_origin = StringProperty("Origin 0")
@@ -216,6 +141,11 @@ class MainApp(App):
     home = None
 
     task_update = None
+
+    def open_custom_settings(self):
+        settings = AppSettings()
+        popup = Popup(title='Custom Settings', content=settings, size_hint=(0.9, 0.9))
+        popup.open()
 
     def on_current_units(self, instance, value):
         if value == "in":
@@ -255,7 +185,7 @@ class MainApp(App):
                 self.task_update.timeout = 1.0 / 25
             except Exception as e:
                 self.connected = False
-                logging.error(e.__str__())
+                log.error(e.__str__())
                 self.device = None
                 self.task_update.timeout = 2.0
 
@@ -273,22 +203,6 @@ class MainApp(App):
 
     def on_max_speed(self, instance, value):
         self.device.max_speed = float(value)
-
-    def request_syn_mode(self):
-        if self.connected:
-            self.device.syn_ratio_num = self.syn_ratio_num
-            self.device.syn_ratio_den = self.syn_ratio_den
-            self.device.mode = communication.MODE_SYNCHRO_INIT
-
-    def request_index_mode(self):
-        if self.connected:
-            self.device.mode = communication.MODE_INDEX_INIT
-
-    def on_syn_ratio_num(self, instance, value):
-        self.device.syn_ratio_num = value
-
-    def on_syn_ratio_den(self, instance, value):
-        self.device.syn_ratio_den = value
 
     def blinker(self, *args):
         self.blink = not self.blink
