@@ -2,8 +2,7 @@ import os.path
 
 from kivy.config import ConfigParser
 from kivy.lang import Builder
-from kivy.uix.popup import Popup
-from kivy.uix.settings import Settings, SettingsWithSidebar
+from kivy.uix.settings import SettingsWithSidebar
 from loguru import logger as log
 
 INPUTS_COUNT = 4

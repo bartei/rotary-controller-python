@@ -1,12 +1,9 @@
-import logging
 import time
-import ctypes
 
 import minimalmodbus
 import serial
 
-logging.basicConfig()
-log = logging.getLogger(__file__)
+from loguru import logger as log
 
 
 adam = minimalmodbus.Instrument(

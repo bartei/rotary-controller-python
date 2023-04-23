@@ -1,14 +1,12 @@
-import logging
 import os
 
 from kivy.lang import Builder
 from kivy.uix.behaviors import ButtonBehavior
 from kivy.uix.boxlayout import BoxLayout
-from kivy.uix.togglebutton import ToggleButton
 from kivy.properties import BooleanProperty, StringProperty, ColorProperty
 
+from loguru import logger as log
 
-log = logging.getLogger(__file__)
 kv_file = os.path.join(os.path.dirname(__file__), __file__.replace(".py", ".kv"))
 if os.path.exists(kv_file):
     log.info(f"Loading KV file: {kv_file}")

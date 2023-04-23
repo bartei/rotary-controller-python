@@ -2,9 +2,8 @@ import struct
 from typing import List
 
 import minimalmodbus
-import logging
+from loguru import logger as log
 
-log = logging.getLogger(__file__)
 
 # Register addresses as per the current firmware version
 REG_MODE = 0

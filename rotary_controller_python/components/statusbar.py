@@ -1,10 +1,9 @@
 import os
-import logging
 
 from kivy.uix.boxlayout import BoxLayout
 from kivy.lang import Builder
+from loguru import logger as log
 
-log = logging.getLogger(__file__)
 kv_file = os.path.join(os.path.dirname(__file__), __file__.replace(".py", ".kv"))
 
 if os.path.exists(kv_file):
