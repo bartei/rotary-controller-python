@@ -1,17 +1,16 @@
-import logging
 import os
 import time
 import collections
 
 from decimal import Decimal
 
+from loguru import logger as log
 from kivy.clock import Clock
 from kivy.lang import Builder
 from kivy.properties import NumericProperty, ObjectProperty
 from kivy.uix.boxlayout import BoxLayout
 from kivy.app import App
 
-log = logging.getLogger(__file__)
 app = App.get_running_app()
 kv_file = os.path.join(os.path.dirname(__file__), __file__.replace(".py", ".kv"))
 if os.path.exists(kv_file):

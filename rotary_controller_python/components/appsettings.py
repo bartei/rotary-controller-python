@@ -2,52 +2,35 @@ import os.path
 
 from kivy.config import ConfigParser
 from kivy.lang import Builder
-from kivy.uix.popup import Popup
-from kivy.uix.settings import Settings
-import logging
+from kivy.uix.settings import SettingsWithSidebar
+from loguru import logger as log
 
 INPUTS_COUNT = 4
 
-log = logging.getLogger(__file__)
 kv_file = os.path.join(os.path.dirname(__file__), __file__.replace(".py", ".kv"))
 if os.path.exists(kv_file):
     log.info(f"Loading KV file: {kv_file}")
     Builder.load_file(kv_file)
 
+config_path = os.path.abspath(
+    os.path.join(
+        os.path.dirname(__file__),
+        "..",
+        "..",
+        "config.ini"
+    )
+)
 config = ConfigParser()
-config.read(os.path.dirname(__file__) + "/../config.ini")
+config.read(config_path)
 
+sections = [f"input{item}" for item in range(INPUTS_COUNT)]
 
-# def generate_input_defaults(my_config: ConfigParser):
-#     my_config.setdefaults(
-#         section="formatting",
-#         keyvalues={
-#             "angle": "{:0.2f}"
-#         }
-#     )
-#     my_config.setdefaults(
-#         section="rotary",
-#         keyvalues={
-#             "divisions": 10
-#         }
-#     )
-#
-#
-#     for item in range(INPUTS_COUNT):
-#         my_config.setdefaults(
-#             section=f"input{item+1}",
-#             keyvalues={
-#                 "axis_name": "X",
-#                 "ratio_num": 1,
-#                 "ratio_den": 100,
-#                 "sync_num": 1,
-#                 "sync_den": 100,
-#                 "sync_enable": "normal",
-#             }
-#         )
-#
-#
-# generate_input_defaults(config)
+# Check if the sections exist and add them if they don't
+for section in sections:
+    if not config.has_section(section):
+        config.add_section(section)
+
+config.write()
 
 
 def generate_input_json() -> str:
@@ -55,10 +38,10 @@ def generate_input_json() -> str:
 
     result_dict = []
     for item in range(INPUTS_COUNT):
-        section = f"input{item+1}"
+        section = f"input{item}"
         result_dict.append({
             "type": "title",
-            "title": f"Input {item+1}"
+            "title": f"Input {item}"
         })
         result_dict.append({
             "type": "string",
@@ -86,18 +69,22 @@ def generate_input_json() -> str:
     return result_json
 
 
-class AppSettings(Popup):
-    settings = None
-
+class AppSettings(SettingsWithSidebar):
     def __init__(self, **kwargs):
         super().__init__(**kwargs)
-        self.settings = Settings()
-        self.settings.add_json_panel("Units", config, "data/units.json")
-        self.settings.add_json_panel("Inputs", config, data=generate_input_json())
-        self.settings.add_json_panel("Rotary", config, "data/rotary.json")
-        self.settings.add_kivy_panel()
-        self.settings.bind(on_close=self.close)
-        self.add_widget(self.settings)
+        data_path = os.path.abspath(
+            os.path.join(
+                os.path.dirname(__file__),
+                "..",
+                "data"
+            )
+        )
+        self.add_json_panel("Units", config, os.path.join(data_path, "units.json"))
+        self.add_json_panel("Inputs", config, data=generate_input_json())
+        self.add_json_panel("Rotary", config, os.path.join(data_path, "rotary.json"))
+        self.add_kivy_panel()
+        self.bind(on_close=self.close)
+        # self.add_widget(self.settings)
 
     def close(self, *args, **kv):
-        self.dismiss()
+        self.parent.parent.parent.dismiss()

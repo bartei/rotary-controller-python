@@ -3,10 +3,7 @@ from typing import Callable, Dict
 
 import minimalmodbus
 import cachetools.func
-import logging
-
-
-log = logging.getLogger(__file__)
+from loguru import logger as log
 
 
 def bits_to_dict(value, structure_class: Callable):
