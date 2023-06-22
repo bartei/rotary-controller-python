@@ -2,6 +2,12 @@
 
 <!--next-version-placeholder-->
 
+## v0.1.5 (2023-06-22)
+
+### Fix
+
+* Wip synchro ([`5de6dd7`](https://gitlab.com/bartei/rotary-controller-python/-/commit/5de6dd793363515aba16d03612af5f2b6460406c))
+
 ## v0.1.4 (2023-04-03)
 
 
