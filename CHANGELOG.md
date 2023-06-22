@@ -2,6 +2,15 @@
 
 <!--next-version-placeholder-->
 
+## v0.1.6 (2023-06-22)
+
+### Fix
+
+* Enable pypi ([`ba42a6e`](https://github.com/bartei/rotary-controller-python/commit/ba42a6ecbd3b78d44668095100eb7c3cd1872649))
+* Update packages and release ([`e9d7b56`](https://github.com/bartei/rotary-controller-python/commit/e9d7b56c592256cdbf565530c1a431b161146e20))
+* Log handling with loguru ([`4239c7c`](https://github.com/bartei/rotary-controller-python/commit/4239c7cd76042e94aae7d8445a3f04d47d82b9f6))
+* Proper config handling for servo and axis bars ([`d7a5141`](https://github.com/bartei/rotary-controller-python/commit/d7a5141a788fbb59fc7abc8e1b308a5c4b558fa7))
+
 ## v0.1.5 (2023-06-22)
 
 ### Fix
