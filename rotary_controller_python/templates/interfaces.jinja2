@@ -1,0 +1,27 @@
+auto {{ interface.name }}
+
+{% if interface.dhcp == True %}
+# Network interface configured with DHCP
+iface {{ interface.name }} inet dhcp
+{% if interface.hostname != None %}
+    hostname {{ interface.hostname }}
+{% endif %}
+{% if interface.wireless != None and interface.wireless.password != None %}
+    wpa-psk {{ interface.wireless.password }}
+{% endif %}
+{% if interface.wireless != None and interface.wireless.ssid != None %}
+    wpa-ssid {{ interface.wireless.ssid }}
+{% endif %}
+
+{% else %}
+# Network interface configured with Static Address
+iface {{ interface.name }} inet static
+    address {{ interface.address }}
+    gateway {{ interface.gateway }}
+{% if interface.wireless != None and interface.wireless.password != None %}
+    wpa-psk {{ interface.wireless.password }}
+{% endif %}
+{% if interface.wireless != None and interface.wireless.ssid != None %}
+    wpa-ssid {{ interface.wireless.ssid }}
+{% endif %}
+{% endif %}
