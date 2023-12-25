@@ -2,6 +2,7 @@
 #: import Keypad components.keypad
 #: import AppSettings components.appsettings
 #: import LedButton components.ledbutton
+#: import Wifi network.ui.wifi
 
 <ToolbarButton>:
   size_hint_y: None
@@ -18,16 +19,6 @@
   orientation: "vertical"
 
   LedButton:
-    # Alarm
-    font_name: "fonts/Font Awesome 6 Free-Solid-900.otf"
-    font_size: 32
-    height: self.width
-    size_hint_y: None
-    label: "\uf071"
-    checkbox_value: (app.mode >= 100 and app.blink)
-#    on_release: Factory.AppSettings().open()
-
-  LedButton:
     # Ready
     font_name: "fonts/Font Awesome 6 Free-Solid-900.otf"
     font_size: 32
@@ -36,6 +27,14 @@
     size_hint_y: None
     label: "\uf058"
     checkbox_value: app.mode < 100
+
+  ToolbarButton:
+    font_name: "fonts/Font Awesome 6 Free-Solid-900.otf"
+    # Network Settings
+    font_size: 32
+    text: "\uf1eb"
+    background_color: "#04FF00"
+    on_release: Factory.Wifi().open()
 
   ToolbarButton:
     # TOOL

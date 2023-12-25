@@ -6,13 +6,15 @@ from loguru import logger as log
 from kivy.app import App
 from kivy.clock import Clock
 from kivy.event import EventDispatcher
-from kivy.properties import StringProperty, NumericProperty, ConfigParserProperty, BooleanProperty, ListProperty
+from kivy.properties import StringProperty, NumericProperty, ConfigParserProperty, BooleanProperty, ListProperty, \
+    DictProperty, ObjectProperty
 from kivy.uix.boxlayout import BoxLayout
 from rotary_controller_python.components.appsettings import config, AppSettings
 from rotary_controller_python.utils import communication
 
 from rotary_controller_python.components.appsettings import config
 from rotary_controller_python.input_class import InputClass
+from rotary_controller_python.network.models import Wireless, NetworkInterface
 
 
 class ServoClass(EventDispatcher):
@@ -77,6 +79,17 @@ class Home(BoxLayout):
 
 
 class MainApp(App):
+    network_settings = ObjectProperty(defaultvalue=NetworkInterface(
+        name="wlan0",
+        dhcp=False,
+        address="10.0.0.1/24",
+        gateway="10.0.0.254",
+        wireless=Wireless(
+            ssid="test",
+            password="test"
+        )
+    ))
+
     display_color = ConfigParserProperty(defaultvalue="#ffffffff", section="formatting", key="display_color",
                                          config=config)
     metric_pos_format = ConfigParserProperty(defaultvalue="{:+0.3f}", section="formatting", key="metric", config=config)
@@ -141,6 +154,9 @@ class MainApp(App):
     home = None
 
     task_update = None
+
+    def on_network_settings(self):
+        print(self.network_settings.dict())
 
     def open_custom_settings(self):
         settings = AppSettings()
