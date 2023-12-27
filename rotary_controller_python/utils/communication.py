@@ -7,25 +7,34 @@ from rotary_controller_python.utils.addresses import GlobalAddresses, SCALES_COU
 
 
 class DeviceManager:
-    def __init__(self, serial_device="/dev/ttyUSB0", baudrate=57600, address=17, debug=False):
-        self.addresses = GlobalAddresses(0)
-        self.device: minimalmodbus.Instrument = minimalmodbus.Instrument(
-            port=serial_device,
-            slaveaddress=address,
-            debug=debug
-        )
-        self.device.serial.baudrate = baudrate
-        self.connected = True
-
+    def __init__(
+        self, serial_device="/dev/ttyUSB0", baudrate=57600, address=17, debug=False
+    ):
         from rotary_controller_python.utils.devices import Global, Index, Servo, Scale
+
+        self.addresses = GlobalAddresses(0)
         self.base = Global(device=self, base_address=self.addresses.base_address)
-        self.index = Index(device=self, base_address=self.addresses.index_structure_offset.base_address)
-        self.servo = Servo(device=self, base_address=self.addresses.servo_structure_offset.base_address)
+        self.index = Index(
+            device=self, base_address=self.addresses.index_structure_offset.base_address
+        )
+        self.servo = Servo(
+            device=self, base_address=self.addresses.servo_structure_offset.base_address
+        )
         self.scales = []
         for i in range(SCALES_COUNT):
             self.scales.append(
                 Scale(device=self, base_address=self.addresses.scales[i].base_address)
             )
+
+        try:
+            self.device: minimalmodbus.Instrument = minimalmodbus.Instrument(
+                port=serial_device, slaveaddress=address, debug=debug
+            )
+            self.device.serial.baudrate = baudrate
+            self.connected = True
+        except Exception as e:
+            log.error(e.__str__())
+            self.connected = False
 
 
 # def configure_device():

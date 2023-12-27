@@ -1,4 +1,3 @@
-
 from rotary_controller_python.utils.base_device import BaseDevice
 from rotary_controller_python.utils.communication import DeviceManager
 
@@ -7,6 +6,7 @@ class Global(BaseDevice):
     def __init__(self, device: DeviceManager, base_address: int):
         super().__init__(device=device)
         from rotary_controller_python.utils.addresses import GlobalAddresses
+
         self.addresses = GlobalAddresses(base_address)
 
     @property
@@ -22,6 +22,7 @@ class Index(BaseDevice):
     def __init__(self, device: DeviceManager, base_address: int):
         super().__init__(device=device)
         from rotary_controller_python.utils.addresses import IndexAddresses
+
         self.addresses = IndexAddresses(base_address)
 
     @property
@@ -45,6 +46,7 @@ class Servo(BaseDevice):
     def __init__(self, device: DeviceManager, base_address: int):
         super().__init__(device=device)
         from rotary_controller_python.utils.addresses import ServoAddresses
+
         self.addresses = ServoAddresses(base_address)
 
     @property
@@ -156,6 +158,7 @@ class Scale(BaseDevice):
     def __init__(self, device: DeviceManager, base_address: int):
         super().__init__(device=device)
         from rotary_controller_python.utils.addresses import ScaleAddresses
+
         self.addresses = ScaleAddresses(base_address)
 
     @property
@@ -228,8 +231,8 @@ class Scale(BaseDevice):
 
     @property
     def sync_motion(self):
-        return bool(self.device.read_register(self.addresses.sync_motion))
+        return bool(self.read_unsigned(self.addresses.sync_motion))
 
     @sync_motion.setter
     def sync_motion(self, value: bool):
-        self.device.write_register(self.addresses.sync_motion, int(value))
+        self.write_unsigned(self.addresses.sync_motion, int(value))

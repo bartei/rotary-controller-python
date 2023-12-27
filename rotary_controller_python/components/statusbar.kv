@@ -21,7 +21,7 @@
     valign: "top"
     width: 64
     label: "RDY"
-    checkbox_value: app.mode == 0
+    checkbox_value: app.connected
 
   LedButton:
     # RUN SYN LED
@@ -29,7 +29,7 @@
     size_hint_x: None
     width: 64
     label: "SYN"
-    checkbox_value: app.mode == 20
+#    checkbox_value: app.mode == 20
 
   LedButton:
     # RUN INDEX LED
@@ -37,7 +37,7 @@
     size_hint_x: None
     width: 64
     label: "IDX"
-    checkbox_value: app.mode == 10
+#    checkbox_value: app.mode == 10
 
   LedButton:
     # RUN JOG LED
@@ -45,7 +45,7 @@
     size_hint_x: None
     width: 64
     label: "JOG"
-    checkbox_value: app.mode >= 30 and app.mode < 40
+#    checkbox_value: app.mode >= 30 and app.mode < 40
 
   LedButton:
     # RUN JOG LED
@@ -53,7 +53,7 @@
     size_hint_x: None
     width: 64
     label: "REV"
-    checkbox_value: app.mode == 32
+#    checkbox_value: app.mode == 32
 
   LedButton:
     # RUN JOG LED
@@ -61,7 +61,7 @@
     size_hint_x: None
     width: 64
     label: "FWD"
-    checkbox_value: app.mode == 31
+#    checkbox_value: app.mode == 31
 
   LedButton:
     # ERROR LED
@@ -69,4 +69,4 @@
     size_hint_x: None
     width: 64
     label: "ERR"
-    checkbox_value: app.mode >= 100
+#    checkbox_value: app.mode >= 100
