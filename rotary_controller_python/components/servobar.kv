@@ -30,7 +30,7 @@
       font_style: "bold"
       background_color: [0.2, 0.2, 0.2, 1]
       color: app.display_color
-      text: str(app.servo.current_position)
+      text: app.angle_format.format(app.servo.current_position)
       text_size: self.size
       halign: 'center'
       valign: 'middle'
@@ -50,7 +50,7 @@
       font_style: "bold"
       background_color: [0.2, 0.2, 0.2, 1]
       color: app.display_color
-      text: str(app.servo.desired_position)
+      text:  app.angle_format.format(app.servo.desired_position)
       text_size: self.size
       halign: 'center'
       valign: 'middle'

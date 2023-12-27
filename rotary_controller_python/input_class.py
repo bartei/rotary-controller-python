@@ -7,6 +7,7 @@ from kivy.properties import StringProperty, NumericProperty
 from rotary_controller_python.utils import communication
 
 from rotary_controller_python.components.appsettings import config
+from rotary_controller_python.utils.communication import DeviceManager
 
 
 class InputClass(EventDispatcher):
@@ -67,55 +68,36 @@ class InputClass(EventDispatcher):
         config.set(section=self.section_name, option="sync_enable", value=value)
         config.write()
         app = App.get_running_app()
+        app.device: DeviceManager
         if app is None:
             return
 
         if value == "down":
-            for data_instance in app.data:
-                if data_instance.input_index != instance.input_index:
-                    data_instance.sync_enable = "normal"
-                else:
-                    pass
-
-            if app.device is None:
-                return
-
-            app.device.syn_scale_index = instance.input_index
-            app.device.syn_ratio_num = instance.sync_num
-            app.device.syn_ratio_den = instance.sync_den
-            app.device.mode = communication.MODE_SYNCHRO_INIT
-            log.info(f"Setting syn scale index to: {instance.input_index}")
+            app.device.scales[instance.input_index].sync_motion = True
         else:
+            app.device.scales[instance.input_index].sync_motion = False
             if app.device is None:
                 return
-            app.device.mode = communication.MODE_HALT
 
     def on_sync_num(self, instance, value):
         app = App.get_running_app()
+        app.device: DeviceManager
         config.set(section=self.section_name, option="sync_num", value=int(value))
         config.write()
-        if instance.sync_enable == "down":
-            app.device.syn_ratio_num = value
-            app.device.mode = communication.MODE_SYNCHRO_INIT
+        try:
+            app.device.scales[instance.input_index].sync_ratio_num = int(value)
+        except Exception as e:
+            log.error(e.__str__())
 
     def on_sync_den(self, instance, value):
         app = App.get_running_app()
+        app.device: DeviceManager
         config.set(section=self.section_name, option="sync_den", value=int(value))
         config.write()
-        if instance.sync_enable == "down":
-            app.device.syn_ratio_den = value
-            app.device.mode = communication.MODE_SYNCHRO_INIT
-
-    @property
-    def update_raw_scale(self):
-        return 0
-
-    @update_raw_scale.setter
-    def update_raw_scale(self, value):
-        if self.ratio_den != 0:
-            self.position = float(value) * float(self.ratio_num) / float(self.ratio_den)
-        else:
-            self.position = 0
+        try:
+            app.device.scales[instance.input_index].sync_ratio_den = int(value)
+        except Exception as e:
+            log.error(e.__str__())
 
     @property
     def set_position(self):
@@ -128,13 +110,9 @@ class InputClass(EventDispatcher):
             if app.device is None:
                 return
 
+            app.device: DeviceManager
+            app.device.scales[self.input_index].position = int(value) * 1000
             log.warning(f"Set New position to: {value} for {self.input_index}")
-            decimal_value = Decimal(self.ratio_den) / Decimal(self.ratio_num) * Decimal(value)
-            int_value = int(decimal_value)
-            log.warning(f"Raw value set to to: {int_value}")
-            app.device.encoder_preset_index = self.input_index
-            app.device.encoder_preset_value = int_value
-            app.device.mode = communication.MODE_SET_ENCODER
         except Exception as e:
             log.exception(e.__str__())
             self.position = 9999.99

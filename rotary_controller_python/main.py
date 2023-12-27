@@ -15,6 +15,7 @@ from rotary_controller_python.utils import communication
 from rotary_controller_python.components.appsettings import config
 from rotary_controller_python.input_class import InputClass
 from rotary_controller_python.network.models import Wireless, NetworkInterface
+from rotary_controller_python.utils.communication import DeviceManager
 
 
 class ServoClass(EventDispatcher):
@@ -38,40 +39,20 @@ class ServoClass(EventDispatcher):
     index = ConfigParserProperty(defaultvalue="0", section="rotary", key="index", config=config, val_type=int)
     enable = BooleanProperty(False)
 
-    def on_desired_position(self, instance, value):
-        from kivy.app import App
-        app = App.get_running_app()
-        if app.device is None:
-            return
-        try:
-            log.warning(f"Update desired position to: {value}")
-            app.device.min_speed = self.min_speed
-            app.device.max_speed = self.max_speed
-            app.device.acceleration = self.acceleration
-            app.device.ratio_num = self.ratio_num
-            app.device.ratio_den = self.ratio_den
-            # app.device.mode = communication.MODE_HALT
-
-            # Send the destination converted to steps
-            current_position = app.device.current_position * self.ratio_num / self.ratio_den
-            final_position = value
-            delta = final_position - current_position
-            if abs(delta) > 180.0:
-                delta = 360 - delta
-
-            index_delta_steps = int(delta / self.ratio_num * self.ratio_den)
-            app.device.index_delta_steps = index_delta_steps
-            app.device.mode = communication.MODE_SYNCHRO_INIT
-        except Exception as e:
-            log.exception(e.__str__())
-        return True
-
     def on_index(self, instance, value):
+        app = App.get_running_app()
+        app.device: DeviceManager
         if self.divisions != 0:
-            self.desired_position = 360.0 / self.divisions * self.index + self.offset
+            app.device.index.index = self.index
+            app.device.index.divisions = self.divisions
         else:
             log.error("Divisions must be != 0")
         return True
+
+    def on_offset(self, instance, value):
+        app = App.get_running_app()
+        app.device: DeviceManager
+        app.device.servo.absolute_offset = self.offset
 
 
 class Home(BoxLayout):
@@ -175,11 +156,12 @@ class MainApp(App):
 
     def update(self, *args):
         if self.device is not None and self.device.connected:
-            for count, scale in enumerate(self.device.scales):
-                self.data[count].update_raw_scale = scale
-            ratio_den = self.device.ratio_den
-            if ratio_den != 0:
-                self.servo.current_position = self.device.current_position * self.device.ratio_num / ratio_den
+            for i in range(len(self.device.scales)):
+                self.data[i].position = self.device.scales[i].position / 1000
+
+            self.servo.current_position = self.device.servo.current_position
+            self.servo.desired_position = self.device.servo.desired_position
+
         else:
             try:
                 self.device = communication.DeviceManager(
@@ -187,15 +169,15 @@ class MainApp(App):
                     baudrate=115200,
                     address=17
                 )
-                mode = self.device.mode
                 if not self.device.connected:
                     raise Exception("No Connection")
 
-                self.device.ratio_num = self.ratio_num
-                self.device.ratio_den = self.ratio_den
-                self.device.acceleration = self.acceleration
-                self.device.max_speed = self.max_speed
-                self.device.min_speed = self.min_speed
+                self.device.servo.acceleration = self.acceleration
+                self.device.servo.max_speed = self.max_speed
+                self.device.servo.min_speed = self.min_speed
+                self.device.servo.ratio_num = self.ratio_num
+                self.device.servo.ratio_den = self.ratio_den
+
                 self.connected = True
                 log.warning(f"Device connection: {self.device.connected}")
                 self.task_update.timeout = 1.0 / 25
@@ -206,19 +188,19 @@ class MainApp(App):
                 self.task_update.timeout = 2.0
 
     def on_ratio_num(self, instance, value):
-        self.device.ratio_num = value
+        self.device.servo.ratio_num = value
 
     def on_ratio_den(self, instance, value):
-        self.device.ratio_den = value
+        self.device.servo.ratio_den = value
 
     def on_acceleration(self, instance, value):
-        self.device.acceleration = float(value)
+        self.device.servo.acceleration = float(value)
 
     def on_min_speed(self, instance, value):
-        self.device.min_speed = float(value)
+        self.device.servo.min_speed = float(value)
 
     def on_max_speed(self, instance, value):
-        self.device.max_speed = float(value)
+        self.device.servo.max_speed = float(value)
 
     def blinker(self, *args):
         self.blink = not self.blink
