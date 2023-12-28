@@ -20,6 +20,7 @@ from rotary_controller_python.dispatchers.formats import FormatsDispatcher
 from rotary_controller_python.utils import communication
 
 from rotary_controller_python.components.appsettings import config
+
 # from rotary_controller_python.dispatchers.scale import ScaleClass
 from rotary_controller_python.network.models import Wireless, NetworkInterface
 
@@ -46,7 +47,7 @@ class Home(BoxLayout):
         self.coord_bars = coord_bars
 
         self.servo = ServoBar(device=self.device)
-        self.ids['bars_container'].add_widget(self.servo)
+        self.ids["bars_container"].add_widget(self.servo)
 
 
 class MainApp(App):
@@ -103,7 +104,6 @@ class MainApp(App):
     def update(self, *args):
         if self.device.connected:
             for i in range(len(self.device.scales)):
-                # self.data[i].position = self.device.scales[i].position / 1000
                 self.home.coord_bars[i].position = self.device.scales[i].position / 1000
 
             self.task_counter = (self.task_counter + 1) % 5
