@@ -247,7 +247,7 @@ class FastData(BaseDevice):
         from rotary_controller_python.utils.addresses import IndexAddresses
 
         self.addresses = FastDataAddresses(base_address)
-        self.scale_current = []
+        self.scale_current = [0, 0, 0, 0]
         self.servo_current = 0
         self.servo_desired = 0
         self.cycles = 0
@@ -256,10 +256,13 @@ class FastData(BaseDevice):
     def refresh(self):
         raw_data = self.dm.device.read_registers(
             registeraddress=self.addresses.base_address,
-            number_of_registers=self.bytes_count,
+            number_of_registers=int(self.bytes_count),
         )
-        raw_bytes = b"".join(raw_data)
+
+        raw_bytes = struct.pack("<" + "H" * int(self.bytes_count), *raw_data)
+        
         converted_data = struct.unpack(self.addresses.struct_map, raw_bytes)
         self.servo_current, self.servo_desired = converted_data[0:2]
-        self.scale_current = converted_data[2 : 2 + SCALES_COUNT]
+        for i in range(SCALES_COUNT):
+            self.scale_current[i] = converted_data[2 + i] / 1000
         self.cycles = converted_data[2 + SCALES_COUNT]
