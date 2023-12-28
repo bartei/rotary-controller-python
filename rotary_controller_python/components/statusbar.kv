@@ -56,15 +56,15 @@
 #    checkbox_value: app.mode == 32
 
   LedButton:
-    # RUN JOG LED
+    # FPS
     height: self.width
     size_hint_x: None
     width: 64
-    label: "FWD"
+    label: str(int(root.fps))
 #    checkbox_value: app.mode == 31
 
   LedButton:
-    # ERROR LED
+    # CYCLES
     height: self.width
     size_hint_x: None
     width: 64

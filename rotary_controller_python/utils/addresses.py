@@ -57,7 +57,9 @@ class GlobalAddresses:
         self.execution_interval_previous = 2 + base_address
         self.execution_interval_current = 4 + base_address
         self.execution_cycles = 6 + base_address
-        self.index_structure_offset = IndexAddresses(self.execution_cycles + base_address + 2)
+        self.index_structure_offset = IndexAddresses(
+            self.execution_cycles + base_address + 2
+        )
         self.servo_structure_offset = ServoAddresses(self.index_structure_offset.end)
         end = self.servo_structure_offset.end
         self.scales = []
@@ -109,3 +111,23 @@ class ServoAddresses:
         self.breaking_time = 32 + base_address
         self.allowed_error = 34 + base_address
         self.end = 36 + base_address
+
+
+class FastDataAddresses:
+    # typedef struct {
+    #   float servoCurrent;
+    #   float servoDesired;
+    #   int32_t scaleCurrent[SCALES_COUNT];
+    #   uint32_t cycles;
+    # } fastData_t;
+    def __init__(self, base_address):
+        self.base_address = base_address
+        self.servo_current = 0 + base_address
+        self.servo_desired = 2 + base_address
+        self.scale_current = 4 + base_address
+        self.cycles = self.scale_current + (2 * SCALES_COUNT)
+        self.end = self.cycles + 2
+
+        import struct
+
+        self.struct_map = "<ff" + "l" * SCALES_COUNT + "l"

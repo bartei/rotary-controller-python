@@ -102,30 +102,34 @@ class MainApp(App):
         popup.open()
 
     def update(self, *args):
-        if self.device.connected:
-            for i in range(len(self.device.scales)):
-                self.home.coord_bars[i].position = self.device.scales[i].position / 1000
-
-            self.task_counter = (self.task_counter + 1) % 5
-            if self.task_counter == 0:
-                self.home.servo.current_position = self.device.servo.current_position
-                self.home.servo.desired_position = self.device.servo.desired_position
-                if self.home.status_bar is not None:
-                    self.home.status_bar.cycles = self.device.base.execution_cycles
-
-        else:
-            self.home.servo.upload()
-            for scale in self.home.coord_bars:
-                scale.upload()
-
-        if self.connected != self.device.connected:
-            self.connected = self.device.connected
-            if self.connected:
+        try:
+            self.device.fast_data.refresh()
+            if not self.device.connected:
                 self.task_update.timeout = 1.0 / 30
-            else:
-                self.task_update.timeout = 2.0
+                self.device.connected = True
+                self.upload()
+
+        except Exception as e:
+            log.error(f"No connection: {e.__str__()}")
+            self.task_update.timeout = 2.0
+            self.device.connected = False
+
+        if self.device.connected:
+            for bar in self.home.coord_bars:
+                bar.position = self.device.fast_data.scale_current[bar.input_index]
+            self.home.servo.current_position = self.device.fast_data.servo_current
+            self.home.servo.desired_position = self.device.fast_data.servo_desired
+            self.home.status_bar.cycles = self.device.fast_data.cycles
+
+        self.connected = self.device.connected
+
+    def upload(self):
+        self.home.servo.upload()
+        for scale in self.home.coord_bars:
+            scale.upload()
 
     def blinker(self, *args):
+        self.home.status_bar.fps = Clock.get_fps()
         self.blink = not self.blink
 
     def build(self):

@@ -1,3 +1,6 @@
+import struct
+
+from rotary_controller_python.utils.addresses import FastDataAddresses, SCALES_COUNT
 from rotary_controller_python.utils.base_device import BaseDevice
 from rotary_controller_python.utils.communication import DeviceManager
 
@@ -236,3 +239,26 @@ class Scale(BaseDevice):
     @sync_motion.setter
     def sync_motion(self, value: bool):
         self.write_unsigned(self.addresses.sync_motion, int(value))
+
+
+class FastData(BaseDevice):
+    def __init__(self, device: DeviceManager, base_address: int):
+        super().__init__(device=device)
+        from rotary_controller_python.utils.addresses import IndexAddresses
+
+        self.addresses = FastDataAddresses(base_address)
+        self.scale_current = []
+        self.servo_current = 0
+        self.servo_desired = 0
+        self.cycles = 0
+        self.bytes_count = self.addresses.end - self.addresses.base_address
+
+    def refresh(self):
+        raw_data = self.dm.device.read_registers(
+            registeraddress=self.addresses.base_address,
+            number_of_registers=self.bytes_count,
+        )
+        converted_data = struct.unpack(self.addresses.struct_map, raw_data)
+        self.servo_current, self.servo_desired = converted_data[0:2]
+        self.scale_current = converted_data[2 : 2 + SCALES_COUNT]
+        self.cycles = converted_data[2 + SCALES_COUNT]
