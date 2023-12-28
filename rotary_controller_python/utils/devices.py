@@ -254,7 +254,7 @@ class FastData(BaseDevice):
         self.bytes_count = self.addresses.end - self.addresses.base_address
 
     def refresh(self):
-        raw_data = self.dm.device.read_registers(
+        raw_data = self.dm.device.read_string(
             registeraddress=self.addresses.base_address,
             number_of_registers=self.bytes_count,
         )
