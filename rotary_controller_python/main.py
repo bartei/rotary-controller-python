@@ -105,7 +105,7 @@ class MainApp(App):
         try:
             self.device.fast_data.refresh()
             if not self.device.connected:
-                self.task_update.timeout = 1.0 / 30
+                # self.task_update.timeout = 1.0 / 30
                 self.device.connected = True
                 self.upload()
 
@@ -115,6 +115,7 @@ class MainApp(App):
             self.device.connected = False
 
         if self.device.connected:
+            self.task_update.timeout = 1.0 / 30
             for bar in self.home.coord_bars:
                 bar.position = self.device.fast_data.scale_current[bar.input_index]
             self.home.servo.current_position = self.device.fast_data.servo_current
