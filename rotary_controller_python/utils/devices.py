@@ -258,7 +258,8 @@ class FastData(BaseDevice):
             registeraddress=self.addresses.base_address,
             number_of_registers=self.bytes_count,
         )
-        converted_data = struct.unpack(self.addresses.struct_map, raw_data)
+        raw_bytes = b"".join(raw_data)
+        converted_data = struct.unpack(self.addresses.struct_map, raw_bytes)
         self.servo_current, self.servo_desired = converted_data[0:2]
         self.scale_current = converted_data[2 : 2 + SCALES_COUNT]
         self.cycles = converted_data[2 + SCALES_COUNT]
