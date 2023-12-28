@@ -1,27 +1,11 @@
 #: import Toolbar components.toolbar
-#: import CoordBar components.coordbar
-#: import StatusBar components.statusbar
-#: import ServoBar components.servobar
 
 <Home>:
   orientation: "horizontal"
+  bars_container: bars_container
+
   Toolbar:
     id: toolbar
   BoxLayout:
+    id: bars_container
     orientation: "vertical"
-    StatusBar:
-    CoordBar:
-      data: app.data[0]
-    CoordBar:
-      data: app.data[1]
-    CoordBar:
-      data: app.data[2]
-    CoordBar:
-      data: app.data[3]
-    ServoBar:
-
-
-BoxLayout:
-  orientation: "vertical"
-  Home:
-    id: home

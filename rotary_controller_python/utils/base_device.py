@@ -48,7 +48,7 @@ class BaseDevice:
                 address,
                 signed=True,
                 byteorder=minimalmodbus.BYTEORDER_LITTLE_SWAP,
-                value=value,
+                value=int(value),
             )
             self.dm.connected = True
         except Exception as e:
@@ -67,7 +67,7 @@ class BaseDevice:
 
     def write_unsigned(self, address, value):
         try:
-            self.dm.device.write_register(address, signed=False, value=value)
+            self.dm.device.write_register(address, signed=False, value=int(value))
             self.dm.connected = True
         except Exception as e:
             self.dm.connected = False
@@ -85,7 +85,7 @@ class BaseDevice:
 
     def write_signed(self, address, value):
         try:
-            self.dm.device.write_register(address, signed=True, value=value)
+            self.dm.device.write_register(address, signed=True, value=int(value))
             self.dm.connected = True
         except Exception as e:
             self.dm.connected = False

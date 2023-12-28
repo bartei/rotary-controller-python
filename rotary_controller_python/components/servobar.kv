@@ -1,13 +1,12 @@
 #: import Factory kivy.factory.Factory
 #: import Keypad components.keypad
-#: import appsettings components
 
 <ServoBar>:
   orientation: "horizontal"
   height: 128
   size_hint_y: None
   Label:
-    text: app.servo.name
+    text: root.name
     width: 80
     size_hint_x: None
     font_size: 64
@@ -30,7 +29,7 @@
       font_style: "bold"
       background_color: [0.2, 0.2, 0.2, 1]
       color: app.display_color
-      text: app.angle_format.format(app.servo.current_position)
+      text: app.formats.angle_format.format(root.current_position)
       text_size: self.size
       halign: 'center'
       valign: 'middle'
@@ -50,11 +49,10 @@
       font_style: "bold"
       background_color: [0.2, 0.2, 0.2, 1]
       color: app.display_color
-      text:  app.angle_format.format(app.servo.desired_position)
+      text:  app.formats.angle_format.format(root.desired_position)
       text_size: self.size
       halign: 'center'
       valign: 'middle'
-      on_release: Factory.Keypad().show(app.servo, 'desired_position')
 
   BoxLayout:
     orientation: "vertical"
@@ -74,11 +72,12 @@
       font_style: "bold"
       background_color: [0.2, 0.2, 0.2, 1]
       color: app.display_color
-      text: str(app.servo.offset)
+      text: app.formats.angle_format.format(root.offset)
       text_size: self.size
       halign: 'center'
       valign: 'middle'
-      on_release: Factory.Keypad().show(app.servo, 'offset')
+      on_release: Factory.Keypad().show(root, 'offset')
+
     Label:
       text: "Divisions"
       text_size: self.size
@@ -94,11 +93,12 @@
       font_style: "bold"
       background_color: [0.2, 0.2, 0.2, 1]
       color: app.display_color
-      text: str(app.servo.divisions)
+      text: str(int(root.divisions))
       text_size: self.size
       halign: 'center'
       valign: 'middle'
-      on_release: Factory.Keypad().show(app.servo, 'divisions')
+      on_release: Factory.Keypad().show(root, 'divisions')
+
   BoxLayout:
     size_hint_x: 0.2
     orientation: "vertical"
@@ -108,12 +108,12 @@
         font_size: 24
         font_style: "bold"
         text: "<"
-        on_release: app.servo.index = (app.servo.index - 1) % app.servo.divisions
+        on_release: root.index = (root.index - 1) % root.divisions
       Button:
         font_size: 24
         font_style: "bold"
         text: ">"
-        on_release: app.servo.index = (app.servo.index + 1) % app.servo.divisions
+        on_release: root.index = (root.index + 1) % root.divisions
     BoxLayout:
       orientation: "vertical"
       Label:
@@ -131,22 +131,22 @@
         font_style: "bold"
         background_color: [0.2, 0.2, 0.2, 1]
         color: app.display_color
-        text: str(app.servo.index)
+        text: str(int(root.index))
         text_size: self.size
         halign: 'center'
         valign: 'middle'
-        on_release: Factory.Keypad().show(app.servo, 'index')
+        on_release: Factory.Keypad().show(root, 'index')
 
-  BoxLayout:
-    size_hint_x: None
-    orientation: "vertical"
+#  BoxLayout:
+#    size_hint_x: None
+#    orientation: "vertical"
 
-  Button:
-    size_hint_y: 1
-    size_hint_x: None
-    width: root.height
-    font_size: 24
-    font_style: "bold"
-    background_color: [0.2, 1, 0.2, 1] if app.servo.enable else [1, 0.2, 0.2, 1]
-    text: "ON" if app.servo.enable else "OFF"
-    on_release: app.servo.enable = False if app.servo.enable else True
+#  Button:
+#    size_hint_y: 1
+#    size_hint_x: None
+#    width: root.height
+#    font_size: 24
+#    font_style: "bold"
+#    background_color: [0.2, 1, 0.2, 1] if root.enable else [1, 0.2, 0.2, 1]
+#    text: "ON" if root.enable else "OFF"
+#    on_release: root.enable = False if root.enable else True

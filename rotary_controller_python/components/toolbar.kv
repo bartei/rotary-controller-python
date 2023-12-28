@@ -3,6 +3,7 @@
 #: import AppSettings components.appsettings
 #: import LedButton components.ledbutton
 #: import Wifi network.ui.wifi
+#: import Setup components.setup
 
 <ToolbarButton>:
   size_hint_y: None
@@ -11,8 +12,6 @@
   font_name: "fonts/Manrope-Bold.ttf"
 
 <Toolbar>:
-  current_units: app.current_units
-
   size_hint_x: None
   size_hint_y: 1
   width: 80
@@ -45,8 +44,8 @@
   ToolbarButton:
     # IN/MM
     font_size: 32
-    text: app.current_units
-    on_release: app.current_units = "mm" if app.current_units == "in" else "in"
+    text: app.formats.current_format
+    on_release: app.formats.toggle()
 
   ToolbarButton:
     font_size: 32
@@ -57,5 +56,5 @@
     font_name: "fonts/Font Awesome 6 Free-Solid-900.otf"
     font_size: 32
     text: "\uf085"
-
-    on_release: app.open_custom_settings()
+    on_release: Factory.Setup().open()
+#    on_release: app.open_custom_settings()

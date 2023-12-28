@@ -1,0 +1,119 @@
+#: import ViewPopup components.viewpopup
+
+<StringItem>:
+  height: 32
+  size_hint_y: None
+  BoxLayout:
+    orientation: "horizontal"
+    Label:
+      size_hint_x: 0.7
+      text: root.name
+    TextInput:
+      size_hint_x: 0.3
+      multiline: False
+      text: root.value
+      on_text_validate: root.value = self.text
+
+<NumberItem>:
+  value: 0
+  height: 32
+  size_hint_y: None
+  BoxLayout:
+    orientation: "horizontal"
+    Label:
+      size_hint_x: 0.7
+      text: root.name
+    TextInput:
+      size_hint_x: 0.3
+      multiline: False
+      text: str(root.value)
+      on_text_validate: root.validate(self.text)
+
+<ScalePanel>:
+  orientation: "vertical"
+  StringItem:
+    name: "Axis Name"
+    value: root.scale.axis_name
+    on_value: root.scale.axis_name = self.value
+  NumberItem:
+    name: "Ratio Numerator"
+    value: root.scale.ratio_num
+    on_value: root.scale.ratio_num = self.value
+  NumberItem:
+    name: "Ratio Denominator"
+    value: root.scale.ratio_den
+    on_value: root.scale.ratio_den = self.value
+  NumberItem:
+    name: "Sync Ratio Numerator"
+    value: root.scale.sync_ratio_num
+    on_value: root.scale.sync_ratio_num = self.value
+  NumberItem:
+    name: "Sync Ratio Denominator"
+    value: root.scale.sync_ratio_den
+    on_value: root.scale.sync_ratio_den = self.value
+  BoxLayout:
+    orientation: "vertical"
+
+<ServoPanel>:
+  orientation: "vertical"
+  NumberItem:
+    name: "Minimum Speed"
+    value: root.servo.min_speed
+    on_value: root.servo.min_speed = self.value
+  NumberItem:
+    name: "Maximum Speed"
+    value: root.servo.max_speed
+    on_value: root.servo.max_speed = self.value
+  NumberItem:
+    name: "Acceleration"
+    value: root.servo.acceleration
+    on_value: root.servo.acceleration = self.value
+  NumberItem:
+    name: "Ratio Numerator"
+    value: root.servo.ratio_num
+    on_value: root.servo.ratio_num = self.value
+  NumberItem:
+    name: "Ratio Denominator"
+    value: root.servo.ratio_den
+    on_value: root.servo.ratio_den = self.value
+  NumberItem:
+    name: "Offset"
+    value: root.servo.offset
+    on_value: root.servo.offset = self.value
+  NumberItem:
+    name: "Divisions"
+    value: root.servo.divisions
+    on_value: root.servo.divisions = self.value
+  NumberItem:
+    name: "Index"
+    value: root.servo.index
+    on_value: root.servo.index = self.value
+  BoxLayout:
+    orientation: "vertical"
+
+<Setup>:
+  title: "Setup"
+  size_hint: 0.9, 0.9
+  auto_dismiss: False
+  tabbed_panel: tabbed_panel
+
+  BoxLayout:
+    orientation: "vertical"
+    TabbedPanel:
+      do_default_tab: False
+      id: tabbed_panel
+    BoxLayout:
+      size_hint_y: None
+      height: 48
+      orientation: "horizontal"
+
+      Button:
+        font_name: "fonts/Font Awesome 6 Free-Solid-900.otf"
+        text: "\uf00d"
+        background_color: "#cf3a3a"
+        on_release: root.cancel()
+      Button:
+        font_name: "fonts/Font Awesome 6 Free-Solid-900.otf"
+        text: "\uf00c"
+        background_color: "#349e65"
+        on_release: root.dismiss()

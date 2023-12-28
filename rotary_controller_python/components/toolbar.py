@@ -20,11 +20,4 @@ class ToolbarButton(Button):
 
 
 class Toolbar(BoxLayout):
-    current_units = StringProperty()
-
-    def toggle_units(self, *args, **kv):
-        app = App.get_running_app()
-        if app.current_units == "in":
-            app.current_units = "mm"
-        else:
-            app.current_units = "in"
+    pass

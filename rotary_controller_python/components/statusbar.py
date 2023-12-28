@@ -1,5 +1,6 @@
 import os
 
+from kivy.properties import NumericProperty
 from kivy.uix.boxlayout import BoxLayout
 from kivy.lang import Builder
 from loguru import logger as log
@@ -12,4 +13,4 @@ if os.path.exists(kv_file):
 
 
 class StatusBar(BoxLayout):
-    pass
+    cycles = NumericProperty(0)

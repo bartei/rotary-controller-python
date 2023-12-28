@@ -1,13 +1,13 @@
 #: import Factory kivy.factory.Factory
 #: import Keypad components.keypad
-#: import appsettings components
+
 
 <CoordBar>:
   orientation: "horizontal"
   height: 80
   size_hint_y: None
   Label:
-    text: root.data.axis_name
+    text: root.axis_name
     width: self.height
     size_hint_x: None
     font_size: 64
@@ -25,18 +25,18 @@
         font_size: 48
         font_style: "bold"
         color: app.display_color
-        text: app.pos_format.format(root.data.position / app.unit_factor)
+        text: app.formats.position_format.format(root.position / app.formats.factor)
         text_size: self.size
         halign: 'right'
         valign: 'center'
-        on_release: Factory.Keypad().show(root.data, 'set_position')
+        on_release: root.update_position()
       Label:
         size_hint_y: 0.3
         font_name: "fonts/iosevka-regular.ttf"
         font_size: 16
         font_style: "bold"
         color: app.display_color
-        text: app.speed_format.format(root.formatted_axis_speed)
+        text: app.formats.speed_format.format(root.formatted_axis_speed / app.formats.factor)
         text_size: self.size
         halign: 'right'
         valign: 'top'
@@ -59,11 +59,11 @@
         font_style: "bold"
         background_color: [0.2, 0.2, 0.2, 1]
         color: app.display_color
-        text: str(int(root.data.sync_num))
+        text: str(int(root.sync_ratio_num))
         text_size: self.size
         halign: 'center'
         valign: 'middle'
-        on_release: Factory.Keypad().show(root.data, 'sync_num')
+        on_release: Factory.Keypad().show(root, 'sync_ratio_num')
 
     BoxLayout:
       size_hint_x: 0.20
@@ -83,11 +83,11 @@
         font_style: "bold"
         background_color: [0.2, 0.2, 0.2, 1]
         color: app.display_color
-        text: str(int(root.data.sync_den))
+        text: str(int(root.sync_ratio_den))
         text_size: self.size
         halign: 'center'
         valign: 'middle'
-        on_release: Factory.Keypad().show(root.data, 'sync_den')
+        on_release: Factory.Keypad().show(root, 'sync_ratio_den')
 
     BoxLayout:
       size_hint_x: 0.10
@@ -102,9 +102,9 @@
         valign: 'top'
       ToggleButton:
         text: "ON" if self.state == "down" else "OFF"
-        state: root.data.sync_enable
+        state: root.sync_enable
         background_color: [0.2, 1, 0.2, 1] if self.state == "down" else [1, 0.2, 0.2, 1]
-        on_release: root.data.sync_enable = self.state
+        on_release: root.sync_enable = self.state
 
   Button:
     text: "Zero"
@@ -113,4 +113,4 @@
     background_color: [0.5, 0.5, 0.5, 1]
     width: self.height
     size_hint_x: None
-    on_release: root.data.set_position = 0
+    on_release: root.new_position = 0

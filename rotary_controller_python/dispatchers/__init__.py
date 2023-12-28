@@ -1,7 +1,10 @@
+import os
+import shutil
+
+import yaml
 from kivy.event import EventDispatcher
 from kivy.properties import StringProperty, NumericProperty, BooleanProperty
 from loguru import logger as log
-from rotary_controller_python.configurator import read_settings, write_settings
 
 
 class SavingDispatcher(EventDispatcher):
@@ -35,7 +38,8 @@ class SavingDispatcher(EventDispatcher):
 
     @property
     def filename(self):
-        return f"{self.__class__.__name__}-{self.uid}.yaml"
+        os.makedirs("settings/", exist_ok=True)
+        return f"settings/{self.__class__.__name__}-{self.uid}.yaml"
 
     def read_settings(self):
         props = self.get_our_properties()
@@ -67,3 +71,30 @@ class SavingDispatcher(EventDispatcher):
             data[item] = self.__getattribute__(item)
 
         write_settings(self.filename, data)
+
+
+def read_settings(file: str):
+    if not os.path.exists(file):
+        return None
+
+    try:
+        with open(file, "r") as f:
+            data = yaml.safe_load(f.read())
+            return data
+    except Exception as e:
+        log.error(e.__str__())
+        return None
+
+
+def write_settings(file: str, data):
+    if os.path.exists(file):
+        shutil.move(file, f"{file}.old")
+
+    try:
+        with open(file, "w") as f:
+            yaml.dump(data, f)
+        return True
+
+    except Exception as e:
+        log.error(e.__str__())
+        return False

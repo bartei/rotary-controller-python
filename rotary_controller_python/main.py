@@ -13,17 +13,40 @@ from kivy.properties import (
 )
 from kivy.uix.boxlayout import BoxLayout
 from rotary_controller_python.components.appsettings import AppSettings
+from rotary_controller_python.components.coordbar import CoordBar
+from rotary_controller_python.components.servobar import ServoBar
+from rotary_controller_python.components.statusbar import StatusBar
 from rotary_controller_python.dispatchers.formats import FormatsDispatcher
-from rotary_controller_python.dispatchers.servo import ServoDispatcher
 from rotary_controller_python.utils import communication
 
 from rotary_controller_python.components.appsettings import config
-from rotary_controller_python.dispatchers.scale import InputClass
+# from rotary_controller_python.dispatchers.scale import ScaleClass
 from rotary_controller_python.network.models import Wireless, NetworkInterface
 
 
 class Home(BoxLayout):
-    pass
+    device = ObjectProperty()
+    status_bar = ObjectProperty()
+    bars_container = ObjectProperty()
+    coord_bars = ListProperty([])
+    servo = ObjectProperty()
+
+    def __init__(self, device, **kv):
+        super().__init__(**kv)
+        self.device = device
+
+        self.status_bar = StatusBar()
+        self.bars_container.add_widget(self.status_bar)
+        coord_bars = []
+        for i in range(4):
+            bar = CoordBar(input_index=i, device=self.device)
+            coord_bars.append(bar)
+            self.bars_container.add_widget(bar)
+
+        self.coord_bars = coord_bars
+
+        self.servo = ServoBar(device=self.device)
+        self.ids['bars_container'].add_widget(self.servo)
 
 
 class MainApp(App):
@@ -36,65 +59,30 @@ class MainApp(App):
             wireless=Wireless(ssid="test", password="test"),
         )
     )
-
     display_color = ConfigParserProperty(
         defaultvalue="#ffffffff",
         section="formatting",
         key="display_color",
         config=config,
     )
-    # metric_pos_format = ConfigParserProperty(
-    #     defaultvalue="{:+0.3f}", section="formatting", key="metric", config=config
-    # )
-    metric_speed_format = ConfigParserProperty(
-        defaultvalue="{:+0.3f}", section="formatting", key="metric_speed", config=config
-    )
-    imperial_pos_format = ConfigParserProperty(
-        defaultvalue="{:+0.4f}", section="formatting", key="imperial", config=config
-    )
-    imperial_speed_format = ConfigParserProperty(
-        defaultvalue="{:+0.3f}",
-        section="formatting",
-        key="imperial_speed",
-        config=config,
-    )
-    angle_format = ConfigParserProperty(
-        defaultvalue="{:+0.3f}", section="formatting", key="angle", config=config
-    )
-    pos_format = StringProperty("{}")
-    speed_format = StringProperty("{}")
-
-    data = ListProperty([])
-    servo = ObjectProperty()
 
     blink = BooleanProperty(False)
     connected = BooleanProperty(False)
-
     formats = FormatsDispatcher()
-    current_units = ConfigParserProperty(
-        defaultvalue="mm",
-        section="global",
-        key="current_units",
-        config=config,
-        val_type=str,
-    )
     abs_inc = ConfigParserProperty(
         defaultvalue="ABS", section="global", key="abs_inc", config=config, val_type=str
     )
-    unit_factor = NumericProperty(1.0)
     current_origin = StringProperty("Origin 0")
     tool = NumericProperty(0)
-
     serial_port = ConfigParserProperty(
         defaultvalue="/dev/serial0", section="device", key="serial_port", config=config
     )
     device = ObjectProperty()
-    home = None
-
+    home = ObjectProperty()
     task_update = None
+    task_counter = 0
 
     def __init__(self, **kv):
-        super().__init__(**kv)
         try:
             self.device = communication.DeviceManager(
                 serial_device=self.serial_port, baudrate=115200, address=17
@@ -102,13 +90,7 @@ class MainApp(App):
         except Exception as e:
             log.error(f"Communication cannot be started, will try again: {e.__str__()}")
 
-        self.servo = ServoDispatcher(device=self.device)
-        self.data = [
-            InputClass(0, self.device),
-            InputClass(1, self.device),
-            InputClass(2, self.device),
-            InputClass(3, self.device),
-        ]
+        super().__init__(**kv)
 
     def on_network_settings(self):
         print(self.network_settings.dict())
@@ -118,62 +100,37 @@ class MainApp(App):
         popup = Popup(title="Custom Settings", content=settings, size_hint=(0.9, 0.9))
         popup.open()
 
-    def on_current_units(self, instance, value):
-        if value == "in":
-            self.pos_format = self.formats.imperial_position
-            self.speed_format = self.formats.imperial_speed
-            self.unit_factor = 25.4
-        else:
-            self.pos_format = self.formats.metric_position
-            self.speed_format = self.metric_speed_format
-            self.unit_factor = 1
-
     def update(self, *args):
-        if self.device is not None and self.device.connected:
+        if self.device.connected:
             for i in range(len(self.device.scales)):
-                self.data[i].position = self.device.scales[i].position / 1000
+                # self.data[i].position = self.device.scales[i].position / 1000
+                self.home.coord_bars[i].position = self.device.scales[i].position / 1000
 
-            self.servo.current_position = self.device.servo.current_position
-            self.servo.desired_position = self.device.servo.desired_position
+            self.task_counter = (self.task_counter + 1) % 5
+            if self.task_counter == 0:
+                self.home.servo.current_position = self.device.servo.current_position
+                self.home.servo.desired_position = self.device.servo.desired_position
+                if self.home.status_bar is not None:
+                    self.home.status_bar.cycles = self.device.base.execution_cycles
 
         else:
-            try:
-                self.device = communication.DeviceManager(
-                    serial_device=self.serial_port, baudrate=115200, address=17
-                )
-                if not self.device.connected:
-                    raise Exception("No Connection")
+            self.home.servo.upload()
+            for scale in self.home.coord_bars:
+                scale.upload()
 
-                self.servo.upload()
-                self.device.servo.acceleration = self.acceleration
-                self.device.servo.max_speed = self.max_speed
-                self.device.servo.min_speed = self.min_speed
-                self.device.servo.ratio_num = self.ratio_num
-                self.device.servo.ratio_den = self.ratio_den
-
-                self.connected = True
-                log.warning(f"Device connection: {self.device.connected}")
-                self.task_update.timeout = 1.0 / 20
-            except Exception as e:
-                self.connected = False
-                log.error(e.__str__())
+        if self.connected != self.device.connected:
+            self.connected = self.device.connected
+            if self.connected:
+                self.task_update.timeout = 1.0 / 30
+            else:
                 self.task_update.timeout = 2.0
 
     def blinker(self, *args):
         self.blink = not self.blink
 
     def build(self):
-        self.home = Home()
-        if self.current_units == "mm":
-            self.pos_format = self.formats.metric_position
-            self.speed_format = self.metric_speed_format
-            self.unit_factor = 1.0
-        else:
-            self.pos_format = self.imperial_pos_format
-            self.speed_format = self.imperial_speed_format
-            self.unit_factor = 25.4
-
-        self.task_update = Clock.schedule_interval(self.update, 1.0 / 20)
+        self.home = Home(device=self.device)
+        self.task_update = Clock.schedule_interval(self.update, 1.0 / 30)
         Clock.schedule_interval(self.blinker, 1.0 / 4)
         return self.home
 
