@@ -230,7 +230,7 @@ class Scale(BaseDevice):
 
     @sync_ratio_den.setter
     def sync_ratio_den(self, value):
-        self.write_long(self.addresses.sync_ratio_den / 1000, value)
+        self.write_long(self.addresses.sync_ratio_den, value / 1000)
 
     @property
     def sync_motion(self):
