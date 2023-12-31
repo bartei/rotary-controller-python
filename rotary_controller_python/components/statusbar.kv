@@ -48,11 +48,11 @@
 #    checkbox_value: app.mode >= 30 and app.mode < 40
 
   LedButton:
-    # RUN JOG LED
+    # SPEED
     height: self.width
     size_hint_x: None
     width: 64
-    label: "REV"
+    label: str(int(root.speed))
 #    checkbox_value: app.mode == 32
 
   LedButton:

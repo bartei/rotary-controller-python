@@ -121,6 +121,7 @@ class MainApp(App):
             self.home.servo.current_position = self.device.fast_data.servo_current
             self.home.servo.desired_position = self.device.fast_data.servo_desired
             self.home.status_bar.cycles = self.device.fast_data.cycles
+            self.home.status_bar.speed = self.device.servo.current_speed
 
         self.connected = self.device.connected
 
