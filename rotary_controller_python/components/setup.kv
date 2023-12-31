@@ -29,6 +29,26 @@
       text: str(root.value)
       on_text_validate: root.validate(self.text)
 
+<DualNumberItem>:
+  value: 0
+  height: 32
+  size_hint_y: None
+  BoxLayout:
+    orientation: "horizontal"
+    Label:
+      size_hint_x: 0.6
+      text: root.name
+    TextInput:
+      size_hint_x: 0.2
+      multiline: False
+      text: str(root.value / root.ratio)
+      on_text_validate: root.validate_first(self.text)
+    TextInput:
+      size_hint_x: 0.2
+      multiline: False
+      text: str(root.value)
+      on_text_validate: root.validate_second(self.text)
+
 <ScalePanel>:
   orientation: "vertical"
   StringItem:
@@ -60,13 +80,15 @@
     name: "Minimum Speed"
     value: root.servo.min_speed
     on_value: root.servo.min_speed = self.value
-  NumberItem:
+  DualNumberItem:
     name: "Maximum Speed"
     value: root.servo.max_speed
+    ratio: root.servo.ratio_den / root.servo.ratio_num
     on_value: root.servo.max_speed = self.value
-  NumberItem:
+  DualNumberItem:
     name: "Acceleration"
     value: root.servo.acceleration
+    ratio: root.servo.ratio_den / root.servo.ratio_num
     on_value: root.servo.acceleration = self.value
   NumberItem:
     name: "Ratio Numerator"

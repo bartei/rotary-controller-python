@@ -50,6 +50,24 @@ class NumberItem(BoxLayout):
             log.error(e.__str__())
 
 
+class DualNumberItem(BoxLayout):
+    name = StringProperty("")
+    value = NumericProperty(0)
+    ratio = NumericProperty(1)
+
+    def validate_first(self, value):
+        try:
+            self.value = float(value) * self.ratio
+        except Exception as e:
+            log.error(e.__str__())
+
+    def validate_second(self, value):
+        try:
+            self.value = float(value)
+        except Exception as e:
+            log.error(e.__str__())
+
+
 class StringItem(BoxLayout):
     name = StringProperty("")
     value = StringProperty("")

@@ -13,6 +13,7 @@ if os.path.exists(kv_file):
 
 
 class StatusBar(BoxLayout):
+    interval = NumericProperty(0)
     cycles = NumericProperty(0)
     fps = NumericProperty(0)
     speed = NumericProperty(0)
