@@ -186,7 +186,7 @@ class Scale(BaseDevice):
 
     @ratio_den.setter
     def ratio_den(self, value):
-        self.write_long(self.addresses.ratio_den, value) * 1000
+        self.write_long(self.addresses.ratio_den, value)
 
     @property
     def max_value(self):
