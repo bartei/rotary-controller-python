@@ -182,11 +182,11 @@ class Scale(BaseDevice):
 
     @property
     def ratio_den(self):
-        return self.read_long(self.addresses.ratio_den)
+        return self.read_long(self.addresses.ratio_den) / 1000
 
     @ratio_den.setter
     def ratio_den(self, value):
-        self.write_long(self.addresses.ratio_den, value)
+        self.write_long(self.addresses.ratio_den, value) * 1000
 
     @property
     def max_value(self):
@@ -226,11 +226,11 @@ class Scale(BaseDevice):
 
     @property
     def sync_ratio_den(self):
-        return self.read_long(self.addresses.sync_ratio_den)
+        return self.read_long(self.addresses.sync_ratio_den) * 1000
 
     @sync_ratio_den.setter
     def sync_ratio_den(self, value):
-        self.write_long(self.addresses.sync_ratio_den, value)
+        self.write_long(self.addresses.sync_ratio_den / 1000, value)
 
     @property
     def sync_motion(self):
