@@ -86,7 +86,7 @@ class MainApp(App):
     def __init__(self, **kv):
         try:
             self.device = communication.DeviceManager(
-                serial_device=self.serial_port, baudrate=57600, address=17
+                serial_device=self.serial_port, baudrate=460800, address=17
             )
         except Exception as e:
             log.error(f"Communication cannot be started, will try again: {e.__str__()}")
