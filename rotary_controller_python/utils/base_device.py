@@ -51,6 +51,7 @@ class BaseDevice:
                 value=int(value),
             )
             self.dm.connected = True
+            log.info(f"Written {int(value)} to address {address}")
         except Exception as e:
             self.dm.connected = False
             log.error(e.__str__())
