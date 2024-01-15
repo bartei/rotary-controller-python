@@ -69,6 +69,12 @@ class CoordBar(BoxLayout, SavingDispatcher):
     def on_sync_ratio_den(self, instance, value):
         self.device.scales[instance.input_index].sync_ratio_den = int(value)
 
+    def on_ratio_num(self, instance, value):
+        self.device.scales[instance.input_index].ratio_num = int(value)
+
+    def on_ratio_den(self, instance, value):
+        self.device.scales[instance.input_index].ratio_den = int(value)
+
     def update_position(self):
         Factory.Keypad().show(self, 'new_position')
 

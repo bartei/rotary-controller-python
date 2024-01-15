@@ -82,7 +82,7 @@ class Setup(Popup):
         app = App.get_running_app()
         panes = []
         for i in range(4):
-            pane = TabbedPanelItem(text=f"Panel {i}")
+            pane = TabbedPanelItem(text=f"Input {i}")
             pane.add_widget(ScalePanel(scale=app.home.coord_bars[i]))
             self.tabbed_panel.add_widget(pane)
             panes.append(pane)
