@@ -1,17 +1,17 @@
 #: import Factory kivy.factory.Factory
 #: import Keypad components.keypad
 
-
 <CoordBar>:
   orientation: "horizontal"
-  height: 80
-  size_hint_y: None
-  Label:
-    text: root.axis_name
+  size_hint_y: 1
+  ToggleButton:
     width: self.height
     size_hint_x: None
-    font_size: 64
-    font_style: "bold"
+    text: root.axis_name
+    font_size: self.height / 1.5
+    state: root.sync_enable
+    background_color: [0.2, 1, 0.2, 1] if self.state == "down" else [0.3, 0.3, 0.3, 1]
+    on_release: root.sync_enable = self.state
   BoxLayout:
     orientation: "horizontal"
     BoxLayout:
@@ -22,7 +22,7 @@
         id: pos_label
         size_hint_y: 0.7
         font_name: "fonts/iosevka-regular.ttf"
-        font_size: 48
+        font_size: self.height / 1.5
         font_style: "bold"
         color: app.display_color
         text: app.formats.position_format.format(root.position / app.formats.factor)
@@ -33,7 +33,7 @@
       Label:
         size_hint_y: 0.3
         font_name: "fonts/iosevka-regular.ttf"
-        font_size: 16
+        font_size: self.height / 1.5
         font_style: "bold"
         color: app.display_color
         text: app.formats.speed_format.format(root.formatted_axis_speed / app.formats.factor)
@@ -42,22 +42,22 @@
         valign: 'top'
 
     BoxLayout:
-      size_hint_x: 0.20
+      size_hint_x: None
+      width: 100
       orientation: 'vertical'
       Label:
         text: "Num"
-        text_size: self.size
+        font_size: self.height / 1.5
         size_hint_y: 0.3
-        font_size: 16
         color: app.display_color
         halign: 'center'
         valign: 'top'
       Button:
         size_hint_y: 0.7
         font_name: "fonts/iosevka-regular.ttf"
-        font_size: 32
+        font_size: self.height / 2
         font_style: "bold"
-        background_color: [0.2, 0.2, 0.2, 1]
+        background_color: [0.3, 0.3, 0.3, 1]
         color: app.display_color
         text: str(int(root.sync_ratio_num))
         text_size: self.size
@@ -66,22 +66,22 @@
         on_release: Factory.Keypad().show(root, 'sync_ratio_num')
 
     BoxLayout:
-      size_hint_x: 0.20
+      size_hint_x: None
+      width: 100
       orientation: 'vertical'
       Label:
         text: "Den"
-        text_size: self.size
+        font_size: self.height / 1.5
         size_hint_y: 0.3
-        font_size: 16
         color: app.display_color
         halign: 'center'
         valign: 'top'
       Button:
         size_hint_y: 0.7
         font_name: "fonts/iosevka-regular.ttf"
-        font_size: 32
+        font_size: self.height / 2
         font_style: "bold"
-        background_color: [0.2, 0.2, 0.2, 1]
+        background_color: [0.3, 0.3, 0.3, 1]
         color: app.display_color
         text: str(int(root.sync_ratio_den))
         text_size: self.size
@@ -89,22 +89,6 @@
         valign: 'middle'
         on_release: Factory.Keypad().show(root, 'sync_ratio_den')
 
-    BoxLayout:
-      size_hint_x: 0.10
-      orientation: 'vertical'
-      Label:
-        text: "SYNC"
-        text_size: self.size
-        size_hint_y: 0.3
-        font_size: 16
-        color: app.display_color
-        halign: 'center'
-        valign: 'top'
-      ToggleButton:
-        text: "ON" if self.state == "down" else "OFF"
-        state: root.sync_enable
-        background_color: [0.2, 1, 0.2, 1] if self.state == "down" else [1, 0.2, 0.2, 1]
-        on_release: root.sync_enable = self.state
 
   Button:
     text: "Zero"
