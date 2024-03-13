@@ -1,14 +1,15 @@
 import os
 
+from kivy.logger import Logger
 from kivy.lang import Builder
 from kivy.properties import StringProperty, NumericProperty, BooleanProperty
 from kivy.uix.boxlayout import BoxLayout
 from kivy.app import App
 
-from loguru import logger as log
-
 from rotary_controller_python.dispatchers import SavingDispatcher
 from rotary_controller_python.utils.communication import DeviceManager
+
+log = Logger.getChild(__name__)
 
 current_app = App.get_running_app()
 kv_file = os.path.join(os.path.dirname(__file__), __file__.replace(".py", ".kv"))
