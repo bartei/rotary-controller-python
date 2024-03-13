@@ -1,16 +1,17 @@
 import os.path
-
+from kivy.logger import Logger
 from kivy.config import ConfigParser
 from kivy.lang import Builder
 from kivy.uix.settings import SettingsWithSidebar
-from loguru import logger as log
+
+log = Logger.getChild("app-settings")
 
 INPUTS_COUNT = 4
 
-kv_file = os.path.join(os.path.dirname(__file__), __file__.replace(".py", ".kv"))
-if os.path.exists(kv_file):
-    log.info(f"Loading KV file: {kv_file}")
-    Builder.load_file(kv_file)
+# kv_file = os.path.join(os.path.dirname(__file__), __file__.replace(".py", ".kv"))
+# if os.path.exists(kv_file):
+#     log.info(f"Loading KV file: {kv_file}")
+#     Builder.load_file(kv_file)
 
 config_path = os.path.abspath(
     os.path.join(os.path.dirname(__file__), "..", "..", "config.ini")
