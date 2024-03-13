@@ -1,5 +1,7 @@
+import logging
+
 from kivy.uix.popup import Popup
-from loguru import logger as log
+from kivy.logger import Logger, KivyFormatter
 
 from kivy.app import App
 from kivy.clock import Clock
@@ -20,9 +22,13 @@ from rotary_controller_python.dispatchers.formats import FormatsDispatcher
 from rotary_controller_python.utils import communication
 
 from rotary_controller_python.components.appsettings import config
-
-# from rotary_controller_python.dispatchers.scale import ScaleClass
 from rotary_controller_python.network.models import Wireless, NetworkInterface
+
+log = Logger.getChild(__name__)
+
+
+for h in log.root.handlers:
+    h.formatter = KivyFormatter('%(asctime)s - %(filename)s:%(lineno)s-%(funcName)s - %(levelname)s - %(message)s')
 
 
 class Home(BoxLayout):
@@ -45,9 +51,8 @@ class Home(BoxLayout):
             self.bars_container.add_widget(bar)
 
         self.coord_bars = coord_bars
-
         self.servo = ServoBar(device=self.device)
-        self.ids["bars_container"].add_widget(self.servo)
+        self.bars_container.add_widget(self.servo)
 
 
 class MainApp(App):

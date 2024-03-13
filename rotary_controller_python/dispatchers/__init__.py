@@ -2,9 +2,11 @@ import os
 import shutil
 
 import yaml
+from kivy.logger import Logger
 from kivy.event import EventDispatcher
 from kivy.properties import StringProperty, NumericProperty, BooleanProperty
-from loguru import logger as log
+
+log = Logger.getChild(__name__)
 
 
 class SavingDispatcher(EventDispatcher):

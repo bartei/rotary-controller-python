@@ -1,10 +1,9 @@
-import time
-
+import logging
 import minimalmodbus
-from loguru import logger as log
 
 from rotary_controller_python.utils.addresses import GlobalAddresses, SCALES_COUNT
 
+log = logging.getLogger(__name__)
 
 class DeviceManager:
     def __init__(

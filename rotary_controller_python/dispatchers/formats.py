@@ -1,13 +1,12 @@
-from kivy.app import App
+from kivy.logger import Logger
 from kivy.properties import (
-    BooleanProperty,
     NumericProperty,
     StringProperty,
 )
-from loguru import logger as log
 
 from rotary_controller_python.dispatchers import SavingDispatcher
-from rotary_controller_python.utils.communication import DeviceManager
+
+log = Logger.getChild(__name__)
 
 
 class FormatsDispatcher(SavingDispatcher):

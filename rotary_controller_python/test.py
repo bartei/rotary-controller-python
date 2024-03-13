@@ -1,9 +1,10 @@
 import time
-
 import minimalmodbus
 import serial
 
-from loguru import logger as log
+import logging
+
+log = logging.getLogger("test-connector")
 
 
 adam = minimalmodbus.Instrument(

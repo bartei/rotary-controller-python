@@ -1,5 +1,7 @@
 import minimalmodbus
-from loguru import logger as log
+import logging
+
+log = logging.getLogger(__name__)
 
 
 class BaseDevice:

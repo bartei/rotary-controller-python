@@ -1,12 +1,12 @@
 import datetime
 import shutil
 import subprocess
-
-from loguru import logger as log
+import logging
 import os
 
-
 from rotary_controller_python.network import models
+
+log = logging.getLogger(__name__)
 
 
 def read_interfaces(config_path: str = "/etc/network/interfaces"):

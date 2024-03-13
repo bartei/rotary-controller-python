@@ -15,7 +15,6 @@ minimalmodbus = "^2.0.1"
 cachetools = "^5.3.0"
 pytest = "^8.0.0"
 coverage = "^7.2.2"
-loguru = "^0.7.0"
 kivy = {version = "^2.3.0"}
 
 [build-system]
