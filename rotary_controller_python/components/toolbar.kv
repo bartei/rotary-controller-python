@@ -17,15 +17,6 @@
   width: 80
   orientation: "vertical"
 
-  LedButton:
-    # Ready
-    font_name: "fonts/Font Awesome 6 Free-Solid-900.otf"
-    font_size: 32
-    color_on: "#62ff4ccc"
-    height: self.width
-    size_hint_y: None
-    label: "\uf058"
-    checkbox_value: app.connected
 
   ToolbarButton:
     font_name: "fonts/Font Awesome 6 Free-Solid-900.otf"
@@ -53,7 +44,17 @@
     on_release: app.abs_inc = "ABS" if app.abs_inc == "INC" else "INC"
 
   ToolbarButton:
+    # Magic Wand
+    font_name: "fonts/Font Awesome 6 Free-Solid-900.otf"
+    font_size: 32
+    text: "\ue2ca"
+
+  ToolbarButton:
     font_name: "fonts/Font Awesome 6 Free-Solid-900.otf"
     font_size: 32
     text: "\uf085"
     on_release: Factory.Setup().open()
+
+  BoxLayout:
+    orientation: "vertical"
+    size_hint_y: 1
