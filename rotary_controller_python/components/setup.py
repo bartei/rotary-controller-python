@@ -44,6 +44,7 @@ class ServoPanel(BoxLayout):
     def __init__(self, servo, **kv):
         self.servo = servo
         super().__init__(**kv)
+        self.ids['grid_layout'].bind(minimum_height=self.ids['grid_layout'].setter('height'))
 
 
 class ScalePanel(BoxLayout):
@@ -52,6 +53,7 @@ class ScalePanel(BoxLayout):
     def __init__(self, scale, **kv):
         self.scale = scale
         super().__init__(**kv)
+        self.ids['grid_layout'].bind(minimum_height=self.ids['grid_layout'].setter('height'))
 
 
 class NumberItem(BoxLayout):
@@ -76,19 +78,19 @@ class DualNumberItem(BoxLayout):
     name = StringProperty("")
     value = NumericProperty(0)
     ratio = NumericProperty(1)
+    scaled_value = NumericProperty(0)
 
-    def validate_first(self, value):
+    def on_value(self, instance, value):
         try:
-            self.value = float(value) * self.ratio
+            self.scaled_value = value / self.ratio
         except Exception as e:
             log.error(e.__str__())
 
-    def validate_second(self, value):
+    def on_scaled_value(self, instance, value):
         try:
-            self.value = float(value)
+            self.value = value * self.ratio
         except Exception as e:
             log.error(e.__str__())
-
 
 class StringItem(BoxLayout):
     name = StringProperty("")

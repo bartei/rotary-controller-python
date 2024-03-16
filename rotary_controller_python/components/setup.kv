@@ -61,84 +61,95 @@
     Label:
       size_hint_x: 0.6
       text: root.name
-    TextInput:
+    Button:
       size_hint_x: None
       width: 125
-      multiline: False
-      text: str(root.value / root.ratio)
-      on_text_validate: root.validate_first(self.text)
-    TextInput:
+      text: "{: 0.2f}".format(root.value / root.ratio)
+      on_release: Factory.Keypad().show(root, 'scaled_value')
+    Button:
       size_hint_x: None
       width: 125
-      multiline: False
-      text: str(root.value)
-      on_text_validate: root.validate_second(self.text)
+      text: "{: 0.2f}".format(root.value)
+      on_release: Factory.Keypad().show(root, 'value')
+
 
 <ScalePanel>:
   orientation: "vertical"
-  StringItem:
-    name: "Axis Name"
-    value: root.scale.axis_name
-    on_value: root.scale.axis_name = self.value
-  NumberItem:
-    name: "Ratio Numerator"
-    value: root.scale.ratio_num
-    on_value: root.scale.ratio_num = self.value
-  NumberItem:
-    name: "Ratio Denominator"
-    value: root.scale.ratio_den
-    help_file: "scales.rst"
-    on_value: root.scale.ratio_den = self.value
-  NumberItem:
-    name: "Sync Ratio Numerator"
-    value: root.scale.sync_ratio_num
-    help_file: "scales.rst"
-    on_value: root.scale.sync_ratio_num = self.value
-  NumberItem:
-    name: "Sync Ratio Denominator"
-    value: root.scale.sync_ratio_den
-    on_value: root.scale.sync_ratio_den = self.value
-  BoxLayout:
-    orientation: "vertical"
+  ScrollView:
+    do_scroll_x: False
+    do_scroll_y: True
+    GridLayout:
+      id: grid_layout
+      cols: 1
+      spacing: 1
+      size_hint_y: None
+      StringItem:
+        name: "Axis Name"
+        value: root.scale.axis_name
+        on_value: root.scale.axis_name = self.value
+      NumberItem:
+        name: "Ratio Numerator"
+        value: root.scale.ratio_num
+        on_value: root.scale.ratio_num = self.value
+      NumberItem:
+        name: "Ratio Denominator"
+        value: root.scale.ratio_den
+        help_file: "scales.rst"
+        on_value: root.scale.ratio_den = self.value
+      NumberItem:
+        name: "Sync Ratio Numerator"
+        value: root.scale.sync_ratio_num
+        help_file: "scales.rst"
+        on_value: root.scale.sync_ratio_num = self.value
+      NumberItem:
+        name: "Sync Ratio Denominator"
+        value: root.scale.sync_ratio_den
+        on_value: root.scale.sync_ratio_den = self.value
 
 <ServoPanel>:
   orientation: "vertical"
-  NumberItem:
-    name: "Minimum Speed"
-    value: root.servo.min_speed
-    on_value: root.servo.min_speed = self.value
-  DualNumberItem:
-    name: "Maximum Speed"
-    value: root.servo.max_speed
-    ratio: root.servo.ratio_den / root.servo.ratio_num
-    on_value: root.servo.max_speed = self.value
-  DualNumberItem:
-    name: "Acceleration"
-    value: root.servo.acceleration
-    ratio: root.servo.ratio_den / root.servo.ratio_num
-    on_value: root.servo.acceleration = self.value
-  NumberItem:
-    name: "Ratio Numerator"
-    value: root.servo.ratio_num
-    on_value: root.servo.ratio_num = self.value
-  NumberItem:
-    name: "Ratio Denominator"
-    value: root.servo.ratio_den
-    on_value: root.servo.ratio_den = self.value
-  NumberItem:
-    name: "Offset"
-    value: root.servo.offset
-    on_value: root.servo.offset = self.value
-  NumberItem:
-    name: "Divisions"
-    value: root.servo.divisions
-    on_value: root.servo.divisions = self.value
-  NumberItem:
-    name: "Index"
-    value: root.servo.index
-    on_value: root.servo.index = self.value
-  BoxLayout:
-    orientation: "vertical"
+  ScrollView:
+    do_scroll_x: False
+    do_scroll_y: True
+    GridLayout:
+      id: grid_layout
+      cols: 1
+      spacing: 1
+      size_hint_y: None
+      NumberItem:
+        name: "Minimum Speed"
+        value: root.servo.min_speed
+        on_value: root.servo.min_speed = self.value
+      DualNumberItem:
+        name: "Maximum Speed"
+        value: root.servo.max_speed
+        ratio: root.servo.ratio_den / root.servo.ratio_num
+        on_value: root.servo.max_speed = self.value
+      DualNumberItem:
+        name: "Acceleration"
+        value: root.servo.acceleration
+        ratio: root.servo.ratio_den / root.servo.ratio_num
+        on_value: root.servo.acceleration = self.value
+      NumberItem:
+        name: "Ratio Numerator"
+        value: root.servo.ratio_num
+        on_value: root.servo.ratio_num = self.value
+      NumberItem:
+        name: "Ratio Denominator"
+        value: root.servo.ratio_den
+        on_value: root.servo.ratio_den = self.value
+      NumberItem:
+        name: "Offset"
+        value: root.servo.offset
+        on_value: root.servo.offset = self.value
+      NumberItem:
+        name: "Divisions"
+        value: root.servo.divisions
+        on_value: root.servo.divisions = self.value
+      NumberItem:
+        name: "Index"
+        value: root.servo.index
+        on_value: root.servo.index = self.value
 
 <LogsPanel>:
   orientation: "vertical"
@@ -183,7 +194,6 @@
       orientation: "horizontal"
 
       Button:
-#        font_name: "fonts/Font Awesome 6 Free-Solid-900.otf"
         text: "UI Settings"
         on_release: app.open_custom_settings()
       Button:
