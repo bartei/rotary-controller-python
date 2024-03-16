@@ -22,8 +22,13 @@ class Keypad(Popup):
 
     def confirm(self):
         try:
-            check_float = float(self.ids['value'].text)
-            setattr(self.container, self.set_method, check_float)
+            value = self.ids['value'].text
+            if "." in value:
+                value = float(value)
+            else:
+                value = int(value)
+
+            setattr(self.container, self.set_method, value)
             self.dismiss()
         except Exception as e:
             log.error(e.__str__())
