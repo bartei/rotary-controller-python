@@ -23,11 +23,11 @@ if os.path.exists(kv_file):
 class CoordBar(BoxLayout, SavingDispatcher):
     device = ObjectProperty()
     input_index = NumericProperty(0)
-    axis_name = StringProperty("NN")
-    ratio_num = NumericProperty(1)
-    ratio_den = NumericProperty(200)
-    sync_ratio_num = NumericProperty(100)
-    sync_ratio_den = NumericProperty(360)
+    axis_name = StringProperty("?")
+    ratio_num = NumericProperty(5)
+    ratio_den = NumericProperty(1)
+    sync_ratio_num = NumericProperty(360)
+    sync_ratio_den = NumericProperty(100)
     sync_enable = StringProperty("normal")
     position = NumericProperty(0)
 
