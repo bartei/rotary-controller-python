@@ -2,6 +2,15 @@
 
 
 
+## v0.2.3 (2024-03-16)
+
+### Fix
+
+* fix: improvements to the setup dialog ([`886bcb5`](https://github.com/bartei/rotary-controller-python/commit/886bcb51b8ac988de25bc49ec20f5b106efd091d))
+
+* fix: add keyboard bindings for the keypad dialog ([`bb04bae`](https://github.com/bartei/rotary-controller-python/commit/bb04bae0bb0cb200cae41824edc3750ce7709c26))
+
+
 ## v0.2.2 (2024-03-16)
 
 ### Fix
