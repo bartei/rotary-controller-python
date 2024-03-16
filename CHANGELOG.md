@@ -2,6 +2,17 @@
 
 
 
+## v0.2.1 (2024-03-16)
+
+### Fix
+
+* fix: check value for confirmation from keypad ([`85333ac`](https://github.com/bartei/rotary-controller-python/commit/85333ac65a71112dd67d7945f1a39f5bf2797b7f))
+
+### Unknown
+
+* Merge remote-tracking branch &#39;origin/main&#39; ([`cdd275c`](https://github.com/bartei/rotary-controller-python/commit/cdd275cc7b0cb17a0c55b3f61ee0c71dee05ec2f))
+
+
 ## v0.2.0 (2024-03-13)
 
 ### Feature
