@@ -21,9 +21,13 @@ class Keypad(Popup):
         self.open()
 
     def confirm(self):
-        current = self.ids['value'].text
-        setattr(self.container, self.set_method, current)
-        self.dismiss()
+        try:
+            check_float = float(self.ids['value'].text)
+            setattr(self.container, self.set_method, check_float)
+            self.dismiss()
+        except Exception as e:
+            log.error(e.__str__())
+            return
 
     def cancel(self):
         # if self.old_value is not None:
