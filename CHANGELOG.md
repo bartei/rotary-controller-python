@@ -2,6 +2,18 @@
 
 
 
+## v0.2.4 (2024-03-16)
+
+### Fix
+
+* fix: remove unused file
+fix: better default values for scales ([`6ef54ab`](https://github.com/bartei/rotary-controller-python/commit/6ef54abcd00aab26eb462e20fd8e4de9f4f435e8))
+
+### Unknown
+
+* Merge remote-tracking branch &#39;origin/main&#39; ([`3329e65`](https://github.com/bartei/rotary-controller-python/commit/3329e655c151a7fe487a1fdca73185d22378e299))
+
+
 ## v0.2.3 (2024-03-16)
 
 ### Fix
