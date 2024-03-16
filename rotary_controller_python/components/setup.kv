@@ -1,50 +1,75 @@
 #: import ViewPopup components.viewpopup
 
 <StringItem>:
-  height: 32
+  height: 36
   size_hint_y: None
   BoxLayout:
     orientation: "horizontal"
+    Button:
+      size_hint_x: None
+      width: self.height
+      font_name: "fonts/Font Awesome 6 Free-Solid-900.otf"
+      font_size: 21
+      text: "\uf129"
+#      on_release: Factory.Wifi().open()
     Label:
       size_hint_x: 0.7
       text: root.name
     TextInput:
-      size_hint_x: 0.3
+      size_hint_x: None
+      width: 250
       multiline: False
       text: root.value
       on_text_validate: root.value = self.text
 
 <NumberItem>:
   value: 0
-  height: 32
+  height: 36
   size_hint_y: None
   BoxLayout:
     orientation: "horizontal"
+    Button:
+      size_hint_x: None
+      width: self.height
+      font_name: "fonts/Font Awesome 6 Free-Solid-900.otf"
+      font_size: 21
+      text: "\uf129"
+#      on_release: Factory.Wifi().open()
     Label:
       size_hint_x: 0.7
       text: root.name
-    TextInput:
-      size_hint_x: 0.3
-      multiline: False
+    Button:
+      size_hint_x: None
+      width: 250
       text: str(root.value)
-      on_text_validate: root.validate(self.text)
+      on_release: Factory.Keypad().show(root, 'value')
 
 <DualNumberItem>:
   value: 0
-  height: 32
+  height: 36
   size_hint_y: None
   BoxLayout:
     orientation: "horizontal"
+    Button:
+      size_hint_x: None
+      width: self.height
+      font_name: "fonts/Font Awesome 6 Free-Solid-900.otf"
+      font_size: 21
+      text: "\uf129"
+#      on_release: Factory.Wifi().open()
+
     Label:
       size_hint_x: 0.6
       text: root.name
     TextInput:
-      size_hint_x: 0.2
+      size_hint_x: None
+      width: 125
       multiline: False
       text: str(root.value / root.ratio)
       on_text_validate: root.validate_first(self.text)
     TextInput:
-      size_hint_x: 0.2
+      size_hint_x: None
+      width: 125
       multiline: False
       text: str(root.value)
       on_text_validate: root.validate_second(self.text)
@@ -62,10 +87,12 @@
   NumberItem:
     name: "Ratio Denominator"
     value: root.scale.ratio_den
+    help_file: "scales.rst"
     on_value: root.scale.ratio_den = self.value
   NumberItem:
     name: "Sync Ratio Numerator"
     value: root.scale.sync_ratio_num
+    help_file: "scales.rst"
     on_value: root.scale.sync_ratio_num = self.value
   NumberItem:
     name: "Sync Ratio Denominator"

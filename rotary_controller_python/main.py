@@ -1,4 +1,5 @@
 import logging
+import os
 
 from kivy.uix.popup import Popup
 from kivy.logger import Logger, KivyFormatter
@@ -97,6 +98,23 @@ class MainApp(App):
             log.error(f"Communication cannot be started, will try again: {e.__str__()}")
 
         super().__init__(**kv)
+
+    @staticmethod
+    def load_help(help_file_name):
+        """
+        Loads the specified help file text from the help files folder.
+        """
+        help_file_path = os.path.join(
+            os.path.dirname(__file__),
+            "help",
+            help_file_name
+        )
+        if not os.path.exists(help_file_path):
+            return "Help file not found"
+
+        with open(help_file_path, "r") as f:
+            return f.read()
+
 
     def on_network_settings(self):
         print(self.network_settings.dict())

@@ -37,6 +37,7 @@ class LogsPanel(BoxLayout):
         else:
             self.ids['log_text_area'].text = "Enable file logging in your Kivy config!"
 
+
 class ServoPanel(BoxLayout):
     servo = ObjectProperty()
 
@@ -56,6 +57,7 @@ class ScalePanel(BoxLayout):
 class NumberItem(BoxLayout):
     name = StringProperty("")
     value = NumericProperty(0)
+    help_file = StringProperty("")
 
     def validate(self, value):
         try:
@@ -65,6 +67,9 @@ class NumberItem(BoxLayout):
                 self.value = int(value)
         except Exception as e:
             log.error(e.__str__())
+
+    def on_value(self, instance, value):
+        self.validate(value)
 
 
 class DualNumberItem(BoxLayout):
