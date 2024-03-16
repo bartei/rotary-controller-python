@@ -2,6 +2,20 @@
 
 
 
+## v0.2.2 (2024-03-16)
+
+### Fix
+
+* fix: add link for help dialog to the setup page
+fix: add rst text for the scales ([`11095c1`](https://github.com/bartei/rotary-controller-python/commit/11095c19a38a086544adf0a43bc1f31ecda70765))
+
+* fix: handle int or float type for keypad confirm ([`20233d1`](https://github.com/bartei/rotary-controller-python/commit/20233d1f1e2e66607c8e56941280aa6f30215b79))
+
+### Unknown
+
+* Merge remote-tracking branch &#39;origin/main&#39; ([`d8a1199`](https://github.com/bartei/rotary-controller-python/commit/d8a1199e688d21a8a8eac672a049d52c8644132f))
+
+
 ## v0.2.1 (2024-03-16)
 
 ### Fix
