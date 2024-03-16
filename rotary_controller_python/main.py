@@ -84,6 +84,12 @@ class MainApp(App):
     serial_port = ConfigParserProperty(
         defaultvalue="/dev/serial0", section="device", key="serial_port", config=config
     )
+    serial_baudrate = ConfigParserProperty(
+        defaultvalue="57600", section="device", key="baudrate", config=config
+    )
+    serial_address = ConfigParserProperty(
+        defaultvalue="17", section="device", key="address", config=config
+    )
     device = ObjectProperty()
     home = ObjectProperty()
     task_update = None
@@ -92,7 +98,9 @@ class MainApp(App):
     def __init__(self, **kv):
         try:
             self.device = communication.DeviceManager(
-                serial_device=self.serial_port, baudrate=115200, address=17
+                serial_device=self.serial_port,
+                baudrate=self.serial_baudrate,
+                address=self.serial_address
             )
         except Exception as e:
             log.error(f"Communication cannot be started, will try again: {e.__str__()}")
