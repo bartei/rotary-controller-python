@@ -2,6 +2,17 @@
 
 
 
+## v0.2.5 (2024-03-16)
+
+### Fix
+
+* fix: add address and baudrate in config.ini ([`957c5a9`](https://github.com/bartei/rotary-controller-python/commit/957c5a9426bcee8ad4e9f0526b00dd1cb70762d4))
+
+### Unknown
+
+* Merge remote-tracking branch &#39;origin/main&#39; ([`ddb3e34`](https://github.com/bartei/rotary-controller-python/commit/ddb3e346ec7669bd9b6ae7bc8570a7419f5d84c0))
+
+
 ## v0.2.4 (2024-03-16)
 
 ### Fix
