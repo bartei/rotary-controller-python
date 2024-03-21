@@ -82,13 +82,13 @@ class MainApp(App):
     current_origin = StringProperty("Origin 0")
     tool = NumericProperty(0)
     serial_port = ConfigParserProperty(
-        defaultvalue="/dev/serial0", section="device", key="serial_port", config=config
+        defaultvalue="/dev/serial0", section="device", key="serial_port", config=config, val_type=str
     )
     serial_baudrate = ConfigParserProperty(
-        defaultvalue="57600", section="device", key="baudrate", config=config
+        defaultvalue="57600", section="device", key="baudrate", config=config, val_type=int
     )
     serial_address = ConfigParserProperty(
-        defaultvalue="17", section="device", key="address", config=config
+        defaultvalue=7, section="device", key="address", config=config, val_type=int
     )
     device = ObjectProperty()
     home = ObjectProperty()
