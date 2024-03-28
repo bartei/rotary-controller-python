@@ -2,6 +2,18 @@
 
 
 
+## v0.2.7 (2024-03-28)
+
+### Fix
+
+* fix: add speed progress bar to indicate how far you are form the maximum allowed speed
+fix: add second refresh routine that goes slower for top bar statuses ([`930635e`](https://github.com/bartei/rotary-controller-python/commit/930635ebd936287bbc42f53f03be1f9f0441ed82))
+
+### Unknown
+
+* Merge remote-tracking branch &#39;origin/main&#39; ([`04f4f61`](https://github.com/bartei/rotary-controller-python/commit/04f4f611508eecd68d6ea4a5873e45c990983374))
+
+
 ## v0.2.6 (2024-03-21)
 
 ### Fix
