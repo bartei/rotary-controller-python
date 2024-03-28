@@ -2,6 +2,17 @@
 
 
 
+## v0.2.9 (2024-03-28)
+
+### Fix
+
+* fix: checks for slow update ([`9b4769f`](https://github.com/bartei/rotary-controller-python/commit/9b4769f6b943b4ac2cb9531d806afcbd0bf6aa25))
+
+### Unknown
+
+* Merge remote-tracking branch &#39;origin/main&#39; ([`20cfc79`](https://github.com/bartei/rotary-controller-python/commit/20cfc795d08060c4a4d8277f77fc15a1fd4d33ce))
+
+
 ## v0.2.8 (2024-03-28)
 
 ### Fix
