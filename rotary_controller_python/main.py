@@ -134,10 +134,13 @@ class MainApp(App):
         popup.open()
 
     def update_slow(self, *args):
-        servo_current_steps = self.device.servo.current_steps
-        self.home.status_bar.speed = abs(servo_current_steps - self.servo_previous_steps)
-        self.servo_previous_steps = servo_current_steps
         if self.device.connected:
+            servo_current_steps = self.device.servo.current_steps
+            if abs(servo_current_steps - self.servo_previous_steps) > 0:
+                self.home.status_bar.speed = int(abs(servo_current_steps - self.servo_previous_steps))
+            else:
+                self.home.status_bar.speed = 0
+            self.servo_previous_steps = servo_current_steps
             self.home.status_bar.max_speed = self.device.servo.max_speed
             self.home.status_bar.cycles = self.device.fast_data.cycles
             self.home.status_bar.interval = self.device.base.execution_interval
@@ -149,7 +152,6 @@ class MainApp(App):
                 # self.task_update.timeout = 1.0 / 30
                 self.device.connected = True
                 self.upload()
-                self.home.status_bar.interval = self.device.base.execution_interval
 
         except Exception as e:
             log.error(f"No connection: {e.__str__()}")
