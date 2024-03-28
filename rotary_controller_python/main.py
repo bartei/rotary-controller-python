@@ -138,7 +138,9 @@ class MainApp(App):
             if abs(servo_current_steps - self.servo_previous_steps) > 0:
                 self.home.status_bar.speed = int(
                     abs(servo_current_steps - self.servo_previous_steps)
-                ) / self.task_update_slow.timeout
+                    / self.task_update_slow.timeout
+                )
+
             else:
                 self.home.status_bar.speed = 0
             self.servo_previous_steps = servo_current_steps
