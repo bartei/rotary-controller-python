@@ -2,6 +2,13 @@
 
 
 
+## v0.2.6 (2024-03-21)
+
+### Fix
+
+* fix: configure variable type for serial port and serial baudrate properties ([`f737866`](https://github.com/bartei/rotary-controller-python/commit/f73786615bcddc55854db04db15e1f5ce55fb646))
+
+
 ## v0.2.5 (2024-03-16)
 
 ### Fix
