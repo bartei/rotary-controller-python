@@ -137,6 +137,7 @@ class MainApp(App):
             self.home.status_bar.max_speed = self.device.servo.max_speed
             self.home.status_bar.cycles = self.device.fast_data.cycles
             self.home.status_bar.interval = self.device.base.execution_interval
+            log.info(f"Speed: max {self.device.servo.max_speed}, current {self.device.servo.current_speed}, N: {self.device.servo.ratio_num}, D: {self.device.servo.ratio_den}")
 
     def update(self, *args):
         try:
