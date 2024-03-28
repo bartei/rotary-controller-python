@@ -94,7 +94,6 @@ class MainApp(App):
     task_update = None
     task_update_slow = None
     task_counter = 0
-    servo_previous_steps = 0
 
     def __init__(self, **kv):
         try:
@@ -134,16 +133,7 @@ class MainApp(App):
 
     def update_slow(self, *args):
         if self.device.connected:
-            servo_current_steps = self.device.servo.current_steps
-            if abs(servo_current_steps - self.servo_previous_steps) > 0:
-                self.home.status_bar.speed = int(
-                    abs(servo_current_steps - self.servo_previous_steps)
-                    / self.task_update_slow.timeout
-                )
-
-            else:
-                self.home.status_bar.speed = 0
-            self.servo_previous_steps = servo_current_steps
+            self.home.status_bar.speed = self.device.servo.current_speed # * self.device.servo.ratio_num / self.device.servo.ratio_den
             self.home.status_bar.max_speed = self.device.servo.max_speed
             self.home.status_bar.cycles = self.device.fast_data.cycles
             self.home.status_bar.interval = self.device.base.execution_interval
