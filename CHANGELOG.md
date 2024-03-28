@@ -2,6 +2,17 @@
 
 
 
+## v0.2.10 (2024-03-28)
+
+### Fix
+
+* fix: error with type definition for servo steps ([`1cb47e6`](https://github.com/bartei/rotary-controller-python/commit/1cb47e65a33e65000e6e53c4c2ce6a4ad4cf6b89))
+
+### Unknown
+
+* Merge remote-tracking branch &#39;origin/main&#39; ([`f383e4c`](https://github.com/bartei/rotary-controller-python/commit/f383e4caab2fc6813eb6bf5ae990ed0a23819469))
+
+
 ## v0.2.9 (2024-03-28)
 
 ### Fix
