@@ -106,7 +106,7 @@ class Servo(BaseDevice):
 
     @property
     def current_steps(self):
-        return self.read_float(self.addresses.current_steps)
+        return self.read_long(self.addresses.current_steps)
 
     @property
     def desired_steps(self):
