@@ -2,6 +2,17 @@
 
 
 
+## v0.2.12 (2024-03-28)
+
+### Fix
+
+* fix: error scaling of the speed bar ([`9bbcc06`](https://github.com/bartei/rotary-controller-python/commit/9bbcc065d98e096d48d491c4a5bf4238a217e449))
+
+### Unknown
+
+* Merge remote-tracking branch &#39;origin/main&#39; ([`784ab6b`](https://github.com/bartei/rotary-controller-python/commit/784ab6b89085c0321b2660cb9a39e0b5c8d636ab))
+
+
 ## v0.2.11 (2024-03-28)
 
 ### Fix
