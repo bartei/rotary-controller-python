@@ -93,6 +93,7 @@ class MainApp(App):
     device = ObjectProperty()
     home = ObjectProperty()
     task_update = None
+    task_update_slow = None
     task_counter = 0
 
     def __init__(self, **kv):
@@ -132,6 +133,13 @@ class MainApp(App):
         popup = Popup(title="Custom Settings", content=settings, size_hint=(0.9, 0.9))
         popup.open()
 
+    def update_slow(self, *args):
+        if self.device.connected:
+            self.home.status_bar.max_speed = self.device.servo.max_speed
+            self.home.status_bar.cycles = self.device.fast_data.cycles
+            self.home.status_bar.speed = self.device.servo.current_speed
+            self.home.status_bar.interval = self.device.base.execution_interval
+
     def update(self, *args):
         try:
             self.device.fast_data.refresh()
@@ -152,8 +160,10 @@ class MainApp(App):
                 bar.position = self.device.fast_data.scale_current[bar.input_index]
             self.home.servo.current_position = self.device.fast_data.servo_current
             self.home.servo.desired_position = self.device.fast_data.servo_desired
-            self.home.status_bar.cycles = self.device.fast_data.cycles
-            self.home.status_bar.speed = self.device.servo.current_speed
+            # self.home.status_bar.cycles = self.device.fast_data.cycles
+            # self.home.status_bar.speed = self.device.servo.current_speed
+            # self.device.servo.max_speed
+            # self.home.status_bar.interval = self.device.base.execution_interval
 
         self.connected = self.device.connected
 
@@ -169,6 +179,7 @@ class MainApp(App):
     def build(self):
         self.home = Home(device=self.device)
         self.task_update = Clock.schedule_interval(self.update, 1.0 / 30)
+        self.task_update_slow = Clock.schedule_interval(self.update_slow, 1.0 / 5)
         Clock.schedule_interval(self.blinker, 1.0 / 4)
         return self.home
 

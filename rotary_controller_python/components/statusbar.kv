@@ -8,7 +8,6 @@
 
   LedButton:
     # Communication Alarm
-    height: self.width
     size_hint_x: None
     width: 64
     label: "COM"
@@ -16,7 +15,6 @@
 
   LedButton:
     # READY LED
-    height: self.width
     size_hint_x: None
     valign: "top"
     width: 64
@@ -24,49 +22,29 @@
     checkbox_value: app.connected
 
   LedButton:
-    # RUN SYN LED
-    height: self.width
-    size_hint_x: None
-    width: 64
-    label: "SYN"
-#    checkbox_value: app.mode == 20
-
-  LedButton:
-    # RUN INDEX LED
-    height: self.width
-    size_hint_x: None
-    width: 64
-    label: "IDX"
-#    checkbox_value: app.mode == 10
-
-  LedButton:
-    # RUN JOG LED
-    height: self.width
+    # INT.CYCLES
     size_hint_x: None
     width: 64
     label: str(int(root.interval))
-#    checkbox_value: app.mode >= 30 and app.mode < 40
 
   LedButton:
     # SPEED
-    height: self.width
     size_hint_x: None
     width: 64
     label: str(int(root.speed))
-#    checkbox_value: app.mode == 32
 
   LedButton:
     # FPS
-    height: self.width
     size_hint_x: None
     width: 64
     label: str(int(root.fps))
-#    checkbox_value: app.mode == 31
 
   LedButton:
     # CYCLES
-    height: self.width
     size_hint_x: None
     width: 64
     label: str(root.cycles)
-#    checkbox_value: app.mode >= 100
+
+  ProgressBar:
+    max: int(root.max_speed)
+    value: int(root.speed)
