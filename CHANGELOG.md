@@ -2,6 +2,13 @@
 
 
 
+## v0.2.8 (2024-03-28)
+
+### Fix
+
+* fix: update data source for the servo speed ([`20cb754`](https://github.com/bartei/rotary-controller-python/commit/20cb7546da4e032d45d5fa91f329cf5e088e9308))
+
+
 ## v0.2.7 (2024-03-28)
 
 ### Fix
