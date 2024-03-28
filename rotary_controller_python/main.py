@@ -95,6 +95,7 @@ class MainApp(App):
     task_update = None
     task_update_slow = None
     task_counter = 0
+    servo_previous_steps = 0
 
     def __init__(self, **kv):
         try:
@@ -124,7 +125,6 @@ class MainApp(App):
         with open(help_file_path, "r") as f:
             return f.read()
 
-
     def on_network_settings(self):
         print(self.network_settings.dict())
 
@@ -134,10 +134,12 @@ class MainApp(App):
         popup.open()
 
     def update_slow(self, *args):
+        servo_current_steps = self.device.servo.current_steps
+        self.home.status_bar.speed = abs(servo_current_steps - self.servo_previous_steps)
+        self.servo_previous_steps = servo_current_steps
         if self.device.connected:
             self.home.status_bar.max_speed = self.device.servo.max_speed
             self.home.status_bar.cycles = self.device.fast_data.cycles
-            self.home.status_bar.speed = self.device.servo.current_speed
             self.home.status_bar.interval = self.device.base.execution_interval
 
     def update(self, *args):
@@ -160,10 +162,6 @@ class MainApp(App):
                 bar.position = self.device.fast_data.scale_current[bar.input_index]
             self.home.servo.current_position = self.device.fast_data.servo_current
             self.home.servo.desired_position = self.device.fast_data.servo_desired
-            # self.home.status_bar.cycles = self.device.fast_data.cycles
-            # self.home.status_bar.speed = self.device.servo.current_speed
-            # self.device.servo.max_speed
-            # self.home.status_bar.interval = self.device.base.execution_interval
 
         self.connected = self.device.connected
 
