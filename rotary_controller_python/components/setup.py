@@ -92,6 +92,7 @@ class DualNumberItem(BoxLayout):
         except Exception as e:
             log.error(e.__str__())
 
+
 class StringItem(BoxLayout):
     name = StringProperty("")
     value = StringProperty("")
