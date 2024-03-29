@@ -133,8 +133,8 @@ class MainApp(App):
 
     def update_slow(self, *args):
         if self.device.connected:
-            self.home.status_bar.speed = self.device.servo.estimated_speed
-            self.home.status_bar.max_speed = self.device.servo.max_speed * self.home.servo.ratio_den / self.home.servo.ratio_num
+            self.home.status_bar.speed = self.device.servo.estimated_speed * self.home.servo.ratio_den / self.home.servo.ratio_num
+            self.home.status_bar.max_speed = self.device.servo.max_speed
             self.home.status_bar.cycles = self.device.fast_data.cycles
             self.home.status_bar.interval = self.device.base.execution_interval
 
