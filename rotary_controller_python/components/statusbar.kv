@@ -13,13 +13,20 @@
     label: "COM"
     checkbox_value: app.connected or app.blink
 
+#  LedButton:
+#    # READY LED
+#    size_hint_x: None
+#    valign: "top"
+#    width: 64
+#    label: "RDY"
+#    checkbox_value: app.connected
+
   LedButton:
-    # READY LED
+    # INT.CYCLES
     size_hint_x: None
-    valign: "top"
     width: 64
-    label: "RDY"
-    checkbox_value: app.connected
+    label: str(int(root.max_speed))
+
 
   LedButton:
     # INT.CYCLES
