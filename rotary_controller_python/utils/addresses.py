@@ -108,7 +108,7 @@ class ServoAddresses:
         self.max_value = 26 + base_address
         self.min_value = 28 + base_address
         self.breaking_space = 30 + base_address
-        self.breaking_time = 32 + base_address
+        self.estimated_speed = 32 + base_address
         self.allowed_error = 34 + base_address
         self.end = 36 + base_address
 

@@ -149,8 +149,8 @@ class Servo(BaseDevice):
         return self.read_float(self.addresses.breaking_space)
 
     @property
-    def breaking_time(self):
-        return self.read_float(self.addresses.breaking_time)
+    def estimated_speed(self):
+        return self.read_float(self.addresses.estimated_speed)
 
     @property
     def allowed_error(self):
