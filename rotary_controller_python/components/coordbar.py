@@ -7,7 +7,7 @@ from kivy.logger import Logger
 from kivy.factory import Factory
 from kivy.clock import Clock
 from kivy.lang import Builder
-from kivy.properties import NumericProperty, StringProperty, ObjectProperty
+from kivy.properties import NumericProperty, StringProperty, ObjectProperty, ListProperty
 from kivy.uix.boxlayout import BoxLayout
 from kivy.app import App
 
@@ -30,6 +30,7 @@ class CoordBar(BoxLayout, SavingDispatcher):
     sync_ratio_den = NumericProperty(100)
     sync_enable = StringProperty("normal")
     position = NumericProperty(0)
+    sync_button_color = ListProperty([0.3, 0.3, 0.3, 1])
 
     formatted_axis_speed = NumericProperty(0.000)
 
@@ -57,11 +58,14 @@ class CoordBar(BoxLayout, SavingDispatcher):
             log.info(f"Writing scale settings for scale {self.input_index}: {item}={self.__getattribute__(item)}")
             self.device.scales[self.input_index].__setattr__(item, self.__getattribute__(item))
 
-    def on_sync_enable(self, instance, value):
-        if value == "down":
-            self.device.scales[instance.input_index].sync_motion = True
-        else:
-            self.device.scales[instance.input_index].sync_motion = False
+    def toggle_sync(self):
+        if self.position == 0:
+            new_status = not self.device.scales[self.input_index].sync_motion
+            self.device.scales[self.input_index].sync_motion = new_status
+            if new_status is True:
+                self.sync_button_color = [0.2, 1, 0.2, 1]
+            else:
+                self.sync_button_color = [0.3, 0.3, 0.3, 1]
 
     def on_sync_ratio_num(self, instance, value):
         self.device.scales[instance.input_index].sync_ratio_num = int(value)

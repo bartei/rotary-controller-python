@@ -4,14 +4,14 @@
 <CoordBar>:
   orientation: "horizontal"
   size_hint_y: 1
-  ToggleButton:
+  Button:
     width: self.height
     size_hint_x: None
     text: root.axis_name
     font_size: self.height / 1.5
-    state: root.sync_enable
-    background_color: [0.2, 1, 0.2, 1] if self.state == "down" else [0.3, 0.3, 0.3, 1]
-    on_release: root.sync_enable = self.state
+    background_color: root.sync_button_color
+    on_release: root.toggle_sync()
+
   BoxLayout:
     orientation: "horizontal"
     BoxLayout:
