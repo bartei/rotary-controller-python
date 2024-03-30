@@ -2,6 +2,19 @@
 
 
 
+## v0.2.14 (2024-03-30)
+
+### Fix
+
+* fix: sync motion auto offsets working reliably
+fix: remove some top bar refresh items to speed up the display
+fix: add manual update command to app ([`97498b7`](https://github.com/bartei/rotary-controller-python/commit/97498b730b643391ba6c4064cf8ac2beb30935bc))
+
+### Unknown
+
+* Merge remote-tracking branch &#39;origin/main&#39; ([`914c375`](https://github.com/bartei/rotary-controller-python/commit/914c3758698c66c95728f160bc4719d894ad616a))
+
+
 ## v0.2.13 (2024-03-30)
 
 ### Fix
