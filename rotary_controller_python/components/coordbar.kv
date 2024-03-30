@@ -9,7 +9,7 @@
     size_hint_x: None
     text: root.axis_name
     font_size: self.height / 1.5
-    background_color: root.sync_button_color
+    background_color: [0.2, 1, 0.2, 1] if root.sync_enable else [0.3, 0.3, 0.3, 1]
     on_release: root.toggle_sync()
 
   BoxLayout:
@@ -98,3 +98,4 @@
     width: self.height
     size_hint_x: None
     on_release: root.new_position = 0
+    disabled: root.sync_enable

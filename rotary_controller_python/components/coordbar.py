@@ -7,7 +7,7 @@ from kivy.logger import Logger
 from kivy.factory import Factory
 from kivy.clock import Clock
 from kivy.lang import Builder
-from kivy.properties import NumericProperty, StringProperty, ObjectProperty, ListProperty
+from kivy.properties import NumericProperty, StringProperty, ObjectProperty, ListProperty, BooleanProperty
 from kivy.uix.boxlayout import BoxLayout
 from kivy.app import App
 
@@ -28,7 +28,7 @@ class CoordBar(BoxLayout, SavingDispatcher):
     ratio_den = NumericProperty(1)
     sync_ratio_num = NumericProperty(360)
     sync_ratio_den = NumericProperty(100)
-    sync_enable = StringProperty("normal")
+    sync_enable = BooleanProperty(False)
     position = NumericProperty(0)
     sync_button_color = ListProperty([0.3, 0.3, 0.3, 1])
 
@@ -46,9 +46,6 @@ class CoordBar(BoxLayout, SavingDispatcher):
         self.upload()
         Clock.schedule_interval(self.update_speed, 1.0 / 10)
 
-    # def on_device(self, instance, value):
-    #     self.upload()
-
     def upload(self):
         props = self.get_our_properties()
         prop_names = [item.name for item in props]
@@ -59,13 +56,10 @@ class CoordBar(BoxLayout, SavingDispatcher):
             self.device.scales[self.input_index].__setattr__(item, self.__getattribute__(item))
 
     def toggle_sync(self):
-        if self.position == 0:
-            new_status = not self.device.scales[self.input_index].sync_motion
-            self.device.scales[self.input_index].sync_motion = new_status
-            if new_status is True:
-                self.sync_button_color = [0.2, 1, 0.2, 1]
-            else:
-                self.sync_button_color = [0.3, 0.3, 0.3, 1]
+        running_app = App.get_running_app()
+        self.sync_enable = not self.device.scales[self.input_index].sync_motion
+        self.device.scales[self.input_index].sync_motion = self.sync_enable
+        running_app.manual_full_update()
 
     def on_sync_ratio_num(self, instance, value):
         self.device.scales[instance.input_index].sync_ratio_num = int(value)
@@ -80,7 +74,8 @@ class CoordBar(BoxLayout, SavingDispatcher):
         self.device.scales[instance.input_index].ratio_den = int(value)
 
     def update_position(self):
-        Factory.Keypad().show(self, 'new_position')
+        if not self.sync_enable:
+            Factory.Keypad().show(self, 'new_position')
 
     @property
     def new_position(self):
