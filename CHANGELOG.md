@@ -2,6 +2,33 @@
 
 
 
+## v0.2.13 (2024-03-30)
+
+### Fix
+
+* fix: sync motion safety updates ([`7fb07cc`](https://github.com/bartei/rotary-controller-python/commit/7fb07cc7323eef36d213f9ac20fd22b48ba6c99c))
+
+* fix: speedup speed bar refresh rate ([`9b43e0d`](https://github.com/bartei/rotary-controller-python/commit/9b43e0d1aa1982724fb30d1162aa38748d019160))
+
+* fix: scale speed to proper normalized value ([`0f68409`](https://github.com/bartei/rotary-controller-python/commit/0f68409e2cf03edbc6b2ee3c3608960ffe578f41))
+
+* fix: scale speed to proper normalized value ([`ecc4a77`](https://github.com/bartei/rotary-controller-python/commit/ecc4a7748882ad85bc7f5ddbe0f795600e82f3af))
+
+* fix: remove info logs and update the speed bar value with estimated speed ([`950c094`](https://github.com/bartei/rotary-controller-python/commit/950c09407c294e7a1d8e93387a355d3beede9779))
+
+* fix: testing ([`c6ec6e0`](https://github.com/bartei/rotary-controller-python/commit/c6ec6e02c7207c3ae8191427bdbaed9e67e8abaa))
+
+### Unknown
+
+* Merge remote-tracking branch &#39;origin/main&#39; ([`c1e7f18`](https://github.com/bartei/rotary-controller-python/commit/c1e7f184e593c1c13c95ceb0deff76678277e96a))
+
+* debug: add max speed to status bar ([`d12f810`](https://github.com/bartei/rotary-controller-python/commit/d12f8107ec3ce2888d64f79541c2a8f5978c5d42))
+
+* add logging info ([`35446a0`](https://github.com/bartei/rotary-controller-python/commit/35446a0359a144ea1d41fa2b3e0a29bec6a54261))
+
+* add logging info ([`11137e1`](https://github.com/bartei/rotary-controller-python/commit/11137e13564ad6a80190b7be9a14742a38cff9c2))
+
+
 ## v0.2.12 (2024-03-28)
 
 ### Fix
