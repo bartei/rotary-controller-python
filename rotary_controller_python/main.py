@@ -172,7 +172,7 @@ class MainApp(App):
     def build(self):
         self.home = Home(device=self.device)
         self.task_update = Clock.schedule_interval(self.update, 1.0 / 30)
-        self.task_update_slow = Clock.schedule_interval(self.update_slow, 1.0 / 5)
+        self.task_update_slow = Clock.schedule_interval(self.update_slow, 1.0 / 10)
         Clock.schedule_interval(self.blinker, 1.0 / 4)
         return self.home
 
