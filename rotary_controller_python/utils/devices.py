@@ -226,11 +226,11 @@ class Scale(BaseDevice):
 
     @property
     def sync_ratio_den(self):
-        return self.read_long(self.addresses.sync_ratio_den) / 1000
+        return self.read_long(self.addresses.sync_ratio_den)
 
     @sync_ratio_den.setter
     def sync_ratio_den(self, value):
-        self.write_long(self.addresses.sync_ratio_den, value * 1000)
+        self.write_long(self.addresses.sync_ratio_den, value)
 
     @property
     def sync_motion(self):

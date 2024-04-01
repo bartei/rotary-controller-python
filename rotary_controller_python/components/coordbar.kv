@@ -63,6 +63,7 @@
         text_size: self.size
         halign: 'center'
         valign: 'middle'
+        disabled: root.sync_enable
         on_release: Factory.Keypad().show(root, 'sync_ratio_num')
 
     BoxLayout:
@@ -87,6 +88,7 @@
         text_size: self.size
         halign: 'center'
         valign: 'middle'
+        disabled: root.sync_enable
         on_release: Factory.Keypad().show(root, 'sync_ratio_den')
 
 
