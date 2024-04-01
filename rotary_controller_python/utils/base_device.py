@@ -28,6 +28,7 @@ class BaseDevice:
                 address, byteorder=minimalmodbus.BYTEORDER_LITTLE_SWAP, value=value
             )
             self.dm.connected = True
+            log.info(f"Write float: {int(value)} to address {address}")
         except Exception as e:
             self.dm.connected = False
             log.error(e.__str__())
@@ -53,7 +54,7 @@ class BaseDevice:
                 value=int(value),
             )
             self.dm.connected = True
-            log.info(f"Written {int(value)} to address {address}")
+            log.info(f"Write long: {int(value)} to address {address}")
         except Exception as e:
             self.dm.connected = False
             log.error(e.__str__())
@@ -72,6 +73,7 @@ class BaseDevice:
         try:
             self.dm.device.write_register(address, signed=False, value=int(value))
             self.dm.connected = True
+            log.info(f"Write unsigned: {int(value)} to address {address}")
         except Exception as e:
             self.dm.connected = False
             log.error(e.__str__())
@@ -90,6 +92,7 @@ class BaseDevice:
         try:
             self.dm.device.write_register(address, signed=True, value=int(value))
             self.dm.connected = True
+            log.info(f"Write signed: {int(value)} to address {address}")
         except Exception as e:
             self.dm.connected = False
             log.error(e.__str__())

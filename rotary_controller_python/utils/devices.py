@@ -250,6 +250,7 @@ class FastData(BaseDevice):
         self.scale_current = [0, 0, 0, 0]
         self.servo_current = 0
         self.servo_desired = 0
+        self.servo_speed = 0
         self.cycles = 0
         self.bytes_count = self.addresses.end - self.addresses.base_address
 
@@ -262,7 +263,7 @@ class FastData(BaseDevice):
         raw_bytes = struct.pack("<" + "H" * int(self.bytes_count), *raw_data)
         
         converted_data = struct.unpack(self.addresses.struct_map, raw_bytes)
-        self.servo_current, self.servo_desired = converted_data[0:2]
+        self.servo_current, self.servo_desired, self.servo_speed = converted_data[0:3]
         for i in range(SCALES_COUNT):
-            self.scale_current[i] = converted_data[2 + i] / 1000
-        self.cycles = converted_data[2 + SCALES_COUNT]
+            self.scale_current[i] = converted_data[3 + i] / 1000
+        self.cycles = converted_data[3 + SCALES_COUNT]

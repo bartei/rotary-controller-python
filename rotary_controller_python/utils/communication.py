@@ -5,6 +5,7 @@ from rotary_controller_python.utils.addresses import GlobalAddresses, SCALES_COU
 
 log = logging.getLogger(__name__)
 
+
 class DeviceManager:
     def __init__(
         self, serial_device="/dev/ttyUSB0", baudrate=57600, address=17, debug=False
@@ -45,27 +46,3 @@ class DeviceManager:
         except Exception as e:
             log.error(e.__str__())
             self.connected = False
-
-
-# def configure_device():
-#     global device
-#     try:
-#         device = DeviceManager()
-#     except Exception as e:
-#         # Retry in 5 seconds if the connection failed
-#         log.warning("Retry to connect")
-#         device = None
-#         log.error(e.__str__())
-#
-#     if device is not None:
-#         log.warning(f"Device connection: {device.connected}")
-
-
-# if __name__ == '__main__':
-#     dm = DeviceManager(serial_device="/dev/ttyUSB0", baudrate=115200, address=17, debug=False)
-#
-#     while True:
-#         print(dm.scales[0].position, dm.scales[1].position, dm.scales[2].position, dm.scales[3].position)
-#         print(dm.servo.min_speed)
-#         print(dm.base.execution_interval, dm.base.execution_cycles)
-#         time.sleep(0.1)

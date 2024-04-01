@@ -127,3 +127,7 @@ class Setup(Popup):
 
         self.tabbed_panel.default_tab = panes[0]
 
+    def on_dismiss(self):
+        app = App.get_running_app()
+        app.manual_full_update()
+        log.info("Close setup page")

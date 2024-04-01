@@ -117,6 +117,7 @@ class FastDataAddresses:
     # typedef struct {
     #   float servoCurrent;
     #   float servoDesired;
+    #   float servoSpeed;
     #   int32_t scaleCurrent[SCALES_COUNT];
     #   uint32_t cycles;
     # } fastData_t;
@@ -124,10 +125,11 @@ class FastDataAddresses:
         self.base_address = base_address
         self.servo_current = 0 + base_address
         self.servo_desired = 2 + base_address
-        self.scale_current = 4 + base_address
+        self.servo_speed = 4 + base_address
+        self.scale_current = 6 + base_address
         self.cycles = self.scale_current + (2 * SCALES_COUNT)
         self.end = self.cycles + 2
 
         import struct
 
-        self.struct_map = "<ff" + "l" * SCALES_COUNT + "l"
+        self.struct_map = "<fff" + "l" * SCALES_COUNT + "l"

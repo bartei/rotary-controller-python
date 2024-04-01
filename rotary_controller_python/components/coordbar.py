@@ -34,7 +34,7 @@ class CoordBar(BoxLayout, SavingDispatcher):
 
     formatted_axis_speed = NumericProperty(0.000)
 
-    _skip_save = ["position", "formatted_axis_speed"]
+    _skip_save = ["position", "formatted_axis_speed", "sync_enable"]
 
     def __init__(self, input_index, **kv):
         super().__init__(**kv)
