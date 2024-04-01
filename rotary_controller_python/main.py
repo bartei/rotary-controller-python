@@ -1,4 +1,3 @@
-import logging
 import os
 
 from kivy.uix.popup import Popup
@@ -130,17 +129,15 @@ class MainApp(App):
         settings = AppSettings()
         popup = Popup(title="Custom Settings", content=settings, size_hint=(0.9, 0.9))
         popup.open()
+        log.info("Settings done")
 
     def update_slow(self, *args):
         if self.device.connected:
-            self.home.status_bar.speed = self.device.servo.estimated_speed * self.home.servo.ratio_den / self.home.servo.ratio_num
-            self.home.status_bar.cycles = self.device.fast_data.cycles
+            # self.home.status_bar.speed = self.device.servo.estimated_speed * self.home.servo.ratio_den / self.home.servo.ratio_num
             self.home.status_bar.interval = self.device.base.execution_interval
             # self.home.servo.offset = self.device.servo.absolute_offset
 
     def manual_full_update(self):
-        self.home.status_bar.speed = self.device.servo.estimated_speed * self.home.servo.ratio_den / self.home.servo.ratio_num
-        self.home.status_bar.max_speed = self.device.servo.max_speed
         self.home.status_bar.cycles = self.device.fast_data.cycles
         self.home.status_bar.interval = self.device.base.execution_interval
         self.home.servo.offset = self.device.servo.absolute_offset
@@ -149,21 +146,25 @@ class MainApp(App):
         try:
             self.device.fast_data.refresh()
             if not self.device.connected:
-                # self.task_update.timeout = 1.0 / 30
                 self.device.connected = True
-                self.upload()
 
         except Exception as e:
             log.error(f"No connection: {e.__str__()}")
             self.task_update.timeout = 2.0
             self.device.connected = False
 
+        if not self.connected and self.device.connected:
+            self.task_update.timeout = 1.0 / 25
+            self.upload()
+
         if self.device.connected:
-            self.task_update.timeout = 1.0 / 30
+            self.home.status_bar.max_speed = self.home.servo.max_speed
             for bar in self.home.coord_bars:
                 bar.position = self.device.fast_data.scale_current[bar.input_index]
             self.home.servo.current_position = self.device.fast_data.servo_current
             self.home.servo.desired_position = self.device.fast_data.servo_desired
+            self.home.status_bar.speed = abs(self.device.fast_data.servo_speed)
+            self.home.status_bar.cycles = self.device.fast_data.cycles
 
         self.connected = self.device.connected
 
