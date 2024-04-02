@@ -63,7 +63,7 @@ class NumberItem(BoxLayout):
 
     def validate(self, value):
         try:
-            if "." in value:
+            if isinstance(value, str) and "." in value:
                 self.value = float(value)
             else:
                 self.value = int(value)
