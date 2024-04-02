@@ -45,6 +45,7 @@ class CoordBar(BoxLayout, SavingDispatcher):
         self.previous_axis_pos: Decimal = Decimal(0)
         self.upload()
         Clock.schedule_interval(self.update_speed, 1.0 / 10)
+        self.app = App.get_running_app()
 
     def upload(self):
         props = self.get_our_properties()
@@ -83,7 +84,7 @@ class CoordBar(BoxLayout, SavingDispatcher):
 
     @new_position.setter
     def new_position(self, value):
-        self.device.scales[self.input_index].position = int(float(value) * 1000)
+        self.device.scales[self.input_index].position = int(float(value) * self.app.formats.factor * 1000)
 
     def update_speed(self, *args, **kv):
         current_time = time.time()
