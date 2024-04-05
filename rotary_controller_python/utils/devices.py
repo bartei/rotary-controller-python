@@ -265,6 +265,7 @@ class FastData(BaseDevice):
         self.servo_desired = 0
         self.servo_speed = 0
         self.cycles = 0
+        self.execution_interval = 0
         self.bytes_count = self.addresses.end - self.addresses.base_address
 
     def refresh(self):
@@ -282,3 +283,4 @@ class FastData(BaseDevice):
         for i in range(SCALES_COUNT):
             self.scale_speed[i] = converted_data[3 + i + SCALES_COUNT] / 1000
         self.cycles = converted_data[3 + SCALES_COUNT + SCALES_COUNT]
+        self.execution_interval = converted_data[3 + SCALES_COUNT + SCALES_COUNT + 1]

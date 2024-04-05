@@ -13,29 +13,28 @@
     label: "COM"
     checkbox_value: app.connected or app.blink
 
+  LedButton:
+    # READY LED
+    size_hint_x: None
+    valign: "top"
+    width: 64
+    label: "ENA"
+    checkbox_value: app.connected
+
 #  LedButton:
-#    # READY LED
+#    # INT.CYCLES
 #    size_hint_x: None
-#    valign: "top"
 #    width: 64
-#    label: "RDY"
-#    checkbox_value: app.connected
+#    label: str(int(root.max_speed))
 
   LedButton:
-    # INT.CYCLES
+    # INTERRUPT INTERVAL
     size_hint_x: None
     width: 64
-    label: str(int(root.max_speed))
-
-
-  LedButton:
-    # INT.CYCLES
-    size_hint_x: None
-    width: 64
-    label: "{:0.3f}".format(root.interval)
+    label: "{:0.2f}".format(0 if root.interval == 0 else (100000000 / root.interval))
 
   LedButton:
-    # SPEED
+    # CURRENT SERVO SPEED
     size_hint_x: None
     width: 64
     label: str(int(root.speed))

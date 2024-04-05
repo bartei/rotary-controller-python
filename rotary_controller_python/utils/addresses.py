@@ -125,6 +125,7 @@ class FastDataAddresses:
     #   int32_t scaleCurrent[SCALES_COUNT];
     #   int32_t scaleSpeed[SCALES_COUNT];
     #   uint32_t cycles;
+    #   uint32_t executionInterval;
     # } fastData_t;
     def __init__(self, base_address):
         self.base_address = base_address
@@ -134,8 +135,9 @@ class FastDataAddresses:
         self.scale_current = 6 + base_address
         self.scale_speed = self.scale_current + (2 * SCALES_COUNT)
         self.cycles = self.scale_speed + (2 * SCALES_COUNT)
-        self.end = self.cycles + 2
+        self.execution_interval = 2 + self.cycles
+        self.end = self.execution_interval + 2
 
         import struct
 
-        self.struct_map = "<fff" + "l" * SCALES_COUNT + "l" * SCALES_COUNT + "l"
+        self.struct_map = "<fff" + "l" * SCALES_COUNT + "l" * SCALES_COUNT + "ll"
