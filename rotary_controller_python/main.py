@@ -131,11 +131,13 @@ class MainApp(App):
         popup.open()
         log.info("Settings done")
 
-    def update_slow(self, *args):
-        if self.device.connected:
+    # def update_slow(self, *args):
+    #     if self.device.connected:
             # self.home.status_bar.speed = self.device.servo.estimated_speed * self.home.servo.ratio_den / self.home.servo.ratio_num
-            self.home.status_bar.interval = self.device.base.execution_interval
-            # self.home.servo.offset = self.device.servo.absolute_offset
+            # self.home.status_bar.interval = self.device.base.execution_interval
+            # self.home.status_bar.interval = self.device.servo.allowed_error
+            # for i, item in enumerate(self.home.coord_bars):
+            #     item.speed = self.device.scales[i].speed
 
     def manual_full_update(self):
         self.home.status_bar.cycles = self.device.fast_data.cycles
@@ -161,9 +163,11 @@ class MainApp(App):
             self.home.status_bar.max_speed = self.home.servo.max_speed
             for bar in self.home.coord_bars:
                 bar.position = self.device.fast_data.scale_current[bar.input_index]
+                bar.speed = self.device.fast_data.scale_speed[bar.input_index]
             self.home.servo.current_position = self.device.fast_data.servo_current
             self.home.servo.desired_position = self.device.fast_data.servo_desired
             self.home.status_bar.speed = abs(self.device.fast_data.servo_speed)
+            self.home.status_bar.cycles = self.device.fast_data.cycles
             self.home.status_bar.cycles = self.device.fast_data.cycles
 
         self.connected = self.device.connected
@@ -180,7 +184,7 @@ class MainApp(App):
     def build(self):
         self.home = Home(device=self.device)
         self.task_update = Clock.schedule_interval(self.update, 1.0 / 30)
-        self.task_update_slow = Clock.schedule_interval(self.update_slow, 1.0 / 10)
+        # self.task_update_slow = Clock.schedule_interval(self.update_slow, 1.0 / 10)
         Clock.schedule_interval(self.blinker, 1.0 / 4)
         return self.home
 

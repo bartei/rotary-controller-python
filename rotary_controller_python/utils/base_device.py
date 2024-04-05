@@ -28,7 +28,7 @@ class BaseDevice:
                 address, byteorder=minimalmodbus.BYTEORDER_LITTLE_SWAP, value=value
             )
             self.dm.connected = True
-            log.info(f"Write float: {int(value)} to address {address}")
+            log.info(f"Write float: {value} to address {address}")
         except Exception as e:
             self.dm.connected = False
             log.error(e.__str__())
@@ -54,7 +54,7 @@ class BaseDevice:
                 value=int(value),
             )
             self.dm.connected = True
-            log.info(f"Write long: {int(value)} to address {address}")
+            log.info(f"Write long: {value} to address {address}")
         except Exception as e:
             self.dm.connected = False
             log.error(e.__str__())

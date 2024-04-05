@@ -213,6 +213,10 @@ class Scale(BaseDevice):
         self.write_long(self.addresses.position, value)
 
     @property
+    def speed(self):
+        return self.read_long(self.addresses.speed)
+
+    @property
     def error(self):
         return self.read_long(self.addresses.error)
 
@@ -240,6 +244,14 @@ class Scale(BaseDevice):
     def sync_motion(self, value: bool):
         self.write_unsigned(self.addresses.sync_motion, int(value))
 
+    @property
+    def mode(self):
+        return bool(self.read_unsigned(self.addresses.mode))
+
+    @mode.setter
+    def mode(self, value: bool):
+        self.write_unsigned(self.addresses.mode, int(value))
+
 
 class FastData(BaseDevice):
     def __init__(self, device: DeviceManager, base_address: int):
@@ -248,6 +260,7 @@ class FastData(BaseDevice):
 
         self.addresses = FastDataAddresses(base_address)
         self.scale_current = [0, 0, 0, 0]
+        self.scale_speed = [0, 0, 0, 0]
         self.servo_current = 0
         self.servo_desired = 0
         self.servo_speed = 0
@@ -266,4 +279,6 @@ class FastData(BaseDevice):
         self.servo_current, self.servo_desired, self.servo_speed = converted_data[0:3]
         for i in range(SCALES_COUNT):
             self.scale_current[i] = converted_data[3 + i] / 1000
-        self.cycles = converted_data[3 + SCALES_COUNT]
+        for i in range(SCALES_COUNT):
+            self.scale_speed[i] = converted_data[3 + i + SCALES_COUNT] / 1000
+        self.cycles = converted_data[3 + SCALES_COUNT + SCALES_COUNT]

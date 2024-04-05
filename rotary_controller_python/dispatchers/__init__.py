@@ -89,9 +89,6 @@ def read_settings(file: str):
 
 
 def write_settings(file: str, data):
-    if os.path.exists(file):
-        shutil.move(file, f"{file}.old")
-
     try:
         with open(file, "w") as f:
             yaml.dump(data, f)

@@ -30,9 +30,8 @@ class CoordBar(BoxLayout, SavingDispatcher):
     sync_ratio_den = NumericProperty(100)
     sync_enable = BooleanProperty(False)
     position = NumericProperty(0)
+    speed = NumericProperty(0.0)
     sync_button_color = ListProperty([0.3, 0.3, 0.3, 1])
-
-    formatted_axis_speed = NumericProperty(0.000)
 
     _skip_save = ["position", "formatted_axis_speed", "sync_enable"]
 
@@ -44,7 +43,6 @@ class CoordBar(BoxLayout, SavingDispatcher):
         self.previous_axis_time: float = 0
         self.previous_axis_pos: Decimal = Decimal(0)
         self.upload()
-        Clock.schedule_interval(self.update_speed, 1.0 / 10)
         self.app = App.get_running_app()
 
     def upload(self):
@@ -86,27 +84,3 @@ class CoordBar(BoxLayout, SavingDispatcher):
     def new_position(self, value):
         self.device.scales[self.input_index].position = int(float(value) * self.app.formats.factor * 1000)
 
-    def update_speed(self, *args, **kv):
-        current_time = time.time()
-
-        # Calculate axis speed
-        self.speed_history.append(
-            (Decimal(self.position) - self.previous_axis_pos) /
-            Decimal(current_time - self.previous_axis_time)
-        )
-
-        average = (sum(self.speed_history) / Decimal(len(self.speed_history)))
-
-        app = App.get_running_app()
-        if app is None:
-            return
-
-        if app.formats.current_format == "IN":
-            # Speed in feet per minute
-            self.formatted_axis_speed = float(average * 60 / Decimal("25.4") / 12)
-        else:
-            # Speed in mt/minute
-            self.formatted_axis_speed = float(average * 60 / 1000)
-
-        self.previous_axis_time = current_time
-        self.previous_axis_pos = Decimal(self.position)

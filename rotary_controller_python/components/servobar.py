@@ -55,6 +55,7 @@ class ServoBar(BoxLayout, SavingDispatcher):
 
     def on_offset(self, instance, value):
         self.device.servo.absolute_offset = self.offset
+        self.offset = self.device.servo.absolute_offset
 
     def on_divisions(self, instance, value):
         self.device.index.divisions = self.divisions

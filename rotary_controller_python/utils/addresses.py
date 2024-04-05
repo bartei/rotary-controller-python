@@ -2,34 +2,38 @@ SCALES_COUNT = 4
 
 
 class ScaleAddresses:
-    #     typedef struct {
-    #     TIM_HandleTypeDef * timerHandle;
-    #     uint16_t encoderPrevious;
-    #     uint16_t encoderCurrent;
-    #     int32_t ratioNum;
-    #     int32_t ratioDen;
-    #     int32_t maxValue;
-    #     int32_t minValue;
-    #     int32_t position;
-    #     int32_t error;
-    #     int32_t syncRatioNum, syncRatioDen;
-    #     bool syncMotion;
+    # typedef struct {
+    #   TIM_HandleTypeDef *timerHandle;
+    #   uint16_t encoderPrevious;
+    #   uint16_t encoderCurrent;
+    #   int32_t ratioNum;
+    #   int32_t ratioDen;
+    #   int32_t maxValue;
+    #   int32_t minValue;
+    #   int32_t position;
+    #   int32_t speed;
+    #   int32_t error;
+    #   int32_t syncRatioNum, syncRatioDen;
+    #   bool syncMotion;
+    #   input_mode_t mode;
     # } input_t;
     def __init__(self, base_address):
         self.base_address = base_address
         self.timer_handle = 0 + base_address
-        self.encoder_previous = 2 + base_address
-        self.encoder_current = 3 + base_address
-        self.ratio_num = 4 + base_address
-        self.ratio_den = 6 + base_address
-        self.max_value = 8 + base_address
-        self.min_value = 10 + base_address
-        self.position = 12 + base_address
-        self.error = 14 + base_address
-        self.sync_ratio_num = 16 + base_address
-        self.sync_ratio_den = 18 + base_address
-        self.sync_motion = 20 + base_address
-        self.end = 22 + base_address
+        self.encoder_previous = 2 + self.timer_handle
+        self.encoder_current = 1 + self.encoder_previous
+        self.ratio_num = 1 + self.encoder_current
+        self.ratio_den = 2 + self.ratio_num
+        self.max_value = 2 + self.ratio_den
+        self.min_value = 2 + self.max_value
+        self.position = 2 + self.min_value
+        self.speed = 2 + self.position
+        self.error = 2 + self.speed
+        self.sync_ratio_num = 2 + self.error
+        self.sync_ratio_den = 2 + self.sync_ratio_num
+        self.sync_motion = 2 + self.sync_ratio_den
+        self.mode = 1 + self.sync_motion
+        self.end = 1 + self.mode
 
 
 class IndexAddresses:
@@ -119,6 +123,7 @@ class FastDataAddresses:
     #   float servoDesired;
     #   float servoSpeed;
     #   int32_t scaleCurrent[SCALES_COUNT];
+    #   int32_t scaleSpeed[SCALES_COUNT];
     #   uint32_t cycles;
     # } fastData_t;
     def __init__(self, base_address):
@@ -127,9 +132,10 @@ class FastDataAddresses:
         self.servo_desired = 2 + base_address
         self.servo_speed = 4 + base_address
         self.scale_current = 6 + base_address
-        self.cycles = self.scale_current + (2 * SCALES_COUNT)
+        self.scale_speed = self.scale_current + (2 * SCALES_COUNT)
+        self.cycles = self.scale_speed + (2 * SCALES_COUNT)
         self.end = self.cycles + 2
 
         import struct
 
-        self.struct_map = "<fff" + "l" * SCALES_COUNT + "l"
+        self.struct_map = "<fff" + "l" * SCALES_COUNT + "l" * SCALES_COUNT + "l"
