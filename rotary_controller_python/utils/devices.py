@@ -2,7 +2,6 @@ import copy
 import inspect
 
 import sys
-from rotary_controller_python.utils.addresses import FastDataAddresses, SCALES_COUNT
 from rotary_controller_python.utils.base_device import BaseDevice
 from rotary_controller_python.utils.communication import DeviceManager
 from rotary_controller_python.utils.base_device import variable_definitions
@@ -82,8 +81,8 @@ typedef struct {
   float servoCurrent;
   float servoDesired;
   float servoSpeed;
-  int32_t scaleCurrent[SCALES_COUNT];
-  int32_t scaleSpeed[SCALES_COUNT];
+  int32_t scaleCurrent[4];
+  int32_t scaleSpeed[4];
   uint32_t cycles;
   uint32_t executionInterval;
 } fastData_t;
@@ -149,3 +148,10 @@ def test_scale_structure():
     result = global_data["servo"]["ratioNum"]
     print(result)
     assert result == 12345
+
+
+def test_scale_fast_data():
+    dm = DeviceManager()
+    dm.device.read_registers(0, 10)
+    global_data = Global(device=dm, base_address=0)
+    global_data["fastData"].refresh()
