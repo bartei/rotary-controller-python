@@ -133,11 +133,18 @@ class MainApp(App):
 
     # def update_slow(self, *args):
     #     if self.device.connected:
-            # self.home.status_bar.speed = self.device.servo.estimated_speed * self.home.servo.ratio_den / self.home.servo.ratio_num
-            # self.home.status_bar.interval = self.device.base.execution_interval
-            # self.home.status_bar.interval = self.device.servo.allowed_error
-            # for i, item in enumerate(self.home.coord_bars):
-            #     item.speed = self.device.scales[i].speed
+    #         # self.home.status_bar.speed = abs(self.device.fast_data.servo_speed)
+    #         for bar in self.home.coord_bars:
+    #             bar.speed = self.device.fast_data.scale_speed[bar.input_index]
+    #
+    #         # self.home.status_bar.cycles = self.device.fast_data.cycles
+    #         # self.home.status_bar.interval = self.device.fast_data.execution_interval
+    #
+    #         # self.home.status_bar.speed = self.device.servo.estimated_speed * self.home.servo.ratio_den / self.home.servo.ratio_num
+    #         # self.home.status_bar.interval = self.device.base.execution_interval
+    #         # self.home.status_bar.interval = self.device.servo.allowed_error
+    #         # for i, item in enumerate(self.home.coord_bars):
+    #         #     item.speed = self.device.scales[i].speed
 
     def manual_full_update(self):
         self.home.status_bar.cycles = self.device.fast_data.cycles
@@ -158,17 +165,13 @@ class MainApp(App):
         if not self.connected and self.device.connected:
             self.task_update.timeout = 1.0 / 25
             self.upload()
+            self.home.status_bar.max_speed = self.home.servo.max_speed
 
         if self.device.connected:
             for bar in self.home.coord_bars:
                 bar.position = self.device.fast_data.scale_current[bar.input_index]
-                bar.speed = self.device.fast_data.scale_speed[bar.input_index]
             self.home.servo.current_position = self.device.fast_data.servo_current
             self.home.servo.desired_position = self.device.fast_data.servo_desired
-            self.home.status_bar.max_speed = self.home.servo.max_speed
-            self.home.status_bar.speed = abs(self.device.fast_data.servo_speed)
-            self.home.status_bar.cycles = self.device.fast_data.cycles
-            self.home.status_bar.interval = self.device.fast_data.execution_interval
 
         self.connected = self.device.connected
 

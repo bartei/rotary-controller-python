@@ -105,6 +105,10 @@
         name: "Sync Ratio Denominator"
         value: root.scale.sync_ratio_den
         on_value: root.scale.sync_ratio_den = self.value
+      NumberItem:
+        name: "Mode"
+        value: root.scale.mode
+        on_value: root.scale.mode = self.value
 
 <ServoPanel>:
   orientation: "vertical"

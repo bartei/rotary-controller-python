@@ -12,6 +12,7 @@ from kivy.uix.boxlayout import BoxLayout
 from kivy.app import App
 
 from rotary_controller_python.dispatchers import SavingDispatcher
+from rotary_controller_python.utils.communication import DeviceManager
 
 log = Logger.getChild(__name__)
 kv_file = os.path.join(os.path.dirname(__file__), __file__.replace(".py", ".kv"))
@@ -31,6 +32,7 @@ class CoordBar(BoxLayout, SavingDispatcher):
     sync_enable = BooleanProperty(False)
     position = NumericProperty(0)
     speed = NumericProperty(0.0)
+    mode = NumericProperty(0)
     sync_button_color = ListProperty([0.3, 0.3, 0.3, 1])
 
     _skip_save = ["position", "formatted_axis_speed", "sync_enable"]
@@ -44,6 +46,7 @@ class CoordBar(BoxLayout, SavingDispatcher):
         self.previous_axis_pos: Decimal = Decimal(0)
         self.upload()
         self.app = App.get_running_app()
+        Clock.schedule_interval(self.speed_task, 1.0/25.0)
 
     def upload(self):
         props = self.get_our_properties()
@@ -72,6 +75,9 @@ class CoordBar(BoxLayout, SavingDispatcher):
     def on_ratio_den(self, instance, value):
         self.device.scales[instance.input_index].ratio_den = int(value)
 
+    def on_mode(self, instance, value):
+        self.device.scales[instance.input_index].mode = int(value)
+
     def update_position(self):
         if not self.sync_enable:
             Factory.Keypad().show(self, 'new_position')
@@ -84,3 +90,25 @@ class CoordBar(BoxLayout, SavingDispatcher):
     def new_position(self, value):
         self.device.scales[self.input_index].position = int(float(value) * self.app.formats.factor * 1000)
 
+    def speed_task(self, *args, **kv):
+        current_time = time.time()
+
+        # Calculate axis speed
+        self.device: DeviceManager
+        self.speed_history.append(self.device.fast_data.scale_speed[self.input_index])
+
+        average = (sum(self.speed_history) / len(self.speed_history))
+
+        app = App.get_running_app()
+        if app is None:
+            return
+
+        if app.formats.current_format == "IN":
+            # Speed in feet per minute
+            self.speed = float(average * 60 / 25.4 / 12)
+        else:
+            # Speed in mt/minute
+            self.speed = float(average * 60 / 1000)
+
+        self.previous_axis_time = current_time
+        self.previous_axis_pos = Decimal(self.position)

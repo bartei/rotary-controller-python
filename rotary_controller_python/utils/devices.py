@@ -1,286 +1,149 @@
-import struct
+import copy
+import inspect
 
+import sys
 from rotary_controller_python.utils.addresses import FastDataAddresses, SCALES_COUNT
 from rotary_controller_python.utils.base_device import BaseDevice
 from rotary_controller_python.utils.communication import DeviceManager
-
-
-class Global(BaseDevice):
-    def __init__(self, device: DeviceManager, base_address: int):
-        super().__init__(device=device)
-        from rotary_controller_python.utils.addresses import GlobalAddresses
-
-        self.addresses = GlobalAddresses(base_address)
-
-    @property
-    def execution_interval(self):
-        return self.read_long(self.addresses.execution_interval)
-
-    @property
-    def execution_cycles(self):
-        return self.read_long(self.addresses.execution_cycles)
+from rotary_controller_python.utils.base_device import variable_definitions
 
 
 class Index(BaseDevice):
-    def __init__(self, device: DeviceManager, base_address: int):
-        super().__init__(device=device)
-        from rotary_controller_python.utils.addresses import IndexAddresses
-
-        self.addresses = IndexAddresses(base_address)
-
-    @property
-    def divisions(self):
-        return self.read_long(self.addresses.divisions)
-
-    @divisions.setter
-    def divisions(self, value):
-        self.write_long(self.addresses.divisions, value)
-
-    @property
-    def index(self):
-        return self.read_long(self.addresses.index)
-
-    @index.setter
-    def index(self, value):
-        self.write_long(self.addresses.index, value)
+    definition = """
+typedef struct {
+  int32_t divisions;
+  int32_t index;
+} index_t;    
+"""
 
 
 class Servo(BaseDevice):
-    def __init__(self, device: DeviceManager, base_address: int):
-        super().__init__(device=device)
-        from rotary_controller_python.utils.addresses import ServoAddresses
+    definition = """
+typedef struct {
+    float minSpeed;
+    float maxSpeed;
+    float currentSpeed;
+    float acceleration;
+    float absoluteOffset;
+    float indexOffset;
+    float syncOffset;
+    float desiredPosition;
+    float currentPosition;
+    int32_t currentSteps;
+    int32_t desiredSteps;
+    int32_t ratioNum;
+    int32_t ratioDen;
+    int32_t maxValue;
+    int32_t minValue;
+    float breakingSpace, breakingTime;
+    float allowedError;
+} servo_t;
+"""
 
-        self.addresses = ServoAddresses(base_address)
 
-    @property
-    def min_speed(self):
-        return self.read_float(self.addresses.min_speed)
-
-    @min_speed.setter
-    def min_speed(self, value):
-        self.write_float(self.addresses.min_speed, value)
-
-    @property
-    def max_speed(self):
-        return self.read_float(self.addresses.max_speed)
-
-    @max_speed.setter
-    def max_speed(self, value):
-        self.write_float(self.addresses.max_speed, value)
-
-    @property
-    def current_speed(self):
-        return self.read_float(self.addresses.current_speed)
-
-    @property
-    def acceleration(self):
-        return self.read_float(self.addresses.acceleration)
-
-    @acceleration.setter
-    def acceleration(self, value):
-        self.write_float(self.addresses.acceleration, value)
-
-    @property
-    def absolute_offset(self):
-        return self.read_float(self.addresses.absolute_offset)
-
-    @absolute_offset.setter
-    def absolute_offset(self, value):
-        self.write_float(self.addresses.absolute_offset, value)
-
-    @property
-    def index_offset(self):
-        return self.read_float(self.addresses.index_offset)
-
-    @property
-    def sync_offset(self):
-        return self.read_float(self.addresses.sync_offset)
-
-    @property
-    def desired_position(self):
-        return self.read_float(self.addresses.desired_position)
-
-    @property
-    def current_position(self):
-        return self.read_float(self.addresses.current_position)
-
-    @property
-    def current_steps(self):
-        return self.read_long(self.addresses.current_steps)
-
-    @property
-    def desired_steps(self):
-        return self.read_float(self.addresses.desired_steps)
-
-    @property
-    def ratio_num(self):
-        return self.read_long(self.addresses.ratio_num)
-
-    @ratio_num.setter
-    def ratio_num(self, value):
-        self.write_long(self.addresses.ratio_num, value)
-
-    @property
-    def ratio_den(self):
-        return self.read_long(self.addresses.ratio_den)
-
-    @ratio_den.setter
-    def ratio_den(self, value):
-        self.write_long(self.addresses.ratio_den, value)
-
-    @property
-    def max_value(self):
-        return self.read_long(self.addresses.max_value)
-
-    @max_value.setter
-    def max_value(self, value):
-        self.write_long(self.addresses.max_value, value)
-
-    @property
-    def min_value(self):
-        return self.read_long(self.addresses.min_value)
-
-    @min_value.setter
-    def min_value(self, value):
-        self.write_long(self.addresses.min_value, value)
-
-    @property
-    def breaking_space(self):
-        return self.read_float(self.addresses.breaking_space)
-
-    @property
-    def estimated_speed(self):
-        return self.read_float(self.addresses.estimated_speed)
-
-    @property
-    def allowed_error(self):
-        return self.read_float(self.addresses.allowed_error)
+class Global(BaseDevice):
+    definition = """
+typedef struct {
+  uint32_t executionInterval;
+  uint32_t executionIntervalPrevious;
+  uint32_t executionIntervalCurrent;
+  uint32_t executionCycles;
+  index_t index;
+  servo_t servo;
+  input_t scales[4];
+  fastData_t fastData;
+} rampsSharedData_t;
+"""
 
 
 class Scale(BaseDevice):
-    def __init__(self, device: DeviceManager, base_address: int):
-        super().__init__(device=device)
-        from rotary_controller_python.utils.addresses import ScaleAddresses
-
-        self.addresses = ScaleAddresses(base_address)
-
-    @property
-    def encoder_previous(self):
-        return self.read_unsigned(self.addresses.encoder_previous)
-
-    @property
-    def encoder_current(self):
-        return self.read_unsigned(self.addresses.encoder_current)
-
-    @property
-    def ratio_num(self):
-        return self.read_long(self.addresses.ratio_num)
-
-    @ratio_num.setter
-    def ratio_num(self, value):
-        self.write_long(self.addresses.ratio_num, value)
-
-    @property
-    def ratio_den(self):
-        return self.read_long(self.addresses.ratio_den)
-
-    @ratio_den.setter
-    def ratio_den(self, value):
-        self.write_long(self.addresses.ratio_den, value)
-
-    @property
-    def max_value(self):
-        return self.read_long(self.addresses.max_value)
-
-    @max_value.setter
-    def max_value(self, value):
-        self.write_long(self.addresses.max_value, value)
-
-    @property
-    def min_value(self):
-        return self.read_long(self.addresses.min_value)
-
-    @min_value.setter
-    def min_value(self, value):
-        self.write_long(self.addresses.min_value, value)
-
-    @property
-    def position(self):
-        return self.read_long(self.addresses.position)
-
-    @position.setter
-    def position(self, value):
-        self.write_long(self.addresses.position, value)
-
-    @property
-    def speed(self):
-        return self.read_long(self.addresses.speed)
-
-    @property
-    def error(self):
-        return self.read_long(self.addresses.error)
-
-    @property
-    def sync_ratio_num(self):
-        return self.read_long(self.addresses.sync_ratio_num)
-
-    @sync_ratio_num.setter
-    def sync_ratio_num(self, value):
-        self.write_long(self.addresses.sync_ratio_num, value)
-
-    @property
-    def sync_ratio_den(self):
-        return self.read_long(self.addresses.sync_ratio_den)
-
-    @sync_ratio_den.setter
-    def sync_ratio_den(self, value):
-        self.write_long(self.addresses.sync_ratio_den, value)
-
-    @property
-    def sync_motion(self):
-        return bool(self.read_unsigned(self.addresses.sync_motion))
-
-    @sync_motion.setter
-    def sync_motion(self, value: bool):
-        self.write_unsigned(self.addresses.sync_motion, int(value))
-
-    @property
-    def mode(self):
-        return bool(self.read_unsigned(self.addresses.mode))
-
-    @mode.setter
-    def mode(self, value: bool):
-        self.write_unsigned(self.addresses.mode, int(value))
+    definition = """
+typedef struct {
+    TIM_HandleTypeDef *timerHandle;
+    uint16_t encoderPrevious;
+    uint16_t encoderCurrent;
+    int32_t ratioNum;
+    int32_t ratioDen;
+    int32_t maxValue;
+    int32_t minValue;
+    int32_t position;
+    int32_t speed;
+    int32_t error;
+    int32_t syncRatioNum, syncRatioDen;
+    bool syncMotion;
+    input_mode_t mode;
+} input_t;    
+"""
 
 
 class FastData(BaseDevice):
-    def __init__(self, device: DeviceManager, base_address: int):
-        super().__init__(device=device)
-        from rotary_controller_python.utils.addresses import IndexAddresses
+    definition = """
+typedef struct {
+  float servoCurrent;
+  float servoDesired;
+  float servoSpeed;
+  int32_t scaleCurrent[SCALES_COUNT];
+  int32_t scaleSpeed[SCALES_COUNT];
+  uint32_t cycles;
+  uint32_t executionInterval;
+} fastData_t;
+"""
+    # def __init__(self, device: DeviceManager, base_address: int):
+    #     super().__init__(device=device)
+    #     from rotary_controller_python.utils.addresses import IndexAddresses
+    #
+    #     self.addresses = FastDataAddresses(base_address)
+    #     self.scale_current = [0, 0, 0, 0]
+    #     self.scale_speed = [0, 0, 0, 0]
+    #     self.servo_current = 0
+    #     self.servo_desired = 0
+    #     self.servo_speed = 0
+    #     self.cycles = 0
+    #     self.execution_interval = 0
+    #     self.bytes_count = self.addresses.end - self.addresses.base_address
+    #
+    # def refresh(self):
+    #     raw_data = self.dm.device.read_registers(
+    #         registeraddress=self.addresses.base_address,
+    #         number_of_registers=int(self.bytes_count),
+    #     )
+    #
+    #     raw_bytes = struct.pack("<" + "H" * int(self.bytes_count), *raw_data)
+    #
+    #     converted_data = struct.unpack(self.addresses.struct_map, raw_bytes)
+    #     self.servo_current, self.servo_desired, self.servo_speed = converted_data[0:3]
+    #     for i in range(SCALES_COUNT):
+    #         self.scale_current[i] = converted_data[3 + i] / 1000
+    #     for i in range(SCALES_COUNT):
+    #         self.scale_speed[i] = converted_data[3 + i + SCALES_COUNT] / 1000
+    #     self.cycles = converted_data[3 + SCALES_COUNT + SCALES_COUNT]
+    #     self.execution_interval = converted_data[3 + SCALES_COUNT + SCALES_COUNT + 1]
 
-        self.addresses = FastDataAddresses(base_address)
-        self.scale_current = [0, 0, 0, 0]
-        self.scale_speed = [0, 0, 0, 0]
-        self.servo_current = 0
-        self.servo_desired = 0
-        self.servo_speed = 0
-        self.cycles = 0
-        self.execution_interval = 0
-        self.bytes_count = self.addresses.end - self.addresses.base_address
 
-    def refresh(self):
-        raw_data = self.dm.device.read_registers(
-            registeraddress=self.addresses.base_address,
-            number_of_registers=int(self.bytes_count),
-        )
+current_module = sys.modules[__name__]
 
-        raw_bytes = struct.pack("<" + "H" * int(self.bytes_count), *raw_data)
-        
-        converted_data = struct.unpack(self.addresses.struct_map, raw_bytes)
-        self.servo_current, self.servo_desired, self.servo_speed = converted_data[0:3]
-        for i in range(SCALES_COUNT):
-            self.scale_current[i] = converted_data[3 + i] / 1000
-        for i in range(SCALES_COUNT):
-            self.scale_speed[i] = converted_data[3 + i + SCALES_COUNT] / 1000
-        self.cycles = converted_data[3 + SCALES_COUNT + SCALES_COUNT]
-        self.execution_interval = converted_data[3 + SCALES_COUNT + SCALES_COUNT + 1]
+clsmembers = [
+    item
+    for item in inspect.getmembers(sys.modules[__name__], inspect.isclass)
+    if issubclass(item[1], BaseDevice) and item[0] != "BaseDevice"
+]
+
+unloaded_list = copy.deepcopy(clsmembers)
+iterations_limit = 3
+while len(unloaded_list) > 0 and iterations_limit > 0:
+    failure_list = []
+    for my_class in unloaded_list:
+        my_class[1]: BaseDevice
+        try:
+            definition = my_class[1].register_type()
+            variable_definitions.types.append(definition)
+        except Exception as e:
+            failure_list.append(my_class)
+    unloaded_list = copy.deepcopy(failure_list)
+    iterations_limit -= 1
+
+
+def test_scale_structure():
+    dm = DeviceManager()
+    global_data = Global(device=dm, base_address=0)
+    print(global_data.servo.ratioNum)
