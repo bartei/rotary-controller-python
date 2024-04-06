@@ -2,6 +2,8 @@ import copy
 import inspect
 
 import sys
+import time
+
 from rotary_controller_python.utils.base_device import BaseDevice
 from rotary_controller_python.utils.communication import DeviceManager
 from rotary_controller_python.utils.base_device import variable_definitions
@@ -70,7 +72,7 @@ typedef struct {
   int32_t speed;
   int32_t error;
   int32_t syncRatioNum, syncRatioDen;
-  uint16_t syncMotion;
+  bool syncMotion;
   input_mode_t mode;
 } input_t;
 """
@@ -142,26 +144,38 @@ while len(unloaded_list) > 0 and iterations_limit > 0:
     iterations_limit -= 1
 
 
-def test_scale_structure():
+# def test_scale_structure():
+#     dm = DeviceManager()
+#     global_data = Global(device=dm, base_address=0)
+#     global_data["servo"]["ratioNum"] = 12345
+#     result = global_data["servo"]["ratioNum"]
+#     print(result)
+#     assert result == 12345
+#
+#
+# def test_get_item_from_array_definition():
+#     dm = DeviceManager()
+#     global_data = Global(device=dm, base_address=0)
+#     global_data['scales'][1]['ratioDen'] = 111
+#     result = global_data['scales'][1]['ratioDen']
+#     assert result == 111
+#
+#
+# def test_scale_fast_data():
+#     dm = DeviceManager()
+#     dm.device.read_registers(0, 10)
+#     global_data = Global(device=dm, base_address=0)
+#     global_data.refresh()
+
+
+if __name__ == "__main__":
     dm = DeviceManager()
     global_data = Global(device=dm, base_address=0)
-    global_data["servo"]["ratioNum"] = 12345
-    result = global_data["servo"]["ratioNum"]
-    print(result)
-    assert result == 12345
-
-
-def test_get_item_from_array_definiton():
-    dm = DeviceManager()
-    global_data = Global(device=dm, base_address=0)
-    global_data['scales'][1]['ratioDen'] = 111
-    result = global_data['scales'][1]['ratioDen']
-    assert result == 111
-
-
-def test_scale_fast_data():
-    dm = DeviceManager()
-    dm.device.read_registers(0, 10)
-    global_data = Global(device=dm, base_address=0)
-    global_data.refresh()
-    assert global_data.fast_data['index']['divisions'] == 123
+    while True:
+        time.sleep(0.1)
+        values = global_data.refresh()
+        print(global_data['executionInterval'])
+        print(global_data['fastData']['scaleSpeed'][1])
+        print(global_data['fastData']['scaleSpeed'][2])
+        print(global_data['fastData']['scaleSpeed'][3])
+        print(values)

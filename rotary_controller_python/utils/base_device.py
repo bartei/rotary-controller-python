@@ -25,19 +25,6 @@ class VariableDefinition(BaseModel):
     type: TypeDefinition
     count: int = 1
 
-    # def __getitem__(self, item):
-    #     item -= 1
-    #     if not isinstance(item, int):
-    #         raise Exception("Specify a number to pick an item from an array type variable")
-    #     if item > self.count:
-    #         raise Exception("Index out of range for array access")
-    #
-    #     return VariableDefinition(
-    #         name=self.name,
-    #         address=self.address + self.type.length * item,
-    #         type=self.type
-    #     )
-
 
 variable_definitions = [
     TypeDefinition(
@@ -243,23 +230,34 @@ class BaseDevice:
     def set_fast_data(self, values: Tuple):
         values = list(values)
         self.fast_data = dict()
-        sorted_keys = sorted(self.variables, key=lambda v: v.address)
+        sorted_keys: List[VariableDefinition] = sorted(self.variables, key=lambda v: v.address)
         for item in sorted_keys:
-            hasattr(item.type.read_function, "set_fast_data")
-            if hasattr(item, "set_fast_data"):
-                self.fast_data[item.name] = item.type.read_function.set_fast_data(values)
-                continue
+            item
+            if hasattr(item.type.read_function, "set_fast_data"):
+                if item.count > 1:
+                    fd_list = list()
+                    for i in range(item.count):
+                        fd_list.append(
+                            item.type.read_function(self.dm, item.address + item.type.length * i).set_fast_data(values)
+                        )
+                    self.fast_data[item.name] = fd_list
+                else:
+                    self.fast_data[item.name] = item.type.read_function(self.dm, item.address).set_fast_data(values)
+            else:
+                if item.count > 1:
+                    fd_list = list()
+                    for i in range(item.count):
+                        fd_list.append(values[0])
+                        values = values[1:]
 
-            self.fast_data[item.name] = values.pop(0)
-        return values
+                    self.fast_data[item.name] = fd_list
+                else:
+                    self.fast_data[item.name] = values[0]
+                    values = values[1:]
+
+        return self.fast_data
 
     def refresh(self):
-        # sort the children
-        # full_struct_unpack_string = "<"
-        # sorted_keys = sorted(self.variables, key=lambda v: v.address)
-        #
-        # for item in sorted_keys:
-        #     full_struct_unpack_string += item.struct_unpack_string
         remaining_size = self.size
         max_size = 32
         raw_data = []
@@ -289,7 +287,7 @@ class BaseDevice:
 
         raw_bytes = struct.pack("<" + "H" * self.size, *raw_data)
         values = struct.unpack("<" + self.struct_unpack_string, raw_bytes)
-        self.set_fast_data(values)
+        return self.set_fast_data(values)
 
         # raw_data = self.dm.device.read_registers(
         #     registeraddress=self.addresses.base_address,
