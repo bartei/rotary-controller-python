@@ -19,7 +19,7 @@ from rotary_controller_python.components.coordbar import CoordBar
 from rotary_controller_python.components.servobar import ServoBar
 from rotary_controller_python.components.statusbar import StatusBar
 from rotary_controller_python.dispatchers.formats import FormatsDispatcher
-from rotary_controller_python.utils import communication
+from rotary_controller_python.utils import communication, devices
 
 from rotary_controller_python.components.appsettings import config
 from rotary_controller_python.network.models import Wireless, NetworkInterface
@@ -95,12 +95,14 @@ class MainApp(App):
     task_counter = 0
 
     def __init__(self, **kv):
+        self.fast_data_values = dict()
         try:
-            self.device = communication.DeviceManager(
+            self.connection_manager = communication.ConnectionManager(
                 serial_device=self.serial_port,
                 baudrate=self.serial_baudrate,
                 address=self.serial_address
             )
+            self.device = devices.Global(connection_manager=self.connection_manager, base_address=0)
         except Exception as e:
             log.error(f"Communication cannot be started, will try again: {e.__str__()}")
 
@@ -147,33 +149,32 @@ class MainApp(App):
     #         #     item.speed = self.device.scales[i].speed
 
     def manual_full_update(self):
-        self.home.status_bar.cycles = self.device.fast_data.cycles
-        self.home.status_bar.interval = self.device.base.execution_interval
-        self.home.servo.offset = self.device.servo.absolute_offset
+        self.home.servo.offset = self.device['servo']['absolute_offset']
 
     def update(self, *args):
         try:
-            self.device.fast_data.refresh()
-            if not self.device.connected:
-                self.device.connected = True
+            self.fast_data_values = self.device['fastData'].refresh()
 
         except Exception as e:
             log.error(f"No connection: {e.__str__()}")
             self.task_update.timeout = 2.0
-            self.device.connected = False
+            self.connection_manager.connected = False
 
-        if not self.connected and self.device.connected:
+        if not self.connected and self.connection_manager.connected:
             self.task_update.timeout = 1.0 / 25
             self.upload()
-            self.home.status_bar.max_speed = self.home.servo.max_speed
+            self.home.status_bar.max_speed = self.device['servo']['max_speed']
+            self.home.status_bar.max_speed
 
-        if self.device.connected:
+        if self.connection_manager.connected:
             for bar in self.home.coord_bars:
-                bar.position = self.device.fast_data.scale_current[bar.input_index]
-            self.home.servo.current_position = self.device.fast_data.servo_current
-            self.home.servo.desired_position = self.device.fast_data.servo_desired
-
-        self.connected = self.device.connected
+                bar.position = self.fast_data_values['scaleCurrent'][bar.input_index] / 1000
+            self.home.servo.current_position = self.fast_data_values['servoCurrent']
+            self.home.servo.desired_position = self.fast_data_values['servoDesired']
+            self.home.status_bar.cycles = self.fast_data_values['cycles']
+            self.home.status_bar.interval = self.fast_data_values['executionInterval']
+            self.home.status_bar.speed = abs(self.fast_data_values['servoSpeed'])
+        self.connected = self.connection_manager.connected
 
     def upload(self):
         self.home.servo.upload()

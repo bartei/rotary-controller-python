@@ -5,7 +5,7 @@ import sys
 import time
 
 from rotary_controller_python.utils.base_device import BaseDevice
-from rotary_controller_python.utils.communication import DeviceManager
+from rotary_controller_python.utils.communication import ConnectionManager
 from rotary_controller_python.utils.base_device import variable_definitions
 
 
@@ -21,25 +21,26 @@ typedef struct {
 class Servo(BaseDevice):
     definition = """
 typedef struct {
-  float minSpeed;
-  float maxSpeed;
-  float currentSpeed;
+  float min_speed;
+  float max_speed;
+  float current_speed;
   float acceleration;
-  float absoluteOffset;
-  float indexOffset;
+  float absolute_offset;
+  float index_offset;
   float unused_1;
-  float desiredPosition;
-  float currentPosition;
-  int32_t currentSteps;
-  int32_t desiredSteps;
-  int32_t ratioNum;
-  int32_t ratioDen;
+  float desired_position;
+  float current_position;
+  int32_t current_steps;
+  int32_t desired_steps;
+  int32_t ratio_num;
+  int32_t ratio_den;
   int32_t unused_2;
   int32_t unused_3;
   float unused_4;
-  float estimatedSpeed;
-  float allowedError;
+  float estimated_speed;
+  float allowed_error;
 } servo_t;
+
 """
 
 
@@ -62,18 +63,18 @@ class Scale(BaseDevice):
     definition = """
 typedef struct {
   TIM_HandleTypeDef *timerHandle;
-  uint16_t encoderPrevious;
-  uint16_t encoderCurrent;
-  int32_t ratioNum;
-  int32_t ratioDen;
-  int32_t maxValue;
-  int32_t minValue;
+  uint16_t encoder_previous;
+  uint16_t encoder_current;
+  int32_t ratio_num;
+  int32_t ratio_den;
+  int32_t max_value;
+  int32_t min_value;
   int32_t position;
   int32_t speed;
   int32_t error;
-  int32_t syncRatioNum, syncRatioDen;
-  bool syncMotion;
-  input_mode_t mode;
+  int32_t sync_ratio_num, sync_ratio_den;
+  uint16_t sync_enable;
+  uint16_t mode;
 } input_t;
 """
 
@@ -90,36 +91,6 @@ typedef struct {
   uint32_t executionInterval;
 } fastData_t;
 """
-    # def __init__(self, device: DeviceManager, base_address: int):
-    #     super().__init__(device=device)
-    #     from rotary_controller_python.utils.addresses import IndexAddresses
-    #
-    #     self.addresses = FastDataAddresses(base_address)
-    #     self.scale_current = [0, 0, 0, 0]
-    #     self.scale_speed = [0, 0, 0, 0]
-    #     self.servo_current = 0
-    #     self.servo_desired = 0
-    #     self.servo_speed = 0
-    #     self.cycles = 0
-    #     self.execution_interval = 0
-    #     self.bytes_count = self.addresses.end - self.addresses.base_address
-    #
-    # def refresh(self):
-    #     raw_data = self.dm.device.read_registers(
-    #         registeraddress=self.addresses.base_address,
-    #         number_of_registers=int(self.bytes_count),
-    #     )
-    #
-    #     raw_bytes = struct.pack("<" + "H" * int(self.bytes_count), *raw_data)
-    #
-    #     converted_data = struct.unpack(self.addresses.struct_map, raw_bytes)
-    #     self.servo_current, self.servo_desired, self.servo_speed = converted_data[0:3]
-    #     for i in range(SCALES_COUNT):
-    #         self.scale_current[i] = converted_data[3 + i] / 1000
-    #     for i in range(SCALES_COUNT):
-    #         self.scale_speed[i] = converted_data[3 + i + SCALES_COUNT] / 1000
-    #     self.cycles = converted_data[3 + SCALES_COUNT + SCALES_COUNT]
-    #     self.execution_interval = converted_data[3 + SCALES_COUNT + SCALES_COUNT + 1]
 
 
 current_module = sys.modules[__name__]
@@ -168,14 +139,10 @@ while len(unloaded_list) > 0 and iterations_limit > 0:
 #     global_data.refresh()
 
 
-if __name__ == "__main__":
-    dm = DeviceManager()
-    global_data = Global(device=dm, base_address=0)
-    while True:
-        time.sleep(0.1)
-        values = global_data.refresh()
-        print(global_data['executionInterval'])
-        print(global_data['fastData']['scaleSpeed'][1])
-        print(global_data['fastData']['scaleSpeed'][2])
-        print(global_data['fastData']['scaleSpeed'][3])
-        print(values)
+# if __name__ == "__main__":
+#     dm = DeviceManager()
+#     global_data = Global(device=dm, base_address=0)
+#     while True:
+#         time.sleep(0.1)
+#         values = global_data['fastData'].refresh()
+#         print(values)

@@ -30,13 +30,13 @@ class SavingDispatcher(EventDispatcher):
         properties = [item for item in properties if item.name not in self._skip_save]
         return properties
 
-    @staticmethod
-    def get_writeable_properties(klass):
-        return [
-            attr
-            for attr, value in vars(klass).items()
-            if isinstance(value, property) and value.fset is not None
-        ]
+    # @staticmethod
+    # def get_writeable_properties(klass):
+    #     return [
+    #         attr
+    #         for attr, value in vars(klass).items()
+    #         if isinstance(value, property) and value.fset is not None
+    #     ]
 
     @property
     def filename(self):

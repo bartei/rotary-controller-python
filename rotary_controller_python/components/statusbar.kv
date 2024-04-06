@@ -30,8 +30,8 @@
   LedButton:
     # INTERRUPT INTERVAL
     size_hint_x: None
-    width: 64
-    label: "{:0.2f}".format(0 if root.interval == 0 else (100000000 / root.interval))
+    width: 128
+    label: "{:0.0f}".format(0 if root.interval == 0 else (100000000 / root.interval))
 
   LedButton:
     # CURRENT SERVO SPEED

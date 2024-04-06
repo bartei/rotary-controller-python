@@ -42,6 +42,13 @@ variable_definitions = [
         write_function=communication.write_unsigned
     ),
     TypeDefinition(
+        name="bool",
+        length=1,
+        struct_unpack_string="h",
+        read_function=communication.read_unsigned,
+        write_function=communication.write_unsigned
+    ),
+    TypeDefinition(
         name="uint32_t",
         length=2,
         struct_unpack_string="L",
@@ -56,25 +63,11 @@ variable_definitions = [
         write_function=communication.write_long
     ),
     TypeDefinition(
-        name="bool",
-        length=1,
-        struct_unpack_string="H",
-        read_function=communication.read_unsigned,
-        write_function=communication.write_unsigned
-    ),
-    TypeDefinition(
         name="float",
         length=2,
         struct_unpack_string="f",
         read_function=communication.read_float,
         write_function=communication.write_float
-    ),
-    TypeDefinition(
-        name="input_mode_t",
-        length=1,
-        struct_unpack_string="H",
-        read_function=communication.read_unsigned,
-        write_function=communication.write_unsigned
     ),
 ]
 
@@ -82,13 +75,13 @@ variable_definitions = [
 class BaseDevice:
     definition = ""
 
-    def __init__(self, device, base_address):
-        from rotary_controller_python.utils.communication import DeviceManager
+    def __init__(self, connection_manager, base_address):
+        from rotary_controller_python.utils.communication import ConnectionManager
         self.base_address = base_address
         self.size = 0
         self.struct_unpack_string = ""
         self.fast_data = dict()
-        self.dm: DeviceManager = device
+        self.dm: ConnectionManager = connection_manager
         self.variables: List[VariableDefinition or BaseDevice] = []
         self.parse_addresses_from_definition()
 
@@ -96,7 +89,7 @@ class BaseDevice:
         try:
             var: VariableDefinition = [item for item in self.variables if item.name == key][0]
         except Exception as e:
-            raise f"Variable with name: {key} not found"
+            raise Exception(f"Variable with name: {key} not found")
 
         if var.count > 1:
             list_type = list()
@@ -112,7 +105,7 @@ class BaseDevice:
         try:
             var = [item for item in self.variables if item.name == key][0]
         except Exception as e:
-            raise f"Variable with name: {key} not found"
+            raise Exception(f"Variable with name: {key} not found")
 
         var.type.write_function(self.dm, var.address + self.base_address, value)
         return
@@ -124,7 +117,10 @@ class BaseDevice:
         name = None
         struct_unpack_string = ""
         for line in cls.definition.split(sep="\n"):
-            tokens = [item.replace(";", "") for item in line.split(" ") if len(item) > 0]
+            tokens = [item for item in line.split(" ") if len(item) > 0]
+            tokens = [item.replace(";", "") for item in tokens]
+            tokens = [item.replace("*", "") for item in tokens]
+
             # Skip lines that don't represent a type definition
             if "typedef" in tokens:
                 continue
@@ -138,11 +134,38 @@ class BaseDevice:
 
             # Find type match
             try:
-                matching_type = [item for item in variable_definitions if item.name == tokens[0]][0]
+                identified_type = tokens[0]
+                identified_name ="".join(tokens[1:])
+
+                matching_type = [
+                    item
+                    for item in variable_definitions
+                    if item.name == identified_type
+                ][0]
+
+                # Handle multi var definition separated by comma
+                if "," in identified_name:
+                    for name in identified_name.replace(" ", "").split(","):
+                        current_address = current_address + matching_type.length
+                        struct_unpack_string += matching_type.struct_unpack_string
+                        # size = current_address
+                    continue
+
+                # Handle array definition
+                if "[" in identified_name:
+                    name, count = identified_name.split("[")
+                    count, _ = count.split("]")
+                    count = int(count)
+
+                    current_address += matching_type.length * count
+                    struct_unpack_string += matching_type.struct_unpack_string * count
+                    continue
+
+                current_address = current_address + matching_type.length
+                struct_unpack_string += matching_type.struct_unpack_string
             except Exception as e:
                 raise Exception(f"Unable to find a matching type for: {tokens[0]}")
-            current_address = current_address + matching_type.length
-            struct_unpack_string += matching_type.struct_unpack_string
+
             size = current_address
 
         if name is None:
@@ -246,13 +269,11 @@ class BaseDevice:
                 if item.count > 1:
                     fd_list = list()
                     for i in range(item.count):
-                        fd_list.append(values[0])
-                        values = values[1:]
+                        fd_list.append(values.pop(0))
 
                     self.fast_data[item.name] = fd_list
                 else:
-                    self.fast_data[item.name] = values[0]
-                    values = values[1:]
+                    self.fast_data[item.name] = values.pop(0)
 
         return self.fast_data
 
@@ -261,28 +282,30 @@ class BaseDevice:
         max_size = 32
         raw_data = []
         remaining_address = self.base_address
-        while remaining_size > max_size:
-            try:
+        try:
+            while remaining_size > max_size:
                 part_data = self.dm.device.read_registers(
-                    registeraddress=self.base_address,
+                    registeraddress=remaining_address,
                     number_of_registers=max_size
                 )
                 remaining_size -= max_size
                 remaining_address += max_size
                 raw_data += part_data
-            except Exception as e:
-                log.error(e.__str__())
-                self.dm.connected = False
-                return
 
-        if remaining_size > 0:
-            part_data = self.dm.device.read_registers(
-                registeraddress=remaining_address,
-                number_of_registers=remaining_size
-            )
-            remaining_address += remaining_size
-            remaining_size = 0
-            raw_data += part_data
+            if remaining_size > 0:
+                part_data = self.dm.device.read_registers(
+                    registeraddress=remaining_address,
+                    number_of_registers=remaining_size
+                )
+                remaining_address += remaining_size
+                remaining_size = 0
+                raw_data += part_data
+
+            self.dm.connected = True
+        except Exception as e:
+            log.error(e.__str__())
+            self.dm.connected = False
+            return
 
         raw_bytes = struct.pack("<" + "H" * self.size, *raw_data)
         values = list(struct.unpack("<" + self.struct_unpack_string, raw_bytes))
