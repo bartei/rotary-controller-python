@@ -63,10 +63,7 @@ class BaseDevice:
         self.variables: List[VariableDefinition] = []
         self.parse_addresses_from_definition()
 
-    def __getattr__(self, key):
-        if key in ["variables"]:
-            return self.__getattribute__(key)
-
+    def __getitem__(self, key):
         try:
             var = [item for item in self.variables if item.name == key][0]
         except Exception as e:
@@ -74,8 +71,14 @@ class BaseDevice:
 
         return var.type.read_function(self.dm, var.address + self.base_address)
 
-    # def __setattr__(self, key, value):
-    #     self.variables[key] = value
+    def __setitem__(self, key, value):
+        try:
+            var = [item for item in self.variables if item.name == key][0]
+        except Exception as e:
+            raise f"Variable with name: {key} not found"
+
+        var.type.write_function(self.dm, var.address + self.base_address, value)
+        return
 
     @classmethod
     def register_type(cls) -> TypeDefinition:

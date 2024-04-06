@@ -8,7 +8,7 @@ log = logging.getLogger(__name__)
 
 class DeviceManager:
     def __init__(
-        self, serial_device="/dev/ttyUSB0", baudrate=57600, address=17, debug=False
+        self, serial_device="/dev/ttyUSB0", baudrate=115200, address=17, debug=False
     ):
         from rotary_controller_python.utils.devices import (
             Global,

@@ -121,7 +121,6 @@ typedef struct {
 
 
 current_module = sys.modules[__name__]
-
 clsmembers = [
     item
     for item in inspect.getmembers(sys.modules[__name__], inspect.isclass)
@@ -146,4 +145,7 @@ while len(unloaded_list) > 0 and iterations_limit > 0:
 def test_scale_structure():
     dm = DeviceManager()
     global_data = Global(device=dm, base_address=0)
-    print(global_data.servo.ratioNum)
+    global_data["servo"]["ratioNum"] = 12345
+    result = global_data["servo"]["ratioNum"]
+    print(result)
+    assert result == 12345
