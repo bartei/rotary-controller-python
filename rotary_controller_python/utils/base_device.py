@@ -227,8 +227,7 @@ class BaseDevice:
 
         self.size = current_address
 
-    def set_fast_data(self, values: Tuple):
-        values = list(values)
+    def set_fast_data(self, values: List):
         self.fast_data = dict()
         sorted_keys: List[VariableDefinition] = sorted(self.variables, key=lambda v: v.address)
         for item in sorted_keys:
@@ -286,7 +285,7 @@ class BaseDevice:
             raw_data += part_data
 
         raw_bytes = struct.pack("<" + "H" * self.size, *raw_data)
-        values = struct.unpack("<" + self.struct_unpack_string, raw_bytes)
+        values = list(struct.unpack("<" + self.struct_unpack_string, raw_bytes))
         return self.set_fast_data(values)
 
         # raw_data = self.dm.device.read_registers(
