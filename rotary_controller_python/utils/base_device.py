@@ -25,25 +25,21 @@ class VariableDefinition(BaseModel):
     type: TypeDefinition
     count: int = 1
 
-    def __getitem__(self, item):
-        item -= 1
-        if not isinstance(item, int):
-            raise Exception("Specify a number to pick an item from an array type variable")
-        if item > self.count:
-            raise Exception("Index out of range for array access")
-
-        return VariableDefinition(
-            name=self.name,
-            address=self.address + self.type.length * item,
-            type=self.type
-        )
-
-
-class VariableDefinitionList(BaseModel):
-    types: List[TypeDefinition]
+    # def __getitem__(self, item):
+    #     item -= 1
+    #     if not isinstance(item, int):
+    #         raise Exception("Specify a number to pick an item from an array type variable")
+    #     if item > self.count:
+    #         raise Exception("Index out of range for array access")
+    #
+    #     return VariableDefinition(
+    #         name=self.name,
+    #         address=self.address + self.type.length * item,
+    #         type=self.type
+    #     )
 
 
-variable_definitions = VariableDefinitionList(types=[
+variable_definitions = [
     TypeDefinition(
         name="TIM_HandleTypeDef",
         length=2,
@@ -54,7 +50,7 @@ variable_definitions = VariableDefinitionList(types=[
     TypeDefinition(
         name="uint16_t",
         length=1,
-        struct_unpack_string="I",
+        struct_unpack_string="h",
         read_function=communication.read_unsigned,
         write_function=communication.write_unsigned
     ),
@@ -93,7 +89,7 @@ variable_definitions = VariableDefinitionList(types=[
         read_function=communication.read_unsigned,
         write_function=communication.write_unsigned
     ),
-])
+]
 
 
 class BaseDevice:
@@ -104,18 +100,26 @@ class BaseDevice:
         self.base_address = base_address
         self.size = 0
         self.struct_unpack_string = ""
-        self.fast_data = None
+        self.fast_data = dict()
         self.dm: DeviceManager = device
         self.variables: List[VariableDefinition or BaseDevice] = []
         self.parse_addresses_from_definition()
 
     def __getitem__(self, key):
         try:
-            var = [item for item in self.variables if item.name == key][0]
+            var: VariableDefinition = [item for item in self.variables if item.name == key][0]
         except Exception as e:
             raise f"Variable with name: {key} not found"
 
-        return var.type.read_function(self.dm, var.address + self.base_address)
+        if var.count > 1:
+            list_type = list()
+            for i in range(var.count):
+                list_type.append(
+                    var.type.read_function(self.dm, var.address + self.base_address + var.type.length * i)
+                )
+            return list_type
+        else:
+            return var.type.read_function(self.dm, var.address + self.base_address)
 
     def __setitem__(self, key, value):
         try:
@@ -147,7 +151,7 @@ class BaseDevice:
 
             # Find type match
             try:
-                matching_type = [item for item in variable_definitions.types if item.name == tokens[0]][0]
+                matching_type = [item for item in variable_definitions if item.name == tokens[0]][0]
             except Exception as e:
                 raise Exception(f"Unable to find a matching type for: {tokens[0]}")
             current_address = current_address + matching_type.length
@@ -191,7 +195,7 @@ class BaseDevice:
 
                 matching_type = [
                     item
-                    for item in variable_definitions.types
+                    for item in variable_definitions
                     if item.name == identified_type
                 ][0]
 
@@ -214,13 +218,14 @@ class BaseDevice:
                     count = int(count)
 
                     self.variables.append(VariableDefinition(
-                        name=identified_name,
+                        name=name,
                         address=current_address,
                         type=matching_type,
                         count=count
                     ))
                     current_address += matching_type.length * count
                     self.struct_unpack_string += matching_type.struct_unpack_string * count
+                    continue
 
                 self.variables.append(VariableDefinition(
                     name=identified_name,
@@ -237,10 +242,12 @@ class BaseDevice:
 
     def set_fast_data(self, values: Tuple):
         values = list(values)
+        self.fast_data = dict()
         sorted_keys = sorted(self.variables, key=lambda v: v.address)
         for item in sorted_keys:
+            hasattr(item.type.read_function, "set_fast_data")
             if hasattr(item, "set_fast_data"):
-                values = item.set_fast_data(values)
+                self.fast_data[item.name] = item.type.read_function.set_fast_data(values)
                 continue
 
             self.fast_data[item.name] = values.pop(0)
@@ -253,19 +260,35 @@ class BaseDevice:
         #
         # for item in sorted_keys:
         #     full_struct_unpack_string += item.struct_unpack_string
+        remaining_size = self.size
+        max_size = 32
+        raw_data = []
+        remaining_address = self.base_address
+        while remaining_size > max_size:
+            try:
+                part_data = self.dm.device.read_registers(
+                    registeraddress=self.base_address,
+                    number_of_registers=max_size
+                )
+                remaining_size -= max_size
+                remaining_address += max_size
+                raw_data += part_data
+            except Exception as e:
+                log.error(e.__str__())
+                self.dm.connected = False
+                return
 
-        try:
-            raw_data = self.dm.device.read_registers(
-                registeraddress=self.base_address,
-                number_of_registers=self.size
+        if remaining_size > 0:
+            part_data = self.dm.device.read_registers(
+                registeraddress=remaining_address,
+                number_of_registers=remaining_size
             )
-        except Exception as e:
-            log.error(e.__str__())
-            self.dm.connected = False
-            return
+            remaining_address += remaining_size
+            remaining_size = 0
+            raw_data += part_data
 
         raw_bytes = struct.pack("<" + "H" * self.size, *raw_data)
-        values = struct.unpack(self.struct_unpack_string, raw_bytes)
+        values = struct.unpack("<" + self.struct_unpack_string, raw_bytes)
         self.set_fast_data(values)
 
         # raw_data = self.dm.device.read_registers(

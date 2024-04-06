@@ -12,30 +12,31 @@ class Index(BaseDevice):
 typedef struct {
   int32_t divisions;
   int32_t index;
-} index_t;    
+} index_t;
 """
 
 
 class Servo(BaseDevice):
     definition = """
 typedef struct {
-    float minSpeed;
-    float maxSpeed;
-    float currentSpeed;
-    float acceleration;
-    float absoluteOffset;
-    float indexOffset;
-    float syncOffset;
-    float desiredPosition;
-    float currentPosition;
-    int32_t currentSteps;
-    int32_t desiredSteps;
-    int32_t ratioNum;
-    int32_t ratioDen;
-    int32_t maxValue;
-    int32_t minValue;
-    float breakingSpace, breakingTime;
-    float allowedError;
+  float minSpeed;
+  float maxSpeed;
+  float currentSpeed;
+  float acceleration;
+  float absoluteOffset;
+  float indexOffset;
+  float unused_1;
+  float desiredPosition;
+  float currentPosition;
+  int32_t currentSteps;
+  int32_t desiredSteps;
+  int32_t ratioNum;
+  int32_t ratioDen;
+  int32_t unused_2;
+  int32_t unused_3;
+  float unused_4;
+  float estimatedSpeed;
+  float allowedError;
 } servo_t;
 """
 
@@ -58,20 +59,20 @@ typedef struct {
 class Scale(BaseDevice):
     definition = """
 typedef struct {
-    TIM_HandleTypeDef *timerHandle;
-    uint16_t encoderPrevious;
-    uint16_t encoderCurrent;
-    int32_t ratioNum;
-    int32_t ratioDen;
-    int32_t maxValue;
-    int32_t minValue;
-    int32_t position;
-    int32_t speed;
-    int32_t error;
-    int32_t syncRatioNum, syncRatioDen;
-    bool syncMotion;
-    input_mode_t mode;
-} input_t;    
+  TIM_HandleTypeDef *timerHandle;
+  uint16_t encoderPrevious;
+  uint16_t encoderCurrent;
+  int32_t ratioNum;
+  int32_t ratioDen;
+  int32_t maxValue;
+  int32_t minValue;
+  int32_t position;
+  int32_t speed;
+  int32_t error;
+  int32_t syncRatioNum, syncRatioDen;
+  uint16_t syncMotion;
+  input_mode_t mode;
+} input_t;
 """
 
 
@@ -134,7 +135,7 @@ while len(unloaded_list) > 0 and iterations_limit > 0:
         my_class[1]: BaseDevice
         try:
             definition = my_class[1].register_type()
-            variable_definitions.types.append(definition)
+            variable_definitions.append(definition)
         except Exception as e:
             failure_list.append(my_class)
     unloaded_list = copy.deepcopy(failure_list)
@@ -150,8 +151,17 @@ def test_scale_structure():
     assert result == 12345
 
 
+def test_get_item_from_array_definiton():
+    dm = DeviceManager()
+    global_data = Global(device=dm, base_address=0)
+    global_data['scales'][1]['ratioDen'] = 111
+    result = global_data['scales'][1]['ratioDen']
+    assert result == 111
+
+
 def test_scale_fast_data():
     dm = DeviceManager()
     dm.device.read_registers(0, 10)
     global_data = Global(device=dm, base_address=0)
-    global_data["fastData"].refresh()
+    global_data.refresh()
+    assert global_data.fast_data['index']['divisions'] == 123
