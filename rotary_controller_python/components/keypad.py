@@ -2,6 +2,7 @@ import os
 
 from kivy.core.window import Window
 from kivy.logger import Logger
+from kivy.properties import NumericProperty
 from kivy.uix.popup import Popup
 from kivy.lang import Builder
 
@@ -16,6 +17,7 @@ if os.path.exists(kv_file):
 class Keypad(Popup):
     set_method = None
     container = None
+    current_value = NumericProperty(0)
 
     def __init__(self, **kwargs):
         super().__init__(**kwargs)
@@ -46,7 +48,17 @@ class Keypad(Popup):
 
         return True  # Return True to accept the key. False would reject the key press.
 
-    def show(self, container, set_method):
+    def show(self, container, set_method, current_value=None):
+        if current_value is not None:
+            ## Use the specified current value if passed
+            self.current_value = current_value
+        else:
+            try:
+                self.current_value = getattr(container, set_method)
+            except Exception as e:
+                log.debug(e.__str__())
+                pass
+            # try to get the current value from the container method specified if
         self.set_method = set_method
         self.container = container
         self.open()
@@ -54,7 +66,7 @@ class Keypad(Popup):
     def confirm(self):
         try:
             value = self.ids['value'].text
-            if "." in value:
+            if type(value) is str and "." in value:
                 value = float(value)
             else:
                 value = int(value)

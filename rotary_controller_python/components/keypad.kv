@@ -9,7 +9,7 @@
   text: "\uf55a"
 
 <Keypad>:
-  title: "Old Value: "
+  title: "Old Value: " + str(root.current_value)
   size_hint: 0.8, 0.8
   auto_dismiss: False
 
@@ -45,9 +45,9 @@
       KeypadButton:
         text: "6"
         on_release: root.ids.value.text+= self.text
-      KeypadIconButton:
-        text: "\uf12d"
-        on_release: root.ids.value.text = ""
+      KeypadButton:
+        text: "\u00bd"
+        on_release: root.ids.value.text = str(root.current_value / 2)
     BoxLayout:
       orientation: "horizontal"
       KeypadButton:

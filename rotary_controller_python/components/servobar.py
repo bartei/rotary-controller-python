@@ -28,9 +28,10 @@ class ServoBar(BoxLayout, SavingDispatcher):
     offset = NumericProperty(0.0)
     divisions = NumericProperty(12)
     index = NumericProperty(0)
-    enable = BooleanProperty(False)
+    # enable = BooleanProperty(False)
     current_position = NumericProperty(0.0)
     desired_position = NumericProperty(0.0)
+    _skip_save = ["current_position", "desired_position"]
 
     def __init__(self, device: Global, **kv):
         self.device = device
@@ -46,6 +47,7 @@ class ServoBar(BoxLayout, SavingDispatcher):
         matches = [item for item in prop_names if item in device_props]
         for item in matches:
             self.device['servo'][item] = self.__getattribute__(item)
+
 
     def on_index(self, instance, value):
         if self.divisions != 0 and self.device is not None:

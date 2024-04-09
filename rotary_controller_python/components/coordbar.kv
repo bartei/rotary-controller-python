@@ -91,7 +91,6 @@
         disabled: root.sync_enable
         on_release: Factory.Keypad().show(root, 'sync_ratio_den')
 
-
   Button:
     text: "Zero"
     font_size: 24
@@ -99,5 +98,5 @@
     background_color: [0.5, 0.5, 0.5, 1]
     width: self.height
     size_hint_x: None
-    on_release: root.new_position = 0
+    on_release: root.zero_position()
     disabled: root.sync_enable
