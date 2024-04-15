@@ -84,26 +84,26 @@
       size_hint_y: None
       StringItem:
         name: "Axis Name"
-        value: root.scale.axis_name
-        on_value: root.scale.axis_name = self.value
+        value: root.scale.axisName
+        on_value: root.scale.axisName = self.value
       NumberItem:
         name: "Ratio Numerator"
-        value: root.scale.ratio_num
-        on_value: root.scale.ratio_num = self.value
+        value: root.scale.ratioNum
+        on_value: root.scale.ratioNum = self.value
       NumberItem:
         name: "Ratio Denominator"
-        value: root.scale.ratio_den
+        value: root.scale.ratioDen
         help_file: "scales.rst"
-        on_value: root.scale.ratio_den = self.value
+        on_value: root.scale.ratioDen = self.value
       NumberItem:
         name: "Sync Ratio Numerator"
-        value: root.scale.sync_ratio_num
+        value: root.scale.syncRatioNum
         help_file: "scales.rst"
-        on_value: root.scale.sync_ratio_num = self.value
+        on_value: root.scale.syncRatioNum = self.value
       NumberItem:
         name: "Sync Ratio Denominator"
-        value: root.scale.sync_ratio_den
-        on_value: root.scale.sync_ratio_den = self.value
+        value: root.scale.syncRatioDen
+        on_value: root.scale.syncRatioDen = self.value
       NumberItem:
         name: "Mode"
         value: root.scale.mode
@@ -121,26 +121,26 @@
       size_hint_y: None
       NumberItem:
         name: "Minimum Speed"
-        value: root.servo.min_speed
-        on_value: root.servo.min_speed = self.value
+        value: root.servo.minSpeed
+        on_value: root.servo.minSpeed = self.value
       DualNumberItem:
         name: "Maximum Speed"
-        value: root.servo.max_speed
-        ratio: root.servo.ratio_den / root.servo.ratio_num
-        on_value: root.servo.max_speed = self.value
+        value: root.servo.maxSpeed
+        ratio: root.servo.ratioDen / root.servo.ratioNum
+        on_value: root.servo.maxSpeed = self.value
       DualNumberItem:
         name: "Acceleration"
         value: root.servo.acceleration
-        ratio: root.servo.ratio_den / root.servo.ratio_num
+        ratio: root.servo.ratioDen / root.servo.ratioNum
         on_value: root.servo.acceleration = self.value
       NumberItem:
         name: "Ratio Numerator"
-        value: root.servo.ratio_num
-        on_value: root.servo.ratio_num = self.value
+        value: root.servo.ratioNum
+        on_value: root.servo.ratioNum = self.value
       NumberItem:
         name: "Ratio Denominator"
-        value: root.servo.ratio_den
-        on_value: root.servo.ratio_den = self.value
+        value: root.servo.ratioDen
+        on_value: root.servo.ratioDen = self.value
       NumberItem:
         name: "Offset"
         value: root.servo.offset

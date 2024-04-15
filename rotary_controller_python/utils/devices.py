@@ -8,6 +8,8 @@ from rotary_controller_python.utils.base_device import BaseDevice
 from rotary_controller_python.utils.communication import ConnectionManager
 from rotary_controller_python.utils.base_device import variable_definitions
 
+SCALES_COUNT = 4
+
 
 class Index(BaseDevice):
     definition = """
@@ -21,26 +23,20 @@ typedef struct {
 class Servo(BaseDevice):
     definition = """
 typedef struct {
-  float min_speed;
-  float max_speed;
-  float current_speed;
+  float minSpeed;
+  float maxSpeed;
+  float currentSpeed;
   float acceleration;
-  float absolute_offset;
-  float index_offset;
-  float unused_1;
-  float desired_position;
-  float current_position;
-  int32_t current_steps;
-  int32_t desired_steps;
-  int32_t ratio_num;
-  int32_t ratio_den;
-  int32_t unused_2;
-  int32_t unused_3;
-  float unused_4;
-  float estimated_speed;
-  float allowed_error;
+  float absoluteOffset;
+  float indexOffset;
+  float desiredPosition;
+  float currentPosition;
+  int32_t currentSteps;
+  int32_t desiredSteps;
+  int32_t ratioNum;
+  int32_t ratioDen;
+  float allowedError;
 } servo_t;
-
 """
 
 
@@ -63,17 +59,17 @@ class Scale(BaseDevice):
     definition = """
 typedef struct {
   TIM_HandleTypeDef *timerHandle;
-  uint16_t encoder_previous;
-  uint16_t encoder_current;
-  int32_t ratio_num;
-  int32_t ratio_den;
-  int32_t max_value;
-  int32_t min_value;
+  uint16_t encoderPrevious;
+  uint16_t encoderCurrent;
+  int32_t ratioNum;
+  int32_t ratioDen;
+  int32_t maxValue;
+  int32_t minValue;
   int32_t position;
   int32_t speed;
   int32_t error;
-  int32_t sync_ratio_num, sync_ratio_den;
-  uint16_t sync_enable;
+  int32_t syncRatioNum, syncRatioDen;
+  uint16_t syncEnable;
   uint16_t mode;
 } input_t;
 """
@@ -89,6 +85,8 @@ typedef struct {
   int32_t scaleSpeed[4];
   uint32_t cycles;
   uint32_t executionInterval;
+  uint16_t servoEnable;
+  int16_t servoDirection;
 } fastData_t;
 """
 
@@ -115,6 +113,8 @@ while len(unloaded_list) > 0 and iterations_limit > 0:
     iterations_limit -= 1
 
 
+# import time
+# from rotary_controller_python.utils.communication import ConnectionManager
 # def test_scale_structure():
 #     dm = DeviceManager()
 #     global_data = Global(device=dm, base_address=0)

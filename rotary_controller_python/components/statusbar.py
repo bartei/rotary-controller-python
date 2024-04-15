@@ -18,4 +18,4 @@ class StatusBar(BoxLayout):
     cycles = NumericProperty(0)
     fps = NumericProperty(0)
     speed = NumericProperty(0)
-    max_speed = NumericProperty(0)
+    maxSpeed = NumericProperty(0)

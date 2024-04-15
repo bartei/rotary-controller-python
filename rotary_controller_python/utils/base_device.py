@@ -1,8 +1,6 @@
-import inspect
 import struct
-from typing import Optional, Callable, List, Any, Tuple
+from typing import Optional, List, Any
 
-import minimalmodbus
 from rotary_controller_python.utils import communication
 
 import logging
@@ -31,6 +29,13 @@ variable_definitions = [
         name="TIM_HandleTypeDef",
         length=2,
         struct_unpack_string="L",
+        read_function=communication.read_long,
+        write_function=communication.write_long
+    ),
+    TypeDefinition(
+        name="int16_t",
+        length=1,
+        struct_unpack_string="H",
         read_function=communication.read_long,
         write_function=communication.write_long
     ),
@@ -89,7 +94,7 @@ class BaseDevice:
         try:
             var: VariableDefinition = [item for item in self.variables if item.name == key][0]
         except Exception as e:
-            raise Exception(f"Variable with name: {key} not found")
+            raise Exception(f"Variable with name: {key} not found ({e.__str__()})")
 
         if var.count > 1:
             list_type = list()
@@ -105,7 +110,7 @@ class BaseDevice:
         try:
             var = [item for item in self.variables if item.name == key][0]
         except Exception as e:
-            raise Exception(f"Variable with name: {key} not found")
+            raise Exception(f"Variable with name: {key} not found ({e.__str__()})")
 
         var.type.write_function(self.dm, var.address + self.base_address, value)
         return
@@ -135,7 +140,7 @@ class BaseDevice:
             # Find type match
             try:
                 identified_type = tokens[0]
-                identified_name ="".join(tokens[1:])
+                identified_name = "".join(tokens[1:])
 
                 matching_type = [
                     item
@@ -164,7 +169,7 @@ class BaseDevice:
                 current_address = current_address + matching_type.length
                 struct_unpack_string += matching_type.struct_unpack_string
             except Exception as e:
-                raise Exception(f"Unable to find a matching type for: {tokens[0]}")
+                raise Exception(f"Unable to find a matching type for: {tokens[0]} ({e.__str__()})")
 
             size = current_address
 
@@ -201,7 +206,7 @@ class BaseDevice:
             # Find type match
             try:
                 identified_type = tokens[0]
-                identified_name ="".join(tokens[1:])
+                identified_name = "".join(tokens[1:])
 
                 matching_type = [
                     item
@@ -254,7 +259,6 @@ class BaseDevice:
         self.fast_data = dict()
         sorted_keys: List[VariableDefinition] = sorted(self.variables, key=lambda v: v.address)
         for item in sorted_keys:
-            item
             if hasattr(item.type.read_function, "set_fast_data"):
                 if item.count > 1:
                     fd_list = list()
@@ -298,7 +302,6 @@ class BaseDevice:
                     number_of_registers=remaining_size
                 )
                 remaining_address += remaining_size
-                remaining_size = 0
                 raw_data += part_data
 
             self.dm.connected = True
@@ -310,19 +313,3 @@ class BaseDevice:
         raw_bytes = struct.pack("<" + "H" * self.size, *raw_data)
         values = list(struct.unpack("<" + self.struct_unpack_string, raw_bytes))
         return self.set_fast_data(values)
-
-        # raw_data = self.dm.device.read_registers(
-        #     registeraddress=self.addresses.base_address,
-        #     number_of_registers=int(self.bytes_count),
-        # )
-        #
-        # raw_bytes = struct.pack("<" + "H" * int(self.bytes_count), *raw_data)
-        #
-        # converted_data = struct.unpack(self.addresses.struct_map, raw_bytes)
-        # self.servo_current, self.servo_desired, self.servo_speed = converted_data[0:3]
-        # for i in range(SCALES_COUNT):
-        #     self.scale_current[i] = converted_data[3 + i] / 1000
-        # for i in range(SCALES_COUNT):
-        #     self.scale_speed[i] = converted_data[3 + i + SCALES_COUNT] / 1000
-        # self.cycles = converted_data[3 + SCALES_COUNT + SCALES_COUNT]
-        # self.execution_interval = converted_data[3 + SCALES_COUNT + SCALES_COUNT + 1]

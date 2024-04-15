@@ -20,18 +20,20 @@ if os.path.exists(kv_file):
 
 class ServoBar(BoxLayout, SavingDispatcher):
     name = StringProperty("R")
-    min_speed = NumericProperty(1)
-    max_speed = NumericProperty(1000)
+    minSpeed = NumericProperty(1)
+    maxSpeed = NumericProperty(1000)
     acceleration = NumericProperty(1000)
-    ratio_num = NumericProperty(400)
-    ratio_den = NumericProperty(360)
+    ratioNum = NumericProperty(400)
+    ratioDen = NumericProperty(360)
     offset = NumericProperty(0.0)
     divisions = NumericProperty(12)
     index = NumericProperty(0)
+    servoEnable = NumericProperty(0)
+
     # enable = BooleanProperty(False)
-    current_position = NumericProperty(0.0)
-    desired_position = NumericProperty(0.0)
-    _skip_save = ["current_position", "desired_position"]
+    currentPosition = NumericProperty(0.0)
+    desiredPosition = NumericProperty(0.0)
+    _skip_save = ["currentPosition", "desiredPosition", "servoEnable"]
 
     def __init__(self, device: Global, **kv):
         self.device = device
@@ -48,7 +50,6 @@ class ServoBar(BoxLayout, SavingDispatcher):
         for item in matches:
             self.device['servo'][item] = self.__getattribute__(item)
 
-
     def on_index(self, instance, value):
         if self.divisions != 0 and self.device is not None:
             self.device['index']['index'] = self.index
@@ -58,23 +59,32 @@ class ServoBar(BoxLayout, SavingDispatcher):
         return True
 
     def on_offset(self, instance, value):
-        self.device['servo']['absolute_offset'] = self.offset
-        self.offset = self.device['servo']['absolute_offset']
+        self.device['servo']['absoluteOffset'] = self.offset
+        self.offset = self.device['servo']['absoluteOffset']
 
     def on_divisions(self, instance, value):
         self.device['index']['divisions'] = self.divisions
 
-    def on_min_speed(self, instance, value):
-        self.device['servo']['min_speed'] = self.min_speed
+    def on_minSpeed(self, instance, value):
+        self.device['servo']['minSpeed'] = self.minSpeed
 
-    def on_max_speed(self, instance, value):
-        self.device['servo']['max_speed'] = self.max_speed
+    def on_maxSpeed(self, instance, value):
+        self.device['servo']['maxSpeed'] = self.maxSpeed
 
     def on_acceleration(self, instance, value):
         self.device['servo']['acceleration'] = self.acceleration
 
-    def on_ratio_num(self, instance, value):
-        self.device['servo']['ratio_num'] = self.ratio_num
+    def on_ratioNum(self, instance, value):
+        self.device['servo']['ratioNum'] = self.ratioNum
 
-    def on_ratio_den(self, instance, value):
-        self.device['servo']['ratio_den'] = self.ratio_den
+    def on_ratioDen(self, instance, value):
+        self.device['servo']['ratioDen'] = self.ratioDen
+
+    def on_servoEnable(self, instance, value):
+        self.device['fastData']['servoEnable'] = self.servoEnable
+
+    def toggle_enable(self):
+        if self.servoEnable != 0:
+            self.servoEnable = 0
+        else:
+            self.servoEnable = 1

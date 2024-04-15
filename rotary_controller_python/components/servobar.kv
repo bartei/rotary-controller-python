@@ -3,14 +3,16 @@
 
 <ServoBar>:
   orientation: "horizontal"
-  height: 128
-  size_hint_y: None
-  Label:
-    text: root.name
-    width: 80
+#  height: 128
+  size_hint_y: 1
+  Button:
+    width: self.height
     size_hint_x: None
-    font_size: 64
+    text: root.name
+    font_size: self.height / 1.5
     font_style: "bold"
+    background_color: [0.2, 1, 0.2, 1] if root.servoEnable else [0.3, 0.3, 0.3, 1]
+    on_release: root.toggle_enable()
   BoxLayout:
     orientation: "vertical"
     size_hint_x: 0.2
@@ -29,11 +31,11 @@
       font_style: "bold"
       background_color: [0.2, 0.2, 0.2, 1]
       color: app.display_color
-      text: app.formats.angle_format.format(root.current_position)
+      text: app.formats.angle_format.format(root.currentPosition)
       text_size: self.size
       halign: 'center'
       valign: 'middle'
-#      on_release: Factory.Keypad().show(root.data, 'sync_num')
+#      on_release: Factory.Keypad().show(root.data, 'syncNum')
     Label:
       text: "Desired"
       text_size: self.size
@@ -49,7 +51,7 @@
       font_style: "bold"
       background_color: [0.2, 0.2, 0.2, 1]
       color: app.display_color
-      text:  app.formats.angle_format.format(root.desired_position)
+      text:  app.formats.angle_format.format(root.desiredPosition)
       text_size: self.size
       halign: 'center'
       valign: 'middle'
@@ -76,6 +78,7 @@
       text_size: self.size
       halign: 'center'
       valign: 'middle'
+      disabled: root.servoEnable == 0
       on_release: Factory.Keypad().show(root, 'offset')
 
     Label:
@@ -97,6 +100,7 @@
       text_size: self.size
       halign: 'center'
       valign: 'middle'
+      disabled: root.servoEnable == 0
       on_release: Factory.Keypad().show(root, 'divisions')
 
   BoxLayout:
@@ -109,11 +113,13 @@
         font_size: 24
         font_style: "bold"
         text: "<"
+        disabled: root.servoEnable == 0
         on_release: root.index = (root.index - 1) % root.divisions
       Button:
         font_size: 24
         font_style: "bold"
         text: ">"
+        disabled: root.servoEnable == 0
         on_release: root.index = (root.index + 1) % root.divisions
     BoxLayout:
       orientation: "vertical"
@@ -136,4 +142,5 @@
         text_size: self.size
         halign: 'center'
         valign: 'middle'
+        disabled: root.servoEnable == 0
         on_release: Factory.Keypad().show(root, 'index')

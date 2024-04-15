@@ -1,8 +1,6 @@
 import logging
 import minimalmodbus
 
-from rotary_controller_python.utils.addresses import GlobalAddresses, SCALES_COUNT
-
 log = logging.getLogger(__name__)
 
 

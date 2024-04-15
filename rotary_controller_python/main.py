@@ -133,23 +133,8 @@ class MainApp(App):
         popup.open()
         log.info("Settings done")
 
-    # def update_slow(self, *args):
-    #     if self.device.connected:
-    #         # self.home.status_bar.speed = abs(self.device.fast_data.servo_speed)
-    #         for bar in self.home.coord_bars:
-    #             bar.speed = self.device.fast_data.scale_speed[bar.input_index]
-    #
-    #         # self.home.status_bar.cycles = self.device.fast_data.cycles
-    #         # self.home.status_bar.interval = self.device.fast_data.execution_interval
-    #
-    #         # self.home.status_bar.speed = self.device.servo.estimated_speed * self.home.servo.ratio_den / self.home.servo.ratio_num
-    #         # self.home.status_bar.interval = self.device.base.execution_interval
-    #         # self.home.status_bar.interval = self.device.servo.allowed_error
-    #         # for i, item in enumerate(self.home.coord_bars):
-    #         #     item.speed = self.device.scales[i].speed
-
     def manual_full_update(self):
-        self.home.servo.offset = self.device['servo']['absolute_offset']
+        self.home.servo.offset = self.device['servo']['absoluteOffset']
 
     def update(self, *args):
         try:
@@ -163,14 +148,14 @@ class MainApp(App):
         if not self.connected and self.connection_manager.connected:
             self.task_update.timeout = 1.0 / 25
             self.upload()
-            self.home.status_bar.max_speed = self.device['servo']['max_speed']
-            self.home.status_bar.max_speed
+            self.home.status_bar.maxSpeed = self.device['servo']['maxSpeed']
 
         if self.connection_manager.connected:
             for bar in self.home.coord_bars:
-                bar.position = self.fast_data_values['scaleCurrent'][bar.input_index] / 1000
-            self.home.servo.current_position = self.fast_data_values['servoCurrent']
-            self.home.servo.desired_position = self.fast_data_values['servoDesired']
+                bar.position = self.fast_data_values['scaleCurrent'][bar.inputIndex] / 1000
+            self.home.servo.currentPosition = self.fast_data_values['servoCurrent']
+            self.home.servo.desiredPosition = self.fast_data_values['servoDesired']
+            self.home.servo.servoEnable = self.fast_data_values['servoEnable']
             self.home.status_bar.cycles = self.fast_data_values['cycles']
             self.home.status_bar.interval = self.fast_data_values['executionInterval']
             self.home.status_bar.speed = abs(self.fast_data_values['servoSpeed'])

@@ -50,7 +50,7 @@ class Keypad(Popup):
 
     def show(self, container, set_method, current_value=None):
         if current_value is not None:
-            ## Use the specified current value if passed
+            # Use the specified current value if passed
             self.current_value = current_value
         else:
             try:

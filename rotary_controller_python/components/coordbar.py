@@ -12,9 +12,7 @@ from kivy.uix.boxlayout import BoxLayout
 from kivy.app import App
 
 from rotary_controller_python.dispatchers import SavingDispatcher
-from rotary_controller_python.utils.addresses import SCALES_COUNT
-# from rotary_controller_python.utils.communication import ConnectionManager
-# from rotary_controller_python.utils.devices import Global
+from rotary_controller_python.utils.devices import SCALES_COUNT
 
 log = Logger.getChild(__name__)
 kv_file = os.path.join(os.path.dirname(__file__), __file__.replace(".py", ".kv"))
@@ -25,25 +23,25 @@ if os.path.exists(kv_file):
 
 class CoordBar(BoxLayout, SavingDispatcher):
     device = ObjectProperty()
-    input_index = NumericProperty(0)
-    axis_name = StringProperty("?")
-    ratio_num = NumericProperty(5)
-    ratio_den = NumericProperty(1)
-    sync_ratio_num = NumericProperty(360)
-    sync_ratio_den = NumericProperty(100)
-    sync_enable = BooleanProperty(False)
+    inputIndex = NumericProperty(0)
+    axisName = StringProperty("?")
+    ratioNum = NumericProperty(5)
+    ratioDen = NumericProperty(1)
+    syncRatioNum = NumericProperty(360)
+    syncRatioDen = NumericProperty(100)
+    syncEnable = BooleanProperty(False)
     position = NumericProperty(0)
-    new_position = NumericProperty(0)
+    newPosition = NumericProperty(0)
     speed = NumericProperty(0.0)
     mode = NumericProperty(0)
     sync_button_color = ListProperty([0.3, 0.3, 0.3, 1])
 
-    _skip_save = ["position", "new_position", "formatted_axis_speed", "sync_enable"]
+    _skip_save = ["position", "new_position", "formatted_axis_speed", "syncEnable"]
 
     def __init__(self, input_index, **kv):
         self.app = App.get_running_app()
         super().__init__(**kv)
-        self.input_index = input_index
+        self.inputIndex = input_index
 
         self.speed_history = collections.deque(maxlen=5)
         self.previous_axis_time: float = 0
@@ -54,45 +52,44 @@ class CoordBar(BoxLayout, SavingDispatcher):
     def upload(self):
         props = self.get_our_properties()
         prop_names = [item.name for item in props]
-        device_props = [item.name for item in self.device['scales'][self.input_index].variables]
+        device_props = [item.name for item in self.device['scales'][self.inputIndex].variables]
         matches = [item for item in prop_names if item in device_props]
         for item in matches:
-            log.info(f"Writing scale settings for scale {self.input_index}: {item}={self.__getattribute__(item)}")
-            self.device['scales'][self.input_index][item] = self.__getattribute__(item)
+            log.info(f"Writing scale settings for scale {self.inputIndex}: {item}={self.__getattribute__(item)}")
+            self.device['scales'][self.inputIndex][item] = self.__getattribute__(item)
 
     def toggle_sync(self):
         running_app = App.get_running_app()
-        self.sync_enable = not self.device['scales'][self.input_index]['sync_enable']
-        self.device['scales'][self.input_index]['sync_enable'] = self.sync_enable
+        self.syncEnable = not self.device['scales'][self.inputIndex]['syncEnable']
+        self.device['scales'][self.inputIndex]['syncEnable'] = self.syncEnable
         running_app.manual_full_update()
 
-    def on_sync_ratio_num(self, instance, value):
-        self.device['scales'][instance.input_index]['sync_ratio_num'] = int(value)
+    def on_syncRatioNum(self, instance, value):
+        self.device['scales'][instance.inputIndex]['syncRatioNum'] = int(value)
 
-    def on_sync_ratio_den(self, instance, value):
-        self.device['scales'][instance.input_index]['sync_ratio_den'] = int(value)
+    def on_syncRatioDen(self, instance, value):
+        self.device['scales'][instance.inputIndex]['syncRatioDen'] = int(value)
 
-    def on_ratio_num(self, instance, value):
-        self.device['scales'][instance.input_index]['ratio_num'] = int(value)
+    def on_ratioNum(self, instance, value):
+        self.device['scales'][instance.inputIndex]['ratioNum'] = int(value)
 
-    def on_ratio_den(self, instance, value):
-        self.device['scales'][instance.input_index]['ratio_den'] = int(value)
+    def on_ratioDen(self, instance, value):
+        self.device['scales'][instance.inputIndex]['ratioDen'] = int(value)
 
     def on_mode(self, instance, value):
-        self.device['scales'][instance.input_index]['mode'] = int(value)
+        self.device['scales'][instance.inputIndex]['mode'] = int(value)
 
-    def on_new_position(self, instance, value):
-        self.device['scales'][self.input_index]['position'] = int(float(value) * self.app.formats.factor * 1000)
+    def on_newPosition(self, instance, value):
+        self.device['scales'][self.inputIndex]['position'] = int(float(value) * self.app.formats.factor * 1000)
 
     def update_position(self):
-        if not self.sync_enable and not self.mode == 1:
-            self.new_position = self.position
-            Factory.Keypad().show(self, 'new_position', self.position)
-            # Factory.Keypad(self.new_position).show()
+        if not self.syncEnable and not self.mode == 1:
+            self.newPosition = self.position
+            Factory.Keypad().show(self, 'newPosition', self.position)
 
     def zero_position(self):
-        self.new_position = 0
-        prop = self.property('new_position')
+        self.newPosition = 0
+        prop = self.property('newPosition')
         prop.dispatch(self)
 
     def speed_task(self, *args, **kv):
@@ -103,7 +100,7 @@ class CoordBar(BoxLayout, SavingDispatcher):
             return
 
         if app.fast_data_values is not None:
-            speed_or_zero = app.fast_data_values.get('scaleSpeed', [0] * SCALES_COUNT)[self.input_index]
+            speed_or_zero = app.fast_data_values.get('scaleSpeed', [0] * SCALES_COUNT)[self.inputIndex]
         else:
             speed_or_zero = 0
         self.speed_history.append(speed_or_zero)
