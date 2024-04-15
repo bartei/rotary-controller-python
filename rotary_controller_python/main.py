@@ -1,5 +1,9 @@
 import os
+from contextlib import ExitStack
 
+from keke import ktrace, TraceOutput
+from kivy.base import EventLoop
+from kivy.core.window import Window
 from kivy.uix.popup import Popup
 from kivy.logger import Logger, KivyFormatter
 
@@ -52,6 +56,20 @@ class Home(BoxLayout):
         self.coord_bars = coord_bars
         self.servo = ServoBar(device=self.device)
         self.bars_container.add_widget(self.servo)
+
+        self._keyboard = Window.request_keyboard(self._keyboard_closed, self)
+        self._keyboard.bind(on_key_down=self._on_keyboard_down)
+        self.exit_stack = ExitStack()
+
+    def _keyboard_closed(self):
+        self._keyboard.unbind(on_key_down=self._on_keyboard_down)
+        self._keyboard = None
+
+    def _on_keyboard_down(self, keyboard, keycode, text, modifiers):
+        print(f'Keycode: {keycode}, text: {text}, modifiers: {modifiers}')
+        if text == "t" and "ctrl" in modifiers:
+            self.exit_stack.enter_context(TraceOutput(file=open("trace.out", "w")))
+            return True  # Return True to accept the key. False would reject the key press.
 
 
 class MainApp(App):
@@ -192,6 +210,11 @@ class MainApp(App):
         Clock.schedule_interval(self.blinker, 1.0 / 4)
         return self.home
 
+    def on_stop(self):
+        self.home.exit_stack.close()
+
 
 if __name__ == "__main__":
+    # Monkeypatch to add more trace events
+    EventLoop.idle = ktrace()(EventLoop.idle)
     MainApp().run()

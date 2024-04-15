@@ -1,5 +1,6 @@
 import logging
 import minimalmodbus
+from keke import ktrace
 
 from rotary_controller_python.utils.addresses import GlobalAddresses, SCALES_COUNT
 
@@ -22,7 +23,7 @@ class ConnectionManager:
             log.error(e.__str__())
             self.connected = False
 
-
+@ktrace("address")
 def read_float(dm: ConnectionManager, address) -> float:
     try:
         value = dm.device.read_float(
@@ -36,6 +37,7 @@ def read_float(dm: ConnectionManager, address) -> float:
         return 0
 
 
+@ktrace("address")
 def write_float(dm, address, value):
     try:
         dm.device.write_float(
@@ -48,6 +50,7 @@ def write_float(dm, address, value):
         log.error(e.__str__())
 
 
+@ktrace("address")
 def read_long(dm, address) -> int:
     try:
         value = dm.device.read_long(
@@ -61,6 +64,7 @@ def read_long(dm, address) -> int:
         return 0
 
 
+@ktrace("address")
 def write_long(dm, address, value):
     try:
         dm.device.write_long(
@@ -76,6 +80,7 @@ def write_long(dm, address, value):
         log.error(e.__str__())
 
 
+@ktrace("address")
 def read_unsigned(dm, address):
     try:
         value = dm.device.read_register(address, signed=False)
@@ -87,6 +92,7 @@ def read_unsigned(dm, address):
         return 0
 
 
+@ktrace("address")
 def write_unsigned(dm, address, value):
     try:
         dm.device.write_register(address, signed=False, value=int(value))
@@ -97,6 +103,7 @@ def write_unsigned(dm, address, value):
         log.error(e.__str__())
 
 
+@ktrace("address")
 def read_signed(dm, address):
     try:
         value = dm.device.read_register(address, signed=True)
@@ -108,6 +115,7 @@ def read_signed(dm, address):
         return 0
 
 
+@ktrace("address")
 def write_signed(dm, address, value):
     try:
         dm.device.write_register(address, signed=True, value=int(value))
