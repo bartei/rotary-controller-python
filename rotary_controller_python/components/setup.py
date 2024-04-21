@@ -5,7 +5,7 @@ from kivy.logger import Logger, FileHandler
 from kivy.app import App
 from kivy.properties import StringProperty, NumericProperty, ObjectProperty
 from kivy.uix.boxlayout import BoxLayout
-from kivy.uix.tabbedpanel import TabbedPanel, TabbedPanelItem
+from kivy.uix.tabbedpanel import TabbedPanelItem
 from kivy.uix.popup import Popup
 from kivy.lang import Builder
 
@@ -103,7 +103,6 @@ class Setup(Popup):
 
     def __init__(self, **kv):
         super().__init__(**kv)
-        self.tabbed_panel: TabbedPanel
         app = App.get_running_app()
         panes = []
 

@@ -163,8 +163,14 @@ class MainApp(App):
             self.task_update.timeout = 2.0
             self.connection_manager.connected = False
 
+        # Handle state change connected -> disconnected
+        if not self.connection_manager.connected:
+            self.connected = self.connection_manager.connected
+            self.task_update.timeout = 2.0
+
+        # Handle state change disconnected -> connected
         if not self.connected and self.connection_manager.connected:
-            self.task_update.timeout = 1.0 / 25
+            self.task_update.timeout = 1.0 / 30
             self.upload()
             self.home.status_bar.maxSpeed = self.device['servo']['maxSpeed']
 
