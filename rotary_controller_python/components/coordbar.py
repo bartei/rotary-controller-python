@@ -50,6 +50,9 @@ class CoordBar(BoxLayout, SavingDispatcher):
         Clock.schedule_interval(self.speed_task, 1.0/25.0)
 
     def upload(self):
+        if not self.device.dm.connected:
+            log.error(f"Unable to upload scale {self.inputIndex} connection is down!")
+            return
         props = self.get_our_properties()
         prop_names = [item.name for item in props]
         device_props = [item.name for item in self.device['scales'][self.inputIndex].variables]

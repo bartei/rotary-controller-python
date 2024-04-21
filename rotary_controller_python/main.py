@@ -57,7 +57,7 @@ class Home(BoxLayout):
         self.servo = ServoBar(device=self.device)
         self.bars_container.add_widget(self.servo)
 
-        self._keyboard = Window.request_keyboard(self._keyboard_closed, self)
+        self._keyboard = Window._system_keyboard
         self._keyboard.bind(on_key_down=self._on_keyboard_down)
         self.exit_stack = ExitStack()
 
@@ -66,7 +66,6 @@ class Home(BoxLayout):
         self._keyboard = None
 
     def _on_keyboard_down(self, keyboard, keycode, text, modifiers):
-        print(f'Keycode: {keycode}, text: {text}, modifiers: {modifiers}')
         if text == "t" and "ctrl" in modifiers:
             self.exit_stack.enter_context(TraceOutput(file=open("trace.out", "w")))
             return True  # Return True to accept the key. False would reject the key press.

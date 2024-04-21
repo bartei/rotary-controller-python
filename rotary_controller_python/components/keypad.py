@@ -22,7 +22,7 @@ class Keypad(Popup):
     def __init__(self, **kwargs):
         super().__init__(**kwargs)
         # Bind the keyboard to this widget
-        self._keyboard = Window.request_keyboard(self._keyboard_closed, self)
+        self._keyboard = Window._system_keyboard
         self._keyboard.bind(on_key_down=self._on_keyboard_down)
 
     def _keyboard_closed(self):
