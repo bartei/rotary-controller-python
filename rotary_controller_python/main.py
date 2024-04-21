@@ -101,10 +101,10 @@ class MainApp(App):
         defaultvalue="/dev/serial0", section="device", key="serial_port", config=config, val_type=str
     )
     serial_baudrate = ConfigParserProperty(
-        defaultvalue="57600", section="device", key="baudrate", config=config, val_type=int
+        defaultvalue="115200", section="device", key="baudrate", config=config, val_type=int
     )
     serial_address = ConfigParserProperty(
-        defaultvalue=7, section="device", key="address", config=config, val_type=int
+        defaultvalue=17, section="device", key="address", config=config, val_type=int
     )
     device = ObjectProperty()
     home = ObjectProperty()
@@ -173,6 +173,7 @@ class MainApp(App):
             self.task_update.timeout = 1.0 / 30
             self.upload()
             self.home.status_bar.maxSpeed = self.device['servo']['maxSpeed']
+            self.connected = self.connection_manager.connected
 
         if self.connection_manager.connected:
             for bar in self.home.coord_bars:
@@ -180,8 +181,8 @@ class MainApp(App):
             self.home.servo.currentPosition = self.fast_data_values['servoCurrent']
             self.home.servo.desiredPosition = self.fast_data_values['servoDesired']
             self.home.servo.servoEnable = self.fast_data_values['servoEnable']
-            self.home.status_bar.cycles = self.fast_data_values['cycles']
-            self.home.status_bar.interval = self.fast_data_values['executionInterval']
+            # self.home.status_bar.cycles = self.fast_data_values['cycles']
+            # self.home.status_bar.interval = self.fast_data_values['executionInterval']
             self.home.status_bar.speed = abs(self.fast_data_values['servoSpeed'])
         self.connected = self.connection_manager.connected
 
