@@ -10,6 +10,7 @@ log = Logger.getChild(__name__)
 
 
 class SavingDispatcher(EventDispatcher):
+    save_id = None
     _skip_save = []
 
     def __init__(self, *args, **kwargs):
@@ -29,14 +30,6 @@ class SavingDispatcher(EventDispatcher):
         ]
         properties = [item for item in properties if item.name not in self._skip_save]
         return properties
-
-    # @staticmethod
-    # def get_writeable_properties(klass):
-    #     return [
-    #         attr
-    #         for attr, value in vars(klass).items()
-    #         if isinstance(value, property) and value.fset is not None
-    #     ]
 
     @property
     def filename(self):
