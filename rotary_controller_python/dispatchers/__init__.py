@@ -10,7 +10,6 @@ log = Logger.getChild(__name__)
 
 
 class SavingDispatcher(EventDispatcher):
-    save_id = None
     _skip_save = []
 
     def __init__(self, *args, **kwargs):
