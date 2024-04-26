@@ -4,7 +4,7 @@ from kivy import Logger
 from kivy.lang import Builder
 from kivy.uix.floatlayout import FloatLayout
 from kivy.properties import NumericProperty
-from kivy.graphics import Color, Point
+from kivy.graphics import Color, Point, Ellipse, Line
 from kivy.uix.stencilview import StencilView
 
 log = Logger.getChild(__name__)
@@ -34,7 +34,14 @@ class Scene(FloatLayout, StencilView):
         self.points = []
         cs = self.current_scene
         with self.canvas:
-            Color(0.1, 0.1, 1.0, 0.8)
+            Color(0.2, 1, 0.2, 1)
+            # Ellipse(
+            #     pos=(self.width / 2 - 10, self.height / 2 - 10),
+            #     size=(20, 20),
+            #     angle_start=0,
+            #     angle_end=360
+            # )
+            Line(circle=(0 + self.width / 2, 0 + self.height / 2, 20), width=1.5)
             # Point(points=self.old_points, pointsize=2)
             # if self.scan:
             #     for s in self.scan[int(cs)]:

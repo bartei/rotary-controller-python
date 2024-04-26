@@ -25,8 +25,8 @@ class Grid(Widget):
         self.bind(zoom=self.update_canvas)
 
     def update_canvas(self, *args):
-        small_step = 25.0
-        big_step = 125.0
+        small_step = 20.0
+        big_step = 100.0
 
         while self.zoom > (10/small_step):
             small_step /= 10
@@ -60,5 +60,5 @@ class Grid(Widget):
                 Line(points=[0, i+self.height/2, self.width,  i+self.height/2], width=0.5)
 
             Color(0.5, 1, 0.5, 1)
-            Line(points=[self.width/2, 0, self.width/2, self.height], width=0.5)
-            Line(points=[0, self.height/2, self.width,  self.height/2], width=0.5)
+            Line(points=[self.width/2, 0, self.width/2, self.height], width=1)
+            Line(points=[0, self.height/2, self.width,  self.height/2], width=1)
