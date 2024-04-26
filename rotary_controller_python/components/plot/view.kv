@@ -1,0 +1,62 @@
+#: import Grid components.plot.grid
+#: import Scene components.plot.scene
+
+<View>:
+    current_scene: current_scene.value
+    BoxLayout:
+        pos: root.pos
+        ScrollView:
+            scroll_x: 0.5
+            scroll_y: 0.5
+            scroll_wheel_distance: 0
+            RelativeLayout:
+                size_hint: None, None
+                size: 10000, 10000
+                Grid:
+                    zoom: root.zoom
+
+                Scene:
+                    id: scene_canvas
+                    zoom: root.zoom
+                    current_scene: root.current_scene
+
+    BoxLayout:
+        orientation: 'vertical'
+        height: 32+20
+        size_hint_y: None
+        pos_hint: {'center_x': 0.5, 'y': 0}
+        BoxLayout:
+            size_hint_y: None
+            height: 32
+            Button:
+                size_hint_x: None
+                width: 32
+                text: '<'
+                on_release: root.current_scene = max(root.current_scene -1, 1)
+            Button:
+                size_hint_x: None
+                width: 32
+                text: '>'
+                on_release: root.current_scene = min(current_scene.max, root.current_scene +1)
+            Slider:
+                id: current_scene
+                min: 0
+                max: 0
+        BoxLayout:
+            id: status_bar
+            orientation: 'horizontal'
+            height: 20
+            size_hint_y: None
+            Label:
+                text: '[{:0.0f}, {:0.0f}] {:0.1f}'.format(root.mouse_position[0], root.mouse_position[1], root.mouse_position[2])
+                size_hint_x: None
+                width: 200
+            Label:
+                text: "{:0.2f} %".format(root.zoom * 100)
+                size_hint_x: None
+                width: 100
+            Label:
+                text: "0"
+                id: lbl_time
+                size_hint_x: None
+                width: 100

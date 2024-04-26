@@ -4,6 +4,7 @@
 #: import LedButton components.ledbutton
 #: import Wifi network.ui.wifi
 #: import Setup components.setup
+#: import ScenePopup components.plot.scenepopup
 
 <ToolbarButton>:
   size_hint_y: None
@@ -48,6 +49,7 @@
     font_name: "fonts/Font Awesome 6 Free-Solid-900.otf"
     font_size: 32
     text: "\ue2ca"
+    on_release: Factory.ScenePopup().open()
 
   ToolbarButton:
     font_name: "fonts/Font Awesome 6 Free-Solid-900.otf"
