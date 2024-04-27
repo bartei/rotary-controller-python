@@ -1,0 +1,40 @@
+#: import NumberItem components.forms.number_item
+#: import DualNumberItem components.forms.dual_number_item
+#: import StringItem components.forms.string_item
+
+<ScalePanel>:
+  orientation: "vertical"
+  ScrollView:
+    do_scroll_x: False
+    do_scroll_y: True
+    GridLayout:
+      id: grid_layout
+      cols: 1
+      spacing: 1
+      size_hint_y: None
+      StringItem:
+        name: "Axis Name"
+        value: root.scale.axisName
+        on_value: root.scale.axisName = self.value
+      NumberItem:
+        name: "Ratio Numerator"
+        value: root.scale.ratioNum
+        on_value: root.scale.ratioNum = self.value
+      NumberItem:
+        name: "Ratio Denominator"
+        value: root.scale.ratioDen
+        help_file: "scales.rst"
+        on_value: root.scale.ratioDen = self.value
+      NumberItem:
+        name: "Sync Ratio Numerator"
+        value: root.scale.syncRatioNum
+        help_file: "scales.rst"
+        on_value: root.scale.syncRatioNum = self.value
+      NumberItem:
+        name: "Sync Ratio Denominator"
+        value: root.scale.syncRatioDen
+        on_value: root.scale.syncRatioDen = self.value
+      NumberItem:
+        name: "Mode"
+        value: root.scale.mode
+        on_value: root.scale.mode = self.value

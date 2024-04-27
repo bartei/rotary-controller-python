@@ -15,7 +15,7 @@ if os.path.exists(kv_file):
     Builder.load_file(kv_file)
 
 
-class Wifi(Popup):
+class NetworkPopup(Popup):
     device = ObjectProperty(None)
     dhcp = ObjectProperty(None)
     address = ObjectProperty(None)

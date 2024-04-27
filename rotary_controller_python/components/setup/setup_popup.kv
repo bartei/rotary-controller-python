@@ -1,0 +1,24 @@
+<SetupPopup>:
+  title: "Setup"
+  size_hint: 0.9, 0.9
+  auto_dismiss: False
+  tabbed_panel: tabbed_panel
+
+  BoxLayout:
+    orientation: "vertical"
+    TabbedPanel:
+      do_default_tab: False
+      id: tabbed_panel
+    BoxLayout:
+      size_hint_y: None
+      height: 48
+      orientation: "horizontal"
+
+      Button:
+        text: "UI Settings"
+        on_release: app.open_custom_settings()
+      Button:
+        font_name: "fonts/Font Awesome 6 Free-Solid-900.otf"
+        text: "\uf00c"
+        background_color: "#349e65"
+        on_release: root.dismiss()

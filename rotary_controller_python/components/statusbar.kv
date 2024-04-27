@@ -1,4 +1,4 @@
-#: import LedButton components.ledbutton
+#: import LedButton components.toolbars.led_button
 
 <StatusBar>:
   size_hint_x: 1
@@ -13,14 +13,6 @@
     label: "COM"
     checkbox_value: app.connected or app.blink
 
-  LedButton:
-    # READY LED
-    size_hint_x: None
-    valign: "top"
-    width: 64
-    label: "ENA"
-    checkbox_value: app.connected
-
 #  LedButton:
 #    # INT.CYCLES
 #    size_hint_x: None
@@ -30,7 +22,7 @@
   LedButton:
     # INTERRUPT INTERVAL
     size_hint_x: None
-    width: 128
+    width: 64
     label: "{:0.0f}".format(0 if root.interval == 0 else (100000000 / root.interval))
 
   LedButton:

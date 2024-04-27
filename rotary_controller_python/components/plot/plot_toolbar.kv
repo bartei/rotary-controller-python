@@ -1,0 +1,37 @@
+#: import Factory kivy.factory.Factory
+#: import Keypad components.keypad
+#: import ToolbarButton components.toolbars.toolbar_button
+
+<PlotToolbar>:
+  size_hint_x: None
+  width: 80
+  orientation: "vertical"
+
+  ToolbarButton:
+    # Circle Pattern
+    text: "CIR"
+    # on_release: Factory.NetworkPopup().open()
+
+  ToolbarButton:
+    # Rect Patterm
+    text: "REC"
+    #on_release: Factory.Keypad().show(app, 'tool')
+
+  ToolbarButton:
+    # Radius
+    text: "RAD"
+    #on_release: Factory.Keypad().show(app, 'tool')
+
+  ToolbarButton:
+    # Load DXF
+    text: "DXF"
+    #on_release: Factory.Keypad().show(app, 'tool')
+
+  Widget:
+    size_hint_y: 1
+
+  ToolbarButton:
+    # Close
+    font_name: "fonts/Font Awesome 6 Free-Solid-900.otf"
+    text: "\uf2f5"
+    on_release: root.popup_instance.cancel()

@@ -1,0 +1,27 @@
+<DualNumberItem>:
+  value: 0
+  height: 36
+  size_hint_y: None
+  BoxLayout:
+    orientation: "horizontal"
+    Button:
+      size_hint_x: None
+      width: self.height
+      font_name: "fonts/Font Awesome 6 Free-Solid-900.otf"
+      font_size: 21
+      text: "\uf129"
+#      on_release: Factory.Wifi().open()
+
+    Label:
+      size_hint_x: 0.6
+      text: root.name
+    Button:
+      size_hint_x: None
+      width: 125
+      text: "{: 0.2f}".format(root.value / root.ratio)
+      on_release: Factory.Keypad().show(root, 'scaled_value')
+    Button:
+      size_hint_x: None
+      width: 125
+      text: "{: 0.2f}".format(root.value)
+      on_release: Factory.Keypad().show(root, 'value')

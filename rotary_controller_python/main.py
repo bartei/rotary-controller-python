@@ -1,74 +1,30 @@
 import os
-from contextlib import ExitStack
 
-from keke import ktrace, TraceOutput
-from kivy.base import EventLoop
-from kivy.core.window import Window
-from kivy.uix.popup import Popup
-from kivy.logger import Logger, KivyFormatter
-
+from keke import ktrace
 from kivy.app import App
+from kivy.base import EventLoop
 from kivy.clock import Clock
+from kivy.logger import Logger, KivyFormatter
 from kivy.properties import (
     StringProperty,
     NumericProperty,
     ConfigParserProperty,
     BooleanProperty,
-    ListProperty,
     ObjectProperty,
 )
-from kivy.uix.boxlayout import BoxLayout
-from rotary_controller_python.components.appsettings import AppSettings
-from rotary_controller_python.components.coordbar import CoordBar
-from rotary_controller_python.components.servobar import ServoBar
-from rotary_controller_python.components.statusbar import StatusBar
-from rotary_controller_python.dispatchers.formats import FormatsDispatcher
-from rotary_controller_python.utils import communication, devices
+from kivy.uix.popup import Popup
 
+from rotary_controller_python.components.appsettings import AppSettings
 from rotary_controller_python.components.appsettings import config
+from rotary_controller_python.components.home.home_page import HomePage
+from rotary_controller_python.dispatchers.formats import FormatsDispatcher
 from rotary_controller_python.network.models import Wireless, NetworkInterface
+from rotary_controller_python.utils import communication, devices
 
 log = Logger.getChild(__name__)
 
 for h in log.root.handlers:
     h.formatter = KivyFormatter('%(asctime)s - %(filename)s:%(lineno)s-%(funcName)s - %(levelname)s - %(message)s')
-
-
-class Home(BoxLayout):
-    device = ObjectProperty()
-    status_bar = ObjectProperty()
-    bars_container = ObjectProperty()
-    coord_bars = ListProperty([])
-    servo = ObjectProperty()
-
-    def __init__(self, device, **kv):
-        super().__init__(**kv)
-        self.device = device
-
-        self.status_bar = StatusBar()
-        self.bars_container.add_widget(self.status_bar)
-        coord_bars = []
-        for i in range(4):
-            bar = CoordBar(input_index=i, device=self.device)
-            coord_bars.append(bar)
-            self.bars_container.add_widget(bar)
-
-        self.coord_bars = coord_bars
-        self.servo = ServoBar(device=self.device)
-        self.bars_container.add_widget(self.servo)
-
-        self._keyboard = Window._system_keyboard
-        self._keyboard.bind(on_key_down=self._on_keyboard_down)
-        self.exit_stack = ExitStack()
-
-    def _keyboard_closed(self):
-        self._keyboard.unbind(on_key_down=self._on_keyboard_down)
-        self._keyboard = None
-
-    def _on_keyboard_down(self, keyboard, keycode, text, modifiers):
-        if text == "t" and "ctrl" in modifiers:
-            self.exit_stack.enter_context(TraceOutput(file=open("trace.out", "w")))
-            return True  # Return True to accept the key. False would reject the key press.
 
 
 class MainApp(App):
@@ -195,7 +151,7 @@ class MainApp(App):
         self.blink = not self.blink
 
     def build(self):
-        self.home = Home(device=self.device)
+        self.home = HomePage(device=self.device)
         self.task_update = Clock.schedule_interval(self.update, 1.0 / 30)
         # self.task_update_slow = Clock.schedule_interval(self.update_slow, 1.0 / 10)
         Clock.schedule_interval(self.blinker, 1.0 / 4)

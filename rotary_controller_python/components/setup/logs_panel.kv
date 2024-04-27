@@ -1,0 +1,25 @@
+<LogsPanel>:
+  orientation: "vertical"
+  BoxLayout:
+    orientation: "horizontal"
+    size_hint_y: None
+    height: 32
+    Label:
+      size_hint_y: 1
+      font_size: self.height * 0.75
+      text: "Application Logs"
+    Button:
+      size_hint_x: None
+      width: 200
+      text: "Refresh"
+      on_release: root.refresh_logs()
+
+  ScrollView:
+    do_scroll_x: False
+    do_scroll_y: True
+    Label:
+      id: log_text_area
+      size_hint_y: None
+      height: self.texture_size[1]
+      text_size: self.width, None
+      padding: 10, 10

@@ -1,10 +1,10 @@
 import os
 
-from kivy.logger import Logger
 from kivy.lang import Builder
+from kivy.logger import Logger
+from kivy.properties import BooleanProperty, StringProperty, ColorProperty
 from kivy.uix.behaviors import ButtonBehavior
 from kivy.uix.boxlayout import BoxLayout
-from kivy.properties import BooleanProperty, StringProperty, ColorProperty
 
 log = Logger.getChild(__name__)
 
