@@ -1,21 +1,23 @@
 #: import Factory kivy.factory.Factory
 #: import Keypad components.keypad
 #: import ToolbarButton components.toolbars.toolbar_button
+#: import CirclePopup components.plot.circle_popup
 
 <PlotToolbar>:
   size_hint_x: None
   width: 80
   orientation: "vertical"
+  popup_instance: None
 
   ToolbarButton:
     # Circle Pattern
     text: "CIR"
-    # on_release: Factory.NetworkPopup().open()
+    on_release: Factory.CirclePopup(ref=root.popup_instance.circle_pattern).show()
 
   ToolbarButton:
     # Rect Patterm
     text: "REC"
-    #on_release: Factory.Keypad().show(app, 'tool')
+    on_release: root.popup_instance.connect_rect()
 
   ToolbarButton:
     # Radius

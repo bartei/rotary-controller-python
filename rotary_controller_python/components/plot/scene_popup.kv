@@ -7,7 +7,9 @@
     title: "Plot View"
     size_hint: 1, 1
     auto_dismiss: False
+    background_color: 0,0,0,1
     scroll_view: scroll_view
+    scene_canvas: scene_canvas
 
     FloatLayout:
         BoxLayout:
@@ -31,21 +33,12 @@
                     Scene:
                         id: scene_canvas
                         zoom: root.zoom
-    #                    current_scene: root.current_scene
+                        points: root.circle_pattern.points
+
         BoxLayout:
             orientation: 'vertical'
             pos: root.scroll_view.pos
             size: root.scroll_view.size
-
-#                pos_hint: {'x': 0.0, 'top': 1}
-#                size_hint_y: 1
-#                size_hint_x: 1
-#            canvas:
-#                Color:
-#                    rgba: 1,1,1,0.2
-#                Rectangle:
-#                    size: self.size
-#                    pos: self.pos
 
             Label:
                 size_hint_y: None

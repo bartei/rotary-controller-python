@@ -51,7 +51,7 @@ class Grid(Widget):
             for i in np.arange(0, -self.height/2, -small_step*self.zoom):
                 Line(points=[0, i+self.height/2, self.width,  i+self.height/2], width=0.25)
 
-            color_value = 0.2 + (big_step * self.zoom) / 1000
+            color_value = 0.3 + (big_step * self.zoom) / 1000
             print(f"Big Step: {color_value}")
             Color(color_value, color_value, color_value, 1)
             for i in np.arange(0, self.width/2, big_step*self.zoom):
