@@ -1,0 +1,19 @@
+[Unit]
+Description=Rotary Controller Service
+After=network.target auditd.service
+
+[Service]
+ExecStart=/root/rotary-controller-python/start.sh
+KillMode=process
+RestartSec=5
+Restart=on-failure
+StandardOutput=syslog
+StandardError=syslog
+SyslogIdentifier=%n
+Type=simple
+WorkingDirectory=/root/rotary-controller-python/
+
+[Install]
+WantedBy=multi-user.target
+Alias=rotary-controller.service
+
