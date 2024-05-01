@@ -1,7 +1,6 @@
 import struct
 from typing import Optional, List, Any
 
-import minimalmodbus
 from keke import ktrace, kev
 from rotary_controller_python.utils import communication
 
