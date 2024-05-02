@@ -25,7 +25,7 @@ class Grid(Widget):
         self.bind(zoom=self.update_canvas)
 
     def update_canvas(self, *args):
-        small_step = 10.0
+        small_step = 50.0
         big_step = 100.0
 
         while self.zoom > (10/small_step):
