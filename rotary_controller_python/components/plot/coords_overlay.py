@@ -1,9 +1,9 @@
 import os
 
-from kivy.logger import Logger
-from kivy.properties import ObjectProperty
-from kivy.uix.boxlayout import BoxLayout
+from kivy import Logger
 from kivy.lang import Builder
+from kivy.uix.boxlayout import BoxLayout
+from kivy.properties import ListProperty, NumericProperty
 
 log = Logger.getChild(__name__)
 kv_file = os.path.join(os.path.dirname(__file__), __file__.replace(".py", ".kv"))
@@ -12,6 +12,7 @@ if os.path.exists(kv_file):
     Builder.load_file(kv_file)
 
 
-class PlotToolbar(BoxLayout):
-    popup_instance = ObjectProperty(None)
-    float_view = ObjectProperty()
+class CoordsOverlay(BoxLayout):
+    mouse_position = ListProperty([0, 0])
+    zoom = NumericProperty(0.0)
+    pass

@@ -4,36 +4,69 @@
 #: import CirclePopup components.plot.circle_popup
 
 <PlotToolbar>:
-  size_hint_x: None
-  width: 80
-  orientation: "vertical"
-  popup_instance: None
+  size_hint_y: None
+  height: 80
+  orientation: "horizontal"
+
+  ToolbarButton:
+    # Zoom  Out
+    size_hint: None, None
+    width: root.height
+    height: self.width
+    font_name: "fonts/Font Awesome 6 Free-Solid-900.otf"
+    text: "\uf010"
+    on_release: root.float_view.zoom = root.float_view.zoom / 1.1
+
+  ToolbarButton:
+    # Zoom In
+    size_hint: None, None
+    width: root.height
+    height: self.width
+    font_name: "fonts/Font Awesome 6 Free-Solid-900.otf"
+    text: "\uf00e"
+    on_release: root.float_view.zoom = root.float_view.zoom * 1.1
 
   ToolbarButton:
     # Circle Pattern
+    size_hint: None, None
+    width: root.height
+    height: self.width
     text: "CIR"
-    on_release: Factory.CirclePopup(ref=root.popup_instance.circle_pattern).show()
+    on_release: Factory.CirclePopup(ref=root.float_view.circle_pattern).show()
 
   ToolbarButton:
     # Rect Patterm
+    size_hint: None, None
+    width: root.height
+    height: self.width
     text: "REC"
-    on_release: root.popup_instance.connect_rect()
+#    on_release: root.float_view.connect_rect()
 
   ToolbarButton:
     # Radius
-    text: "RAD"
+    size_hint: None, None
+    width: root.height
+    height: self.width
+    text: "<"
     #on_release: Factory.Keypad().show(app, 'tool')
 
   ToolbarButton:
     # Load DXF
-    text: "DXF"
+    size_hint: None, None
+    width: root.height
+    height: self.width
+    width: root.height
+    text: ">"
     #on_release: Factory.Keypad().show(app, 'tool')
 
   Widget:
-    size_hint_y: 1
+    size_hint_x: 1
 
   ToolbarButton:
     # Close
+    size_hint: None, None
+    width: root.height
+    height: self.width
     font_name: "fonts/Font Awesome 6 Free-Solid-900.otf"
     text: "\uf2f5"
     on_release: root.popup_instance.cancel()

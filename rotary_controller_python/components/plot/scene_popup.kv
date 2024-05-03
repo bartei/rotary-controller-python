@@ -1,100 +1,52 @@
 #: import Scene components.plot.scene
 #: import Grid components.plot.grid
 #: import PlotToolbar components.plot.plot_toolbar
-
+#: import CoordsOverlay components.plot.coords_overlay
+#: import FloatView components.plot.float_view
 
 <ScenePopup>:
     title: "Plot View"
-    size_hint: 1, 1
+    size_hint: 0.8, 0.8
     auto_dismiss: False
     background_color: 0,0,0,1
-    scroll_view: scroll_view
-    scene_canvas: scene_canvas
+    toolbar: toolbar
+    float_view: float_view
 
-    FloatLayout:
-        BoxLayout:
-            orientation: "horizontal"
-            pos: root.pos
-            size: root.size
-            PlotToolbar:
-                popup_instance: root
+    BoxLayout:
+        orientation: "vertical"
+        FloatView:
+            id: float_view
+        PlotToolbar:
+            id: toolbar
+            float_view: root.float_view
+            popup_instance: root
 
-            ScrollView:
-                id: scroll_view
-                scroll_x: 0.5
-                scroll_y: 0.5
-                scroll_wheel_distance: 0
-                RelativeLayout:
-                    size_hint: None, None
-                    size: 10000, 10000
-                    Grid:
-                        zoom: root.zoom
-
-                    Scene:
-                        id: scene_canvas
-                        zoom: root.zoom
-                        points: root.circle_pattern.points
-
-        BoxLayout:
-            orientation: 'vertical'
-            pos: root.scroll_view.pos
-            size: root.scroll_view.size
-
-            Label:
-                size_hint_y: None
-                height: 24
-                halign: "left"
-                valign: "middle"
-                font_name: "fonts/iosevka-regular.ttf"
-                text_size: self.size
-                text: "{:0.2f} %".format(root.zoom * 100)
-            Label:
-                size_hint_y: None
-                height: 24
-                halign: "left"
-                valign: "middle"
-                font_name: "fonts/iosevka-regular.ttf"
-                text_size: self.size
-                text: "Pointer"
-            Label:
-                size_hint_y: None
-                height: 24
-                halign: "left"
-                valign: "middle"
-                font_name: "fonts/iosevka-regular.ttf"
-                text_size: self.size
-                text: 'X: {:0.3f}'.format(root.mouse_position[0])
-            Label:
-                size_hint_y: None
-                height: 24
-                halign: "left"
-                valign: "middle"
-                font_name: "fonts/iosevka-regular.ttf"
-                text_size: self.size
-                text: 'Y: {:0.3f}'.format(root.mouse_position[1])
-            Label:
-                size_hint_y: None
-                height: 24
-                halign: "left"
-                valign: "middle"
-                font_name: "fonts/iosevka-regular.ttf"
-                text_size: self.size
-                text: "Tool"
-            Label:
-                size_hint_y: None
-                height: 24
-                halign: "left"
-                valign: "middle"
-                font_name: "fonts/iosevka-regular.ttf"
-                text_size: self.size
-                text: 'X: {:0.3f}'.format(root.mouse_position[0])
-            Label:
-                size_hint_y: None
-                height: 24
-                halign: "left"
-                valign: "middle"
-                font_name: "fonts/iosevka-regular.ttf"
-                text_size: self.size
-                text: 'Y: {:0.3f}'.format(root.mouse_position[1])
-            Widget:
-                size_hint_y: 1
+#    FloatLayout:
+#        BoxLayout:
+#            orientation: "horizontal"
+#            pos: root.pos
+#            size: root.size
+#            PlotToolbar:
+#                popup_instance: root
+#
+#            ScrollView:
+#                id: scroll_view
+#                scroll_x: 0.5
+#                scroll_y: 0.5
+#                scroll_wheel_distance: 0
+#                RelativeLayout:
+#                    size_hint: None, None
+#                    size: 10000, 10000
+#                    Grid:
+#                        zoom: root.zoom
+#
+#                    Scene:
+#                        id: scene_canvas
+#                        zoom: root.zoom
+#                        points: root.circle_pattern.points
+#
+#        CoordsOverlay:
+#            pos: root.pos
+#            size: root.size
+#            mouse_position: root.mouse_position
+#            zoom: root.zoom
