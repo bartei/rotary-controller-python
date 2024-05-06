@@ -1,0 +1,63 @@
+<CoordsOverlay>:
+    orientation: 'vertical'
+#    pos: root.scroll_view.pos
+#    size: root.scroll_view.size
+
+    Label:
+        size_hint_y: None
+        height: 24
+        halign: "left"
+        valign: "middle"
+        font_name: "fonts/iosevka-regular.ttf"
+        text_size: self.size
+        text: "{:0.2f} %".format(root.zoom * 100)
+    Label:
+        size_hint_y: None
+        height: 24
+        halign: "left"
+        valign: "middle"
+        font_name: "fonts/iosevka-regular.ttf"
+        text_size: self.size
+        text: "Pointer"
+    Label:
+        size_hint_y: None
+        height: 24
+        halign: "left"
+        valign: "middle"
+        font_name: "fonts/iosevka-regular.ttf"
+        text_size: self.size
+        text: 'X: {:0.3f}'.format(root.mouse_position[0])
+    Label:
+        size_hint_y: None
+        height: 24
+        halign: "left"
+        valign: "middle"
+        font_name: "fonts/iosevka-regular.ttf"
+        text_size: self.size
+        text: 'Y: {:0.3f}'.format(root.mouse_position[1])
+    Label:
+        size_hint_y: None
+        height: 24
+        halign: "left"
+        valign: "middle"
+        font_name: "fonts/iosevka-regular.ttf"
+        text_size: self.size
+        text: "Tool"
+    Label:
+        size_hint_y: None
+        height: 24
+        halign: "left"
+        valign: "middle"
+        font_name: "fonts/iosevka-regular.ttf"
+        text_size: self.size
+        text: 'X: {:0.3f}'.format(root.mouse_position[0])
+    Label:
+        size_hint_y: None
+        height: 24
+        halign: "left"
+        valign: "middle"
+        font_name: "fonts/iosevka-regular.ttf"
+        text_size: self.size
+        text: 'Y: {:0.3f}'.format(root.mouse_position[1])
+    Widget:
+        size_hint_y: 1

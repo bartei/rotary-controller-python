@@ -1,0 +1,27 @@
+<FloatView>:
+    scene_canvas: scene_canvas
+    BoxLayout:
+        orientation: "horizontal"
+        pos: root.pos
+        size: root.size
+
+        ScrollView:
+            scroll_x: 0.5
+            scroll_y: 0.5
+            scroll_wheel_distance: 0
+            RelativeLayout:
+                size_hint: None, None
+                size: 10000, 10000
+                Grid:
+                    zoom: root.zoom
+
+                Scene:
+                    id: scene_canvas
+                    zoom: root.zoom
+                    points: root.circle_pattern.points
+
+    CoordsOverlay:
+        pos: root.pos
+        size: root.size
+        mouse_position: root.mouse_position
+        zoom: root.zoom
