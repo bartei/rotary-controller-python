@@ -4,7 +4,7 @@ from keke import ktrace
 from kivy.app import App
 from kivy.base import EventLoop
 from kivy.clock import Clock
-from kivy.logger import Logger, KivyFormatter
+from kivy.logger import Logger
 from kivy.properties import (
     StringProperty,
     NumericProperty,
@@ -23,8 +23,8 @@ from rotary_controller_python.utils import communication, devices
 
 log = Logger.getChild(__name__)
 
-for h in log.root.handlers:
-    h.formatter = KivyFormatter('%(asctime)s - %(filename)s:%(lineno)s-%(funcName)s - %(levelname)s - %(message)s')
+# for h in log.root.handlers:
+#     h.formatter = KivyFormatter('%(asctime)s - %(filename)s:%(lineno)s-%(funcName)s - %(levelname)s - %(message)s')
 
 
 class MainApp(App):
