@@ -2,6 +2,17 @@
 
 
 
+## v0.2.15-rc.4 (2024-05-14)
+
+### Fix
+
+* fix: revert latest version of kivy ([`bf8b9a1`](https://github.com/bartei/rotary-controller-python/commit/bf8b9a1b58794b5be5983d531f8c978581401ff5))
+
+### Unknown
+
+* Merge remote-tracking branch &#39;origin/dev&#39; into dev ([`82103a9`](https://github.com/bartei/rotary-controller-python/commit/82103a982b4bb34a40ab9a98e7072ccb45d48917))
+
+
 ## v0.2.15-rc.3 (2024-05-14)
 
 ### Fix
