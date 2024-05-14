@@ -2,6 +2,13 @@
 
 
 
+## v0.2.15-rc.2 (2024-05-14)
+
+### Fix
+
+* fix: use kivy version 2.1.0 ([`9879560`](https://github.com/bartei/rotary-controller-python/commit/98795607f9a74dc764dd6bbb4d999669db8c515e))
+
+
 ## v0.2.15-rc.1 (2024-05-12)
 
 ### Fix
