@@ -1,10 +1,12 @@
 import datetime
+import json
 import shutil
 import subprocess
 import logging
 import os
 
 from rotary_controller_python.network import models
+from rotary_controller_python.network.models import RfkillStatus
 
 log = logging.getLogger(__name__)
 
@@ -84,11 +86,51 @@ def render_interfaces(configuration: models.NetworkInterface, output_file: str =
 def reload_interfaces():
     log.info("Call ifreload to reconfigure the network settings")
 
-    result = subprocess.run(["which", "ifreload"], timeout=1, text=True)
-    if result.returncode != 0:
-        message = "ifreload is not available on this system, install ifupdown2 to allow dynamic configuration changes"
-        log.error(message)
-        return message
+    try:
+        reload = subprocess.run(["/usr/sbin/ifreload", "-a"], capture_output=True)
+        return reload.stdout
+    except Exception as e:
+        log.error(e.__str__())
 
-    reload = subprocess.run(["ifreload", "-a"])
-    print(result.stdout)
+
+def read_wlan_status():
+    try:
+        result = subprocess.run(["/usr/sbin/rfkill", "-J", "--output-all"], capture_output=True)
+        result.check_returncode()
+        json_data = result.stdout
+        rfkill_data = json.loads(json_data)
+        wlan_data = [v for k,v in rfkill_data.items()][0]
+        wlan_data = [item for item in wlan_data if item['type'] == 'wlan']
+        if len(wlan_data) == 0:
+            raise Exception("No wlan detected")
+        if len(wlan_data) > 1:
+            raise Exception("More than one wlan detected")
+
+        wlan_data = wlan_data[0]
+        result = RfkillStatus(**wlan_data)
+        return result
+
+    except Exception as e:
+        log.error(e.__str__())
+
+
+def enable_wlan(device_id: int):
+    try:
+        result = subprocess.run(["/usr/sbin/rfkill", "unblock", f"{device_id}"], capture_output=True)
+        result.check_returncode()
+        log.info(f"Device {device_id} successfully unblocked")
+        return result
+
+    except Exception as e:
+        log.error(e.__str__())
+
+
+def disable_wlan(device_id: int):
+    try:
+        result = subprocess.run(["/usr/sbin/rfkill", "block", f"{device_id}"], capture_output=True)
+        result.check_returncode()
+        log.info(f"Device {device_id} successfully blocked")
+        return result
+
+    except Exception as e:
+        log.error(e.__str__())
