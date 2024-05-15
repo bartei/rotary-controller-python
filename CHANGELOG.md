@@ -2,6 +2,132 @@
 
 
 
+## v0.2.15-rc.3 (2024-05-14)
+
+### Fix
+
+* fix: revert latest version of kivy ([`1f9e6c0`](https://github.com/bartei/rotary-controller-python/commit/1f9e6c0203dac33ebc8ad72d083580732452f583))
+
+### Unknown
+
+* Merge remote-tracking branch &#39;origin/dev&#39; into dev ([`2784a63`](https://github.com/bartei/rotary-controller-python/commit/2784a6335f6081b9a0b76a3e4743bb3d4e198515))
+
+
+## v0.2.15-rc.2 (2024-05-14)
+
+### Fix
+
+* fix: use kivy version 2.1.0 ([`9879560`](https://github.com/bartei/rotary-controller-python/commit/98795607f9a74dc764dd6bbb4d999669db8c515e))
+
+
+## v0.2.15-rc.1 (2024-05-12)
+
+### Fix
+
+* fix: add pre-release workflow for dev branch ([`cedb688`](https://github.com/bartei/rotary-controller-python/commit/cedb688b452092d8d6ec242759442ed4911b9ff6))
+
+* fix: add template service for systemd automated startup ([`7a768ca`](https://github.com/bartei/rotary-controller-python/commit/7a768cab236eefa095a0ac100d0d01a498bf0670))
+
+* fix: update permissions ([`415289b`](https://github.com/bartei/rotary-controller-python/commit/415289bc49adc37db2891cc0691462c57a9f699d))
+
+* fix: add start.sh script ([`29b0acf`](https://github.com/bartei/rotary-controller-python/commit/29b0acf9ee61bf4743d18072628a2a913fdeabc7))
+
+* fix: cleanup imports ([`ad30596`](https://github.com/bartei/rotary-controller-python/commit/ad305961f81ed6a151c3ba28eab0af4bec14358e))
+
+* fix: add form to configure circle pattern
+fix: add rendering of circle pattern
+fix: update grid look and feel
+fix: rename scene_popup ([`ddc6189`](https://github.com/bartei/rotary-controller-python/commit/ddc618965c0ac22656ec86cbc2b5f03b5219d7a7))
+
+* fix: several improvements to the code layout
+fix: additions and toolbar for the plot view ([`5916a70`](https://github.com/bartei/rotary-controller-python/commit/5916a700910c87442ad499b9bd7c281f88b404dc))
+
+* fix: wip on the gui for plot mode ([`d4daa67`](https://github.com/bartei/rotary-controller-python/commit/d4daa67dbda3b95c34029c68881be74523af9120))
+
+* fix: revert save_id ([`bc1679e`](https://github.com/bartei/rotary-controller-python/commit/bc1679e4f98f25887f7b4bb2e6d30f2658426dc7))
+
+* fix: improved rendering of the home page for small screens ([`cea9b11`](https://github.com/bartei/rotary-controller-python/commit/cea9b1173cf9c60b1253c3a2a489473b902bc690))
+
+* fix: handle keyboard reference properly for systemanddock mode ([`4ce9310`](https://github.com/bartei/rotary-controller-python/commit/4ce931091b8aedc91d5f8ad69a86652be8adccfa))
+
+* fix: bad default values configured for serial comm ([`6bd78a5`](https://github.com/bartei/rotary-controller-python/commit/6bd78a5e54bbddc18bed2b5fbbfc931a2883391f))
+
+* fix: add back the fps indicator for the screen ([`c05d4ed`](https://github.com/bartei/rotary-controller-python/commit/c05d4edac54cde737c521c6d6554c3fd89757c47))
+
+* fix: cleanup setup component
+fix: update poetry
+fix: improve main refresh loops ([`3285be0`](https://github.com/bartei/rotary-controller-python/commit/3285be0e141e75f758aab03a6f8ce165ce78ebf5))
+
+* fix: rename variables from device to follow standard C notation
+fix: handle enable signal manually from UI to prevent positioning glitches with some servo drives
+fix: minor correction on the sizing of servo panel
+fix: remove now deprecated addresses.py
+fix: cleanup imports in base_device.py
+fix: cleanup imports in communication.py
+fix: move SCALES_COUNT in devices.py
+fix: remove unmaintained tests ([`0a2c85b`](https://github.com/bartei/rotary-controller-python/commit/0a2c85bc28d64820aa64d933099654651791b0ba))
+
+* fix: prevent undesired value updates to go to the device when starting the app
+fix: add half function to the numeric keypad ([`ab58334`](https://github.com/bartei/rotary-controller-python/commit/ab58334567bcaac66ff513b1a937e9687767a8de))
+
+* fix: new comm protocol tested ([`d0ff91a`](https://github.com/bartei/rotary-controller-python/commit/d0ff91aa46a98fe188c5a6ead3c5f673348f5317))
+
+* fix: update servobar with new interface to device ([`a3111b5`](https://github.com/bartei/rotary-controller-python/commit/a3111b5afd0cdf713a35807dc979edf22befb1a3))
+
+* fix: update references in coordbar for thew device interface ([`83e8e9a`](https://github.com/bartei/rotary-controller-python/commit/83e8e9aa1081d670f7b00ce69a62c3083bd6dc75))
+
+* fix: cleaned up tuple for fast data ([`294a842`](https://github.com/bartei/rotary-controller-python/commit/294a842bda790df54c35bae096920d063be2deb8))
+
+* fix: working array accessor mode for variable definitions ([`32278c8`](https://github.com/bartei/rotary-controller-python/commit/32278c87714a9ab0e57b3c83bc6588f2eadf767f))
+
+* fix: working array accessor mode for variable definitions ([`4f6fd85`](https://github.com/bartei/rotary-controller-python/commit/4f6fd8596fd46d2acd3735a82b15a6cdd6a9d78b))
+
+* fix: add fast data mode to be tested ([`7bd3046`](https://github.com/bartei/rotary-controller-python/commit/7bd3046f46756b476db533a281e8f7460b97cbe6))
+
+* fix: driver working again with dict access mode ([`075b0ef`](https://github.com/bartei/rotary-controller-python/commit/075b0efeb595e6cdb01ed745965a1a9ba233758b))
+
+* fix: broken comm ([`30e69a3`](https://github.com/bartei/rotary-controller-python/commit/30e69a3c8c48f9fa55b2bd07a68bd5c448692810))
+
+* fix: add fastdata variable for interrupt period
+fix: add placeholder for enable led ([`bb8546d`](https://github.com/bartei/rotary-controller-python/commit/bb8546d2599866c6a2fdb3502647c1c96a03a500))
+
+* fix: new variables and new speed fastdata fields ([`146b149`](https://github.com/bartei/rotary-controller-python/commit/146b149079c880cb31a042c94baf08dce741d3a3))
+
+* fix: set correct value when changing position in imperial mode
+fix: check for value type to prevent int iteration when validating field value changes ([`b040229`](https://github.com/bartei/rotary-controller-python/commit/b040229cab0e07f1cb4d5366b593a33cb74fd65a))
+
+* fix: set correct value when changing position in imperial mode
+fix: check for value type to prevent int iteration when validating field value changes ([`36ff65b`](https://github.com/bartei/rotary-controller-python/commit/36ff65b203a24883be26862d2c9c8fd51f3fd3e7))
+
+* fix: improvements to the homepage refresh rates ([`2473eb0`](https://github.com/bartei/rotary-controller-python/commit/2473eb0de8a703d8ee59d6c99526bc401a6835c7))
+
+* fix: disable saving the sync_enable status in the settings file
+fix: add manual update when exiting from the setup page
+fix: add servospeed value from the fastdata
+fix: add more logging to track what&#39;s being sent over to the modbus ([`233f565`](https://github.com/bartei/rotary-controller-python/commit/233f56554a404da390e45a21e3ef4d3c371e8f14))
+
+* fix: coordbar disable when in sync mode
+fix: ratio scaling not needed anymore for sync_ratio_den
+fix: add back refresh for cycles and interval ([`8c5c557`](https://github.com/bartei/rotary-controller-python/commit/8c5c5578db2f89d0b887ec7181a12451013bb5f8))
+
+### Unknown
+
+* wip: update packages and add plot graphical items ([`0f92ec3`](https://github.com/bartei/rotary-controller-python/commit/0f92ec30727976bd2923ab450058e600ae9a01fa))
+
+* Merge remote-tracking branch &#39;origin/dev&#39; into dev
+
+# Conflicts:
+#	rotary_controller_python/utils/base_device.py ([`da4ea0d`](https://github.com/bartei/rotary-controller-python/commit/da4ea0d6348d984fe3a081c4272e18d70579f060))
+
+* Merge pull request #15 from thatch/keke-tracing
+
+Add keke tracing to cwd/trace.out with ctrl-t ([`30b236a`](https://github.com/bartei/rotary-controller-python/commit/30b236a810135aa70920000e17434dbf1243392d))
+
+* Add keke tracing to cwd/trace.out with ctrl-t ([`188c50b`](https://github.com/bartei/rotary-controller-python/commit/188c50b349ead17d5e171d3cbfa210d4505b541e))
+
+* Merge branch &#39;spindle_mode&#39; into dev ([`b2d5d31`](https://github.com/bartei/rotary-controller-python/commit/b2d5d3153177a4c76354fb6e2dae34b664f3142f))
+
+
 ## v0.2.14 (2024-03-30)
 
 ### Fix
