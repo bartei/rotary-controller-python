@@ -34,6 +34,10 @@ upload_to_pypi = true
 build_command = "pip install poetry && poetry build"
 preselease = false
 
+[tool.semantic_release.branches.main]
+match = "main"
+prerelease = false
+
 [tool.semantic_release.branches.dev]
 match = "dev"
 prerelease = true
