@@ -2,6 +2,13 @@
 
 
 
+## v0.2.15-rc.5 (2024-05-16)
+
+### Fix
+
+* fix: update start.sh ([`10a9169`](https://github.com/bartei/rotary-controller-python/commit/10a9169a96ef9039979a220e36be7bc450138d08))
+
+
 ## v0.2.15-rc.4 (2024-05-14)
 
 ### Fix
