@@ -1,3 +1,5 @@
 #!/bin/sh
+export KCFG_KIVY_KEYBOARD_MODE="systemanddock"
+export KCFG_KIVY_LOG_DIR="/var/log"
 
-poetry run python ./rotary_controller_python/main.py
+python ./rotary_controller_python/main.py
