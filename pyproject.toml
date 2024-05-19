@@ -1,6 +1,6 @@
 [tool.poetry]
 name = "rotary-controller-python"
-version = "0.2.15-rc.4"
+version = "0.2.16"
 description = "Rotary Controller Python"
 authors = ["Stefano Bertelli <bartei81@gmail.com>"]
 license = "MIT"
@@ -25,17 +25,20 @@ requires = ["poetry-core"]
 build-backend = "poetry.core.masonry.api"
 
 [tool.semantic_release]
-version_toml = [
-    "pyproject.toml:tool.poetry.version"
-]
+version_toml = ["pyproject.toml:tool.poetry.version"]
 patch_without_tag = true
 branch = "main"
 hvcs = "github"
 remove_dist = false
 upload_to_pypi = true
 build_command = "pip install poetry && poetry build"
+preselease = false
+
+[tool.semantic_release.branches.main]
+match = "main"
+prerelease = false
 
 [tool.semantic_release.branches.dev]
 match = "dev"
-prerelease_token = "rc"
 prerelease = true
+prerelease_token = "rc"

@@ -2,6 +2,28 @@
 
 
 
+## v0.2.16 (2024-05-17)
+
+### Fix
+
+* fix: test push ([`5caca88`](https://github.com/bartei/rotary-controller-python/commit/5caca8856eee03c606ad26cf8669abf6a0bfea9f))
+
+### Unknown
+
+* Merge remote-tracking branch &#39;origin/main&#39; ([`92b8da2`](https://github.com/bartei/rotary-controller-python/commit/92b8da2ef61c45885196a437744404122216b4df))
+
+
+## v0.2.15 (2024-05-16)
+
+### Fix
+
+* fix: add def for main branch release ([`15f4feb`](https://github.com/bartei/rotary-controller-python/commit/15f4feb7e240882f96615889c55db9b4a5a2e82e))
+
+* fix: test main cicd ([`d54e3e8`](https://github.com/bartei/rotary-controller-python/commit/d54e3e886203a571b3497b44d9df6ed92bfc662e))
+
+* fix: add more helper functions and tests for network configuration when running on the raspberry pi ([`a5deac9`](https://github.com/bartei/rotary-controller-python/commit/a5deac9fb29d6d5e69111f7854675c2707b1f4dd))
+
+
 ## v0.2.15-rc.4 (2024-05-14)
 
 ### Fix
