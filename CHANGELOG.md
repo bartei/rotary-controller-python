@@ -2,11 +2,20 @@
 
 
 
+## v0.2.17 (2024-05-19)
+
+### Unknown
+
+* Merge remote-tracking branch &#39;origin/main&#39; ([`bfd589f`](https://github.com/bartei/rotary-controller-python/commit/bfd589f478146a92aa54d9241b5637145ba20654))
+
+
 ## v0.2.16 (2024-05-17)
 
 ### Fix
 
 * fix: test push ([`5caca88`](https://github.com/bartei/rotary-controller-python/commit/5caca8856eee03c606ad26cf8669abf6a0bfea9f))
+
+* fix: update start.sh ([`10a9169`](https://github.com/bartei/rotary-controller-python/commit/10a9169a96ef9039979a220e36be7bc450138d08))
 
 ### Unknown
 
