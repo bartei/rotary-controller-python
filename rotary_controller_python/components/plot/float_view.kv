@@ -1,3 +1,5 @@
+#: import Scene components.plot.scene
+#: import CoordsOverlay components.plot.coords_overlay
 <FloatView>:
     scene_canvas: scene_canvas
     BoxLayout:
@@ -12,16 +14,17 @@
             RelativeLayout:
                 size_hint: None, None
                 size: 10000, 10000
-                Grid:
-                    zoom: root.zoom
-
                 Scene:
                     id: scene_canvas
                     zoom: root.zoom
                     points: root.circle_pattern.points
+                    tool_x: app.home.scale_x.position
+                    tool_y: app.home.scale_y.position
 
     CoordsOverlay:
         pos: root.pos
         size: root.size
         mouse_position: root.mouse_position
         zoom: root.zoom
+        tool_x: app.home.scale_x.position
+        tool_y: app.home.scale_y.position

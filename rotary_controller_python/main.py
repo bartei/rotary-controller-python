@@ -131,8 +131,12 @@ class MainApp(App):
             self.connected = self.connection_manager.connected
 
         if self.connection_manager.connected:
-            for bar in self.home.coord_bars:
-                bar.position = self.fast_data_values['scaleCurrent'][bar.inputIndex] / 1000
+            self.home.scale_x.position = self.fast_data_values['scaleCurrent'][self.home.scale_x.inputIndex] / 1000
+            self.home.scale_y.position = self.fast_data_values['scaleCurrent'][self.home.scale_y.inputIndex] / 1000
+            self.home.scale_z.position = self.fast_data_values['scaleCurrent'][self.home.scale_z.inputIndex] / 1000
+            self.home.scale_a.position = self.fast_data_values['scaleCurrent'][self.home.scale_a.inputIndex] / 1000
+            # for bar in self.home.coord_bars:
+            #     bar.position = self.fast_data_values['scaleCurrent'][bar.inputIndex] / 1000
             self.home.servo.currentPosition = self.fast_data_values['servoCurrent']
             self.home.servo.desiredPosition = self.fast_data_values['servoDesired']
             self.home.servo.servoEnable = self.fast_data_values['servoEnable']
@@ -143,8 +147,13 @@ class MainApp(App):
 
     def upload(self):
         self.home.servo.upload()
-        for scale in self.home.coord_bars:
-            scale.upload()
+        self.home.scale_x.upload()
+        self.home.scale_y.upload()
+        self.home.scale_z.upload()
+        self.home.scale_a.upload()
+        self.home.servo.upload()
+        # for scale in self.home.coord_bars:
+        #     scale.upload()
 
     def blinker(self, *args):
         self.home.status_bar.fps = Clock.get_fps()

@@ -15,4 +15,5 @@ if os.path.exists(kv_file):
 class CoordsOverlay(BoxLayout):
     mouse_position = ListProperty([0, 0])
     zoom = NumericProperty(0.0)
-    pass
+    tool_x = NumericProperty(0.0)
+    tool_y = NumericProperty(0.0)
