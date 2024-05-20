@@ -1,39 +1,11 @@
 #: import HomeToolbar components.home.home_toolbar
-#: import CoordBar components.coordbar
-#: import ServoBar components.servobar
-#: import StatusBar components.statusbar
 
 <HomePage>:
   orientation: "horizontal"
-  scale_x: scale_x
-  scale_y: scale_y
-  scale_z: scale_z
-  scale_a: scale_a
-  servo: servo
-  status_bar: status_bar
+  bars_container: bars_container
 
   HomeToolbar:
     id: toolbar
   BoxLayout:
+    id: bars_container
     orientation: "vertical"
-    StatusBar:
-      id: status_bar
-    CoordBar:
-      id: scale_x
-      inputIndex: 0
-      device: root.device
-    CoordBar:
-      id: scale_y
-      inputIndex: 1
-      device: root.device
-    CoordBar:
-      id: scale_z
-      inputIndex: 2
-      device: root.device
-    CoordBar:
-      id: scale_a
-      inputIndex: 3
-      device: root.device
-    ServoBar:
-      id: servo
-      device: root.device

@@ -24,7 +24,7 @@ class FloatView(FloatLayout):
 
     def __init__(self, **kwargs):
         super().__init__(**kwargs)
-        Window.bind(mouse_pos=self.window_mouse_pos)
+        # Window.bind(mouse_pos=self.window_mouse_pos)
         Window.bind(on_motion=self.on_motion)
         self.circle_pattern.recalculate()
 
@@ -36,10 +36,3 @@ class FloatView(FloatLayout):
                     self.zoom = self.zoom / 1.1
                 if event.button == 'scrolldown':
                     self.zoom = self.zoom * 1.1
-
-    def window_mouse_pos(self, instance, value):
-        global_pos = self.scene_canvas.to_widget(value[0], value[1])
-        delta_x = global_pos[0] - 5000
-        delta_y = global_pos[1] - 5000
-        degrees = math.degrees(math.atan2(delta_y, delta_x))
-        self.mouse_position = [delta_x / self.zoom, delta_y / self.zoom, degrees]

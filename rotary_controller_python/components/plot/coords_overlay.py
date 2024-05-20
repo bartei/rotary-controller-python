@@ -17,3 +17,5 @@ class CoordsOverlay(BoxLayout):
     zoom = NumericProperty(0.0)
     tool_x = NumericProperty(0.0)
     tool_y = NumericProperty(0.0)
+    selected_x = NumericProperty(0.0)
+    selected_y = NumericProperty(0.0)

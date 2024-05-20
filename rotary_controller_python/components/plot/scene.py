@@ -19,7 +19,7 @@ if os.path.exists(kv_file):
 class Scene(FloatLayout, StencilView):
     zoom = NumericProperty(1.0)
     points = ListProperty([])
-    point_widgets = ListProperty([])
+    scaled_points = ListProperty([])
     selected_point = NumericProperty(0)
     dot_size = NumericProperty(20)
     tool_x = NumericProperty(0.0)
@@ -35,6 +35,13 @@ class Scene(FloatLayout, StencilView):
         self.bind(tool_y=self.update_points)
 
     def update_points(self, *args):
+        self.scaled_points = [
+            [
+                item[0] * self.zoom,
+                item[1] * self.zoom,
+            ] for item in self.points
+        ]
+
         self.canvas.clear()
         with self.canvas:
             Color(0, 1, 0, 1)
@@ -44,7 +51,7 @@ class Scene(FloatLayout, StencilView):
             Line(points=[self.width/2, 0, self.width/2, self.height], width=1)
             Line(points=[0, self.height/2, self.width,  self.height/2], width=1)
 
-            for i, p in enumerate(self.points):
+            for i, p in enumerate(self.scaled_points):
                 if i == self.selected_point:
                     Color(0.8, 1, 0.8, 1)
                 else:
@@ -52,14 +59,15 @@ class Scene(FloatLayout, StencilView):
 
                 Ellipse(
                     pos=(
-                        p[0] * self.zoom + self.width / 2 - self.dot_size/2,
-                        p[1] * self.zoom + self.height / 2 - self.dot_size/2
+                        p[0] + self.width / 2 - self.dot_size/2,
+                        p[1] + self.height / 2 - self.dot_size/2
                     ),
                     size=(self.dot_size, self.dot_size),
                     angle_start=0,
                     angle_end=360
                 )
 
+            Color(0.5, 1, 0.5, 1)
             Ellipse(
                 pos=(
                     self.tool_x * self.zoom + self.width / 2 - self.dot_size / 2,
@@ -68,14 +76,13 @@ class Scene(FloatLayout, StencilView):
                 size=(self.dot_size, self.dot_size),
                 angle_start=0,
                 angle_end=360
-
             )
 
     def on_touch_up(self, touch):
         touch_x = touch.x - self.width/2
         touch_y = touch.y - self.height/2
 
-        for i, p in enumerate(self.points):
+        for i, p in enumerate(self.scaled_points):
             if p[0] - self.dot_size < touch_x < p[0] + self.dot_size and p[1] - self.dot_size < touch_y < p[1] + self.dot_size:
                 self.selected_point = i
                 break
