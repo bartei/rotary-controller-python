@@ -40,10 +40,11 @@ class SavingDispatcher(EventDispatcher):
     def filename(self):
         home_folder = os.environ.get('HOME')
         settings_folder = Path(home_folder) / ".config" / "rotary-controller-python"
-
-        log.info(f"Identified settings folder as: {settings_folder}")
         os.makedirs(settings_folder, exist_ok=True)
-        return f"{settings_folder}/{self.__class__.__name__}-{self.id_override}.yaml"
+
+        settings_path = settings_folder / f"{self.__class__.__name__}-{self.id_override}.yaml"
+        log.debug(f"Identified settings path as: {settings_path}")
+        return settings_path
 
     def read_settings(self):
         props = self.get_our_properties()

@@ -1,24 +1,79 @@
+#: import SetupScreenManager components.setup.setup_screen_manager
+
 <SetupPopup>:
+  id: setup_popup
   title: "Setup"
   size_hint: 0.9, 0.9
   auto_dismiss: False
-  tabbed_panel: tabbed_panel
 
-  BoxLayout:
-    orientation: "vertical"
-    TabbedPanel:
-      do_default_tab: False
-      id: tabbed_panel
-    BoxLayout:
-      size_hint_y: None
-      height: 48
-      orientation: "horizontal"
+  SetupScreenManager:
+    setup_popup: setup_popup
+    current: 'menu'
+#    Screen:
+#      name: 'menu'
+#      BoxLayout:
+#        orientation: "vertical"
+#        Button:
+#          text: "Scale 0"
+#          on_release: root.manager.current = "scale_0"
+#        Button:
+#          text: "Scale 1"
+#          on_release: root.manager.current = "scale_1"
+#        Button:
+#          text: "Scale 2"
+#          on_release: root.manager.current = "scale_2"
+#        Button:
+#          text: "Scale 3"
+#          on_release: root.manager.current = "scale_3"
+#        Button:
+#          text: "Servo"
+#          on_release: root.manager.current = "servo"
+#        Button:
+#          text: "Logs"
+#          on_release: root.manager.current = "logs"
+#        Button:
+#          text: "Exit"
+#          on_release: root.dismiss()
 
-      Button:
-        text: "UI Settings"
-        on_release: app.open_custom_settings()
-      Button:
-        font_name: "fonts/Font Awesome 6 Free-Solid-900.otf"
-        text: "\uf00c"
-        background_color: "#349e65"
-        on_release: root.dismiss()
+#    Screen:
+#      name: 'scale_0'
+#      BoxLayout:
+#        orientation: "vertical"
+#        Button:
+#          text: "Scale 0"
+#          on_release: root.manager.current = "scale_0"
+#        Button:
+#          text: "Back"
+#          on_release: root.manager.current = "menu"
+#
+#    Screen:
+#      name: 'scale_1'
+#      BoxLayout:
+#        orientation: "vertical"
+#        Button:
+#          text: "Scale 1"
+#          on_release: root.manager.current = "scale_1"
+#        Button:
+#          text: "Back"
+#          on_release: root.manager.current = "menu"
+
+
+
+#  BoxLayout:
+#    orientation: "vertical"
+#    TabbedPanel:
+#      do_default_tab: False
+#      id: tabbed_panel
+#    BoxLayout:
+#      size_hint_y: None
+#      height: 48
+#      orientation: "horizontal"
+#
+#      Button:
+#        text: "UI Settings"
+#        on_release: app.open_custom_settings()
+#      Button:
+#        font_name: "fonts/Font Awesome 6 Free-Solid-900.otf"
+#        text: "\uf00c"
+#        background_color: "#349e65"
+#        on_release: root.dismiss()
