@@ -32,8 +32,8 @@ class FormatsDispatcher(SavingDispatcher):
             self.position_format = self.metric_position
             self.factor = 1.0
         else:
-            self.speed_format = self.metric_speed
-            self.position_format = self.metric_position
+            self.speed_format = self.imperial_speed
+            self.position_format = self.imperial_position
             self.factor = 25.4
 
     def toggle(self):

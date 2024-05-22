@@ -40,12 +40,12 @@ class HomePage(BoxLayout):
         self.bars_container.add_widget(self.status_bar)
         coord_bars = []
         for i in range(4):
-            bar = CoordBar(inputIndex=i, device=self.device)
+            bar = CoordBar(inputIndex=i, device=self.device, id_override=f"{i}")
             coord_bars.append(bar)
             self.bars_container.add_widget(bar)
 
         self.coord_bars = coord_bars
-        self.servo = ServoBar(device=self.device)
+        self.servo = ServoBar(device=self.device, id_override="0")
         self.bars_container.add_widget(self.servo)
 
         self._keyboard = Window._system_keyboard

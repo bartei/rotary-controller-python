@@ -1,5 +1,6 @@
 import os
 import shutil
+from pathlib import Path
 
 import yaml
 from kivy.logger import Logger
@@ -11,9 +12,14 @@ log = Logger.getChild(__name__)
 
 class SavingDispatcher(EventDispatcher):
     _skip_save = []
+    id_override = StringProperty("")
 
     def __init__(self, *args, **kwargs):
         super().__init__(*args, **kwargs)
+
+        # Check if we have an id_override
+        if self.id_override == "":
+            self.id_override = f"{self.uid}"
 
         # Read the settings from file and into a dictionary
         self.read_settings()
@@ -32,8 +38,12 @@ class SavingDispatcher(EventDispatcher):
 
     @property
     def filename(self):
-        os.makedirs("settings/", exist_ok=True)
-        return f"settings/{self.__class__.__name__}-{self.uid}.yaml"
+        home_folder = os.environ.get('HOME')
+        settings_folder = Path(home_folder) / ".config" / "rotary-controller-python"
+
+        log.info(f"Identified settings folder as: {settings_folder}")
+        os.makedirs(settings_folder, exist_ok=True)
+        return f"{settings_folder}/{self.__class__.__name__}-{self.id_override}.yaml"
 
     def read_settings(self):
         props = self.get_our_properties()

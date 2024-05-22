@@ -46,7 +46,7 @@ class MainApp(App):
 
     blink = BooleanProperty(False)
     connected = BooleanProperty(False)
-    formats = FormatsDispatcher()
+    formats = FormatsDispatcher(id_override="0")
     abs_inc = ConfigParserProperty(
         defaultvalue="ABS", section="global", key="abs_inc", config=config, val_type=str
     )
@@ -133,15 +133,15 @@ class MainApp(App):
 
         if self.connection_manager.connected:
             for bar in self.home.coord_bars:
-                bar.position = self.fast_data_values['scaleCurrent'][bar.inputIndex] / 1000
+                bar.position = (self.fast_data_values['scaleCurrent'][bar.inputIndex] / 1000)
             self.home.servo.currentPosition = self.fast_data_values['servoCurrent']
             self.home.servo.desiredPosition = self.fast_data_values['servoDesired']
             self.home.servo.servoEnable = self.fast_data_values['servoEnable']
             self.home.status_bar.speed = abs(self.fast_data_values['servoSpeed'])
 
             # TODO: Find a better way to configure x and y axy for the plot view
-            self.tool_x = self.fast_data_values['scaleCurrent'][0]
-            self.tool_y = self.fast_data_values['scaleCurrent'][1]
+            self.tool_x = self.fast_data_values['scaleCurrent'][0] / 1000
+            self.tool_y = self.fast_data_values['scaleCurrent'][1] / 1000
 
         self.connected = self.connection_manager.connected
 

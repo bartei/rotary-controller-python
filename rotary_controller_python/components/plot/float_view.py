@@ -19,7 +19,7 @@ if os.path.exists(kv_file):
 class FloatView(FloatLayout):
     scene_canvas = ObjectProperty(None)
     mouse_position = ListProperty([0, 0])
-    circle_pattern = ObjectProperty(CirclePatternDispatcher())
+    circle_pattern = ObjectProperty(CirclePatternDispatcher(id_override="0"))
     zoom = NumericProperty(1.0)
 
     def __init__(self, **kwargs):
