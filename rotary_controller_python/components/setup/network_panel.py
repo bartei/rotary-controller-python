@@ -85,4 +85,3 @@ class NetworkPanel(BoxLayout):
             status = reload_interfaces()
         except Exception as e:
             status = e.__str__()
-        self.status_text = status
