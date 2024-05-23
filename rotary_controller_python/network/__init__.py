@@ -90,5 +90,5 @@ def reload_interfaces():
         log.error(message)
         return message
 
-    reload = subprocess.run(["ifreload", "-a"])
-    print(result.stdout)
+    reload = subprocess.run(["ifreload", "-av"])
+    return reload.stdout
