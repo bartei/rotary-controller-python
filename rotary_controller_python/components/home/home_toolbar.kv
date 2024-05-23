@@ -2,7 +2,6 @@
 #: import Keypad components.keypad
 #: import AppSettings components.appsettings
 #: import ToolbarButton components.toolbars.toolbar_button
-#: import NetworkPopup components.network.network_popup
 #: import SetupPopup components.setup.setup_popup
 #: import ScenePopup components.plot.scene_popup
 
@@ -11,13 +10,6 @@
   size_hint_y: 1
   width: 80
   orientation: "vertical"
-
-  ToolbarButton:
-    font_name: "fonts/Font Awesome 6 Free-Solid-900.otf"
-    # Network Settings
-    text: "\uf1eb"
-    background_color: "#04FF00"
-    on_release: Factory.NetworkPopup().open()
 
   ToolbarButton:
     # TOOL

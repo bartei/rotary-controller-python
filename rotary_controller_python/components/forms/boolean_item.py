@@ -12,7 +12,6 @@ if os.path.exists(kv_file):
     Builder.load_file(kv_file)
 
 
-class StringItem(BoxLayout):
+class BooleanItem(BoxLayout):
     name = StringProperty("")
-    value = StringProperty("")
-    disabled = BooleanProperty(False)
+    value = BooleanProperty(False)
