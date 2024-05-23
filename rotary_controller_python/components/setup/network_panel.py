@@ -29,7 +29,6 @@ class NetworkPanel(BoxLayout):
         super().__init__(**kv)
         self.ids['grid_layout'].bind(minimum_height=self.ids['grid_layout'].setter('height'))
 
-    def on_open(self):
         configuration: NetworkInterface = read_interfaces()
         self.device = configuration.name
         self.dhcp = configuration.dhcp
