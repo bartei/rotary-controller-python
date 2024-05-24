@@ -1,3 +1,3 @@
 #!/bin/sh
 
-poetry run python ./rotary_controller_python/main.py
+python ./rotary_controller_python/main.py
