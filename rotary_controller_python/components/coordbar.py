@@ -38,10 +38,9 @@ class CoordBar(BoxLayout, SavingDispatcher):
 
     _skip_save = ["position", "new_position", "formatted_axis_speed", "syncEnable"]
 
-    def __init__(self, input_index, **kv):
+    def __init__(self, **kv):
         self.app = App.get_running_app()
         super().__init__(**kv)
-        self.inputIndex = input_index
 
         self.speed_history = collections.deque(maxlen=5)
         self.previous_axis_time: float = 0
@@ -50,6 +49,9 @@ class CoordBar(BoxLayout, SavingDispatcher):
         Clock.schedule_interval(self.speed_task, 1.0/25.0)
 
     def upload(self):
+        if self.device is None:
+            return
+
         if not self.device.dm.connected:
             log.error(f"Unable to upload scale {self.inputIndex} connection is down!")
             return
@@ -114,7 +116,7 @@ class CoordBar(BoxLayout, SavingDispatcher):
             self.speed = float(average * 60 / 25.4 / 12)
         else:
             # Speed in mt/minute
-            self.speed = float(average * 60 / 1000)
+            self.speed = float(average * 60 / 1000 / 1000)
 
         self.previous_axis_time = current_time
         self.previous_axis_pos = Decimal(self.position)

@@ -1,4 +1,4 @@
-<StringItem>:
+<BooleanItem>:
   height: 36
   size_hint_y: None
   BoxLayout:
@@ -9,14 +9,13 @@
       font_name: "fonts/Font Awesome 6 Free-Solid-900.otf"
       font_size: 21
       text: "\uf129"
-#      on_release: Factory.Wifi().open()
     Label:
       size_hint_x: 0.7
       text: root.name
-    TextInput:
+    ToggleButton:
       size_hint_x: None
       width: 250
       multiline: False
-      text: root.value
-      disabled: root.disabled
-      on_text_validate: root.value = self.text
+      text: 'ON' if root.value else 'OFF'
+      state: 'down' if root.value else 'normal'
+      on_release: root.value = True if self.state == 'down' else False

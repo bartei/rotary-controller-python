@@ -2,7 +2,7 @@ import os
 
 from kivy.logger import Logger
 from kivy.lang import Builder
-from kivy.properties import StringProperty, NumericProperty, BooleanProperty
+from kivy.properties import StringProperty, NumericProperty, BooleanProperty, ObjectProperty
 from kivy.uix.boxlayout import BoxLayout
 from kivy.app import App
 
@@ -29,18 +29,21 @@ class ServoBar(BoxLayout, SavingDispatcher):
     divisions = NumericProperty(12)
     index = NumericProperty(0)
     servoEnable = NumericProperty(0)
+    device = ObjectProperty()
 
     # enable = BooleanProperty(False)
     currentPosition = NumericProperty(0.0)
     desiredPosition = NumericProperty(0.0)
     _skip_save = ["currentPosition", "desiredPosition", "servoEnable"]
 
-    def __init__(self, device: Global, **kv):
-        self.device = device
+    def __init__(self, **kv):
         super().__init__(**kv)
         self.upload()
 
     def upload(self):
+        if self.device is None:
+            return
+
         props = self.get_our_properties()
         prop_names = [item.name for item in props]
 
