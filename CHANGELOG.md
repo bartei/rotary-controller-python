@@ -2,6 +2,40 @@
 
 
 
+## v0.3.0 (2024-05-24)
+
+### Fix
+
+* fix: update start script ([`8b986a8`](https://github.com/bartei/rotary-controller-python/commit/8b986a8af5c38e69ad6cd881cfb6ac297d2d923d))
+
+* fix: something is wrong with the network status reporting disabled for now ([`f341423`](https://github.com/bartei/rotary-controller-python/commit/f341423896deeff2fbb2cf26d2d0dc4a8eb44a98))
+
+* fix: handle return status value for ifreload ([`2c21599`](https://github.com/bartei/rotary-controller-python/commit/2c215995221026e1090b44390db6ab4fe54d7f42))
+
+* fix: load network settings from interfaces file ([`db031c0`](https://github.com/bartei/rotary-controller-python/commit/db031c0e48521b3bf96d5245def7ef5636dc8166))
+
+* fix: move network settings in the settings page
+fix: update network settings screen with shared components
+fix: remove logs panel from the settings page as it takes a lot of resources to load long log files
+fix: other minor improvements to the new settings page ([`cba3ea0`](https://github.com/bartei/rotary-controller-python/commit/cba3ea0c7d9ca7c25fa706a9eb6c8a002e7e1191))
+
+* fix: new setup popup with screens
+fix: better file naming for settings with some logs ([`a16cba6`](https://github.com/bartei/rotary-controller-python/commit/a16cba65047bbb585c5578daef177a7847fc24b2))
+
+* fix: handle id_override for SavingDispatcher to allow more stable file naming ([`042f59e`](https://github.com/bartei/rotary-controller-python/commit/042f59efe8795efdd31ea4ab2be91ccd5890f51b))
+
+* fix: improvements to the plot view ([`bbc58c7`](https://github.com/bartei/rotary-controller-python/commit/bbc58c7cd3ac508878c04be3a43c0f99c13fada5))
+
+* fix: working on graphical view ([`dcc73c6`](https://github.com/bartei/rotary-controller-python/commit/dcc73c65d40561ad187c91c2d2f723426a27632f))
+
+### Unknown
+
+* Merge branch &#39;touch&#39;
+
+# Conflicts:
+#	rotary_controller_python/network/__init__.py ([`f7e163c`](https://github.com/bartei/rotary-controller-python/commit/f7e163c0571648276bf24341da2783e1f2eb9f3c))
+
+
 ## v0.2.17 (2024-05-19)
 
 ### Unknown
@@ -64,9 +98,19 @@
 
 ## v0.2.15-rc.1 (2024-05-12)
 
+### Feature
+
+* feat: add touch support for zooming and selecting items wip ([`289952a`](https://github.com/bartei/rotary-controller-python/commit/289952a093d540e04d64198d5a0cb9d7fafdc1d9))
+
+* feat: add touch support for zooming and selecting items wip ([`8909391`](https://github.com/bartei/rotary-controller-python/commit/89093918623df52cb0f7c1cf880fcde9a4768795))
+
+* feat: add touch support for zooming and selecting items wip ([`dd2d32b`](https://github.com/bartei/rotary-controller-python/commit/dd2d32bdd63462165bcf00999f76efbfb1fbf01c))
+
 ### Fix
 
 * fix: add pre-release workflow for dev branch ([`cedb688`](https://github.com/bartei/rotary-controller-python/commit/cedb688b452092d8d6ec242759442ed4911b9ff6))
+
+* fix: better organization of the plot widgets ([`85ba899`](https://github.com/bartei/rotary-controller-python/commit/85ba8999bcdc796fda3934c967ce3fb9a2671317))
 
 * fix: add template service for systemd automated startup ([`7a768ca`](https://github.com/bartei/rotary-controller-python/commit/7a768cab236eefa095a0ac100d0d01a498bf0670))
 
@@ -153,6 +197,12 @@ fix: ratio scaling not needed anymore for sync_ratio_den
 fix: add back refresh for cycles and interval ([`8c5c557`](https://github.com/bartei/rotary-controller-python/commit/8c5c5578db2f89d0b887ec7181a12451013bb5f8))
 
 ### Unknown
+
+* Merge remote-tracking branch &#39;origin/touch&#39; into touch
+
+# Conflicts:
+#	rotary_controller_python/components/plot/grid.py
+#	rotary_controller_python/components/plot/scene_popup.py ([`02315a8`](https://github.com/bartei/rotary-controller-python/commit/02315a827e612d63869b906646dec950306ecac0))
 
 * wip: update packages and add plot graphical items ([`0f92ec3`](https://github.com/bartei/rotary-controller-python/commit/0f92ec30727976bd2923ab450058e600ae9a01fa))
 
