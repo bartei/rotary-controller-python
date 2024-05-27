@@ -5,13 +5,14 @@ from pathlib import Path
 import yaml
 from kivy.logger import Logger
 from kivy.event import EventDispatcher
-from kivy.properties import StringProperty, NumericProperty, BooleanProperty
+from kivy.properties import StringProperty, NumericProperty, BooleanProperty, ListProperty, ObservableList
 
 log = Logger.getChild(__name__)
 
 
 class SavingDispatcher(EventDispatcher):
     _skip_save = []
+    _force_save = []
     id_override = StringProperty("")
 
     def __init__(self, *args, **kwargs):
@@ -34,6 +35,9 @@ class SavingDispatcher(EventDispatcher):
             if type(item) in [NumericProperty, StringProperty, BooleanProperty]
         ]
         properties = [item for item in properties if item.name not in self._skip_save]
+
+        force_properties = [getattr(type(self), item) for item in self._force_save]
+        properties.extend(force_properties)
         return properties
 
     @property
@@ -74,6 +78,8 @@ class SavingDispatcher(EventDispatcher):
         data = dict()
         for item in prop_names:
             data[item] = self.__getattribute__(item)
+            if type(data[item]) == ObservableList:
+                data[item] = list(data[item])
 
         write_settings(self.filename, data)
 

@@ -1,7 +1,7 @@
 from kivy.logger import Logger
 from kivy.properties import (
     NumericProperty,
-    StringProperty,
+    StringProperty, ListProperty,
 )
 
 from rotary_controller_python.dispatchers import SavingDispatcher
@@ -10,6 +10,7 @@ log = Logger.getChild(__name__)
 
 
 class FormatsDispatcher(SavingDispatcher):
+    _force_save = ['display_color']
     metric_position = StringProperty("{:+0.3f}")
     metric_speed = StringProperty("{:+0.3f}")
 
@@ -21,6 +22,8 @@ class FormatsDispatcher(SavingDispatcher):
     speed_format = StringProperty()
     position_format = StringProperty()
     factor = NumericProperty(1)
+
+    display_color = ListProperty([1, 1, 1, 1])
 
     def __init__(self, **kv):
         super().__init__(**kv)

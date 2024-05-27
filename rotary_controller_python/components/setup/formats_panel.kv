@@ -1,0 +1,42 @@
+#: import StringItem components.forms.string_item
+
+<FormatsPanel>:
+  orientation: "vertical"
+  ScrollView:
+    do_scroll_x: False
+    do_scroll_y: True
+    GridLayout:
+      id: grid_layout
+      cols: 1
+      spacing: 1
+      size_hint_y: None
+      StringItem:
+        name: "Metric Position"
+        value: root.formats.metric_position
+        on_value: root.formats.metric_position = self.value
+      StringItem:
+        name: "Metric Speed"
+        value: root.formats.metric_speed
+        on_value: root.formats.metric_speed = self.value
+      StringItem:
+        name: "Imperial Position"
+        value: root.formats.imperial_position
+        on_value: root.formats.imperial_position = self.value
+      StringItem:
+        name: "Imperial Speed"
+        value: root.formats.imperial_speed
+        on_value: root.formats.imperial_speed = self.value
+      StringItem:
+        name: "Angle Format"
+        value: root.formats.angle_format
+        on_value: root.formats.angle_format = self.value
+      Label:
+        size_hint_y: None
+        height: 32
+        text: "Digits Color"
+      ColorPicker:
+        padding: 10
+        size_hint_y: None
+        height: 320
+        color: root.formats.display_color
+        on_color: root.formats.display_color = self.color
