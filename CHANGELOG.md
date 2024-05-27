@@ -2,6 +2,16 @@
 
 
 
+## v0.3.1 (2024-05-27)
+
+### Fix
+
+* fix: set user for rotary-controller service ([`6d7986e`](https://github.com/bartei/rotary-controller-python/commit/6d7986ed3de798cd16dc08c2e480fe4442a1740c))
+
+* fix: add formats setup page with color picker for digits
+fix: extend functionality of saving dispatcher ([`7c4f28e`](https://github.com/bartei/rotary-controller-python/commit/7c4f28e6f0acda8a7090a41fc0f99f9c415facfb))
+
+
 ## v0.3.0 (2024-05-24)
 
 ### Fix
