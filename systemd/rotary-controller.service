@@ -11,8 +11,9 @@ StandardOutput=syslog
 StandardError=syslog
 SyslogIdentifier=%n
 Type=simple
+User=root
+Group=root
 WorkingDirectory=/root/rotary-controller-python/
-
 [Install]
 WantedBy=multi-user.target
 Alias=rotary-controller.service
