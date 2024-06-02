@@ -5,7 +5,8 @@ from kivy.logger import Logger
 from kivy.uix.boxlayout import BoxLayout
 from kivy.lang import Builder
 
-from rotary_controller_python.network import read_interfaces, render_interfaces, reload_interfaces
+from rotary_controller_python.network import read_interfaces, render_interfaces, reload_interfaces, read_wlan_status, \
+    disable_wlan, enable_wlan
 from rotary_controller_python.network.models import NetworkInterface, Wireless
 
 log = Logger.getChild(__name__)
@@ -17,7 +18,7 @@ if os.path.exists(kv_file):
 
 class NetworkPanel(BoxLayout):
     device = StringProperty("")
-    dhcp = BooleanProperty(False)
+    dhcp = BooleanProperty(True)
     address = StringProperty("")
     netmask = StringProperty("")
     gateway = StringProperty("")
@@ -31,6 +32,7 @@ class NetworkPanel(BoxLayout):
 
         configuration: NetworkInterface = read_interfaces()
         self.device = configuration.name
+        self.rfkill_status = read_wlan_status()
         self.dhcp = configuration.dhcp
         if configuration.wireless is not None:
             if configuration.wireless.ssid is not None:
@@ -68,8 +70,14 @@ class NetworkPanel(BoxLayout):
 
         self.status_text = status
 
+    def disable(self):
+        if self.rfkill_status is None:
+            return
+        disable_wlan(self.rfkill_status.id)
+
     def test_configuration(self):
         try:
+            enable_wlan(self.rfkill_status.id)
             configuration = NetworkInterface(
                 name=self.device,
                 dhcp=self.dhcp,
@@ -82,6 +90,6 @@ class NetworkPanel(BoxLayout):
                 )
             )
             render_interfaces(configuration=configuration)
-            status = reload_interfaces()
+            self.status_text = reload_interfaces()
         except Exception as e:
-            status = e.__str__()
+            self.status_text = e.__str__()
