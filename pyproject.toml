@@ -19,6 +19,7 @@ kivy = {version = "2.3.0"}
 docutils = "^0.21.2"
 keke = "^0.1.4"
 numpy = "^1.26.4"
+sdbus-networkmanager = "^2.0.0"
 
 [build-system]
 requires = ["poetry-core"]

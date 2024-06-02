@@ -1,13 +1,13 @@
 import os
 
-from kivy.properties import StringProperty, BooleanProperty
+from kivy.clock import Clock
+from kivy.properties import StringProperty, ObjectProperty
 from kivy.logger import Logger
 from kivy.uix.boxlayout import BoxLayout
 from kivy.lang import Builder
 
-from rotary_controller_python.network import read_interfaces, render_interfaces, reload_interfaces, read_wlan_status, \
-    disable_wlan, enable_wlan
-from rotary_controller_python.network.models import NetworkInterface, Wireless
+from rotary_controller_python.network.networkmanager import get_all_network_interface_names, get_profile_by_id, get_psk, \
+    get_ssid, get_connection_method, activate_connection, deactivate_connection, enable_wifi, disable_wifi, get_ipv4
 
 log = Logger.getChild(__name__)
 kv_file = os.path.join(os.path.dirname(__file__), __file__.replace(".py", ".kv"))
@@ -18,78 +18,50 @@ if os.path.exists(kv_file):
 
 class NetworkPanel(BoxLayout):
     device = StringProperty("")
-    dhcp = BooleanProperty(True)
     address = StringProperty("")
     netmask = StringProperty("")
     gateway = StringProperty("")
     wpa_ssid = StringProperty("")
     wpa_psk = StringProperty("")
     status_text = StringProperty("Ready")
+    profile = ObjectProperty()
+    connection_method = StringProperty("")
+    refresh_task = ObjectProperty()
 
     def __init__(self, **kv):
         super().__init__(**kv)
         self.ids['grid_layout'].bind(minimum_height=self.ids['grid_layout'].setter('height'))
 
-        configuration: NetworkInterface = read_interfaces()
-        self.device = configuration.name
-        self.rfkill_status = read_wlan_status()
-        self.dhcp = configuration.dhcp
-        if configuration.wireless is not None:
-            if configuration.wireless.ssid is not None:
-                self.wpa_ssid = configuration.wireless.ssid
-            if configuration.wireless.password is not None:
-                self.wpa_psk = configuration.wireless.password
+        self.profile = get_profile_by_id()
+        self.wpa_psk = get_psk(self.profile)
+        self.wpa_ssid = get_ssid(self.profile)
+        self.connection_method = get_connection_method(self.profile)
+        self.apply_thread = None
+        self.disable_thread = None
+        self.refresh_task = Clock.schedule_interval(self.refresh_thread, 1)
 
-        if configuration.address is not None and len(configuration.address) > 0:
-            self.address = configuration.address
+    def refresh_thread(self, *args):
+        address, netmask, gateway = get_ipv4(self.profile)
+        self.address = address
+        self.netmask = netmask
+        self.gateway = gateway
+        # self.status_text = self.status_text + "A"
 
-        if configuration.netmask is not None:
-            self.netmask = str(configuration.netmask)
+    def activate_connection(self, *args):
+        activate_connection(self.profile)
+        self.status_text = "Connection Ready"
 
-        if configuration.gateway is not None and len(configuration.gateway) > 0:
-            self.gateway = configuration.gateway
+    def enable_wifi(self, *args):
+        self.status_text = "Enabling Wifi Device"
+        enable_wifi()
+        self.status_text = "Enabling Connection"
+        Clock.schedule_once(self.activate_connection, timeout=2)
 
-    def confirm(self):
-        try:
-            configuration = NetworkInterface(
-                name=self.device,
-                dhcp=self.dhcp,
-                address=self.address if not self.dhcp else None,
-                gateway=self.gateway if not self.dhcp else None,
-                netmask=int(self.netmask) if not self.dhcp else None,
-                wireless=Wireless(
-                    password=self.wpa_psk,
-                    ssid=self.wpa_ssid
-                )
-            )
-            render_interfaces(configuration=configuration)
-            status = reload_interfaces()
-        except Exception as e:
-            log.exception(e.__str__())
-            status = e.__str__()
-
-        self.status_text = status
+    def apply(self):
+        Clock.schedule_once(self.enable_wifi)
 
     def disable(self):
-        if self.rfkill_status is None:
-            return
-        disable_wlan(self.rfkill_status.id)
+        disable_wifi()
 
-    def test_configuration(self):
-        try:
-            enable_wlan(self.rfkill_status.id)
-            configuration = NetworkInterface(
-                name=self.device,
-                dhcp=self.dhcp,
-                address=self.address if not self.dhcp else None,
-                gateway=self.gateway if not self.dhcp else None,
-                netmask=int(self.netmask) if not self.dhcp else None,
-                wireless=Wireless(
-                    password=self.wpa_psk,
-                    ssid=self.wpa_ssid
-                )
-            )
-            render_interfaces(configuration=configuration)
-            self.status_text = reload_interfaces()
-        except Exception as e:
-            self.status_text = e.__str__()
+    def get_all_network_interfaces(self):
+        return get_all_network_interface_names()
