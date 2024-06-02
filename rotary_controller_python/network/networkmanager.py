@@ -157,14 +157,14 @@ def deactivate_connection(profile: ConnectionProfile):
     return network_manager.deactivate_connection(active_connection=connection)
 
 
-def get_connection_ssid(profile_id: str) -> str | None:
+def get_connection_ssid(profile_id: str) -> str or None:
     profile = get_profile_by_id(profile_id)
     if profile is None:
         return None
     return profile.wireless.ssid
 
 
-def get_connection_psk(profile_id: str) -> str | None:
+def get_connection_psk(profile_id: str) -> str or None:
     profile = get_profile_by_id(profile_id)
     if profile is None:
         return None
