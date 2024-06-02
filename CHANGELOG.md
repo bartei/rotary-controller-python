@@ -2,6 +2,13 @@
 
 
 
+## v0.3.2 (2024-06-02)
+
+### Fix
+
+* fix: broken network page link ([`2822180`](https://github.com/bartei/rotary-controller-python/commit/2822180598e11985195609a3f1d2012611f1d9d8))
+
+
 ## v0.3.1 (2024-05-27)
 
 ### Fix
