@@ -39,9 +39,9 @@ class SetupScreenManager(ScreenManager):
         self.add_widget(screen)
 
         # TODO: Disable network for now, need to finish working on this
-        # screen = Screen(name="network")
-        # screen.add_widget(NetworkPanel())
-        # self.add_widget(screen)
+        screen = Screen(name="network")
+        screen.add_widget(NetworkPanel())
+        self.add_widget(screen)
 
         screen = Screen(name="formats")
         screen.add_widget(FormatsPanel(formats=app.formats))
