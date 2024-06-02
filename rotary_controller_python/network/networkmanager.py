@@ -56,7 +56,7 @@ def get_all_network_interface_names(
     return names
 
 
-def get_profile_by_id(profile_id: str = "ospi") -> ConnectionProfile | None:
+def get_profile_by_id(profile_id: str = "ospi") -> ConnectionProfile or None:
     nms = NetworkManagerSettings()
     connections = nms.list_connections()
     profiles = [NetworkConnectionSettings(item).get_profile() for item in connections]
