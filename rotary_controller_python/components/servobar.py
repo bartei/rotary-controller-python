@@ -11,7 +11,6 @@ from rotary_controller_python.utils.devices import Global
 
 log = Logger.getChild(__name__)
 
-current_app = App.get_running_app()
 kv_file = os.path.join(os.path.dirname(__file__), __file__.replace(".py", ".kv"))
 if os.path.exists(kv_file):
     log.info(f"Loading KV file: {kv_file}")
@@ -87,6 +86,10 @@ class ServoBar(BoxLayout, SavingDispatcher):
         self.device['fastData']['servoEnable'] = self.servoEnable
 
     def toggle_enable(self):
+        current_app = App.get_running_app()
+        if not current_app.connected:
+            return
+
         if self.servoEnable != 0:
             self.servoEnable = 0
         else:

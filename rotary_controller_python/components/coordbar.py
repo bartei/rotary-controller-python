@@ -34,9 +34,9 @@ class CoordBar(BoxLayout, SavingDispatcher):
     newPosition = NumericProperty(0)
     speed = NumericProperty(0.0)
     mode = NumericProperty(0)
-    sync_button_color = ListProperty([0.3, 0.3, 0.3, 1])
+    syncButtonColor = ListProperty([0.3, 0.3, 0.3, 1])
 
-    _skip_save = ["position", "new_position", "formatted_axis_speed", "syncEnable"]
+    _skip_save = ["position", "newPosition", "syncEnable", "speed", ]
 
     def __init__(self, **kv):
         self.app = App.get_running_app()
@@ -64,10 +64,12 @@ class CoordBar(BoxLayout, SavingDispatcher):
             self.device['scales'][self.inputIndex][item] = self.__getattribute__(item)
 
     def toggle_sync(self):
-        running_app = App.get_running_app()
+        current_app = App.get_running_app()
+        if not current_app.connected:
+            return
         self.syncEnable = not self.device['scales'][self.inputIndex]['syncEnable']
         self.device['scales'][self.inputIndex]['syncEnable'] = self.syncEnable
-        running_app.manual_full_update()
+        current_app.manual_full_update()
 
     def on_syncRatioNum(self, instance, value):
         self.device['scales'][instance.inputIndex]['syncRatioNum'] = int(value)
@@ -88,9 +90,9 @@ class CoordBar(BoxLayout, SavingDispatcher):
         self.device['scales'][self.inputIndex]['position'] = int(float(value) * self.app.formats.factor * 1000)
 
     def update_position(self):
+        current_app = App.get_running_app()
         if not self.syncEnable and not self.mode == 1:
-            self.newPosition = self.position
-            Factory.Keypad().show(self, 'newPosition', self.position)
+            Factory.Keypad().show(self, 'newPosition', self.position / current_app.formats.factor)
 
     def zero_position(self):
         self.newPosition = 0

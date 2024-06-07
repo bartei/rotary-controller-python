@@ -1,7 +1,7 @@
 #: import NumberItem components.forms.number_item
 #: import DualNumberItem components.forms.dual_number_item
 #: import StringItem components.forms.string_item
-
+#: import TitleItem components.forms.title_item
 
 <ServoPanel>:
   orientation: "vertical"
@@ -13,20 +13,9 @@
       cols: 1
       spacing: 1
       size_hint_y: None
-      NumberItem:
-        name: "Minimum Speed"
-        value: root.servo.minSpeed
-        on_value: root.servo.minSpeed = self.value
-      DualNumberItem:
-        name: "Maximum Speed"
-        value: root.servo.maxSpeed
-        ratio: root.servo.ratioDen / root.servo.ratioNum
-        on_value: root.servo.maxSpeed = self.value
-      DualNumberItem:
-        name: "Acceleration"
-        value: root.servo.acceleration
-        ratio: root.servo.ratioDen / root.servo.ratioNum
-        on_value: root.servo.acceleration = self.value
+
+      TitleItem:
+        name: "Gearing Ratios"
       NumberItem:
         name: "Ratio Numerator"
         value: root.servo.ratioNum
@@ -35,18 +24,44 @@
         name: "Ratio Denominator"
         value: root.servo.ratioDen
         on_value: root.servo.ratioDen = self.value
+
+
+      TitleItem:
+        name: "Speeds"
       NumberItem:
-        name: "Offset"
-        value: root.servo.offset
-        on_value: root.servo.offset = self.value
+        name: "Minimum Speed"
+        value: root.servo.minSpeed
+        on_value: root.servo.minSpeed = self.value
       NumberItem:
-        name: "Divisions"
-        value: root.servo.divisions
-        on_value: root.servo.divisions = self.value
+        name: "Maximum Speed (Steps/s)"
+        value: root.servo.maxSpeed / (root.servo.ratioDen / root.servo.ratioNum)
+        on_value: root.servo.maxSpeed = self.value * (root.servo.ratioDen / root.servo.ratioNum)
       NumberItem:
-        name: "Index"
-        value: root.servo.index
-        on_value: root.servo.index = self.value
+        name: "Maximum Speed (Units/s)"
+        value: root.servo.maxSpeed
+        on_value: root.servo.maxSpeed = self.value
+
+      NumberItem:
+        name: "Acceleration (Steps/s^2)"
+        value: root.servo.acceleration / (root.servo.ratioDen / root.servo.ratioNum)
+        on_value: root.servo.acceleration = self.value * (root.servo.ratioDen / root.servo.ratioNum)
+      NumberItem:
+        name: "Acceleration (Units/s^2)"
+        value: root.servo.acceleration
+        on_value: root.servo.acceleration = self.value
+
+#      NumberItem:
+#        name: "Offset"
+#        value: root.servo.offset
+#        on_value: root.servo.offset = self.value
+#      NumberItem:
+#        name: "Divisions"
+#        value: root.servo.divisions
+#        on_value: root.servo.divisions = self.value
+#      NumberItem:
+#        name: "Index"
+#        value: root.servo.index
+#        on_value: root.servo.index = self.value
 #  Button:
 #    size_hint_y: None
 #    height: 32

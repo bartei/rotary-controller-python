@@ -20,6 +20,6 @@ class SetupPopup(Popup):
     screen_selector: BoxLayout = ObjectProperty()
 
     def on_dismiss(self):
-        app = App.get_running_app()
-        app.manual_full_update()
+        current_app = App.get_running_app()
+        current_app.manual_full_update()
         log.info("Close setup page")
