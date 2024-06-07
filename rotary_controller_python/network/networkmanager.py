@@ -59,7 +59,14 @@ def get_all_network_interface_names(
 def get_profile_by_id(profile_id: str = "ospi") -> ConnectionProfile or None:
     nms = NetworkManagerSettings()
     connections = nms.list_connections()
-    profiles = [NetworkConnectionSettings(item).get_profile() for item in connections]
+    profiles = []
+    for item in connections:
+        try:
+            profile = NetworkConnectionSettings(item).get_profile()
+            profiles.append(profile)
+        except Exception as e:
+            log.error(e.__str__())
+
     wlan_profiles = [item for item in profiles if item.connection.connection_id == profile_id]
 
     if len(wlan_profiles) == 1:
@@ -69,26 +76,41 @@ def get_profile_by_id(profile_id: str = "ospi") -> ConnectionProfile or None:
 
 
 def get_psk(profile: ConnectionProfile) -> str:
-    return profile.wireless_security.psk
+    if profile is None:
+        return ""
+    else:
+        return profile.wireless_security.psk
 
 
 def get_ssid(profile: ConnectionProfile) -> str:
-    return profile.wireless.ssid.decode("UTF-8")
+    if profile is None:
+        return ""
+    else:
+        return profile.wireless.ssid.decode("UTF-8")
 
 
 def get_connection_method(profile: ConnectionProfile) -> str:
-    return profile.ipv4.method
+    if profile is None:
+        return ""
+    else:
+        return profile.ipv4.method
 
 
 def get_connection_by_profile(profile:  ConnectionProfile):
-    nms = NetworkManagerSettings()
-    connections = nms.get_connections_by_id(profile.connection.connection_id)
-    if len(connections) != 1:
-        raise ValueError("Unable to find the connection associated with the given profile")
-    return connections[0]
+    if profile is None:
+        return None
+    else:
+        nms = NetworkManagerSettings()
+        connections = nms.get_connections_by_id(profile.connection.connection_id)
+        if len(connections) != 1:
+            raise ValueError("Unable to find the connection associated with the given profile")
+        return connections[0]
 
 
 def get_ipv4(profile: ConnectionProfile) -> Tuple:
+    if profile is None:
+        return "", "", ""
+
     network_manager = NetworkManager()
     interface_name = profile.connection.interface_name
     device_path = network_manager.get_device_by_ip_iface(interface_name)
