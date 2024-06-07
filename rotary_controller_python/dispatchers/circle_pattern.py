@@ -33,7 +33,12 @@ class CirclePatternDispatcher(SavingDispatcher):
 
     def recalculate(self, *kv):
         points_list = []
-        for i in range(self.holes_count + 1):
+
+        hc = self.holes_count
+        if abs(self.start_angle - self.end_angle) != 360:
+            hc += 1
+
+        for i in range(hc):
             angle_offset = (self.end_angle - self.start_angle) / self.holes_count * i * math.pi / 180
             angle_offset += self.start_angle * math.pi / 180
 

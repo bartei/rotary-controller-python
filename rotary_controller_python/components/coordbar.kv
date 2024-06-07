@@ -24,7 +24,7 @@
         font_name: "fonts/iosevka-regular.ttf"
         font_size: self.height / 1.5
         font_style: "bold"
-        color: app.display_color
+        color: app.formats.display_color
         text: app.formats.position_format.format(root.position / app.formats.factor) if root.mode == 0 else app.formats.speed_format.format(root.speed / app.formats.factor)
         text_size: self.size
         halign: 'right'
@@ -35,7 +35,7 @@
         font_name: "fonts/iosevka-regular.ttf"
         font_size: self.height / 1.5
         font_style: "bold"
-        color: app.display_color
+        color: app.formats.display_color
         text: app.formats.speed_format.format(root.speed / app.formats.factor)
         text_size: self.size
         halign: 'right'
@@ -49,7 +49,7 @@
         text: "Num"
         font_size: self.height / 1.5
         size_hint_y: 0.3
-        color: app.display_color
+        color: app.formats.display_color
         halign: 'center'
         valign: 'top'
       Button:
@@ -58,7 +58,7 @@
         font_size: self.height / 2
         font_style: "bold"
         background_color: [0.3, 0.3, 0.3, 1]
-        color: app.display_color
+        color: app.formats.display_color
         text: str(int(root.syncRatioNum))
         text_size: self.size
         halign: 'center'
@@ -74,7 +74,7 @@
         text: "Den"
         font_size: self.height / 1.5
         size_hint_y: 0.3
-        color: app.display_color
+        color: app.formats.display_color
         halign: 'center'
         valign: 'top'
       Button:
@@ -83,7 +83,7 @@
         font_size: self.height / 2
         font_style: "bold"
         background_color: [0.3, 0.3, 0.3, 1]
-        color: app.display_color
+        color: app.formats.display_color
         text: str(int(root.syncRatioDen))
         text_size: self.size
         halign: 'center'

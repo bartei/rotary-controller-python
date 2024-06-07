@@ -1,6 +1,6 @@
 from typing import Optional
 
-from pydantic import BaseModel
+from pydantic import BaseModel, Field
 
 
 class Wireless(BaseModel):
@@ -15,3 +15,11 @@ class NetworkInterface(BaseModel):
     netmask: Optional[int]
     gateway: Optional[str]
     wireless: Optional[Wireless]
+
+
+class RfkillStatus(BaseModel):
+    id: int
+    type: str
+    device: str
+    soft: str
+    hard: str

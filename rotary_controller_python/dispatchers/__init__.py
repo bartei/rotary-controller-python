@@ -1,19 +1,26 @@
 import os
 import shutil
+from pathlib import Path
 
 import yaml
 from kivy.logger import Logger
 from kivy.event import EventDispatcher
-from kivy.properties import StringProperty, NumericProperty, BooleanProperty
+from kivy.properties import StringProperty, NumericProperty, BooleanProperty, ListProperty, ObservableList
 
 log = Logger.getChild(__name__)
 
 
 class SavingDispatcher(EventDispatcher):
     _skip_save = []
+    _force_save = []
+    id_override = StringProperty("")
 
     def __init__(self, *args, **kwargs):
         super().__init__(*args, **kwargs)
+
+        # Check if we have an id_override
+        if self.id_override == "":
+            self.id_override = f"{self.uid}"
 
         # Read the settings from file and into a dictionary
         self.read_settings()
@@ -28,12 +35,20 @@ class SavingDispatcher(EventDispatcher):
             if type(item) in [NumericProperty, StringProperty, BooleanProperty]
         ]
         properties = [item for item in properties if item.name not in self._skip_save]
+
+        force_properties = [getattr(type(self), item) for item in self._force_save]
+        properties.extend(force_properties)
         return properties
 
     @property
     def filename(self):
-        os.makedirs("settings/", exist_ok=True)
-        return f"settings/{self.__class__.__name__}-{self.uid}.yaml"
+        home_folder = os.environ.get('HOME')
+        settings_folder = Path(home_folder) / ".config" / "rotary-controller-python"
+        os.makedirs(settings_folder, exist_ok=True)
+
+        settings_path = settings_folder / f"{self.__class__.__name__}-{self.id_override}.yaml"
+        log.debug(f"Identified settings path as: {settings_path}")
+        return settings_path
 
     def read_settings(self):
         props = self.get_our_properties()
@@ -63,6 +78,8 @@ class SavingDispatcher(EventDispatcher):
         data = dict()
         for item in prop_names:
             data[item] = self.__getattribute__(item)
+            if type(data[item]) == ObservableList:
+                data[item] = list(data[item])
 
         write_settings(self.filename, data)
 

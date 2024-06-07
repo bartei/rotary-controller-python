@@ -2,7 +2,7 @@ import os
 
 from kivy.lang import Builder
 from kivy.logger import Logger
-from kivy.properties import StringProperty
+from kivy.properties import StringProperty, BooleanProperty
 from kivy.uix.boxlayout import BoxLayout
 
 log = Logger.getChild(__name__)
@@ -15,3 +15,4 @@ if os.path.exists(kv_file):
 class StringItem(BoxLayout):
     name = StringProperty("")
     value = StringProperty("")
+    disabled = BooleanProperty(False)

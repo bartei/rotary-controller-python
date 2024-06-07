@@ -1,0 +1,76 @@
+#: import StringItem components.forms.string_item
+#: import BooleanItem components.forms.boolean_item
+
+<NetworkPanel>:
+  orientation: "vertical"
+  ScrollView:
+    do_scroll_x: False
+    do_scroll_y: True
+    GridLayout:
+      id: grid_layout
+      cols: 1
+      spacing: 1
+      size_hint_y: None
+      StringItem:
+        name: "Network Interface"
+        value: root.device
+        on_value: root.device = self.value
+
+      StringItem:
+        name: "Wifi Network"
+        value: root.wpa_ssid
+        on_value: root.wpa_ssid = self.value
+
+      StringItem:
+        name: "Wifi Password"
+        value: root.wpa_psk
+        on_value: root.wpa_psk = self.value
+
+      BooleanItem:
+        name: "Use DHCP"
+        value: root.dhcp
+        on_value: root.dhcp = self.value
+
+      StringItem:
+        name: "IP Address"
+        value: root.address
+        disabled: root.dhcp
+        on_value: root.address = self.value
+
+      StringItem:
+        name: "Netmask Bits"
+        value: root.netmask
+        disabled: root.dhcp
+        on_value: root.netmask = self.value
+
+      StringItem:
+        name: "Default Gateway"
+        value: root.gateway
+        disabled: root.dhcp
+        on_value: root.gateway = self.value
+
+
+      BoxLayout:
+        orientation: "horizontal"
+
+      BoxLayout:
+        size_hint_y: None
+        height: 64
+        orientation: "horizontal"
+        Label:
+          size_hint_x: 0.3
+          text: "Status:"
+        TextInput:
+          readonly: True
+          multiline: True
+          text: root.status_text
+
+      BoxLayout:
+        size_hint_y: None
+        height: 48
+        orientation: "horizontal"
+
+        Button:
+          text: "Apply"
+          background_color: "#cf3a3a"
+          on_release: root.test_configuration()

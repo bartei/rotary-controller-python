@@ -46,7 +46,7 @@ class MainApp(App):
 
     blink = BooleanProperty(False)
     connected = BooleanProperty(False)
-    formats = FormatsDispatcher()
+    formats = FormatsDispatcher(id_override="0")
     abs_inc = ConfigParserProperty(
         defaultvalue="ABS", section="global", key="abs_inc", config=config, val_type=str
     )
@@ -64,8 +64,9 @@ class MainApp(App):
     device = ObjectProperty()
     home = ObjectProperty()
     task_update = None
-    task_update_slow = None
-    task_counter = 0
+
+    tool_x = NumericProperty(0)
+    tool_y = NumericProperty(0)
 
     def __init__(self, **kv):
         self.fast_data_values = dict()
@@ -132,13 +133,16 @@ class MainApp(App):
 
         if self.connection_manager.connected:
             for bar in self.home.coord_bars:
-                bar.position = self.fast_data_values['scaleCurrent'][bar.inputIndex] / 1000
+                bar.position = (self.fast_data_values['scaleCurrent'][bar.inputIndex] / 1000)
             self.home.servo.currentPosition = self.fast_data_values['servoCurrent']
             self.home.servo.desiredPosition = self.fast_data_values['servoDesired']
             self.home.servo.servoEnable = self.fast_data_values['servoEnable']
-            # self.home.status_bar.cycles = self.fast_data_values['cycles']
-            # self.home.status_bar.interval = self.fast_data_values['executionInterval']
             self.home.status_bar.speed = abs(self.fast_data_values['servoSpeed'])
+
+            # TODO: Find a better way to configure x and y axy for the plot view
+            self.tool_x = self.fast_data_values['scaleCurrent'][0] / 1000
+            self.tool_y = self.fast_data_values['scaleCurrent'][1] / 1000
+
         self.connected = self.connection_manager.connected
 
     def upload(self):
@@ -153,7 +157,6 @@ class MainApp(App):
     def build(self):
         self.home = HomePage(device=self.device)
         self.task_update = Clock.schedule_interval(self.update, 1.0 / 30)
-        # self.task_update_slow = Clock.schedule_interval(self.update_slow, 1.0 / 10)
         Clock.schedule_interval(self.blinker, 1.0 / 4)
         return self.home
 
