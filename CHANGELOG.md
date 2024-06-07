@@ -2,6 +2,38 @@
 
 
 
+## v0.2.15-rc.6 (2024-06-07)
+
+### Fix
+
+* fix: remove data folder, not needed anymore
+fix: better error handling for networking page ([`9794b17`](https://github.com/bartei/rotary-controller-python/commit/9794b17edebd211787d88fcd7df3870f2e8d1593))
+
+* fix: update handling of units for position
+fix: add titles to servo ([`fdcb5f9`](https://github.com/bartei/rotary-controller-python/commit/fdcb5f9630dfe4cfb733584ce6defc6599288446))
+
+* fix: backwards compatibility changes for 3.9 ([`bd11363`](https://github.com/bartei/rotary-controller-python/commit/bd113639f639154f3e261d40b0ed8ada5a598439))
+
+* fix: backwards compatibility changes for 3.9 ([`590c484`](https://github.com/bartei/rotary-controller-python/commit/590c484d5ea60fa0f80cad1847bca511060b5973))
+
+* fix: major updates to the network configuration panel and methods ([`c572f89`](https://github.com/bartei/rotary-controller-python/commit/c572f897523a0d046baa886e04da851941a28c48))
+
+### Unknown
+
+* Merge remote-tracking branch &#39;refs/remotes/origin/network&#39; into dev
+
+# Conflicts:
+#	poetry.lock ([`ac84a9e`](https://github.com/bartei/rotary-controller-python/commit/ac84a9ec969c78de7021e1d6a5ff88f18d747501))
+
+* Merge branch &#39;refs/heads/main&#39; into dev
+
+# Conflicts:
+#	CHANGELOG.md
+#	pyproject.toml ([`f32e28d`](https://github.com/bartei/rotary-controller-python/commit/f32e28d771234ec9a29a8dd98a18ec8ea91cf438))
+
+* minor: add disable to network panel, apply enables wlan ([`69aff71`](https://github.com/bartei/rotary-controller-python/commit/69aff714b2b99a7c18ed1a9179e8ebe3b46a3be1))
+
+
 ## v0.3.2 (2024-06-02)
 
 ### Fix
@@ -66,11 +98,16 @@ fix: better file naming for settings with some logs ([`a16cba6`](https://github.
 
 * fix: test push ([`5caca88`](https://github.com/bartei/rotary-controller-python/commit/5caca8856eee03c606ad26cf8669abf6a0bfea9f))
 
-* fix: update start.sh ([`10a9169`](https://github.com/bartei/rotary-controller-python/commit/10a9169a96ef9039979a220e36be7bc450138d08))
-
 ### Unknown
 
 * Merge remote-tracking branch &#39;origin/main&#39; ([`92b8da2`](https://github.com/bartei/rotary-controller-python/commit/92b8da2ef61c45885196a437744404122216b4df))
+
+
+## v0.2.15-rc.5 (2024-05-16)
+
+### Fix
+
+* fix: update start.sh ([`10a9169`](https://github.com/bartei/rotary-controller-python/commit/10a9169a96ef9039979a220e36be7bc450138d08))
 
 
 ## v0.2.15 (2024-05-16)
