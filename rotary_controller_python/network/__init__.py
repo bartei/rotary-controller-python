@@ -14,7 +14,7 @@ log = logging.getLogger(__name__)
 def read_interfaces(config_path: str = "/etc/network/interfaces"):
     interface = models.NetworkInterface(
         name="wlan0",
-        dhcp=False,
+        dhcp=True,
         wireless=models.Wireless(
             password="",
             ssid=""
@@ -93,13 +93,13 @@ def reload_interfaces():
         log.error(e.__str__())
 
 
-def read_wlan_status():
+def read_wlan_status() -> RfkillStatus:
     try:
         result = subprocess.run(["/usr/sbin/rfkill", "-J", "--output-all"], capture_output=True)
         result.check_returncode()
         json_data = result.stdout
         rfkill_data = json.loads(json_data)
-        wlan_data = [v for k,v in rfkill_data.items()][0]
+        wlan_data = [v for k, v in rfkill_data.items()][0]
         wlan_data = [item for item in wlan_data if item['type'] == 'wlan']
         if len(wlan_data) == 0:
             raise Exception("No wlan detected")

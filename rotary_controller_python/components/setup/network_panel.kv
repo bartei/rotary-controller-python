@@ -1,5 +1,6 @@
 #: import StringItem components.forms.string_item
 #: import BooleanItem components.forms.boolean_item
+#: import DropDownItem components.forms.dropdown_item
 
 <NetworkPanel>:
   orientation: "vertical"
@@ -11,10 +12,16 @@
       cols: 1
       spacing: 1
       size_hint_y: None
-      StringItem:
+      DropDownItem:
         name: "Network Interface"
-        value: root.device
-        on_value: root.device = self.value
+        options: root.get_all_network_interfaces()
+        value: root.get_all_network_interfaces()[0] if len(root.get_all_network_interfaces()) > 0 else ""
+
+      DropDownItem:
+        name: "Connection Method"
+        options: ["auto", "manual"]
+        value: root.connection_method
+        on_value: root.connection_method = self.value
 
       StringItem:
         name: "Wifi Network"
@@ -26,32 +33,24 @@
         value: root.wpa_psk
         on_value: root.wpa_psk = self.value
 
-      BooleanItem:
-        name: "Use DHCP"
-        value: root.dhcp
-        on_value: root.dhcp = self.value
-
       StringItem:
         name: "IP Address"
         value: root.address
-        disabled: root.dhcp
+        disabled: root.connection_method == "auto"
         on_value: root.address = self.value
 
       StringItem:
         name: "Netmask Bits"
         value: root.netmask
-        disabled: root.dhcp
+        disabled: root.connection_method == "auto"
         on_value: root.netmask = self.value
 
       StringItem:
         name: "Default Gateway"
         value: root.gateway
-        disabled: root.dhcp
+        disabled: root.connection_method == "auto"
         on_value: root.gateway = self.value
 
-
-      BoxLayout:
-        orientation: "horizontal"
 
       BoxLayout:
         size_hint_y: None
@@ -72,5 +71,10 @@
 
         Button:
           text: "Apply"
+          background_color: "#3acf3a"
+          on_release: root.apply()
+
+        Button:
+          text: "Disable"
           background_color: "#cf3a3a"
-          on_release: root.test_configuration()
+          on_release: root.disable()
