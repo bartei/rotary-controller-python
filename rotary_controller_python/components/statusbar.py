@@ -1,5 +1,6 @@
 import os
 
+from kivy.app import App
 from kivy.logger import Logger
 from kivy.properties import NumericProperty
 from kivy.uix.boxlayout import BoxLayout
@@ -19,3 +20,13 @@ class StatusBar(BoxLayout):
     fps = NumericProperty(0)
     speed = NumericProperty(0)
     maxSpeed = NumericProperty(0)
+
+    def __init__(self, **kv):
+        self.app = App.get_running_app()
+        super().__init__(**kv)
+        self.app.bind(update_tick=self.update_tick)
+
+    def update_tick(self, *args, **kv):
+        self.speed = self.app.fast_data_values['servoSpeed']
+        self.interval = self.app.fast_data_values['executionInterval']
+        self.cycles = self.app.fast_data_values['cycles']
