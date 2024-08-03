@@ -51,7 +51,7 @@ class MainApp(App):
     abs_inc = ConfigParserProperty(
         defaultvalue="ABS", section="global", key="abs_inc", config=config, val_type=str
     )
-    current_origin = StringProperty("Origin 0")
+    currentOffset = NumericProperty(0)
     tool = NumericProperty(0)
     serial_port = ConfigParserProperty(
         defaultvalue="/dev/serial0", section="device", key="serial_port", config=config, val_type=str
@@ -64,6 +64,8 @@ class MainApp(App):
     )
     device = ObjectProperty()
     home = ObjectProperty()
+    update_tick = NumericProperty(0)
+
     task_update = None
 
     tool_x = NumericProperty(0)
@@ -125,35 +127,22 @@ class MainApp(App):
         # Handle state change disconnected -> connected
         if not self.connected and self.connection_manager.connected:
             self.task_update.timeout = 1.0 / 10
-            self.upload()
             self.home.status_bar.maxSpeed = self.device['servo']['maxSpeed']
             self.connected = self.connection_manager.connected
 
         if self.connection_manager.connected:
-            for bar in self.home.coord_bars:
-                bar.encoderPrevious = bar.encoderCurrent
-                bar.encoderCurrent = self.fast_data_values['scaleCurrent'][bar.inputIndex]
-                bar.position += uint32_subtract_to_int32(bar.encoderCurrent, bar.encoderPrevious)
-
-            self.home.servo.currentPosition = self.fast_data_values['servoCurrent'] * self.home.servo.ratioNum / self.home.servo.ratioDen
-            self.home.servo.desiredPosition = self.fast_data_values['servoDesired'] * self.home.servo.ratioNum / self.home.servo.ratioDen
-            self.home.servo.servoEnable = self.fast_data_values['servoEnable']
-            self.home.servo.offset = self.device['servo']['direction']
-
-            self.home.status_bar.speed = abs(self.fast_data_values['servoSpeed'])
-            self.home.status_bar.interval = abs(self.fast_data_values['executionInterval'])
-            self.home.status_bar.cycles = abs(self.fast_data_values['cycles'])
+            self.update_tick = (self.update_tick + 1) % 100
 
             # TODO: Find a better way to configure x and y axy for the plot view
-            self.tool_x = self.fast_data_values['scaleCurrent'][0] / 1000
-            self.tool_y = self.fast_data_values['scaleCurrent'][1] / 1000
+            # self.tool_x = self.fast_data_values['scaleCurrent'][0] / 1000
+            # self.tool_y = self.fast_data_values['scaleCurrent'][1] / 1000
 
         self.connected = self.connection_manager.connected
 
-    def upload(self):
-        self.home.servo.upload()
-        for scale in self.home.coord_bars:
-            scale.upload()
+    # def upload(self):
+        # self.home.servo.upload()
+        # for scale in self.home.coord_bars:
+        #     scale.upload()
 
     def blinker(self, *args):
         self.home.status_bar.fps = Clock.get_fps()
