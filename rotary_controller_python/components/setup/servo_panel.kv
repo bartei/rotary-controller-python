@@ -29,41 +29,16 @@
       TitleItem:
         name: "Speeds"
       NumberItem:
-        name: "Minimum Speed"
-        value: root.servo.minSpeed
-        on_value: root.servo.minSpeed = self.value
-      NumberItem:
         name: "Maximum Speed (Steps/s)"
-        value: root.servo.maxSpeed / (root.servo.ratioDen / root.servo.ratioNum)
-        on_value: root.servo.maxSpeed = self.value * (root.servo.ratioDen / root.servo.ratioNum)
-      NumberItem:
-        name: "Maximum Speed (Units/s)"
         value: root.servo.maxSpeed
         on_value: root.servo.maxSpeed = self.value
 
       NumberItem:
         name: "Acceleration (Steps/s^2)"
-        value: root.servo.acceleration / (root.servo.ratioDen / root.servo.ratioNum)
-        on_value: root.servo.acceleration = self.value * (root.servo.ratioDen / root.servo.ratioNum)
-      NumberItem:
-        name: "Acceleration (Units/s^2)"
         value: root.servo.acceleration
         on_value: root.servo.acceleration = self.value
 
-#      NumberItem:
-#        name: "Offset"
-#        value: root.servo.offset
-#        on_value: root.servo.offset = self.value
-#      NumberItem:
-#        name: "Divisions"
-#        value: root.servo.divisions
-#        on_value: root.servo.divisions = self.value
-#      NumberItem:
-#        name: "Index"
-#        value: root.servo.index
-#        on_value: root.servo.index = self.value
-#  Button:
-#    size_hint_y: None
-#    height: 32
-#    text: "Back"
-#    on_release: root.parent.parent.current = "menu"
+      NumberItem:
+        name: "Units/Turn"
+        value: root.servo.unitsPerTurn
+        on_value: root.servo.unitsPerTurn = self.value
