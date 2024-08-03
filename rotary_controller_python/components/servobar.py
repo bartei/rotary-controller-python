@@ -1,4 +1,5 @@
 import os
+from fractions import Fraction
 
 from kivy.factory import Factory
 from kivy.logger import Logger
@@ -8,6 +9,7 @@ from kivy.uix.boxlayout import BoxLayout
 from kivy.app import App
 
 from rotary_controller_python.dispatchers import SavingDispatcher
+from rotary_controller_python.utils.ctype_calc import uint32_subtract_to_int32
 from rotary_controller_python.utils.devices import Global
 
 log = Logger.getChild(__name__)
@@ -20,7 +22,6 @@ if os.path.exists(kv_file):
 
 class ServoBar(BoxLayout, SavingDispatcher):
     name = StringProperty("R")
-    minSpeed = NumericProperty(1)
     maxSpeed = NumericProperty(1000)
     acceleration = NumericProperty(1000)
     ratioNum = NumericProperty(400)
@@ -30,48 +31,98 @@ class ServoBar(BoxLayout, SavingDispatcher):
     index = NumericProperty(0)
     servoEnable = NumericProperty(0)
     device = ObjectProperty()
-    newCurrentPosition = NumericProperty(0)
-    newDesiredPosition = NumericProperty(0)
+    stepsPerTurn = NumericProperty(4096)
+    unitsPerTurn = NumericProperty(360.0)
+    oldOffset = NumericProperty(0.0)
 
-    # enable = BooleanProperty(False)
-    currentPosition = NumericProperty(0.0)
+    indexOffset = NumericProperty(0.0)
+    oldIndexOffset = NumericProperty(0.0)
+
+    position = NumericProperty(0)
+    scaledPosition = NumericProperty(0)
+
     desiredPosition = NumericProperty(0.0)
-    _skip_save = ["currentPosition", "desiredPosition", "servoEnable"]
+
+    disableControls = BooleanProperty(False)
+    _skip_save = [
+        "currentPosition",
+        "desiredPosition",
+        "servoEnable",
+        "oldOffset",
+        "offset",
+        "index",
+        "indexOffset",
+        "oldIndexOffset",
+    ]
 
     def __init__(self, **kv):
+        self.app = App.get_running_app()
         super().__init__(**kv)
-        self.upload()
+        self.app.bind(update_tick=self.update_tick)
+        self.app.bind(connected=self.init_connection)
 
-    def upload(self):
-        if self.device is None:
-            return
+        # Private variables that don't need dispatchers etc
+        self.encoderPrevious = 0
+        self.encoderCurrent = 0
 
-        props = self.get_our_properties()
-        prop_names = [item.name for item in props]
+    def init_connection(self, *args, **kv):
+        """
+        This method is called when the connection is established
+        """
+        if self.device.dm.connected:
+            self.encoderPrevious = self.app.fast_data_values['servoCurrent']
+            self.encoderCurrent = self.app.fast_data_values['servoCurrent']
+            self.servoEnable = self.app.fast_data_values['servoEnable']
+            if self.servoEnable == 0:
+                self.disableControls = True
+            else:
+                self.disableControls = False
 
-        device_props = [item.name for item in self.device['servo'].variables]
+    def update_tick(self, *arg, **kv):
+        self.encoderPrevious = self.encoderCurrent
+        self.encoderCurrent = self.app.fast_data_values['servoCurrent']
+        self.position += uint32_subtract_to_int32(self.encoderCurrent, self.encoderPrevious)
 
-        matches = [item for item in prop_names if item in device_props]
-        for item in matches:
-            self.device['servo'][item] = self.__getattribute__(item)
+        self.desiredPosition = self.app.fast_data_values[
+                                   'servoDesired'] * self.ratioNum / self.ratioDen
+
+        if self.app.fast_data_values['stepsToGo'] == 0 and self.servoEnable != 0:
+            self.disableControls = False
+
+    def update_scaledPosition(self, *args, **kv):
+        ratio = Fraction(self.ratioNum, self.ratioDen)
+
+        if self.unitsPerTurn != 0:
+            self.scaledPosition = float(self.position * ratio) % self.unitsPerTurn
+        else:
+            self.scaledPosition = float(self.position * ratio)
+
+    def on_position(self, instance, value):
+        self.update_scaledPosition()
 
     def on_index(self, instance, value):
-        # if self.divisions != 0 and self.device is not None:
-        #     self.device['index']['index'] = self.index
-        #     self.device['index']['divisions'] = self.divisions
-        # else:
-        #     log.error("Divisions must be != 0")
+        ratio = Fraction(self.ratioNum, self.ratioDen)
+        if self.divisions != 0:
+            self.index = self.index % self.divisions
+            self.indexOffset = self.unitsPerTurn / self.divisions * self.index
+
+        delta = self.indexOffset - self.oldIndexOffset
+        self.oldIndexOffset = self.indexOffset
+        delta_steps = delta / ratio
+
+        if delta_steps != 0:
+            self.device['servo']['direction'] = delta_steps
+            self.disableControls = True
         return True
 
-    # def on_offset(self, instance, value):
-    #     self.device['servo']['absoluteOffset'] = self.offset
-    #     self.offset = self.device['servo']['absoluteOffset']
-
-    # def on_divisions(self, instance, value):
-    #     self.device['index']['divisions'] = self.divisions
-
-    # def on_minSpeed(self, instance, value):
-    #     self.device['servo']['minSpeed'] = self.minSpeed
+    def on_offset(self, instance, value):
+        ratio = Fraction(self.ratioNum, self.ratioDen)
+        delta = value - self.oldOffset
+        delta_steps = int(delta / ratio)
+        if delta_steps != 0:
+            self.device['servo']['direction'] = delta_steps
+            self.disableControls = True
+            self.oldOffset = value
 
     def on_maxSpeed(self, instance, value):
         self.device['servo']['maxSpeed'] = self.maxSpeed
@@ -79,14 +130,18 @@ class ServoBar(BoxLayout, SavingDispatcher):
     def on_acceleration(self, instance, value):
         self.device['servo']['acceleration'] = self.acceleration
 
-    # def on_ratioNum(self, instance, value):
-    #     self.device['servo']['ratioNum'] = self.ratioNum
+    def on_ratioNum(self, instance, value):
+        self.update_scaledPosition()
 
-    # def on_ratioDen(self, instance, value):
-    #     self.device['servo']['ratioDen'] = self.ratioDen
+    def on_ratioDen(self, instance, value):
+        self.update_scaledPosition()
 
     def on_servoEnable(self, instance, value):
         self.device['fastData']['servoEnable'] = self.servoEnable
+        if self.servoEnable == 1:
+            self.disableControls = False
+        else:
+            self.disableControls = True
 
     def toggle_enable(self):
         current_app = App.get_running_app()
@@ -98,20 +153,9 @@ class ServoBar(BoxLayout, SavingDispatcher):
         else:
             self.servoEnable = 1
 
-    def on_newCurrentPosition(self, instance, value):
-        is_enabled = self.device['fastData']['servoEnable']
-        self.device['fastData']['servoEnable'] = 0
-        self.device['servo']['currentSteps'] = value
-        self.device['servo']['desiredSteps'] = value
-        self.device['fastData']['servoEnable'] = is_enabled
-
-    def on_newDesiredPosition(self, instance, value):
-        self.device['servo']['direction'] = value
+    def set_current_position(self, value):
+        ratio = Fraction(self.ratioNum, self.ratioDen)
+        self.position = int(value / ratio)
 
     def update_current_position(self):
-        current_app = App.get_running_app()
-        Factory.Keypad().show(self, 'newCurrentPosition', self.currentPosition)
-
-    def update_desired_position(self):
-        current_app = App.get_running_app()
-        Factory.Keypad().show(self, 'newDesiredPosition', self.desiredPosition)
+        Factory.Keypad().show_with_callback(self.set_current_position, self.scaledPosition)
