@@ -66,6 +66,7 @@ class FastData(BaseDevice):
 typedef struct {
   uint32_t servoCurrent;
   uint32_t servoDesired;
+  uint32_t stepsToGo;
   float servoSpeed;
   int32_t scaleCurrent[4];
   int32_t scaleSpeed[4];
