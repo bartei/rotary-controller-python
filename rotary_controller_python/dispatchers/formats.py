@@ -1,7 +1,9 @@
+from fractions import Fraction
+
 from kivy.logger import Logger
 from kivy.properties import (
     NumericProperty,
-    StringProperty, ListProperty,
+    StringProperty, ListProperty, ObjectProperty,
 )
 
 from rotary_controller_python.dispatchers import SavingDispatcher
@@ -21,7 +23,7 @@ class FormatsDispatcher(SavingDispatcher):
     current_format = StringProperty("MM")
     speed_format = StringProperty()
     position_format = StringProperty()
-    factor = NumericProperty(1)
+    factor = ObjectProperty(Fraction(1, 1))
 
     display_color = ListProperty([1, 1, 1, 1])
 
@@ -33,11 +35,11 @@ class FormatsDispatcher(SavingDispatcher):
         if self.current_format == "MM":
             self.speed_format = self.metric_speed
             self.position_format = self.metric_position
-            self.factor = 1.0
+            self.factor = Fraction(1, 1)
         else:
             self.speed_format = self.imperial_speed
             self.position_format = self.imperial_position
-            self.factor = 25.4
+            self.factor = Fraction(10, 254)
 
     def toggle(self):
         if self.current_format == "MM":
