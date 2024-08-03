@@ -78,7 +78,7 @@ class SavingDispatcher(EventDispatcher):
         data = dict()
         for item in prop_names:
             data[item] = self.__getattribute__(item)
-            if type(data[item]) == ObservableList:
+            if isinstance(data[item], ObservableList):
                 data[item] = list(data[item])
 
         write_settings(self.filename, data)
