@@ -21,5 +21,5 @@ class SetupPopup(Popup):
 
     def on_dismiss(self):
         current_app = App.get_running_app()
-        current_app.manual_full_update()
+        # current_app.manual_full_update()
         log.info("Close setup page")

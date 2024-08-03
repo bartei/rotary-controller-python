@@ -14,12 +14,14 @@ if os.path.exists(kv_file):
 
 class NumberItem(BoxLayout):
     name = StringProperty("")
-    value = NumericProperty(0)
+    value = NumericProperty(0.0)
     help_file = StringProperty("")
 
     def validate(self, value):
         try:
             if isinstance(value, str) and "." in value:
+                self.value = float(value)
+            elif isinstance(value, float):
                 self.value = float(value)
             else:
                 self.value = int(value)

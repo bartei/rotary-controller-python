@@ -36,7 +36,7 @@
       text_size: self.size
       halign: 'center'
       valign: 'middle'
-#      on_release: Factory.Keypad().show(root.data, 'syncNum')
+      on_release: root.update_current_position()
     Label:
       text: "Desired"
       text_size: self.size
@@ -56,6 +56,8 @@
       text_size: self.size
       halign: 'center'
       valign: 'middle'
+      on_release: root.update_desired_position()
+
 
   BoxLayout:
     orientation: "vertical"

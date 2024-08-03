@@ -11,31 +11,25 @@ from rotary_controller_python.utils.base_device import variable_definitions
 SCALES_COUNT = 4
 
 
-class Index(BaseDevice):
-    definition = """
-typedef struct {
-  int32_t divisions;
-  int32_t index;
-} index_t;
-"""
+# class Index(BaseDevice):
+#     definition = """
+# typedef struct {
+#   int32_t divisions;
+#   int32_t index;
+# } index_t;
+# """
 
 
 class Servo(BaseDevice):
     definition = """
 typedef struct {
-  float minSpeed;
   float maxSpeed;
   float currentSpeed;
   float acceleration;
-  float absoluteOffset;
-  float indexOffset;
-  float desiredPosition;
-  float currentPosition;
-  int32_t currentSteps;
-  int32_t desiredSteps;
-  int32_t ratioNum;
-  int32_t ratioDen;
-  float allowedError;
+  int32_t direction;
+  uint32_t destinationSteps;
+  uint32_t currentSteps;
+  uint32_t desiredSteps;
 } servo_t;
 """
 
@@ -47,7 +41,6 @@ typedef struct {
   uint32_t executionIntervalPrevious;
   uint32_t executionIntervalCurrent;
   uint32_t executionCycles;
-  index_t index;
   servo_t servo;
   input_t scales[4];
   fastData_t fastData;
@@ -59,18 +52,11 @@ class Scale(BaseDevice):
     definition = """
 typedef struct {
   TIM_HandleTypeDef *timerHandle;
-  uint16_t encoderPrevious;
-  uint16_t encoderCurrent;
-  int32_t ratioNum;
-  int32_t ratioDen;
-  int32_t maxValue;
-  int32_t minValue;
   int32_t position;
   int32_t speed;
-  int32_t error;
   int32_t syncRatioNum, syncRatioDen;
   uint16_t syncEnable;
-  uint16_t mode;
+  uint16_t spare;
 } input_t;
 """
 
@@ -78,15 +64,14 @@ typedef struct {
 class FastData(BaseDevice):
     definition = """
 typedef struct {
-  float servoCurrent;
-  float servoDesired;
+  uint32_t servoCurrent;
+  uint32_t servoDesired;
   float servoSpeed;
   int32_t scaleCurrent[4];
   int32_t scaleSpeed[4];
   uint32_t cycles;
   uint32_t executionInterval;
   uint16_t servoEnable;
-  int16_t servoDirection;
 } fastData_t;
 """
 
@@ -113,36 +98,28 @@ while len(unloaded_list) > 0 and iterations_limit > 0:
     iterations_limit -= 1
 
 
-# import time
-# from rotary_controller_python.utils.communication import ConnectionManager
-# def test_scale_structure():
-#     dm = DeviceManager()
-#     global_data = Global(device=dm, base_address=0)
-#     global_data["servo"]["ratioNum"] = 12345
-#     result = global_data["servo"]["ratioNum"]
-#     print(result)
-#     assert result == 12345
-#
-#
-# def test_get_item_from_array_definition():
-#     dm = DeviceManager()
-#     global_data = Global(device=dm, base_address=0)
-#     global_data['scales'][1]['ratioDen'] = 111
-#     result = global_data['scales'][1]['ratioDen']
-#     assert result == 111
-#
-#
-# def test_scale_fast_data():
-#     dm = DeviceManager()
-#     dm.device.read_registers(0, 10)
-#     global_data = Global(device=dm, base_address=0)
-#     global_data.refresh()
+if __name__ == "__main__":
+    from rotary_controller_python.utils import communication
 
+    connection_manager = communication.ConnectionManager()
+    device = Global(connection_manager=connection_manager, base_address=0)
 
-# if __name__ == "__main__":
-#     dm = DeviceManager()
-#     global_data = Global(device=dm, base_address=0)
-#     while True:
-#         time.sleep(0.1)
-#         values = global_data['fastData'].refresh()
-#         print(values)
+    while True:
+        time.sleep(0.5)
+        # values = device['fastData'].refresh()
+        # print(
+        #     device['executionInterval'],
+        #     device['executionIntervalPrevious'],
+        #     device['executionIntervalCurrent'],
+        #     device['executionCycles']
+        # )
+        values = device['servo'].refresh()
+        print(values)
+
+  # float maxSpeed;
+  # float currentSpeed;
+  # float acceleration;
+  # int32_t direction;
+  # uint32_t destinationSteps;
+  # uint32_t currentSteps;
+  # uint32_t desiredSteps;

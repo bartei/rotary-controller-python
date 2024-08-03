@@ -14,9 +14,9 @@ if os.path.exists(kv_file):
 
 class DualNumberItem(BoxLayout):
     name = StringProperty("")
-    value = NumericProperty(0)
-    ratio = NumericProperty(1)
-    scaled_value = NumericProperty(0)
+    value = NumericProperty(0.0)
+    ratio = NumericProperty(1.0)
+    scaled_value = NumericProperty(0.0)
 
     def on_value(self, instance, value):
         try:

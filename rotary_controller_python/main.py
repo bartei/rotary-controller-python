@@ -107,9 +107,6 @@ class MainApp(App):
         popup.open()
         log.info("Settings done")
 
-    def manual_full_update(self):
-        self.home.servo.offset = self.device['servo']['absoluteOffset']
-
     def update(self, *args):
         try:
             self.fast_data_values = self.device['fastData'].refresh()
@@ -126,7 +123,7 @@ class MainApp(App):
 
         # Handle state change disconnected -> connected
         if not self.connected and self.connection_manager.connected:
-            self.task_update.timeout = 1.0 / 30
+            self.task_update.timeout = 1.0 / 10
             self.upload()
             self.home.status_bar.maxSpeed = self.device['servo']['maxSpeed']
             self.connected = self.connection_manager.connected
@@ -137,7 +134,10 @@ class MainApp(App):
             self.home.servo.currentPosition = self.fast_data_values['servoCurrent']
             self.home.servo.desiredPosition = self.fast_data_values['servoDesired']
             self.home.servo.servoEnable = self.fast_data_values['servoEnable']
+            self.home.servo.offset = self.device['servo']['direction']
             self.home.status_bar.speed = abs(self.fast_data_values['servoSpeed'])
+            self.home.status_bar.interval = abs(self.fast_data_values['executionInterval'])
+            self.home.status_bar.cycles = abs(self.fast_data_values['cycles'])
 
             # TODO: Find a better way to configure x and y axy for the plot view
             self.tool_x = self.fast_data_values['scaleCurrent'][0] / 1000

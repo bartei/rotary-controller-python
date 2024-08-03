@@ -18,10 +18,10 @@
     Button:
       size_hint_x: None
       width: 125
-      text: "{: 0.2f}".format(root.value / root.ratio)
+      text: "{: 0.4f}".format(root.value / root.ratio)
       on_release: Factory.Keypad().show(root, 'scaled_value')
     Button:
       size_hint_x: None
       width: 125
-      text: "{: 0.2f}".format(root.value)
+      text: "{: 0.4f}".format(root.value)
       on_release: Factory.Keypad().show(root, 'value')

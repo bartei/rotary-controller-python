@@ -69,7 +69,6 @@ class CoordBar(BoxLayout, SavingDispatcher):
             return
         self.syncEnable = not self.device['scales'][self.inputIndex]['syncEnable']
         self.device['scales'][self.inputIndex]['syncEnable'] = self.syncEnable
-        current_app.manual_full_update()
 
     def on_syncRatioNum(self, instance, value):
         self.device['scales'][instance.inputIndex]['syncRatioNum'] = int(value)
@@ -77,14 +76,14 @@ class CoordBar(BoxLayout, SavingDispatcher):
     def on_syncRatioDen(self, instance, value):
         self.device['scales'][instance.inputIndex]['syncRatioDen'] = int(value)
 
-    def on_ratioNum(self, instance, value):
-        self.device['scales'][instance.inputIndex]['ratioNum'] = int(value)
+    # def on_ratioNum(self, instance, value):
+    #     self.device['scales'][instance.inputIndex]['ratioNum'] = int(value)
 
-    def on_ratioDen(self, instance, value):
-        self.device['scales'][instance.inputIndex]['ratioDen'] = int(value)
+    # def on_ratioDen(self, instance, value):
+    #     self.device['scales'][instance.inputIndex]['ratioDen'] = int(value)
 
-    def on_mode(self, instance, value):
-        self.device['scales'][instance.inputIndex]['mode'] = int(value)
+    # def on_mode(self, instance, value):
+    #     self.device['scales'][instance.inputIndex]['mode'] = int(value)
 
     def on_newPosition(self, instance, value):
         self.device['scales'][self.inputIndex]['position'] = int(float(value) * self.app.formats.factor * 1000)
