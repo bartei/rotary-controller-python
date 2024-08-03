@@ -20,6 +20,7 @@ from rotary_controller_python.components.home.home_page import HomePage
 from rotary_controller_python.dispatchers.formats import FormatsDispatcher
 from rotary_controller_python.network.models import Wireless, NetworkInterface
 from rotary_controller_python.utils import communication, devices
+from rotary_controller_python.utils.ctype_calc import uint32_subtract_to_int32
 
 log = Logger.getChild(__name__)
 
@@ -130,11 +131,15 @@ class MainApp(App):
 
         if self.connection_manager.connected:
             for bar in self.home.coord_bars:
-                bar.position = (self.fast_data_values['scaleCurrent'][bar.inputIndex] / 1000)
-            self.home.servo.currentPosition = self.fast_data_values['servoCurrent']
-            self.home.servo.desiredPosition = self.fast_data_values['servoDesired']
+                bar.encoderPrevious = bar.encoderCurrent
+                bar.encoderCurrent = self.fast_data_values['scaleCurrent'][bar.inputIndex]
+                bar.position += uint32_subtract_to_int32(bar.encoderCurrent, bar.encoderPrevious)
+
+            self.home.servo.currentPosition = self.fast_data_values['servoCurrent'] * self.home.servo.ratioNum / self.home.servo.ratioDen
+            self.home.servo.desiredPosition = self.fast_data_values['servoDesired'] * self.home.servo.ratioNum / self.home.servo.ratioDen
             self.home.servo.servoEnable = self.fast_data_values['servoEnable']
             self.home.servo.offset = self.device['servo']['direction']
+
             self.home.status_bar.speed = abs(self.fast_data_values['servoSpeed'])
             self.home.status_bar.interval = abs(self.fast_data_values['executionInterval'])
             self.home.status_bar.cycles = abs(self.fast_data_values['cycles'])

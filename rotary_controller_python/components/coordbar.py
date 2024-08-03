@@ -22,6 +22,10 @@ if os.path.exists(kv_file):
 
 
 class CoordBar(BoxLayout, SavingDispatcher):
+    # encoder values are used to track the movement from the dro board
+    encoderCurrent: int
+    encoderPrevious: int
+
     device = ObjectProperty()
     inputIndex = NumericProperty(0)
     axisName = StringProperty("?")
@@ -30,13 +34,17 @@ class CoordBar(BoxLayout, SavingDispatcher):
     syncRatioNum = NumericProperty(360)
     syncRatioDen = NumericProperty(100)
     syncEnable = BooleanProperty(False)
+
     position = NumericProperty(0)
+
     newPosition = NumericProperty(0)
     speed = NumericProperty(0.0)
     mode = NumericProperty(0)
     syncButtonColor = ListProperty([0.3, 0.3, 0.3, 1])
 
-    _skip_save = ["position", "newPosition", "syncEnable", "speed", ]
+    scaledPosition = NumericProperty(0.0)
+
+    _skip_save = ["position", "newPosition", "syncEnable", "speed", "scaledPosition"]
 
     def __init__(self, **kv):
         self.app = App.get_running_app()
@@ -76,14 +84,18 @@ class CoordBar(BoxLayout, SavingDispatcher):
     def on_syncRatioDen(self, instance, value):
         self.device['scales'][instance.inputIndex]['syncRatioDen'] = int(value)
 
-    # def on_ratioNum(self, instance, value):
-    #     self.device['scales'][instance.inputIndex]['ratioNum'] = int(value)
+    def on_position(self, instance, value):
+        self.update_scaledPosition()
 
-    # def on_ratioDen(self, instance, value):
-    #     self.device['scales'][instance.inputIndex]['ratioDen'] = int(value)
+    def on_ratioNum(self, instance, value):
+        self.update_scaledPosition()
 
-    # def on_mode(self, instance, value):
-    #     self.device['scales'][instance.inputIndex]['mode'] = int(value)
+    def on_ratioDen(self, instance, value):
+        self.update_scaledPosition()
+
+    def update_scaledPosition(self):
+        current_app = App.get_running_app()
+        self.scaledPosition = (self.position * self.ratioNum / self.ratioDen) / current_app.formats.factor
 
     def on_newPosition(self, instance, value):
         self.device['scales'][self.inputIndex]['position'] = int(float(value) * self.app.formats.factor * 1000)
