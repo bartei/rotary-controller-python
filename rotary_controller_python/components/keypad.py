@@ -24,6 +24,7 @@ class Keypad(Popup):
         # Bind the keyboard to this widget
         self._keyboard = Window._system_keyboard
         self._keyboard.bind(on_key_down=self._on_keyboard_down)
+        self.callback_fn = None
 
     def _keyboard_closed(self):
         self._keyboard.unbind(on_key_down=self._on_keyboard_down)
@@ -51,7 +52,7 @@ class Keypad(Popup):
     def show(self, container, set_method, current_value=None):
         if current_value is not None:
             # Use the specified current value if passed
-            self.current_value = current_value
+            self.current_value = float(current_value)
         else:
             try:
                 self.current_value = getattr(container, set_method)
@@ -63,6 +64,16 @@ class Keypad(Popup):
         self.container = container
         self.open()
 
+    def show_with_callback(self, callback_fn, current_value=None):
+        if current_value is not None:
+            # Use the specified current value if passed
+            self.current_value = float(current_value)
+
+        self.callback_fn = callback_fn
+        self.set_method = None
+        self.container = None
+        self.open()
+
     def confirm(self):
         try:
             value = self.ids['value'].text
@@ -71,7 +82,11 @@ class Keypad(Popup):
             else:
                 value = int(value)
 
-            setattr(self.container, self.set_method, value)
+            if self.callback_fn is not None:
+                self.callback_fn(value)
+            else:
+                setattr(self.container, self.set_method, value)
+
             self._keyboard.release()
             self.dismiss()
         except Exception as e:
