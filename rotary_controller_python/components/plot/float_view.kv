@@ -18,15 +18,15 @@
                     id: scene_canvas
                     zoom: root.zoom
                     points: root.circle_pattern.points
-                    tool_x: app.tool_x
-                    tool_y: app.tool_y
+                    tool_x: root.tool_x
+                    tool_y: root.tool_y
 
     CoordsOverlay:
         pos: root.pos
         size: root.size
         mouse_position: root.mouse_position
         zoom: root.zoom
-        tool_x: app.tool_x
-        tool_y: app.tool_y
+        tool_x: root.tool_x
+        tool_y: root.tool_y
         selected_x: root.circle_pattern.points[root.scene_canvas.selected_point][0]
         selected_y: root.circle_pattern.points[root.scene_canvas.selected_point][1]

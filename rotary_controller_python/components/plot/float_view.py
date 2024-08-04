@@ -2,11 +2,13 @@ import math
 import os
 
 from kivy import Logger
+from kivy.app import App
 from kivy.core.window import Window
 from kivy.lang import Builder
 from kivy.uix.floatlayout import FloatLayout
 from kivy.properties import ListProperty, NumericProperty, ObjectProperty
 
+from rotary_controller_python.components.coordbar import CoordBar
 from rotary_controller_python.dispatchers.circle_pattern import CirclePatternDispatcher
 
 log = Logger.getChild(__name__)
@@ -21,12 +23,21 @@ class FloatView(FloatLayout):
     mouse_position = ListProperty([0, 0])
     circle_pattern = ObjectProperty(CirclePatternDispatcher(id_override="0"))
     zoom = NumericProperty(1.0)
+    tool_x = NumericProperty(0)
+    tool_y = NumericProperty(0)
 
     def __init__(self, **kwargs):
+        self.app = App.get_running_app()
         super().__init__(**kwargs)
         # Window.bind(mouse_pos=self.window_mouse_pos)
         Window.bind(on_motion=self.on_motion)
         self.circle_pattern.recalculate()
+        self.app.bind(update_tick=self.update_tick)
+
+    def update_tick(self, *arg, **kv):
+        coord_bars: list[CoordBar] = self.app.home.coord_bars
+        self.tool_x = coord_bars[0].scaledPosition
+        self.tool_y = coord_bars[1].scaledPosition
 
     def on_motion(self, window, etype, event):
         # will receive all motion events.

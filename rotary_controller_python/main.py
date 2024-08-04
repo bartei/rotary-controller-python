@@ -68,9 +68,6 @@ class MainApp(App):
 
     task_update = None
 
-    tool_x = NumericProperty(0)
-    tool_y = NumericProperty(0)
-
     def __init__(self, **kv):
         self.fast_data_values = dict()
         try:
@@ -133,16 +130,7 @@ class MainApp(App):
         if self.connection_manager.connected:
             self.update_tick = (self.update_tick + 1) % 100
 
-            # TODO: Find a better way to configure x and y axy for the plot view
-            # self.tool_x = self.fast_data_values['scaleCurrent'][0] / 1000
-            # self.tool_y = self.fast_data_values['scaleCurrent'][1] / 1000
-
         self.connected = self.connection_manager.connected
-
-    # def upload(self):
-        # self.home.servo.upload()
-        # for scale in self.home.coord_bars:
-        #     scale.upload()
 
     def blinker(self, *args):
         self.home.status_bar.fps = Clock.get_fps()
