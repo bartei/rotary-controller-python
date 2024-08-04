@@ -41,12 +41,10 @@ class ServoBar(BoxLayout, SavingDispatcher):
     position = NumericProperty(0)
     scaledPosition = NumericProperty(0)
 
-    desiredPosition = NumericProperty(0.0)
-
     disableControls = BooleanProperty(False)
     _skip_save = [
-        "currentPosition",
-        "desiredPosition",
+        "position",
+        "scaledPosition",
         "servoEnable",
         "oldOffset",
         "offset",

@@ -38,14 +38,14 @@ class HomePage(BoxLayout):
 
         self.status_bar = StatusBar()
         self.bars_container.add_widget(self.status_bar)
+        self.servo = ServoBar(device=self.device, id_override="0")
         coord_bars = []
         for i in range(4):
-            bar = CoordBar(inputIndex=i, device=self.device, id_override=f"{i}")
+            bar = CoordBar(inputIndex=i, device=self.device, id_override=f"{i}", servo=self.servo)
             coord_bars.append(bar)
             self.bars_container.add_widget(bar)
 
         self.coord_bars = coord_bars
-        self.servo = ServoBar(device=self.device, id_override="0")
         self.bars_container.add_widget(self.servo)
 
         self._keyboard = Window._system_keyboard

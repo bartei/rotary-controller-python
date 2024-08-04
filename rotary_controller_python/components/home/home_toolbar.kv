@@ -22,8 +22,8 @@
     on_release: app.formats.toggle()
 
   ToolbarButton:
-    text: app.abs_inc
-    on_release: app.abs_inc = "ABS" if app.abs_inc == "INC" else "INC"
+    text: "P{:d}".format(app.currentOffset)
+    on_release: Factory.Keypad().show(app, 'currentOffset')
 
   ToolbarButton:
     # Magic Wand
