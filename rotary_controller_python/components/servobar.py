@@ -80,16 +80,11 @@ class ServoBar(BoxLayout, SavingDispatcher):
         self.encoderPrevious = self.encoderCurrent
         self.encoderCurrent = self.app.fast_data_values['servoCurrent']
         self.position += uint32_subtract_to_int32(self.encoderCurrent, self.encoderPrevious)
-
-        self.desiredPosition = self.app.fast_data_values[
-                                   'servoDesired'] * self.ratioNum / self.ratioDen
-
         if self.app.fast_data_values['stepsToGo'] == 0 and self.servoEnable != 0:
             self.disableControls = False
 
     def update_scaledPosition(self, *args, **kv):
         ratio = Fraction(self.ratioNum, self.ratioDen)
-
         if self.unitsPerTurn != 0:
             self.scaledPosition = float(self.position * ratio) % self.unitsPerTurn
         else:

@@ -1,4 +1,5 @@
 import os
+import time
 
 from keke import ktrace
 from kivy.app import App
@@ -123,12 +124,15 @@ class MainApp(App):
 
         # Handle state change disconnected -> connected
         if not self.connected and self.connection_manager.connected:
-            self.task_update.timeout = 1.0 / 10
-            self.home.status_bar.maxSpeed = self.device['servo']['maxSpeed']
+            self.task_update.timeout = 1.0 / 20
+
             self.connected = self.connection_manager.connected
 
         if self.connection_manager.connected:
             self.update_tick = (self.update_tick + 1) % 100
+
+        if (self.update_tick % 10) == 0:
+            self.home.status_bar.maxSpeed = self.device['servo']['maxSpeed']
 
         self.connected = self.connection_manager.connected
 
