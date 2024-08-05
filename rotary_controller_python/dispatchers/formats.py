@@ -20,6 +20,8 @@ class FormatsDispatcher(SavingDispatcher):
     imperial_speed = StringProperty("{:+0.4f}")
 
     angle_format = StringProperty("{:+0.1f}")
+    angle_speed_format = StringProperty("{:+0.1f} RPM")
+
     current_format = StringProperty("MM")
     speed_format = StringProperty()
     position_format = StringProperty()
@@ -29,15 +31,16 @@ class FormatsDispatcher(SavingDispatcher):
 
     def __init__(self, **kv):
         super().__init__(**kv)
+        self.bind(current_format=self.update_format)
         self.update_format()
 
-    def update_format(self):
+    def update_format(self, *args, **kv):
         if self.current_format == "MM":
-            self.speed_format = self.metric_speed
+            self.speed_format = f"{self.metric_speed} M/min"
             self.position_format = self.metric_position
             self.factor = Fraction(1, 1)
         else:
-            self.speed_format = self.imperial_speed
+            self.speed_format = f"{self.imperial_speed} Ft/min"
             self.position_format = self.imperial_position
             self.factor = Fraction(10, 254)
 
@@ -46,6 +49,3 @@ class FormatsDispatcher(SavingDispatcher):
             self.current_format = "IN"
         else:
             self.current_format = "MM"
-
-    def on_current_format(self, instance, value):
-        self.update_format()

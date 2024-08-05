@@ -26,9 +26,9 @@
       halign: 'center'
       valign: 'top'
     Button:
-      size_hint_y: 0.35
+      size_hint_y: 0.30
       font_name: "fonts/iosevka-regular.ttf"
-      font_size: 32
+      font_size: 48
       font_style: "bold"
       background_color: [0.2, 0.2, 0.2, 1]
       color: app.formats.display_color
@@ -37,26 +37,10 @@
       halign: 'center'
       valign: 'middle'
       on_release: root.update_current_position()
-#    Label:
-#      text: "Desired"
-#      text_size: self.size
-#      size_hint_y: 0.15
-#      font_size: 16
-#      color: app.formats.display_color
-#      halign: 'center'
-#      valign: 'top'
-#    Button:
-#      size_hint_y: 0.35
-#      font_name: "fonts/iosevka-regular.ttf"
-#      font_size: 32
-#      font_style: "bold"
-#      background_color: [0.2, 0.2, 0.2, 1]
-#      color: app.formats.display_color
-#      text:  app.formats.angle_format.format(root.desiredPosition)
-#      text_size: self.size
-#      halign: 'center'
-#      valign: 'middle'
-
+    ProgressBar:
+      size_hint_y: 0.20
+      max: int(root.maxSpeed)
+      value: int(root.speed)
 
   BoxLayout:
     orientation: "vertical"

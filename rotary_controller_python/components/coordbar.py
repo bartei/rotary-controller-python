@@ -38,18 +38,31 @@ class CoordBar(BoxLayout, SavingDispatcher):
     position = NumericProperty(0)
 
     speed = NumericProperty(0)
-    mode = NumericProperty(0)
+    spindleMode = BooleanProperty(False)
+    stepsPerRev = NumericProperty(4096)
+    stepsPerMM = NumericProperty(1000)
     offsets = ListProperty([0 for item in range(100)])
     syncButtonColor = ListProperty([0.3, 0.3, 0.3, 1])
     scaledPosition = NumericProperty(0)
+    formattedPosition = StringProperty("--")
+    formattedSpeed = StringProperty("--")
 
     _skip_save = [
-        "position", "syncEnable", "speed", "scaledPosition", "encoderPrevious", "encoderCurrent", "currentOffset"
+        "position",
+        "syncEnable",
+        "speed",
+        "scaledPosition",
+        "encoderPrevious",
+        "encoderCurrent",
+        "currentOffset",
+        "formattedSpeed",
+        "formattedPosition",
     ]
     _force_save = ["offsets"]
 
     def __init__(self, servo: ServoBar, **kv):
-        self.app = App.get_running_app()
+        from rotary_controller_python.main import MainApp
+        self.app: MainApp = App.get_running_app()
         super().__init__(**kv)
 
         self.servo: ServoBar = servo
@@ -118,6 +131,13 @@ class CoordBar(BoxLayout, SavingDispatcher):
             self.position * Fraction(self.ratioNum, self.ratioDen) + self.offsets[self.app.currentOffset]
         ) * self.app.formats.factor
 
+        if self.spindleMode:
+            self.formattedPosition = self.app.formats.angle_speed_format.format(self.speed)
+            self.formattedSpeed = self.app.formats.angle_speed_format.format(self.speed)
+        else:
+            self.formattedPosition = self.app.formats.position_format.format(self.scaledPosition)
+            self.formattedSpeed = self.app.formats.speed_format.format(self.speed)
+
     def on_newPosition(self, instance, value):
         raw_position = self.position * Fraction(self.ratioNum, self.ratioDen)
         raw_offset = value / self.app.formats.factor
@@ -133,32 +153,37 @@ class CoordBar(BoxLayout, SavingDispatcher):
         self.update_scaledPosition()
 
     def update_position(self):
-        if not self.mode == 1:
+        if not self.spindleMode:
             Factory.Keypad().show_with_callback(self.set_current_position, self.scaledPosition)
 
     def zero_position(self):
         self.set_current_position(0)
 
     def speed_task(self, *args, **kv):
-        current_time = time.time()
-
-        app = App.get_running_app()
-        if app is None:
+        if self.app is None or self.app.fast_data_values is None:
             return
 
-        if app.fast_data_values is not None:
-            speed_or_zero = app.fast_data_values.get('scaleSpeed', [0] * SCALES_COUNT)[self.inputIndex]
-        else:
-            speed_or_zero = 0
-        self.speed_history.append(speed_or_zero)
-        average = (sum(self.speed_history) / len(self.speed_history))
+        if self.stepsPerMM == 0 and not self.spindleMode:
+            return
 
-        if app.formats.current_format == "IN":
-            # Speed in feet per minute
-            self.speed = float(average * 60 / 25.4 / 12)
-        else:
-            # Speed in mt/minute
-            self.speed = float(average * 60 / 1000 / 1000)
+        if self.stepsPerRev == 0  and self.spindleMode:
+            return
+
+        current_time = time.time()
+        steps_per_second = self.app.fast_data_values.get('scaleSpeed', [0] * SCALES_COUNT)[self.inputIndex]
+        self.speed_history.append(steps_per_second)
+        avg_steps_per_second = (sum(self.speed_history) / len(self.speed_history))
+
+        # Calculate Revs/Min for spindleMode
+        if self.spindleMode:
+            self.speed = (avg_steps_per_second / self.stepsPerRev) / 60
+
+        # Calculate feeds
+        if not self.spindleMode:
+            if self.app.formats.current_format == "MM":
+                self.speed = float(avg_steps_per_second * 60 * (1 / self.stepsPerMM) * (1 / 1000))
+            if self.app.formats.current_format == "IN":
+                self.speed = float(avg_steps_per_second * 60 * (1 / self.stepsPerMM) * (1 / 1000) * (120 / 254))
 
         self.previous_axis_time = current_time
-        self.previous_axis_pos = Decimal(self.position)
+        self.previous_axis_pos = self.position

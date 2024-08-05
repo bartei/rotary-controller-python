@@ -24,6 +24,7 @@ class ServoBar(BoxLayout, SavingDispatcher):
     name = StringProperty("R")
     maxSpeed = NumericProperty(1000)
     acceleration = NumericProperty(1000)
+    speed = NumericProperty(0)
     ratioNum = NumericProperty(400)
     ratioDen = NumericProperty(360)
     offset = NumericProperty(0.0)

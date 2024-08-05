@@ -1,5 +1,4 @@
 import os
-import time
 
 from keke import ktrace
 from kivy.app import App
@@ -7,7 +6,6 @@ from kivy.base import EventLoop
 from kivy.clock import Clock
 from kivy.logger import Logger, KivyFormatter
 from kivy.properties import (
-    StringProperty,
     NumericProperty,
     ConfigParserProperty,
     BooleanProperty,
@@ -21,7 +19,6 @@ from rotary_controller_python.components.home.home_page import HomePage
 from rotary_controller_python.dispatchers.formats import FormatsDispatcher
 from rotary_controller_python.network.models import Wireless, NetworkInterface
 from rotary_controller_python.utils import communication, devices
-from rotary_controller_python.utils.ctype_calc import uint32_subtract_to_int32
 
 log = Logger.getChild(__name__)
 
@@ -125,19 +122,14 @@ class MainApp(App):
         # Handle state change disconnected -> connected
         if not self.connected and self.connection_manager.connected:
             self.task_update.timeout = 1.0 / 20
-
             self.connected = self.connection_manager.connected
 
         if self.connection_manager.connected:
             self.update_tick = (self.update_tick + 1) % 100
 
-        if (self.update_tick % 10) == 0:
-            self.home.status_bar.maxSpeed = self.device['servo']['maxSpeed']
-
         self.connected = self.connection_manager.connected
 
     def blinker(self, *args):
-        self.home.status_bar.fps = Clock.get_fps()
         self.blink = not self.blink
 
     def build(self):

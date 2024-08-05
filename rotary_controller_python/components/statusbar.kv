@@ -25,11 +25,11 @@
     width: 64
     label: "{:0.0f}".format(0 if root.interval == 0 else (100000000 / root.interval))
 
-  LedButton:
-    # CURRENT SERVO SPEED
-    size_hint_x: None
-    width: 64
-    label: str(int(root.speed))
+#  LedButton:
+#    # CURRENT SERVO SPEED
+#    size_hint_x: None
+#    width: 64
+#    label: str(int(root.speed))
 
   LedButton:
     # FPS
@@ -42,7 +42,3 @@
     size_hint_x: None
     width: 64
     label: str(root.cycles)
-
-  ProgressBar:
-    max: int(root.maxSpeed)
-    value: int(root.speed)

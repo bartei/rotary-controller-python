@@ -25,7 +25,7 @@
         font_size: self.height / 1.5
         font_style: "bold"
         color: app.formats.display_color
-        text: app.formats.position_format.format(root.scaledPosition) if root.mode == 0 else app.formats.speed_format.format(root.speed)
+        text: root.formattedPosition
         text_size: self.size
         halign: 'right'
         valign: 'center'
@@ -36,7 +36,7 @@
         font_size: self.height / 1.5
         font_style: "bold"
         color: app.formats.display_color
-        text: app.formats.speed_format.format(root.speed / app.formats.factor)
+        text: root.formattedSpeed
         text_size: self.size
         halign: 'right'
         valign: 'top'
