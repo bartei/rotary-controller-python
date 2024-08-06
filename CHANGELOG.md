@@ -1,5 +1,48 @@
 # CHANGELOG
 
+## v0.3.5-alpha.1 (2024-08-06)
+
+### Fix
+
+* fix: configure simple branch release ([`291a3c2`](https://github.com/bartei/rotary-controller-python/commit/291a3c23f7ab87c4d69812e283fb8a9f9e91b88f))
+
+* fix: add release process for simple branch ([`e730645`](https://github.com/bartei/rotary-controller-python/commit/e730645db1c1e945d98dd7be3b1cdf6bcaebaf73))
+
+* fix: add spindle mode flag for scales
+fix: formatting and units for speeds and spindle mode
+fix: move speedbar for servo in servobar
+fix: update speed calculator ([`289900f`](https://github.com/bartei/rotary-controller-python/commit/289900f7091cb2e61311439ef3de978bf8ceb8c1))
+
+* fix: cleanup
+fix: add slow speed refresh call to update maxSpeed for status bar
+fix: remove numpy as it&#39;s not used anymore in the code ([`080a96a`](https://github.com/bartei/rotary-controller-python/commit/080a96adb964761ca8ffa3bac0a1d2caac81d5b9))
+
+* fix: minor updates ([`8d07a83`](https://github.com/bartei/rotary-controller-python/commit/8d07a8315ed3b22730a318a5dc2d06e4c54dfbdd))
+
+* fix: updates for ratio scaling of sync value ([`1b66639`](https://github.com/bartei/rotary-controller-python/commit/1b6663920dfdf3752cd9337f4bea0e7d55e284b2))
+
+* fix: update setup page for servo ([`625fb02`](https://github.com/bartei/rotary-controller-python/commit/625fb02306bee635584e0e193fe9870a63801cc1))
+
+* fix: cleanup initial connection handling and propagate clock events ([`ab7f061`](https://github.com/bartei/rotary-controller-python/commit/ab7f061f6c22022fde2cf491ad2441e9693eb2d9))
+
+* fix: update devices for communication ([`5f15f89`](https://github.com/bartei/rotary-controller-python/commit/5f15f89df788498647359d143047a0a29281e736))
+
+* fix: add handling of overflow with method for uint32 using ctypes ([`923854b`](https://github.com/bartei/rotary-controller-python/commit/923854b43f53b92792dc47ebe5c703f4211f9703))
+
+* fix: massive update to servobar ([`e7792c6`](https://github.com/bartei/rotary-controller-python/commit/e7792c6c27bc19389bb8e4f9d0626d1a25d27b1a))
+
+* fix: use Fractions for unit conversion ([`d4adbc0`](https://github.com/bartei/rotary-controller-python/commit/d4adbc073b8f7250fee8673adb60922c9b9e88ba))
+
+* fix: cleanup ([`4a37e9d`](https://github.com/bartei/rotary-controller-python/commit/4a37e9d4d7740ee68292f75558c1d7f805617839))
+
+* fix: move update event for statusbar in the statusbar code ([`0930b98`](https://github.com/bartei/rotary-controller-python/commit/0930b9875bb181fe338444a5f816ef1531b79454))
+
+* fix: add callback strategy for the keypad ([`25794db`](https://github.com/bartei/rotary-controller-python/commit/25794db4b5d0fafa13135c40ca4f35ace19e5bdf))
+
+* fix: unit conversions and ctype calculations ([`2e2387d`](https://github.com/bartei/rotary-controller-python/commit/2e2387dbdc40302927311f0bda886baf1ba0a102))
+
+* fix: wip on simple mode, so far so good! ([`11f8d91`](https://github.com/bartei/rotary-controller-python/commit/11f8d91b44568f8718f07199237778253280020a))
+
 ## v0.3.4 (2024-07-28)
 
 ### Fix
