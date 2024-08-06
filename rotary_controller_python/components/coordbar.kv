@@ -7,10 +7,10 @@
   Button:
     width: 96
     size_hint_x: None
-    text: root.axisName
+    text: root.scale.axisName
     font_size: self.height / 1.5
-    background_color: [0.2, 1, 0.2, 1] if root.syncEnable else [0.3, 0.3, 0.3, 1]
-    on_release: root.toggle_sync()
+    background_color: [0.2, 1, 0.2, 1] if root.scale.syncEnable else [0.3, 0.3, 0.3, 1]
+    on_release: root.scale.toggle_sync()
 
   BoxLayout:
     orientation: "horizontal"
@@ -25,7 +25,7 @@
         font_size: self.height / 1.5
         font_style: "bold"
         color: app.formats.display_color
-        text: root.formattedPosition
+        text: root.scale.formattedPosition
         text_size: self.size
         halign: 'right'
         valign: 'center'
@@ -36,7 +36,7 @@
         font_size: self.height / 1.5
         font_style: "bold"
         color: app.formats.display_color
-        text: root.formattedSpeed
+        text: root.scale.formattedSpeed
         text_size: self.size
         halign: 'right'
         valign: 'top'
@@ -59,11 +59,11 @@
         font_style: "bold"
         background_color: [0.3, 0.3, 0.3, 1]
         color: app.formats.display_color
-        text: str(int(root.syncRatioNum))
+        text: str(int(root.scale.syncRatioNum))
         text_size: self.size
         halign: 'center'
         valign: 'middle'
-        on_release: Factory.Keypad().show(root, 'syncRatioNum')
+        on_release: Factory.Keypad().show(root.scale, 'syncRatioNum')
 
     BoxLayout:
       size_hint_x: None
@@ -83,11 +83,11 @@
         font_style: "bold"
         background_color: [0.3, 0.3, 0.3, 1]
         color: app.formats.display_color
-        text: str(int(root.syncRatioDen))
+        text: str(int(root.scale.syncRatioDen))
         text_size: self.size
         halign: 'center'
         valign: 'middle'
-        on_release: Factory.Keypad().show(root, 'syncRatioDen')
+        on_release: Factory.Keypad().show(root.scale, 'syncRatioDen')
 
   Button:
     text: "Zero"
@@ -96,4 +96,4 @@
     background_color: [0.5, 0.5, 0.5, 1]
     width: self.height
     size_hint_x: None
-    on_release: root.zero_position()
+    on_release: root.scale.zero_position()

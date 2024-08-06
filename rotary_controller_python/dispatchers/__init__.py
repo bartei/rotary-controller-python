@@ -98,6 +98,7 @@ def read_settings(file: str):
 
 
 def write_settings(file: str, data):
+    log.info(f"Saving: {file}")
     try:
         with open(file, "w") as f:
             yaml.dump(data, f)

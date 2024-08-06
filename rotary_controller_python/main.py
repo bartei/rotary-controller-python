@@ -1,4 +1,5 @@
 import os
+from typing import List
 
 from keke import ktrace
 from kivy.app import App
@@ -9,7 +10,7 @@ from kivy.properties import (
     NumericProperty,
     ConfigParserProperty,
     BooleanProperty,
-    ObjectProperty,
+    ObjectProperty, ListProperty,
 )
 from kivy.uix.popup import Popup
 
@@ -17,6 +18,8 @@ from rotary_controller_python.components.appsettings import AppSettings
 from rotary_controller_python.components.appsettings import config
 from rotary_controller_python.components.home.home_page import HomePage
 from rotary_controller_python.dispatchers.formats import FormatsDispatcher
+from rotary_controller_python.dispatchers.scale import ScaleDispatcher
+from rotary_controller_python.dispatchers.servo import ServoDispatcher
 from rotary_controller_python.network.models import Wireless, NetworkInterface
 from rotary_controller_python.utils import communication, devices
 
@@ -45,7 +48,7 @@ class MainApp(App):
 
     blink = BooleanProperty(False)
     connected = BooleanProperty(False)
-    formats = FormatsDispatcher(id_override="0")
+    formats = ObjectProperty()
     abs_inc = ConfigParserProperty(
         defaultvalue="ABS", section="global", key="abs_inc", config=config, val_type=str
     )
@@ -64,6 +67,9 @@ class MainApp(App):
     home = ObjectProperty()
     update_tick = NumericProperty(0)
 
+    servo: ServoDispatcher = ObjectProperty()
+    scales: List[ScaleDispatcher] = ListProperty([])
+
     task_update = None
 
     def __init__(self, **kv):
@@ -75,6 +81,7 @@ class MainApp(App):
                 address=self.serial_address
             )
             self.device = devices.Global(connection_manager=self.connection_manager, base_address=0)
+
         except Exception as e:
             log.error(f"Communication cannot be started, will try again: {e.__str__()}")
 
@@ -133,7 +140,23 @@ class MainApp(App):
         self.blink = not self.blink
 
     def build(self):
-        self.home = HomePage(device=self.device)
+        self.formats = FormatsDispatcher(id_override="0")
+        self.servo = ServoDispatcher(
+            connected=self.connected,
+            # formats=self.formats,
+            device=self.device,
+            id_override="0",
+        )
+        for i in range(4):
+            self.scales.append(ScaleDispatcher(
+                connected=self.connected,
+                update_tick=self.update_tick,
+                servo=self.servo,
+                device=self.device,
+                formats=self.formats,
+                id_override=f"{i}",
+            ))
+        self.home = HomePage(device=self.device, servo=self.servo, scales=self.scales)
         self.task_update = Clock.schedule_interval(self.update, 1.0 / 30)
         Clock.schedule_interval(self.blinker, 1.0 / 4)
         return self.home
