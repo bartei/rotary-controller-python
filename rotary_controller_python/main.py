@@ -125,6 +125,7 @@ class MainApp(App):
         if not self.connection_manager.connected:
             self.connected = self.connection_manager.connected
             self.task_update.timeout = 2.0
+            self.update_tick = (self.update_tick + 1) % 100
 
         # Handle state change disconnected -> connected
         if not self.connected and self.connection_manager.connected:
@@ -156,7 +157,11 @@ class MainApp(App):
                 formats=self.formats,
                 id_override=f"{i}",
             ))
-        self.home = HomePage(device=self.device, servo=self.servo, scales=self.scales)
+        self.home = HomePage(
+            device=self.device,
+            servo=self.servo,
+            scales=self.scales,
+        )
         self.task_update = Clock.schedule_interval(self.update, 1.0 / 30)
         Clock.schedule_interval(self.blinker, 1.0 / 4)
         return self.home

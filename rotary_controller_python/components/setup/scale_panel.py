@@ -15,7 +15,6 @@ if os.path.exists(kv_file):
 class ScalePanel(BoxLayout):
     scale = ObjectProperty()
 
-    def __init__(self, scale, **kv):
-        self.scale = scale
+    def __init__(self, **kv):
         super().__init__(**kv)
         self.ids['grid_layout'].bind(minimum_height=self.ids['grid_layout'].setter('height'))

@@ -15,7 +15,6 @@ if os.path.exists(kv_file):
 class ServoPanel(BoxLayout):
     servo = ObjectProperty()
 
-    def __init__(self, servo, **kv):
-        self.servo = servo
+    def __init__(self, **kv):
         super().__init__(**kv)
         self.ids['grid_layout'].bind(minimum_height=self.ids['grid_layout'].setter('height'))

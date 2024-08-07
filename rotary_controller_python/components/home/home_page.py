@@ -29,15 +29,13 @@ if os.path.exists(kv_file):
 
 class HomePage(BoxLayout):
     device = ObjectProperty()
-    status_bar = ObjectProperty()
     bars_container = ObjectProperty()
     servo = ObjectProperty()
     scales: List[ScaleDispatcher] = ListProperty([])
 
     def __init__(self, **kv):
         super().__init__(**kv)
-        self.status_bar = StatusBar()
-        self.bars_container.add_widget(self.status_bar)
+        self.bars_container.add_widget(StatusBar())
         servo_bar = ServoBar(servo=self.servo)
 
         coord_bars = []

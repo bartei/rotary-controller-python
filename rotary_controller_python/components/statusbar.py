@@ -16,6 +16,7 @@ if os.path.exists(kv_file):
 
 
 class StatusBar(BoxLayout):
+    update_tick = NumericProperty(0)
     interval = NumericProperty(0)
     cycles = NumericProperty(0)
     fps = NumericProperty(0)
@@ -23,9 +24,19 @@ class StatusBar(BoxLayout):
     def __init__(self, **kv):
         self.app = App.get_running_app()
         super().__init__(**kv)
-        self.app.bind(update_tick=self.update_tick)
+        Clock.schedule_interval(self.update, 1.0 / 5)
 
-    def update_tick(self, *args, **kv):
+    def update(self, *args, **kv):
         self.fps = Clock.get_fps()
-        self.interval = self.app.fast_data_values['executionInterval']
-        self.cycles = self.app.fast_data_values['cycles']
+        if not self.app.connected:
+            return
+
+        if self.app.fast_data_values is None:
+            # There is no connection yet
+            return
+        try:
+            self.interval = self.app.fast_data_values['executionInterval']
+            self.cycles = self.app.fast_data_values['cycles']
+        except Exception as e:
+            log.debug(e.__str__(), exc_info=True)
+
