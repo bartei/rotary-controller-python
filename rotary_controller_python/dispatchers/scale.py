@@ -36,8 +36,6 @@ class ScaleDispatcher(SavingDispatcher):
 
     speed = NumericProperty(0)
     spindleMode = BooleanProperty(False)
-    stepsPerRev = NumericProperty(4096)
-    stepsPerMM = NumericProperty(1000)
     offsets = ListProperty([0 for item in range(100)])
     syncButtonColor = ListProperty([0.3, 0.3, 0.3, 1])
     scaledPosition = NumericProperty(0)
@@ -74,7 +72,7 @@ class ScaleDispatcher(SavingDispatcher):
         self.formats.bind(factor=self.update_scaledPosition)
         self.formats.bind(factor=self.set_sync_ratio)
         self.update_scaledPosition()
-        Clock.schedule_interval(self.speed_task, 1.0/25.0)
+        Clock.schedule_interval(self.speed_task, 1.0 / 25.0)
 
         # Private variables that don't need dispatchers etc
         self.encoderPrevious = 0
@@ -159,12 +157,6 @@ class ScaleDispatcher(SavingDispatcher):
         if self.app is None or self.app.fast_data_values is None:
             return
 
-        if self.stepsPerMM == 0 and not self.spindleMode:
-            return
-
-        if self.stepsPerRev == 0  and self.spindleMode:
-            return
-
         current_time = time.time()
         steps_per_second = self.app.fast_data_values.get('scaleSpeed', [0] * SCALES_COUNT)[self.inputIndex]
         self.speed_history.append(steps_per_second)
@@ -172,14 +164,27 @@ class ScaleDispatcher(SavingDispatcher):
 
         # Calculate Revs/Min for spindleMode
         if self.spindleMode:
-            self.speed = (avg_steps_per_second / self.stepsPerRev) / 60
+            self.speed = float(
+                avg_steps_per_second
+                * Fraction(self.ratioNum, self.ratioDen)
+                * Fraction(1, 60)
+            )
 
         # Calculate feeds
         if not self.spindleMode:
             if self.formats.current_format == "MM":
-                self.speed = float(avg_steps_per_second * 60 * (1 / self.stepsPerMM) * (1 / 1000))
+                self.speed = float(
+                    avg_steps_per_second
+                    * Fraction(self.ratioNum, self.ratioDen)
+                    * Fraction(60, 1000)
+                )
             if self.formats.current_format == "IN":
-                self.speed = float(avg_steps_per_second * 60 * (1 / self.stepsPerMM) * (1 / 1000) * (120 / 254))
+                self.speed = float(
+                    avg_steps_per_second
+                    * Fraction(self.ratioNum, self.ratioDen)
+                    * Fraction(60, 1000)
+                    * Fraction(120, 254)
+                )
 
         self.previous_axis_time = current_time
         self.previous_axis_pos = self.position
