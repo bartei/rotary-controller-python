@@ -19,11 +19,8 @@ log = Logger.getChild(__name__)
 
 
 class ScaleDispatcher(SavingDispatcher):
-    connected = BooleanProperty(False)
-    update_tick = NumericProperty(0)
     formats: FormatsDispatcher = ObjectProperty(None)
     servo: ServoDispatcher = ObjectProperty(None)
-    device = ObjectProperty()
 
     inputIndex = NumericProperty(0)
     axisName = StringProperty("?")
@@ -43,11 +40,8 @@ class ScaleDispatcher(SavingDispatcher):
     formattedSpeed = StringProperty("--")
 
     _skip_save = [
-        "connected",
         "update_tick",
         "formats",
-        "servo",
-        "device",
         "position",
         "syncEnable",
         "speed",
@@ -69,6 +63,9 @@ class ScaleDispatcher(SavingDispatcher):
         self.previous_axis_time: float = 0
         self.previous_axis_pos: Decimal = Decimal(0)
         self.app.bind(currentOffset=self.update_scaledPosition)
+        self.app.bind(connected=self.connected)
+        self.app.bind(update_tick=self.update_tick)
+
         self.formats.bind(factor=self.update_scaledPosition)
         self.formats.bind(factor=self.set_sync_ratio)
         self.update_scaledPosition()
@@ -78,14 +75,14 @@ class ScaleDispatcher(SavingDispatcher):
         self.encoderPrevious = 0
         self.encoderCurrent = 0
 
-    def on_connected(self, instance, value):
+    def connected(self, instance, value):
         """
         This method is called when the connection is established
         """
-        self.syncEnable = self.device['scales'][self.inputIndex]['syncEnable']
+        self.syncEnable = self.app.device['scales'][self.inputIndex]['syncEnable'] == 1
         self.set_sync_ratio()
 
-    def on_update_tick(self, instance, value):
+    def update_tick(self, instance, value):
         self.encoderPrevious = self.encoderCurrent
         self.encoderCurrent = self.app.fast_data_values['scaleCurrent'][self.inputIndex]
         self.position += uint32_subtract_to_int32(self.encoderCurrent, self.encoderPrevious)
@@ -93,8 +90,14 @@ class ScaleDispatcher(SavingDispatcher):
     def toggle_sync(self):
         if not self.app.connected:
             return
-        self.syncEnable = not self.device['scales'][self.inputIndex]['syncEnable']
-        self.device['scales'][self.inputIndex]['syncEnable'] = self.syncEnable
+        log.info(f"Sync for: {self.axisName}, set to: {self.syncEnable}")
+
+        if self.syncEnable is True:
+            self.app.device['scales'][self.inputIndex]['syncEnable'] = 0
+            self.syncEnable = False
+        else:
+            self.app.device['scales'][self.inputIndex]['syncEnable'] = 1
+            self.syncEnable = True
 
     def set_sync_ratio(self, *args, **kv):
         scale_ratio = Fraction(self.ratioNum, self.ratioDen) * self.formats.factor
@@ -102,8 +105,8 @@ class ScaleDispatcher(SavingDispatcher):
         sync_ratio = Fraction(self.syncRatioNum, self.syncRatioDen)
 
         final_ratio = scale_ratio * sync_ratio / servo_ratio
-        self.device['scales'][self.inputIndex]['syncRatioNum'] = final_ratio.numerator
-        self.device['scales'][self.inputIndex]['syncRatioDen'] = final_ratio.denominator
+        self.app.device['scales'][self.inputIndex]['syncRatioNum'] = final_ratio.numerator
+        self.app.device['scales'][self.inputIndex]['syncRatioDen'] = final_ratio.denominator
 
     def on_syncRatioNum(self, instance, value):
         if self.app.home is None:

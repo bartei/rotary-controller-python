@@ -143,17 +143,11 @@ class MainApp(App):
     def build(self):
         self.formats = FormatsDispatcher(id_override="0")
         self.servo = ServoDispatcher(
-            connected=self.connected,
-            # formats=self.formats,
-            device=self.device,
             id_override="0",
         )
         for i in range(4):
             self.scales.append(ScaleDispatcher(
-                connected=self.connected,
-                update_tick=self.update_tick,
                 servo=self.servo,
-                device=self.device,
                 formats=self.formats,
                 id_override=f"{i}",
             ))

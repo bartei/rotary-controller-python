@@ -1,7 +1,9 @@
+import collections
+import time
 from fractions import Fraction
 
 from kivy.logger import Logger
-from kivy.properties import StringProperty, NumericProperty, BooleanProperty, ObjectProperty
+from kivy.properties import StringProperty, NumericProperty, BooleanProperty
 from kivy.app import App
 
 from rotary_controller_python.dispatchers import SavingDispatcher
@@ -11,10 +13,6 @@ log = Logger.getChild(__name__)
 
 
 class ServoDispatcher(SavingDispatcher):
-    update_tick = NumericProperty(0)
-    connected = BooleanProperty(False)
-    device = ObjectProperty()
-
     name = StringProperty("R")
     maxSpeed = NumericProperty(1000)
     acceleration = NumericProperty(1000)
@@ -53,25 +51,41 @@ class ServoDispatcher(SavingDispatcher):
     def __init__(self, **kv):
         self.app = App.get_running_app()
         super().__init__(**kv)
-
+        self.app.bind(connected=self.connected)
+        self.app.bind(update_tick=self.update_tick)
         # Private variables that don't need dispatchers etc
         self.encoderPrevious = 0
         self.encoderCurrent = 0
+        self.previous_axis_time = time.time()
+        self.speed_history = collections.deque(maxlen=10)
 
-    def on_connected(self, instance, value):
-        if self.device.dm.connected:
+
+    def connected(self, instance, value):
+        if self.app.connected:
             self.encoderPrevious = self.app.fast_data_values['servoCurrent']
             self.encoderCurrent = self.app.fast_data_values['servoCurrent']
             self.servoEnable = self.app.fast_data_values['servoEnable']
+            self.app.device['servo']['maxSpeed'] = self.maxSpeed
+            self.app.device['servo']['acceleration'] = self.acceleration
+
             if self.servoEnable == 0:
                 self.disableControls = True
             else:
                 self.disableControls = False
 
-    def on_update_tick(self, instance, value):
+    def update_tick(self, instance, value):
         self.encoderPrevious = self.encoderCurrent
         self.encoderCurrent = self.app.fast_data_values['servoCurrent']
-        self.position += uint32_subtract_to_int32(self.encoderCurrent, self.encoderPrevious)
+        self.servoEnable = self.app.fast_data_values['servoEnable']
+
+        delta = uint32_subtract_to_int32(self.encoderCurrent, self.encoderPrevious)
+        current_time = time.time()
+        steps_per_second = abs(delta) / (current_time - self.previous_axis_time)
+        self.speed_history.append(steps_per_second)
+        self.speed = (sum(self.speed_history) / len(self.speed_history))
+        self.previous_axis_time = current_time
+
+        self.position += delta
         if self.app.fast_data_values['stepsToGo'] == 0 and self.servoEnable != 0:
             self.disableControls = False
 
@@ -96,7 +110,7 @@ class ServoDispatcher(SavingDispatcher):
         delta_steps = delta / ratio
 
         if delta_steps != 0:
-            self.device['servo']['direction'] = delta_steps
+            self.app.device['servo']['direction'] = delta_steps
             self.disableControls = True
         return True
 
@@ -105,15 +119,15 @@ class ServoDispatcher(SavingDispatcher):
         delta = value - self.oldOffset
         delta_steps = int(delta / ratio)
         if delta_steps != 0:
-            self.device['servo']['direction'] = delta_steps
+            self.app.device['servo']['direction'] = delta_steps
             self.disableControls = True
             self.oldOffset = value
 
     def on_maxSpeed(self, instance, value):
-        self.device['servo']['maxSpeed'] = self.maxSpeed
+        self.app.device['servo']['maxSpeed'] = self.maxSpeed
 
     def on_acceleration(self, instance, value):
-        self.device['servo']['acceleration'] = self.acceleration
+        self.app.device['servo']['acceleration'] = self.acceleration
 
     def on_ratioNum(self, instance, value):
         self.update_scaledPosition()
@@ -122,14 +136,14 @@ class ServoDispatcher(SavingDispatcher):
         self.update_scaledPosition()
 
     def on_servoEnable(self, instance, value):
-        self.device['fastData']['servoEnable'] = self.servoEnable
+        self.app.device['fastData']['servoEnable'] = self.servoEnable
         if self.servoEnable == 1:
             self.disableControls = False
         else:
             self.disableControls = True
 
     def toggle_enable(self):
-        if not self.connected:
+        if not self.app.connected:
             return
 
         if self.servoEnable != 0:
