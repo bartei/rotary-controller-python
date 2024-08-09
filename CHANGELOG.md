@@ -1,5 +1,23 @@
 # CHANGELOG
 
+## v0.3.5-alpha.2 (2024-08-09)
+
+### Fix
+
+* fix: use more globals in the scale dispatcher
+fix: speed calculation for servo
+fix: user more globals for the servo dispatcher
+fix: cleanup initialization of dispatchers in main.py ([`4eaaf6d`](https://github.com/bartei/rotary-controller-python/commit/4eaaf6d024f3c42e858b1350860bb428e59364a5))
+
+* fix: cleanup units for scales ([`34984ab`](https://github.com/bartei/rotary-controller-python/commit/34984ab4dbb4a25c2a4570146a5cd83b50811867))
+
+* fix: cleanup home init
+fix: force update_tick to take place also when not connected
+fix: cleanup setup initializations
+fix: error handling for statusbar ([`91d8fd4`](https://github.com/bartei/rotary-controller-python/commit/91d8fd404d4737b28186d49a56ab36f73d3202b1))
+
+* fix: wip refactoring of scales and servos into dedicated dispatcher ([`05036a3`](https://github.com/bartei/rotary-controller-python/commit/05036a3724aedd8cf0a5d396038926fa59d16959))
+
 ## v0.3.5-alpha.1 (2024-08-06)
 
 ### Fix
