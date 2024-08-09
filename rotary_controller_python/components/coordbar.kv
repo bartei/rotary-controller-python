@@ -1,5 +1,6 @@
 #: import Factory kivy.factory.Factory
 #: import Keypad components.keypad
+#: import ImageButton components.toolbars.image_button
 
 <CoordBar>:
   orientation: "horizontal"
@@ -89,8 +90,9 @@
         valign: 'middle'
         on_release: Factory.Keypad().show(root.scale, 'syncRatioDen')
 
-  Button:
-    text: "Zero"
+  ImageButton:
+#    text: "Zero"
+    source: "pictures/zero-icon-white.png"
     font_size: 24
     font_style: "bold"
     background_color: [0.5, 0.5, 0.5, 1]

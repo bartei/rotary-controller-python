@@ -1,0 +1,19 @@
+#: import ew kivy.uix.effectwidget
+
+<ImageButton>:
+  source: "pictures/zero-icon-white.png"
+#  size_hint_y: None
+#  height: self.width
+#  width: self.height
+#  size_hint_x: None
+#  on_release: root.scale.zero_position()
+  EffectWidget:
+    effects: ew.FXAAEffect(),
+    height: min(root.height, root.width) * 0.75
+    width: min(root.height, root.width) * 0.75
+    center_x: root.center_x
+    center_y: root.center_y
+    Image:
+      source: root.source
+      height: root.height
+      width: root.width

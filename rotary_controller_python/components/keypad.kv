@@ -1,3 +1,5 @@
+#: import ImageButton components.toolbars.image_button
+
 <KeypadButton@Button>:
   font_size: 32
   font_name: "fonts/Manrope-Bold.ttf"
@@ -43,9 +45,9 @@
       KeypadButton:
         text: "6"
         on_release: root.ids.value.text+= self.text
-      KeypadButton:
-        text: "\u00bd"
+      ImageButton:
         on_release: root.ids.value.text = str(root.current_value / 2)
+        source: "pictures/half-icon-white.png"
     BoxLayout:
       orientation: "horizontal"
       KeypadButton:
