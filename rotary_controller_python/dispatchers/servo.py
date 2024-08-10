@@ -18,6 +18,7 @@ class ServoDispatcher(SavingDispatcher):
     maxSpeed = NumericProperty(1000)
     acceleration = NumericProperty(1000)
     speed = NumericProperty(0)
+    jogSpeed = NumericProperty(0)
     ratioNum = NumericProperty(400)
     ratioDen = NumericProperty(360)
     offset = NumericProperty(0.0)
@@ -111,13 +112,11 @@ class ServoDispatcher(SavingDispatcher):
         self.encoderCurrent = self.app.fast_data_values['servoCurrent']
         self.servoEnable = self.app.fast_data_values['servoEnable']
 
-        delta = uint32_subtract_to_int32(self.encoderCurrent, self.encoderPrevious)
-        current_time = time.time()
-        steps_per_second = abs(delta) / (current_time - self.previous_axis_time)
+        steps_per_second = self.app.fast_data_values['servoSpeed']
         self.speed_history.append(steps_per_second)
         self.speed = (sum(self.speed_history) / len(self.speed_history))
-        self.previous_axis_time = current_time
 
+        delta = uint32_subtract_to_int32(self.encoderCurrent, self.encoderPrevious)
         self.position += delta
         if self.app.fast_data_values['stepsToGo'] == 0 and self.servoEnable != 0:
             self.disableControls = False
@@ -159,12 +158,15 @@ class ServoDispatcher(SavingDispatcher):
     def on_maxSpeed(self, instance, value):
         self.app.device['servo']['maxSpeed'] = self.maxSpeed
 
+    def on_jogSpeed(self, instance, value):
+        self.app.device['servo']['jogSpeed'] = self.jogSpeed
+
     def on_acceleration(self, instance, value):
         self.app.device['servo']['acceleration'] = self.acceleration
 
     def on_servoEnable(self, instance, value):
         self.app.device['fastData']['servoEnable'] = self.servoEnable
-        if self.servoEnable == 1:
+        if self.servoEnable != 0:
             self.disableControls = False
         else:
             self.disableControls = True
