@@ -25,6 +25,7 @@ class Servo(BaseDevice):
 typedef struct {
   float maxSpeed;
   float currentSpeed;
+  float jogSpeed;
   float acceleration;
   int32_t direction;
   uint32_t destinationSteps;
