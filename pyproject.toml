@@ -42,8 +42,3 @@ prerelease = false
 match = "dev"
 prerelease = true
 prerelease_token = "rc"
-
-[tool.semantic_release.branches.simple]
-match = "simple"
-prerelease = true
-prerelease_token = "alpha"
