@@ -1,6 +1,16 @@
 # CHANGELOG
 
+## v0.3.5-alpha.4 (2024-08-10)
+
+### Unknown
+
+* Merge remote-tracking branch &#39;origin/simple&#39; into simple ([`1e8f388`](https://github.com/bartei/rotary-controller-python/commit/1e8f3882b0bd6263263d8b79ee13e3167775092a))
+
 ## v0.3.5-alpha.3 (2024-08-09)
+
+### Fix
+
+* fix: servo indexing ([`11e05de`](https://github.com/bartei/rotary-controller-python/commit/11e05de4ce7842beaa56ac06d87554f234049c89))
 
 ### Unknown
 
