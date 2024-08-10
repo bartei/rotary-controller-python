@@ -1,8 +1,26 @@
 # CHANGELOG
 
+## v1.0.0 (2024-08-10)
+
+### Breaking
+
+* feat: new communication protocol
+
+BREAKING CHANGE: new communication and servo handling
+
+ci: Cleanup of cicd ([`68f8abd`](https://github.com/bartei/rotary-controller-python/commit/68f8abd432987ed839ce2cd20e63ebe1f442da1d))
+
+### Unknown
+
+* Merge remote-tracking branch &#39;origin/main&#39; ([`6c986d1`](https://github.com/bartei/rotary-controller-python/commit/6c986d19aeb667c2dd776cb97dfe453cecbb3096))
+
 ## v0.3.5 (2024-08-10)
 
 ### Unknown
+
+* major: new communication protocol
+
+BREAKING CHANGE: new communication and servo handling ([`f96f636`](https://github.com/bartei/rotary-controller-python/commit/f96f63677970f9d9035b178e010004fcd7dfb6c4))
 
 * Merge remote-tracking branch &#39;origin/simple&#39; into simple ([`9446616`](https://github.com/bartei/rotary-controller-python/commit/9446616c4f120a7eae9a87e25c947aca8ea16da2))
 
