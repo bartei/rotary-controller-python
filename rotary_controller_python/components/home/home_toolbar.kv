@@ -4,17 +4,13 @@
 #: import ToolbarButton components.toolbars.toolbar_button
 #: import SetupPopup components.setup.setup_popup
 #: import ScenePopup components.plot.scene_popup
+#: import JogPopup components.jog.jog_popup
 
 <HomeToolbar>:
   size_hint_x: None
   size_hint_y: 1
   width: 80
   orientation: "vertical"
-
-  ToolbarButton:
-    # TOOL
-    text: "T{:d}".format(int(app.tool))
-    on_release: Factory.Keypad().show(app, 'tool')
 
   ToolbarButton:
     # IN/MM
@@ -30,6 +26,11 @@
     font_name: "fonts/Font Awesome 6 Free-Solid-900.otf"
     text: "\ue2ca"
     on_release: Factory.ScenePopup().open()
+
+  ToolbarButton:
+    # TOOL
+    text: "JOG".format(int(app.tool))
+    on_release: Factory.JogPopup().open()
 
   ToolbarButton:
     font_name: "fonts/Font Awesome 6 Free-Solid-900.otf"

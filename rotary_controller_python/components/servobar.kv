@@ -40,7 +40,7 @@
     ProgressBar:
       size_hint_y: 0.20
       max: int(root.servo.maxSpeed)
-      value: int(root.servo.speed)
+      value: int(abs(root.servo.speed))
 
   BoxLayout:
     orientation: "vertical"

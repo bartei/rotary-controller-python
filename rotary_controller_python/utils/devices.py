@@ -11,15 +11,6 @@ from rotary_controller_python.utils.base_device import variable_definitions
 SCALES_COUNT = 4
 
 
-# class Index(BaseDevice):
-#     definition = """
-# typedef struct {
-#   int32_t divisions;
-#   int32_t index;
-# } index_t;
-# """
-
-
 class Servo(BaseDevice):
     definition = """
 typedef struct {
