@@ -1,4 +1,6 @@
 import logging
+from typing import Optional
+
 import minimalmodbus
 from keke import ktrace
 
@@ -36,13 +38,13 @@ def read_float(dm: ConnectionManager, address) -> float:
 
 
 @ktrace("address")
-def write_float(dm, address, value):
+def write_float(dm, address, value, variable_name: Optional[str] = ""):
     try:
         dm.device.write_float(
             address, byteorder=minimalmodbus.BYTEORDER_LITTLE_SWAP, value=value
         )
         dm.connected = True
-        log.info(f"Write float: {value} to address {address}")
+        log.info(f"Write {variable_name}: float {value} to address {address}")
     except Exception as e:
         dm.connected = False
         log.error(e.__str__())
@@ -63,7 +65,7 @@ def read_long(dm, address) -> int:
 
 
 @ktrace("address")
-def write_long(dm, address, value):
+def write_long(dm, address, value, variable_name: Optional[str] = ""):
     try:
         dm.device.write_long(
             address,
@@ -72,7 +74,7 @@ def write_long(dm, address, value):
             value=int(value),
         )
         dm.connected = True
-        log.info(f"Write long: {value} to address {address}")
+        log.info(f"Write {variable_name}: long {value} to address {address}")
     except Exception as e:
         dm.connected = False
         log.error(e.__str__())
@@ -91,11 +93,11 @@ def read_unsigned(dm, address):
 
 
 @ktrace("address")
-def write_unsigned(dm, address, value):
+def write_unsigned(dm, address, value, variable_name: Optional[str] = ""):
     try:
         dm.device.write_register(address, signed=False, value=int(value))
         dm.connected = True
-        log.info(f"Write unsigned: {int(value)} to address {address}")
+        log.info(f"Write {variable_name}: unsigned {value} to address {address}")
     except Exception as e:
         dm.connected = False
         log.error(e.__str__())
@@ -114,11 +116,11 @@ def read_signed(dm, address):
 
 
 @ktrace("address")
-def write_signed(dm, address, value):
+def write_signed(dm, address, value, variable_name: Optional[str] = ""):
     try:
         dm.device.write_register(address, signed=True, value=int(value))
         dm.connected = True
-        log.info(f"Write signed: {int(value)} to address {address}")
+        log.info(f"Write {variable_name}: signed {value} to address {address}")
     except Exception as e:
         dm.connected = False
         log.error(e.__str__())

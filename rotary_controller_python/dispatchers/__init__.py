@@ -1,11 +1,12 @@
 import os
 import shutil
 from pathlib import Path
+from typing import Optional
 
 import yaml
 from kivy.logger import Logger
 from kivy.event import EventDispatcher
-from kivy.properties import StringProperty, NumericProperty, BooleanProperty, ListProperty, ObservableList
+from kivy.properties import StringProperty, NumericProperty, BooleanProperty, ListProperty, ObservableList, partial
 
 log = Logger.getChild(__name__)
 
@@ -47,7 +48,6 @@ class SavingDispatcher(EventDispatcher):
         os.makedirs(settings_folder, exist_ok=True)
 
         settings_path = settings_folder / f"{self.__class__.__name__}-{self.id_override}.yaml"
-        log.debug(f"Identified settings path as: {settings_path}")
         return settings_path
 
     def read_settings(self):
@@ -68,11 +68,11 @@ class SavingDispatcher(EventDispatcher):
     def bind_settings(self):
         props = self.get_our_properties()
         prop_names = [item.name for item in props]
-
-        kwargs = {item: self.save_settings for item in prop_names}
+        kwargs = {item: partial(self.save_settings, triggering_property=item) for item in prop_names}
         self.bind(**kwargs)
 
     def save_settings(self, *args, **kv):
+        triggering_property = kv.pop("triggering_property", "")
         props = self.get_our_properties()
         prop_names = [item.name for item in props]
         data = dict()
@@ -81,7 +81,7 @@ class SavingDispatcher(EventDispatcher):
             if isinstance(data[item], ObservableList):
                 data[item] = list(data[item])
 
-        write_settings(self.filename, data)
+        write_settings(self.filename, data, triggered_by=triggering_property)
 
 
 def read_settings(file: str):
@@ -97,8 +97,8 @@ def read_settings(file: str):
         return None
 
 
-def write_settings(file: str, data):
-    log.info(f"Saving: {file}")
+def write_settings(file: str, data, triggered_by: Optional[str] = ""):
+    log.info(f"Saving {triggered_by}: {file}")
     try:
         with open(file, "w") as f:
             yaml.dump(data, f)

@@ -113,7 +113,7 @@ class BaseDevice:
         except Exception as e:
             raise Exception(f"Variable with name: {key} not found ({e.__str__()})")
 
-        var.type.write_function(self.dm, var.address + self.base_address, value)
+        var.type.write_function(self.dm, var.address + self.base_address, value, key)
         return
 
     @classmethod

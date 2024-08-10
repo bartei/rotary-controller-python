@@ -1,4 +1,5 @@
 import collections
+import math
 import time
 from fractions import Fraction
 
@@ -27,8 +28,8 @@ class ServoDispatcher(SavingDispatcher):
     unitsPerTurn = NumericProperty(360.0)
     oldOffset = NumericProperty(0.0)
 
-    indexOffset = NumericProperty(0.0)
-    oldIndexOffset = NumericProperty(0.0)
+    # indexOffset = NumericProperty(0.0)
+    # oldIndexOffset = NumericProperty(0.0)
 
     position = NumericProperty(0)
     scaledPosition = NumericProperty(0)
@@ -44,21 +45,37 @@ class ServoDispatcher(SavingDispatcher):
         "oldOffset",
         "offset",
         "index",
-        "indexOffset",
-        "oldIndexOffset",
+        # "indexOffset",
+        # "oldIndexOffset",
+        "disableControls",
+        "speed",
+        "direction",
     ]
 
     def __init__(self, **kv):
         self.app = App.get_running_app()
         super().__init__(**kv)
+        # App event bindings
         self.app.bind(connected=self.connected)
+        self.app.bind(connected=self.update_positions)
         self.app.bind(update_tick=self.update_tick)
+
+        # Widget event bindings
+        self.bind(divisions=self.update_positions)
+        self.bind(ratioNum=self.update_positions)
+        self.bind(ratioDen=self.update_positions)
+        self.bind(ratioNum=self.update_scaledPosition)
+        self.bind(ratioDen=self.update_scaledPosition)
+        self.bind(position=self.update_scaledPosition)
+
         # Private variables that don't need dispatchers etc
         self.encoderPrevious = 0
         self.encoderCurrent = 0
         self.previous_axis_time = time.time()
         self.speed_history = collections.deque(maxlen=10)
-
+        self.previousIndex = 0
+        self.step_positions = dict()
+        self.positions = dict()
 
     def connected(self, instance, value):
         if self.app.connected:
@@ -73,7 +90,23 @@ class ServoDispatcher(SavingDispatcher):
             else:
                 self.disableControls = False
 
+    def update_positions(self, *args, **kv):
+        ratio = Fraction(self.ratioNum, self.ratioDen)
+        if self.divisions < 1:
+            self.divisions = 1
+        self.positions = dict()
+        self.step_positions = dict()
+        for i in range(self.divisions):
+            self.positions[i] = i * (self.unitsPerTurn / self.divisions)
+            self.step_positions[i] = round(self.positions[i] / ratio)
+
+        self.previousIndex = 0
+        self.index = self.index = 0
+
     def update_tick(self, instance, value):
+        if not self.app.connected:
+            return
+
         self.encoderPrevious = self.encoderCurrent
         self.encoderCurrent = self.app.fast_data_values['servoCurrent']
         self.servoEnable = self.app.fast_data_values['servoEnable']
@@ -96,23 +129,23 @@ class ServoDispatcher(SavingDispatcher):
         else:
             self.scaledPosition = float(self.position * ratio)
 
-    def on_position(self, instance, value):
-        self.update_scaledPosition()
-
     def on_index(self, instance, value):
         ratio = Fraction(self.ratioNum, self.ratioDen)
-        if self.divisions != 0:
-            self.index = self.index % self.divisions
-            self.indexOffset = self.unitsPerTurn / self.divisions * self.index
+        self.index = self.index % self.divisions
 
-        delta = self.indexOffset - self.oldIndexOffset
-        self.oldIndexOffset = self.indexOffset
-        delta_steps = delta / ratio
+        index_delta = (self.index - self.previousIndex)
+        half_divisions = self.divisions // 2
+        steps_per_turn = (self.unitsPerTurn / ratio)
+        delta = self.step_positions[self.index] - self.step_positions[self.previousIndex]
 
-        if delta_steps != 0:
-            self.app.device['servo']['direction'] = delta_steps
+        if index_delta > half_divisions:
+            delta = -(steps_per_turn - delta)
+        if index_delta < -half_divisions:
+            delta = (delta + steps_per_turn)
+        if delta != 0:
+            self.app.device['servo']['direction'] = delta
             self.disableControls = True
-        return True
+            self.previousIndex = self.index
 
     def on_offset(self, instance, value):
         ratio = Fraction(self.ratioNum, self.ratioDen)
@@ -128,12 +161,6 @@ class ServoDispatcher(SavingDispatcher):
 
     def on_acceleration(self, instance, value):
         self.app.device['servo']['acceleration'] = self.acceleration
-
-    def on_ratioNum(self, instance, value):
-        self.update_scaledPosition()
-
-    def on_ratioDen(self, instance, value):
-        self.update_scaledPosition()
 
     def on_servoEnable(self, instance, value):
         self.app.device['fastData']['servoEnable'] = self.servoEnable

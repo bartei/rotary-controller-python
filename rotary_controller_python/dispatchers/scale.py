@@ -83,6 +83,8 @@ class ScaleDispatcher(SavingDispatcher):
         self.set_sync_ratio()
 
     def update_tick(self, instance, value):
+        if not self.app.connected:
+            return
         self.encoderPrevious = self.encoderCurrent
         self.encoderCurrent = self.app.fast_data_values['scaleCurrent'][self.inputIndex]
         self.position += uint32_subtract_to_int32(self.encoderCurrent, self.encoderPrevious)
@@ -150,7 +152,7 @@ class ScaleDispatcher(SavingDispatcher):
         raw_position = self.position * Fraction(self.ratioNum, self.ratioDen)
         raw_offset = value / self.formats.factor
         self.offsets[self.app.currentOffset] = float(raw_offset - raw_position)
-        self.save_settings()
+        # self.save_settings()
         self.update_scaledPosition()
 
     def zero_position(self):
