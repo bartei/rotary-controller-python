@@ -1,6 +1,20 @@
 # CHANGELOG
 
+## v0.3.5-alpha.5 (2024-08-10)
+
+### Unknown
+
+* Merge remote-tracking branch &#39;origin/simple&#39; into simple ([`0fad8bb`](https://github.com/bartei/rotary-controller-python/commit/0fad8bb27d237e202b9f2ef6ea4731f67d6484e0))
+
 ## v0.3.5-alpha.4 (2024-08-10)
+
+### Fix
+
+* fix: cleanup ([`2097a72`](https://github.com/bartei/rotary-controller-python/commit/2097a72ee3bfaf7e00059373a931454c9d865b1d))
+
+* fix: add jogSpeed variable ([`a497896`](https://github.com/bartei/rotary-controller-python/commit/a4978968792f82a4f6064aadf0f9676c6c6de70d))
+
+* fix: use better speed for servo ([`48554b4`](https://github.com/bartei/rotary-controller-python/commit/48554b45731427ea559a56ecf2a054b035a216b4))
 
 ### Unknown
 
