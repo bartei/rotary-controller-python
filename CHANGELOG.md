@@ -1,8 +1,16 @@
 # CHANGELOG
 
+## v0.3.5-alpha.3 (2024-08-09)
+
+### Unknown
+
+* Merge remote-tracking branch &#39;origin/simple&#39; into simple ([`0afea8b`](https://github.com/bartei/rotary-controller-python/commit/0afea8bfb3ff93d7da7eaf7fcff9d86033b5db0e))
+
 ## v0.3.5-alpha.2 (2024-08-09)
 
 ### Fix
+
+* fix: add icons to some buttons ([`abfe32f`](https://github.com/bartei/rotary-controller-python/commit/abfe32fa9901470dc30587fac4ccffafd9019a69))
 
 * fix: use more globals in the scale dispatcher
 fix: speed calculation for servo
