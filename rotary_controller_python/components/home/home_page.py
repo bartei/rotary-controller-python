@@ -1,6 +1,5 @@
 import os
 from contextlib import ExitStack
-from typing import List
 
 from keke import TraceOutput
 from kivy.app import App
@@ -16,7 +15,6 @@ from kivy.uix.boxlayout import BoxLayout
 from rotary_controller_python.components.coordbar import CoordBar
 from rotary_controller_python.components.servobar import ServoBar
 from rotary_controller_python.components.statusbar import StatusBar
-from rotary_controller_python.dispatchers.scale import ScaleDispatcher
 
 log = Logger.getChild(__name__)
 
@@ -30,6 +28,7 @@ if os.path.exists(kv_file):
 class HomePage(BoxLayout):
     device = ObjectProperty()
     bars_container = ObjectProperty()
+    servo = ObjectProperty()
 
     def __init__(self, **kv):
         self.app = App.get_running_app()
@@ -39,7 +38,7 @@ class HomePage(BoxLayout):
 
         coord_bars = []
         for i in range(4):
-            bar = CoordBar(input_index=1)
+            bar = bar = CoordBar(inputIndex=i, device=self.device, id_override=f"{i}", servo=self.servo)
             coord_bars.append(bar)
             self.bars_container.add_widget(bar)
 

@@ -18,7 +18,6 @@ from rotary_controller_python.components.appsettings import AppSettings
 from rotary_controller_python.components.appsettings import config
 from rotary_controller_python.components.home.home_page import HomePage
 from rotary_controller_python.dispatchers.formats import FormatsDispatcher
-from rotary_controller_python.dispatchers.scale import ScaleDispatcher
 from rotary_controller_python.dispatchers.servo import ServoDispatcher
 from rotary_controller_python.network.models import Wireless, NetworkInterface
 from rotary_controller_python.utils import communication, devices
@@ -68,7 +67,6 @@ class MainApp(App):
     update_tick = NumericProperty(0)
 
     servo: ServoDispatcher = ObjectProperty()
-    scales: List[ScaleDispatcher] = ListProperty([])
 
     task_update = None
 
@@ -145,16 +143,9 @@ class MainApp(App):
         self.servo = ServoDispatcher(
             id_override="0",
         )
-        for i in range(4):
-            self.scales.append(ScaleDispatcher(
-                servo=self.servo,
-                formats=self.formats,
-                id_override=f"{i}",
-            ))
         self.home = HomePage(
             device=self.device,
             servo=self.servo,
-            scales=self.scales,
         )
         self.task_update = Clock.schedule_interval(self.update, 1.0 / 30)
         Clock.schedule_interval(self.blinker, 1.0 / 4)
