@@ -1,5 +1,11 @@
 # CHANGELOG
 
+## v1.0.2 (2024-08-11)
+
+### Fix
+
+* fix: wrong address for scales in plot view ([`1b25625`](https://github.com/bartei/rotary-controller-python/commit/1b25625153430cea82affe6dd4fe223b7e46bb0a))
+
 ## v1.0.1 (2024-08-11)
 
 ### Unknown
