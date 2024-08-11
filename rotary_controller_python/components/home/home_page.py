@@ -29,6 +29,7 @@ class HomePage(BoxLayout):
     device = ObjectProperty()
     bars_container = ObjectProperty()
     servo = ObjectProperty()
+    scales = ListProperty([])
 
     def __init__(self, **kv):
         self.app = App.get_running_app()
@@ -42,7 +43,7 @@ class HomePage(BoxLayout):
             coord_bars.append(bar)
             self.bars_container.add_widget(bar)
 
-        self.coord_bars = coord_bars
+        self.scales = coord_bars
         self.bars_container.add_widget(servo_bar)
 
         self._keyboard = Window._system_keyboard

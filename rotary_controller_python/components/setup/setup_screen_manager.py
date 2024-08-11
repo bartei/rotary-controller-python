@@ -30,7 +30,7 @@ class SetupScreenManager(ScreenManager):
         # Add tabs for the input scales
         for i in range(4):
             screen = Screen(name=f"scale_{i}")
-            screen.add_widget(ScalePanel(scale=app.scales[i]))
+            screen.add_widget(ScalePanel(scale=app.home.scales[i]))
             self.add_widget(screen)
 
         # Add Tab for the servo motor configuration
