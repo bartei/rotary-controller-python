@@ -1,5 +1,11 @@
 # CHANGELOG
 
+## v1.0.1 (2024-08-11)
+
+### Unknown
+
+* Merge remote-tracking branch &#39;origin/main&#39; ([`0e2820b`](https://github.com/bartei/rotary-controller-python/commit/0e2820b5e8952bc7dfd7fda3f6a829a516202017))
+
 ## v1.0.0 (2024-08-10)
 
 ### Breaking
@@ -9,6 +15,10 @@
 BREAKING CHANGE: new communication and servo handling
 
 ci: Cleanup of cicd ([`68f8abd`](https://github.com/bartei/rotary-controller-python/commit/68f8abd432987ed839ce2cd20e63ebe1f442da1d))
+
+### Fix
+
+* fix: mistake in the setup panel for scales instance referencing ([`c489cbe`](https://github.com/bartei/rotary-controller-python/commit/c489cbee0e7e95610762f685a13acef5af2f85ec))
 
 ### Unknown
 
