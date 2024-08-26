@@ -92,6 +92,7 @@ class MainApp(App):
         self.sound.play()
 
     def beep(self, *args, **kv):
+        self.sound.volume = 0.2
         self.sound.play()
         pass
 
