@@ -87,7 +87,7 @@ class MainApp(App):
 
         super().__init__(**kv)
 
-        sound_file = f"{os.path.dirname(__file__)}/sounds/stop.mp3"
+        sound_file = f"{os.path.dirname(__file__)}/sounds/beep.mp3"
         self.sound = SoundLoader.load(sound_file)
         self.sound.play()
 
