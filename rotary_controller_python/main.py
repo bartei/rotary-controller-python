@@ -1,10 +1,12 @@
 import os
+from pathlib import Path
 from typing import List
 
 from keke import ktrace
 from kivy.app import App
 from kivy.base import EventLoop
 from kivy.clock import Clock
+from kivy.core.audio import SoundLoader
 from kivy.logger import Logger, KivyFormatter
 from kivy.properties import (
     NumericProperty,
@@ -84,6 +86,14 @@ class MainApp(App):
             log.error(f"Communication cannot be started, will try again: {e.__str__()}")
 
         super().__init__(**kv)
+
+        sound_file = f"{os.path.dirname(__file__)}/sounds/stop.mp3"
+        self.sound = SoundLoader.load(sound_file)
+        self.sound.play()
+
+    def beep(self, *args, **kv):
+        self.sound.play()
+        pass
 
     @staticmethod
     def load_help(help_file_name):
