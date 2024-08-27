@@ -79,17 +79,20 @@ class ServoDispatcher(SavingDispatcher):
         self.positions = dict()
 
     def connected(self, instance, value):
-        if self.app.connected:
-            self.encoderPrevious = self.app.fast_data_values['servoCurrent']
-            self.encoderCurrent = self.app.fast_data_values['servoCurrent']
-            self.servoEnable = self.app.fast_data_values['servoEnable']
-            self.app.device['servo']['maxSpeed'] = self.maxSpeed
-            self.app.device['servo']['acceleration'] = self.acceleration
+        try:
+            if self.app.connected:
+                self.encoderPrevious = self.app.fast_data_values['servoCurrent']
+                self.encoderCurrent = self.app.fast_data_values['servoCurrent']
+                self.servoEnable = self.app.fast_data_values['servoEnable']
+                self.app.device['servo']['maxSpeed'] = self.maxSpeed
+                self.app.device['servo']['acceleration'] = self.acceleration
 
-            if self.servoEnable == 0:
-                self.disableControls = True
-            else:
-                self.disableControls = False
+                if self.servoEnable == 0:
+                    self.disableControls = True
+                else:
+                    self.disableControls = False
+        except Exception as e:
+            log.error(e.__str__())
 
     def update_positions(self, *args, **kv):
         ratio = Fraction(self.ratioNum, self.ratioDen)
