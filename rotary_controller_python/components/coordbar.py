@@ -142,18 +142,19 @@ class CoordBar(BoxLayout, SavingDispatcher):
             self.formattedSpeed = self.app.formats.speed_format.format(self.speed)
 
     def on_newPosition(self, instance, value):
-        raw_position = self.position * Fraction(self.ratioNum, self.ratioDen)
-        raw_offset = value / self.app.formats.factor
-        self.offsets[self.app.currentOffset] = float(raw_offset - raw_position)
-        self.save_settings()
-        self.update_scaledPosition()
+        self.set_current_position(value)
 
     def set_current_position(self, value):
-        raw_position = self.position * Fraction(self.ratioNum, self.ratioDen)
-        raw_offset = value / self.app.formats.factor
-        self.offsets[self.app.currentOffset] = float(raw_offset - raw_position)
-        self.save_settings()
-        self.update_scaledPosition()
+        # 0 is the reference position for the DRO when offset 0 is selected we reset the absolute position of the scale
+        if self.app.currentOffset == 0:
+            self.position = float(value / self.app.formats.factor / Fraction(self.ratioNum, self.ratioDen))
+            self.offsets[self.app.currentOffset] = 0
+        else:
+            raw_position = self.position * Fraction(self.ratioNum, self.ratioDen)
+            raw_offset = value / self.app.formats.factor
+            self.offsets[self.app.currentOffset] = float(raw_offset - raw_position)
+            self.save_settings()
+            self.update_scaledPosition()
 
     def update_position(self):
         if not self.spindleMode:
@@ -169,7 +170,7 @@ class CoordBar(BoxLayout, SavingDispatcher):
         if self.stepsPerMM == 0 and not self.spindleMode:
             return
 
-        if self.stepsPerRev == 0  and self.spindleMode:
+        if self.stepsPerRev == 0 and self.spindleMode:
             return
 
         current_time = time.time()
