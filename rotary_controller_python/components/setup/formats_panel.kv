@@ -45,13 +45,12 @@
         Slider:
           size_hint_x: 0.7
           min: 0
-          max: 1
+          max: 0.5
           value: root.formats.volume
-  #        on_value:
           on_touch_up: root.formats.volume = self.value
         Label:
           size_hint_x: 0.1
-          text: "{}".format(int(root.formats.volume * 100))
+          text: "{}".format(int(root.formats.volume * 200))
           font_name: "fonts/iosevka-regular.ttf"
           font_size: 32
       Label:
