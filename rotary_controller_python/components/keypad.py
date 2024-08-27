@@ -1,5 +1,6 @@
 import os
 
+from kivy.app import App
 from kivy.core.window import Window
 from kivy.logger import Logger
 from kivy.properties import NumericProperty
@@ -20,11 +21,16 @@ class Keypad(Popup):
     current_value = NumericProperty(0)
 
     def __init__(self, **kwargs):
+        self.app = App.get_running_app()
         super().__init__(**kwargs)
         # Bind the keyboard to this widget
         self._keyboard = Window._system_keyboard
         self._keyboard.bind(on_key_down=self._on_keyboard_down)
         self.callback_fn = None
+
+    def on_touch_down(self, touch):
+        self.app.beep()
+        return super().on_touch_down(touch)
 
     def _keyboard_closed(self):
         self._keyboard.unbind(on_key_down=self._on_keyboard_down)

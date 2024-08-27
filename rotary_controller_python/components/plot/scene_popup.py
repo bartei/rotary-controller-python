@@ -21,5 +21,9 @@ class ScenePopup(Popup):
         self.app = App.get_running_app()
         super().__init__(**kwargs)
 
+    def on_touch_down(self, touch):
+        self.app.beep()
+        return super().on_touch_down(touch)
+
     def cancel(self):
         self.dismiss()

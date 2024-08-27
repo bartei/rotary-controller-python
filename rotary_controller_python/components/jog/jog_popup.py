@@ -34,6 +34,10 @@ class JogPopup(Popup):
         value = args[1]
         self.desired_speed = value
 
+    def on_touch_down(self, touch):
+        self.app.beep()
+        return super().on_touch_down(touch)
+
     def on_dismiss(self):
         self.app.servo.jogSpeed = 0
         self.app.servo.servoEnable = 0

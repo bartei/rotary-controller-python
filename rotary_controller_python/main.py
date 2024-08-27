@@ -89,12 +89,10 @@ class MainApp(App):
 
         sound_file = f"{os.path.dirname(__file__)}/sounds/beep.mp3"
         self.sound = SoundLoader.load(sound_file)
-        self.sound.play()
 
     def beep(self, *args, **kv):
-        self.sound.volume = 0.2
+        self.sound.volume = self.formats.volume
         self.sound.play()
-        pass
 
     @staticmethod
     def load_help(help_file_name):
@@ -160,6 +158,8 @@ class MainApp(App):
         )
         self.task_update = Clock.schedule_interval(self.update, 1.0 / 30)
         Clock.schedule_interval(self.blinker, 1.0 / 4)
+
+        self.beep()
         return self.home
 
     def on_stop(self):

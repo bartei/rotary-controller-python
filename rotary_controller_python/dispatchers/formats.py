@@ -28,6 +28,7 @@ class FormatsDispatcher(SavingDispatcher):
     factor = ObjectProperty(Fraction(1, 1))
 
     display_color = ListProperty([1, 1, 1, 1])
+    volume = NumericProperty(0.2)
 
     def __init__(self, **kv):
         super().__init__(**kv)
