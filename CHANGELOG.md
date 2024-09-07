@@ -1,5 +1,25 @@
 # CHANGELOG
 
+## v1.0.3 (2024-09-07)
+
+### Fix
+
+* fix: limit maximum volume to 50 ([`f864738`](https://github.com/bartei/rotary-controller-python/commit/f864738b3b62faf5ae358fe76e4a3650bc0e3b76))
+
+* fix: update packages ([`489dd3f`](https://github.com/bartei/rotary-controller-python/commit/489dd3f6aedb633eecc6836bd85a90a1e1da43e3))
+
+* fix: error handling for servo connection update ([`e64186e`](https://github.com/bartei/rotary-controller-python/commit/e64186ec8fd7026158fb5f045d4549fdec05d163))
+
+* fix: absolute zero at offset 0 properly handled ([`e5c1151`](https://github.com/bartei/rotary-controller-python/commit/e5c1151037e122520df414c1fe2ad1681bf762fc))
+
+* fix: add beeps to most buttons and volume slider in setup page ([`2918b0c`](https://github.com/bartei/rotary-controller-python/commit/2918b0c379daf35e4fa581f47eadfe164c0d2e2e))
+
+* fix: beep sound ([`e001fd6`](https://github.com/bartei/rotary-controller-python/commit/e001fd6d2bf56ea3d08980b149be35077b1b16dc))
+
+* fix: lower volume to test current ([`dfc1416`](https://github.com/bartei/rotary-controller-python/commit/dfc141615781618c564955600d469417455074eb))
+
+* fix: test code for a beep ([`9907ab7`](https://github.com/bartei/rotary-controller-python/commit/9907ab795e1811938e2ddbe20dbde9c4f173afa8))
+
 ## v1.0.2 (2024-08-11)
 
 ### Fix
