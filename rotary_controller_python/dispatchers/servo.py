@@ -108,21 +108,24 @@ class ServoDispatcher(SavingDispatcher):
         self.index = self.index = 0
 
     def update_tick(self, instance, value):
-        if not self.app.connected:
-            return
+        try:
+            if not self.app.connected:
+                return
 
-        self.encoderPrevious = self.encoderCurrent
-        self.encoderCurrent = self.app.fast_data_values['servoCurrent']
-        self.servoEnable = self.app.fast_data_values['servoEnable']
+            self.encoderPrevious = self.encoderCurrent
+            self.encoderCurrent = self.app.fast_data_values['servoCurrent']
+            self.servoEnable = self.app.fast_data_values['servoEnable']
 
-        steps_per_second = self.app.fast_data_values['servoSpeed']
-        self.speed_history.append(steps_per_second)
-        self.speed = (sum(self.speed_history) / len(self.speed_history))
+            steps_per_second = self.app.fast_data_values['servoSpeed']
+            self.speed_history.append(steps_per_second)
+            self.speed = (sum(self.speed_history) / len(self.speed_history))
 
-        delta = uint32_subtract_to_int32(self.encoderCurrent, self.encoderPrevious)
-        self.position += delta
-        if self.app.fast_data_values['stepsToGo'] == 0 and self.servoEnable != 0:
-            self.disableControls = False
+            delta = uint32_subtract_to_int32(self.encoderCurrent, self.encoderPrevious)
+            self.position += delta
+            if self.app.fast_data_values['stepsToGo'] == 0 and self.servoEnable != 0:
+                self.disableControls = False
+        except Exception as e:
+            log.error(f"Unable to read servo: {e.__str__()}")
 
     def update_scaledPosition(self, *args, **kv):
         ratio = Fraction(self.ratioNum, self.ratioDen)
