@@ -1,6 +1,4 @@
 import os
-from pathlib import Path
-from typing import List
 
 from keke import ktrace
 from kivy.app import App
@@ -12,7 +10,7 @@ from kivy.properties import (
     NumericProperty,
     ConfigParserProperty,
     BooleanProperty,
-    ObjectProperty, ListProperty,
+    ObjectProperty,
 )
 from kivy.uix.popup import Popup
 
@@ -23,8 +21,11 @@ from rotary_controller_python.dispatchers.formats import FormatsDispatcher
 from rotary_controller_python.dispatchers.servo import ServoDispatcher
 from rotary_controller_python.network.models import Wireless, NetworkInterface
 from rotary_controller_python.utils import communication, devices
+from kivy.core.window import Window
 
 log = Logger.getChild(__name__)
+
+Window.show_cursor = False
 
 for h in log.root.handlers:
     h.formatter = KivyFormatter('%(asctime)s - %(filename)s:%(lineno)s-%(funcName)s - %(levelname)s - %(message)s')
