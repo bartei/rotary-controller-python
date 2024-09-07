@@ -1,6 +1,6 @@
 [tool.poetry]
 name = "rotary-controller-python"
-version = "1.0.5"
+version = "1.0.6"
 description = "Rotary Controller Python"
 authors = ["Stefano Bertelli <bartei81@gmail.com>"]
 license = "MIT"

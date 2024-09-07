@@ -1,8 +1,16 @@
 # CHANGELOG
 
+## v1.0.6 (2024-09-07)
+
+### Unknown
+
+* Merge remote-tracking branch &#39;origin/main&#39; ([`ea7aa14`](https://github.com/bartei/rotary-controller-python/commit/ea7aa14c2c5ba48c705c1defdf0a2ee45fb02205))
+
 ## v1.0.5 (2024-09-07)
 
 ### Fix
+
+* fix: handle update_tick exceptions ([`5cecd31`](https://github.com/bartei/rotary-controller-python/commit/5cecd315d59eb579d42e2ec8749d3b911d4b253d))
 
 * fix: handle update_tick exceptions ([`0b01c88`](https://github.com/bartei/rotary-controller-python/commit/0b01c8819e0c6be0016f83433fcda2cb35b0f87c))
 
