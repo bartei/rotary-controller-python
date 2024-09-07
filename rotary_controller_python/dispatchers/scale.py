@@ -83,11 +83,14 @@ class ScaleDispatcher(SavingDispatcher):
         self.set_sync_ratio()
 
     def update_tick(self, instance, value):
-        if not self.app.connected:
-            return
-        self.encoderPrevious = self.encoderCurrent
-        self.encoderCurrent = self.app.fast_data_values['scaleCurrent'][self.inputIndex]
-        self.position += uint32_subtract_to_int32(self.encoderCurrent, self.encoderPrevious)
+        try:
+            if not self.app.connected:
+                return
+            self.encoderPrevious = self.encoderCurrent
+            self.encoderCurrent = self.app.fast_data_values['scaleCurrent'][self.inputIndex]
+            self.position += uint32_subtract_to_int32(self.encoderCurrent, self.encoderPrevious)
+        except Exception as e:
+            log.error(f"Unable to update scale: {e.__str__()}")
 
     def toggle_sync(self):
         if not self.app.connected:
