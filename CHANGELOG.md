@@ -1,8 +1,17 @@
 # CHANGELOG
 
+## v1.0.4 (2024-09-07)
+
+### Unknown
+
+* Merge remote-tracking branch &#39;origin/main&#39; ([`68aabcd`](https://github.com/bartei/rotary-controller-python/commit/68aabcd74b7d3dcec69d98a61ff0013bfaa4182a))
+
 ## v1.0.3 (2024-09-07)
 
 ### Fix
+
+* fix: hide cursor from the window
+fix: update packages ([`9c09551`](https://github.com/bartei/rotary-controller-python/commit/9c09551c5703048f9c56bbc1ea7cc982fcbe8b08))
 
 * fix: limit maximum volume to 50 ([`f864738`](https://github.com/bartei/rotary-controller-python/commit/f864738b3b62faf5ae358fe76e4a3650bc0e3b76))
 
