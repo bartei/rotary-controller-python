@@ -39,7 +39,7 @@ class HomePage(BoxLayout):
 
         coord_bars = []
         for i in range(4):
-            bar = bar = CoordBar(inputIndex=i, device=self.device, id_override=f"{i}", servo=self.servo)
+            bar = CoordBar(inputIndex=i, device=self.device, id_override=f"{i}", servo=self.servo)
             coord_bars.append(bar)
             self.bars_container.add_widget(bar)
 

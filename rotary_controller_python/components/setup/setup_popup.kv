@@ -1,4 +1,4 @@
-#: import SetupScreenManager components.setup.setup_screen_manager
+#: import SetupScreenManager rotary_controller_python.components.setup.setup_screen_manager
 
 <SetupPopup>:
   id: setup_popup
@@ -29,8 +29,8 @@
       Button:
         text: "Servo"
         on_release: root.screen_manager.current = "servo"
-      Button:
-        text: "Network"
+#      Button:
+#        text: "Network"
 #        on_release: root.screen_manager.current = "network"
       Button:
         text: "Formats"

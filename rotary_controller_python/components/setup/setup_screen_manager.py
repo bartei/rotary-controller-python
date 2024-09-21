@@ -6,8 +6,6 @@ from kivy.logger import Logger
 from kivy.properties import ObjectProperty
 from kivy.uix.screenmanager import Screen, ScreenManager, FadeTransition, NoTransition
 
-from rotary_controller_python.components.setup.network_panel import NetworkPanel
-# from rotary_controller_python.components.setup.logs_panel import LogsPanel
 from rotary_controller_python.components.setup.scale_panel import ScalePanel
 from rotary_controller_python.components.setup.servo_panel import ServoPanel
 from rotary_controller_python.components.setup.formats_panel import FormatsPanel

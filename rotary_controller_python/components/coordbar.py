@@ -57,6 +57,11 @@ class CoordBar(BoxLayout, SavingDispatcher):
         "currentOffset",
         "formattedSpeed",
         "formattedPosition",
+        "x",
+        "y",
+        "width",
+        "height",
+        "minimum_width"
     ]
     _force_save = ["offsets"]
 
