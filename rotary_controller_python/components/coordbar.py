@@ -105,6 +105,10 @@ class CoordBar(BoxLayout, SavingDispatcher):
         self.device['scales'][self.inputIndex]['syncEnable'] = self.syncEnable
 
     def set_sync_ratio(self, *args, **kv):
+        # check and make sure the denominator is not 0
+        if self.syncRatioDen == 0:
+            self.syncRatioDen = 1
+
         scale_ratio = Fraction(self.ratioNum, self.ratioDen) * self.app.formats.factor
         servo_ratio = Fraction(self.servo.ratioNum, self.servo.ratioDen)
         sync_ratio = Fraction(self.syncRatioNum, self.syncRatioDen)
