@@ -1,7 +1,15 @@
 # CHANGELOG
 
 
+## v1.0.9 (2024-12-13)
+
+
 ## v1.0.8 (2024-12-13)
+
+### Bug Fixes
+
+- Configure sync ratio properly when the encoder axis is configured as spindle mode
+  ([`0202432`](https://github.com/bartei/rotary-controller-python/commit/0202432492af654a3e4d9d95275f6903ecc6ec2b))
 
 
 ## v1.0.7 (2024-11-05)
