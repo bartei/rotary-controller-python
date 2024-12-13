@@ -109,7 +109,11 @@ class CoordBar(BoxLayout, SavingDispatcher):
         if self.syncRatioDen == 0:
             self.syncRatioDen = 1
 
-        scale_ratio = Fraction(self.ratioNum, self.ratioDen) * self.app.formats.factor
+        if self.spindleMode:
+            scale_ratio = Fraction(self.ratioNum, self.ratioDen)
+        else:
+            scale_ratio = Fraction(self.ratioNum, self.ratioDen) * self.app.formats.factor
+
         servo_ratio = Fraction(self.servo.ratioNum, self.servo.ratioDen)
         sync_ratio = Fraction(self.syncRatioNum, self.syncRatioDen)
 
