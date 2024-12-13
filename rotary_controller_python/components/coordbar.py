@@ -187,7 +187,7 @@ class CoordBar(BoxLayout, SavingDispatcher):
 
         # Calculate Revs/Min for spindleMode
         if self.spindleMode:
-            self.speed = (avg_steps_per_second / self.stepsPerRev) / 60
+            self.speed = (avg_steps_per_second / self.stepsPerRev) * 60
 
         # Calculate feeds
         if not self.spindleMode:
