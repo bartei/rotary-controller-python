@@ -139,4 +139,4 @@ cython_debug/
 
 /.idea/
 config.ini
-/rotary_controller_python/settings/
+/rcp/settings/

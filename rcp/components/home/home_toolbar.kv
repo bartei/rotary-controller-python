@@ -1,0 +1,41 @@
+#: import Factory kivy.factory.Factory
+#: import Keypad rcp.components.keypad
+#: import AppSettings rcp.components.appsettings
+#: import ToolbarButton rcp.components.toolbars.toolbar_button
+#: import SetupPopup rcp.components.setup.setup_popup
+#: import ScenePopup rcp.components.plot.scene_popup
+#: import JogPopup rcp.components.jog.jog_popup
+
+<HomeToolbar>:
+  size_hint_x: None
+  size_hint_y: 1
+  width: 80
+  orientation: "vertical"
+
+  ToolbarButton:
+    # IN/MM
+    text: app.formats.current_format
+    on_release: app.formats.toggle()
+
+  ToolbarButton:
+    text: "P{:d}".format(app.currentOffset)
+    on_release: Factory.Keypad().show(app, 'currentOffset')
+
+  ToolbarButton:
+    # Magic Wand
+    font_name: "fonts/Font Awesome 6 Free-Solid-900.otf"
+    text: "\ue2ca"
+    on_release: Factory.ScenePopup().open()
+
+  ToolbarButton:
+    # TOOL
+    text: "JOG".format(int(app.tool))
+    on_release: Factory.JogPopup().open()
+
+  ToolbarButton:
+    font_name: "fonts/Font Awesome 6 Free-Solid-900.otf"
+    text: "\uf085"
+    on_release: Factory.SetupPopup().open()
+
+  Widget:
+    size_hint_y: 1

@@ -1,0 +1,50 @@
+#: import NumberItem rcp.components.forms.number_item
+
+<CirclePopup>:
+    title: "Circle Pattern Parameters"
+    size_hint: 0.8, 0.8
+    auto_dismiss: False
+
+    BoxLayout:
+        orientation: 'vertical'
+        GridLayout:
+            id: grid_layout
+            cols: 1
+            spacing: 1
+            size_hint_y: None
+            NumberItem:
+                name: "Origin X"
+                value: root.ref.origin_x
+                on_value: root.ref.origin_x = self.value
+            NumberItem:
+                name: "Origin Y"
+                value: root.ref.origin_y
+                on_value: root.ref.origin_y = self.value
+            NumberItem:
+                name: "Holes Count"
+                value: root.ref.holes_count
+                on_value: root.ref.holes_count = self.value
+            NumberItem:
+                name: "Diameter"
+                value: root.ref.diameter
+                on_value: root.ref.diameter = self.value
+            NumberItem:
+                name: "Start Angle"
+                value: root.ref.start_angle
+                on_value: root.ref.start_angle = self.value
+            NumberItem:
+                name: "End Angle"
+                value: root.ref.end_angle
+                on_value: root.ref.end_angle = self.value
+        Widget:
+            size_hint_y: 1
+        BoxLayout:
+            size_hint_y: None
+            height: 48
+            orientation: "horizontal"
+
+            Button:
+                font_name: "fonts/Font Awesome 6 Free-Solid-900.otf"
+                text: "\uf00c"
+                background_color: "#349e65"
+                on_release: root.dismiss()
