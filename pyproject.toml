@@ -16,8 +16,10 @@ dependencies = [
     "minimalmodbus>=2.1.1",
     "pydantic>=2.10.3",
     "pytest>=8.3.4",
+    "python-semantic-release>=9.15.2",
     "pyyaml>=6.0.2",
 ]
+
 
 [build-system]
 requires = ["hatchling"]
@@ -30,7 +32,7 @@ branch = "main"
 hvcs = "github"
 remove_dist = false
 upload_to_pypi = true
-build_command = "pip install uv && uv sync"
+build_command = "pip install uv && uv build"
 preselease = false
 
 [tool.semantic_release.branches.main]
