@@ -718,7 +718,7 @@ wheels = [
 
 [[package]]
 name = "rcp"
-version = "1.0.9"
+version = "1.0.10rc3"
 source = { editable = "." }
 dependencies = [
     { name = "cachetools" },
