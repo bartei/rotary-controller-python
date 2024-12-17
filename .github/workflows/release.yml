@@ -1,9 +1,10 @@
-name: Semantic Release
+name: Release
 
 on:
   push:
     branches:
       - main
+      - dev
 
 permissions: write-all
 
@@ -18,7 +19,10 @@ jobs:
         fetch-depth: 0
 
     - name: Python Semantic Release
-      uses: relekang/python-semantic-release@master
-      with:
-        github_token: ${{ secrets.GITHUB_TOKEN }}
-
+      env:
+        GH_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+      run: |
+        curl -LsSf https://astral.sh/uv/install.sh | sh
+        uv venv
+        uv sync
+        ./.venv/bin/semantic-release version
