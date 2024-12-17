@@ -1,7 +1,15 @@
 # CHANGELOG
 
 
+## v1.0.10 (2024-12-17)
+
+
 ## v1.0.10-rc.3 (2024-12-17)
+
+### Bug Fixes
+
+- Rename and cleanup cicd
+  ([`9bbc43f`](https://github.com/bartei/rotary-controller-python/commit/9bbc43fb808b4b36980be2462060021ae3f80fa2))
 
 
 ## v1.0.10-rc.2 (2024-12-17)
