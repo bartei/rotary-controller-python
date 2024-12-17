@@ -1,7 +1,15 @@
 # CHANGELOG
 
 
+## v1.0.10-rc.3 (2024-12-17)
+
+
 ## v1.0.10-rc.2 (2024-12-17)
+
+### Bug Fixes
+
+- Add token for action
+  ([`85988bb`](https://github.com/bartei/rotary-controller-python/commit/85988bbfeb7fb239b453ca911db020b67e88010a))
 
 
 ## v1.0.10-rc.1 (2024-12-16)
