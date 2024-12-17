@@ -1,6 +1,6 @@
 [project]
 name = "rcp"
-version = "1.0.9"
+version = "1.0.10-rc.1"
 description = "Rotary Controller Python"
 authors = [
     { name = "Stefano Bertelli", email = "stefano@provvedo.com" }
@@ -26,13 +26,13 @@ requires = ["hatchling"]
 build-backend = "hatchling.build"
 
 [tool.semantic_release]
-version_toml = ["pyproject.toml:tool.poetry.version"]
+version_toml = ["pyproject.toml:project.version"]
 patch_without_tag = true
 branch = "main"
 hvcs = "github"
 remove_dist = false
 upload_to_pypi = true
-build_command = "pip install uv && uv build"
+build_command = "uv build"
 preselease = false
 
 [tool.semantic_release.branches.main]

@@ -1,6 +1,23 @@
 # CHANGELOG
 
 
+## v1.0.10-rc.1 (2024-12-16)
+
+### Bug Fixes
+
+- Add lock file
+  ([`66dcc5a`](https://github.com/bartei/rotary-controller-python/commit/66dcc5aa40b611a93975c80208b840538d4450e0))
+
+- Test uv with github
+  ([`15ea8ec`](https://github.com/bartei/rotary-controller-python/commit/15ea8ece0508f637f38cd87ce958b07f7e5c6a65))
+
+- Test uv with github
+  ([`a565bc0`](https://github.com/bartei/rotary-controller-python/commit/a565bc09cb651cbf0ce9dfa3784beb850b1ac8be))
+
+- Test uv with github
+  ([`de3e60d`](https://github.com/bartei/rotary-controller-python/commit/de3e60d87fa94c745f89f15d50000227c51a2176))
+
+
 ## v1.0.9 (2024-12-13)
 
 
