@@ -5,6 +5,8 @@ on:
     branches:
       - dev
 
+permissions: write-all
+
 jobs:
   release:
     runs-on: ubuntu-latest
@@ -16,6 +18,8 @@ jobs:
         fetch-depth: 0
 
     - name: Python Semantic Release
+      env:
+        GH_TOKEN: ${{ secrets.GITHUB_TOKEN }}
       run: |
         curl -LsSf https://astral.sh/uv/install.sh | sh
         uv venv
