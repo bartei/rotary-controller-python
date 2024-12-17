@@ -1,12 +1,7 @@
 # CHANGELOG
 
 
-## v1.0.10-rc.2 (2024-12-16)
-
-### Bug Fixes
-
-- Test release
-  ([`d48e51c`](https://github.com/bartei/rotary-controller-python/commit/d48e51c64efcfe4396e328e973ad0868b51c96c4))
+## v1.0.10-rc.2 (2024-12-17)
 
 
 ## v1.0.10-rc.1 (2024-12-16)
@@ -15,6 +10,9 @@
 
 - Add lock file
   ([`66dcc5a`](https://github.com/bartei/rotary-controller-python/commit/66dcc5aa40b611a93975c80208b840538d4450e0))
+
+- Test release
+  ([`d48e51c`](https://github.com/bartei/rotary-controller-python/commit/d48e51c64efcfe4396e328e973ad0868b51c96c4))
 
 - Test uv with github
   ([`15ea8ec`](https://github.com/bartei/rotary-controller-python/commit/15ea8ece0508f637f38cd87ce958b07f7e5c6a65))
