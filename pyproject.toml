@@ -1,6 +1,6 @@
 [project]
 name = "rcp"
-version = "1.0.10-rc.1"
+version = "1.0.10-rc.2"
 description = "Rotary Controller Python"
 authors = [
     { name = "Stefano Bertelli", email = "stefano@provvedo.com" }
@@ -31,7 +31,7 @@ patch_without_tag = true
 branch = "main"
 hvcs = "github"
 remove_dist = false
-upload_to_pypi = true
+upload_to_pypi = false
 build_command = "uv build"
 preselease = false
 

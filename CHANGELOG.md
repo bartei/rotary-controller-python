@@ -1,6 +1,14 @@
 # CHANGELOG
 
 
+## v1.0.10-rc.2 (2024-12-16)
+
+### Bug Fixes
+
+- Test release
+  ([`d48e51c`](https://github.com/bartei/rotary-controller-python/commit/d48e51c64efcfe4396e328e973ad0868b51c96c4))
+
+
 ## v1.0.10-rc.1 (2024-12-16)
 
 ### Bug Fixes
