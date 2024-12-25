@@ -63,7 +63,7 @@ class SavingDispatcher(EventDispatcher):
             if k in prop_names:
                 self.__setattr__(k, v)
             else:
-                log.info(f"Provided property with name: {k} is unknown to this class")
+                log.debug(f"Provided property with name: {k} is unknown to this class")
 
     def bind_settings(self):
         props = self.get_our_properties()

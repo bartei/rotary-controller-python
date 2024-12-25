@@ -12,9 +12,7 @@ from kivy.properties import (
     BooleanProperty,
     ObjectProperty,
 )
-from kivy.uix.popup import Popup
 
-from rcp.components.appsettings import AppSettings
 from rcp.components.appsettings import config
 from rcp.components.home.home_page import HomePage
 from rcp.dispatchers.formats import FormatsDispatcher
@@ -25,10 +23,10 @@ from kivy.core.window import Window
 
 log = Logger.getChild(__name__)
 
-Window.show_cursor = False
+# Window.show_cursor = False
 
 for h in log.root.handlers:
-    h.formatter = KivyFormatter('%(asctime)s - %(filename)s:%(lineno)s-%(funcName)s - %(levelname)s - %(message)s')
+    h.formatter = KivyFormatter('%(asctime)s - %(name)s:%(lineno)s-%(funcName)s - %(levelname)s - %(message)s')
 
 
 class MainApp(App):
@@ -113,12 +111,6 @@ class MainApp(App):
 
     def on_network_settings(self):
         print(self.network_settings.dict())
-
-    def open_custom_settings(self):
-        settings = AppSettings()
-        popup = Popup(title="Custom Settings", content=settings, size_hint=(0.9, 0.9))
-        popup.open()
-        log.info("Settings done")
 
     def update(self, *args):
         try:

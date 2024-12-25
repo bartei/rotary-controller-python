@@ -15,6 +15,7 @@ from kivy.uix.boxlayout import BoxLayout
 from rcp.components.coordbar import CoordBar
 from rcp.components.servobar import ServoBar
 from rcp.components.statusbar import StatusBar
+from rcp.components.elsbar import ElsBar
 
 log = Logger.getChild(__name__)
 
@@ -29,13 +30,16 @@ class HomePage(BoxLayout):
     device = ObjectProperty()
     bars_container = ObjectProperty()
     servo = ObjectProperty()
+    servo_bar = ObjectProperty()
+    els_bar = ObjectProperty()
     scales = ListProperty([])
 
     def __init__(self, **kv):
         self.app = App.get_running_app()
         super().__init__(**kv)
         self.bars_container.add_widget(StatusBar())
-        servo_bar = ServoBar(servo=self.servo)
+        self.servo_bar = ServoBar(servo=self.servo)
+        self.els_bar = ElsBar()
 
         coord_bars = []
         for i in range(4):
@@ -44,11 +48,17 @@ class HomePage(BoxLayout):
             self.bars_container.add_widget(bar)
 
         self.scales = coord_bars
-        self.bars_container.add_widget(servo_bar)
+        self.bars_container.add_widget(self.servo_bar)
 
         self._keyboard = Window._system_keyboard
         self._keyboard.bind(on_key_down=self._on_keyboard_down)
         self.exit_stack = ExitStack()
+
+    def show_els(self):
+        self.bars_container: BoxLayout
+        self.bars_container.remove_widget(self.bars_container.children[0])
+        self.bars_container.add_widget(self.els_bar)
+        log.info("Show ELS Pressed")
 
     def on_touch_down(self, touch):
         self.app.beep()

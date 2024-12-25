@@ -64,5 +64,7 @@
         color: root.formats.display_color
         on_color: root.formats.display_color = self.color
       Button:
+        size_hint_y: None
+        height: 32
         text: "Exit Application"
         on_release: app.stop()

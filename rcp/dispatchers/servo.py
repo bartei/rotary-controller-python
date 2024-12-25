@@ -110,7 +110,10 @@ class ServoDispatcher(SavingDispatcher):
     def update_tick(self, instance, value):
         try:
             if not self.app.connected:
+                self.disableControls = True
                 return
+            else:
+                self.disableControls = False
 
             self.encoderPrevious = self.encoderCurrent
             self.encoderCurrent = self.app.fast_data_values['servoCurrent']

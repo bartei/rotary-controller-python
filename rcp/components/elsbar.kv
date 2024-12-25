@@ -1,0 +1,68 @@
+#: import Factory kivy.factory.Factory
+#: import Keypad components.keypad
+#: import FeedsPopup components.feeds_popup
+
+<ElsBar>:
+  orientation: "horizontal"
+  size_hint_y: None
+  height: 96
+
+  Button:
+    id: feed_button
+    width: self.height
+    size_hint_x: None
+    text: root.mode
+    text_halign: "center"
+    font_size: self.height / 4
+    font_style: "bold"
+    halign: "center"
+    background_color: [0.2, 1, 0.2, 1]
+    on_release: Factory.FeedsPopup().show_with_callback(root.set_feed_mode)
+
+
+  BoxLayout:
+    size_hint_x: None
+    width: 100
+    orientation: 'vertical'
+    Label:
+      text: "Num"
+      font_size: self.height / 1.5
+      size_hint_y: 0.3
+      color: app.formats.display_color
+      halign: 'center'
+      valign: 'top'
+    Button:
+      size_hint_y: 0.7
+      font_name: "fonts/iosevka-regular.ttf"
+      font_size: self.height / 2
+      font_style: "bold"
+      background_color: [0.3, 0.3, 0.3, 1]
+      color: app.formats.display_color
+      text: "123"
+      text_size: self.size
+      halign: 'center'
+      valign: 'middle'
+      on_release: root.do_drop()
+
+  BoxLayout:
+    size_hint_x: None
+    width: 100
+    orientation: 'vertical'
+    Label:
+      text: "Num"
+      font_size: self.height / 1.5
+      size_hint_y: 0.3
+      color: app.formats.display_color
+      halign: 'center'
+      valign: 'top'
+    Button:
+      size_hint_y: 0.7
+      font_name: "fonts/iosevka-regular.ttf"
+      font_size: self.height / 2
+      font_style: "bold"
+      background_color: [0.3, 0.3, 0.3, 1]
+      color: app.formats.display_color
+      text: "123"
+      text_size: self.size
+      halign: 'center'
+      valign: 'middle'
