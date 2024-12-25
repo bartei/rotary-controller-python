@@ -9,11 +9,11 @@ from kivy.logger import Logger
 from kivy.factory import Factory
 from kivy.clock import Clock
 from kivy.lang import Builder
-from kivy.properties import NumericProperty, StringProperty, ObjectProperty, ListProperty, BooleanProperty, DictProperty
+from kivy.properties import NumericProperty, StringProperty, ObjectProperty, ListProperty, BooleanProperty
 from kivy.uix.boxlayout import BoxLayout
 from kivy.app import App
 
-from rcp.components.servobar import ServoBar
+from rcp.components.home.servobar import ServoBar
 from rcp.dispatchers import SavingDispatcher
 from rcp.utils.ctype_calc import uint32_subtract_to_int32
 from rcp.utils.devices import SCALES_COUNT

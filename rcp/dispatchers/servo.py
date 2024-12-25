@@ -109,12 +109,6 @@ class ServoDispatcher(SavingDispatcher):
 
     def update_tick(self, instance, value):
         try:
-            if not self.app.connected:
-                self.disableControls = True
-                return
-            else:
-                self.disableControls = False
-
             self.encoderPrevious = self.encoderCurrent
             self.encoderCurrent = self.app.fast_data_values['servoCurrent']
             self.servoEnable = self.app.fast_data_values['servoEnable']
@@ -125,7 +119,13 @@ class ServoDispatcher(SavingDispatcher):
 
             delta = uint32_subtract_to_int32(self.encoderCurrent, self.encoderPrevious)
             self.position += delta
-            if self.app.fast_data_values['stepsToGo'] == 0 and self.servoEnable != 0:
+            if (
+                    self.app.fast_data_values['stepsToGo'] == 0 and
+                    self.servoEnable != 0 and
+                    self.disableControls
+                    and self.app.connected
+            ):
+                log.info("Disable Controls False")
                 self.disableControls = False
         except Exception as e:
             log.error(f"Unable to read servo: {e.__str__()}")
@@ -176,8 +176,10 @@ class ServoDispatcher(SavingDispatcher):
     def on_servoEnable(self, instance, value):
         self.app.device['fastData']['servoEnable'] = self.servoEnable
         if self.servoEnable != 0:
+            log.info("Disable Controls False")
             self.disableControls = False
         else:
+            log.info("Disable Controls True")
             self.disableControls = True
 
     def toggle_enable(self):

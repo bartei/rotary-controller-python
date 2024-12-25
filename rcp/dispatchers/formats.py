@@ -28,6 +28,9 @@ class FormatsDispatcher(SavingDispatcher):
     factor = ObjectProperty(Fraction(1, 1))
 
     display_color = ListProperty([1, 1, 1, 1])
+
+    accept_color = ListProperty([0.2, 1, 0.2, 1])
+    cancel_color = ListProperty([1, 0.2, 0.2, 1])
     volume = NumericProperty(0.2)
 
     def __init__(self, **kv):
@@ -45,7 +48,7 @@ class FormatsDispatcher(SavingDispatcher):
             self.position_format = self.imperial_position
             self.factor = Fraction(10, 254)
 
-    def toggle(self):
+    def toggle(self, *_):
         if self.current_format == "MM":
             self.current_format = "IN"
         else:

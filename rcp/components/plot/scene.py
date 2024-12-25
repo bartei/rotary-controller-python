@@ -8,8 +8,6 @@ from kivy.properties import NumericProperty, ListProperty
 from kivy.graphics import Color, Line, Ellipse
 from kivy.uix.stencilview import StencilView
 
-from rcp.components.coordbar import CoordBar
-
 # from rcp.components.plot.point_widget import PointWidget
 
 log = Logger.getChild(__name__)

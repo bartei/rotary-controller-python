@@ -2,48 +2,29 @@ from kivy.app import App
 from kivy.logger import Logger
 from kivy.properties import NumericProperty
 from kivy.uix.popup import Popup
-from kivy.uix.button import Button
 from kivy.uix.boxlayout import BoxLayout
-from rcp.components.home.elsbar import FEED_MODES
+
+from rcp.components.toolbars.keypad_button import KeypadButton
 
 log = Logger.getChild(__name__)
 
-class KeypadButton(Button):
-    text_halign = "center"
-    font_style = "bold"
-    halign = "center"
-    background_color = [0.2, 1, 0.2, 1]
-    return_value = NumericProperty(0)
 
-    def __init__(self, **kwargs):
-        super().__init__(**kwargs)
-
-    def on_height(self, instance, value):
-        self.font_size = value / 4
-
-
-class FeedsPopup(Popup):
-    set_method = None
-    container = None
+class ModePopup(Popup):
+    current_value = NumericProperty(1)
 
     def __init__(self, **kwargs):
         self.app = App.get_running_app()
         super().__init__(**kwargs)
-        self.title = f"Select Feed Mode"
-        self.size_hint = (0.8, 0.3)
+        self.title = f"Select Mode"
+        self.size_hint = (0.6, 0.8)
         self.auto_dismiss = False
 
-        layout = BoxLayout(orientation="vertical")
-
-        row1 = BoxLayout(orientation="horizontal")
-        for mode in FEED_MODES:
-            row1.add_widget(
-                KeypadButton(text=mode.name, return_value=mode.id, on_release=self.confirm)
-            )
-        layout.add_widget(row1)
-        self.add_widget(layout)
+        buttons = BoxLayout(orientation="vertical")
+        buttons.add_widget(KeypadButton(text="Indexing", return_value=1, on_release=self.confirm))
+        buttons.add_widget(KeypadButton(text="ELS", return_value=2, on_release=self.confirm))
+        buttons.add_widget(KeypadButton(text="JOG", return_value=3, on_release=self.confirm))
+        self.add_widget(buttons)
         self.callback_fn = None
-        self.current_value = None
 
     def on_touch_down(self, touch):
         self.app.beep()
@@ -55,8 +36,6 @@ class FeedsPopup(Popup):
             self.current_value = float(current_value)
 
         self.callback_fn = callback_fn
-        self.set_method = None
-        self.container = None
         self.open()
 
     def confirm(self, instance: KeypadButton):

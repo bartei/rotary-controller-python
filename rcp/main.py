@@ -68,6 +68,7 @@ class MainApp(App):
     update_tick = NumericProperty(0)
 
     servo: ServoDispatcher = ObjectProperty()
+    current_mode = NumericProperty(1)
 
     task_update = None
 
@@ -111,6 +112,9 @@ class MainApp(App):
 
     def on_network_settings(self):
         print(self.network_settings.dict())
+
+    def set_mode(self, mode_id: int):
+        self.current_mode = mode_id
 
     def update(self, *args):
         try:

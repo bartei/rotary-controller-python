@@ -1,0 +1,77 @@
+#: import Factory kivy.factory.Factory
+#: import Keypad components.keypad
+#: import FeedsPopup components.feeds_popup
+
+<JogBar>:
+  orientation: "horizontal"
+  size_hint_y: None
+  height: 128
+
+  BoxLayout:
+    size_hint_x: 0.3
+    orientation: 'vertical'
+    Label:
+      text: "Des.Speed"
+      font_size: self.height / 1.75
+      size_hint_y: 0.3
+      color: app.formats.display_color
+      halign: 'center'
+      valign: 'top'
+    Button:
+      size_hint_y: 0.4
+      font_name: "fonts/iosevka-regular.ttf"
+      font_size: self.height / 1.75
+      font_style: "bold"
+      background_color: [0.3, 0.3, 0.3, 1]
+      color: app.formats.display_color
+      text: str(int(root.desired_speed))
+      text_size: self.size
+      halign: 'center'
+      valign: 'middle'
+      on_release: Factory.Keypad().show(root, 'desired_speed')
+    Label:
+      text: "Max: {}".format(app.servo.maxSpeed)
+      font_size: self.height / 1.75
+      size_hint_y: 0.3
+      color: app.formats.display_color
+      halign: 'center'
+      valign: 'top'
+
+  BoxLayout:
+    size_hint_x: 0.3
+    orientation: 'vertical'
+    Label:
+      text: "Curr.Speed"
+      font_size: self.height / 1.75
+      size_hint_y: 0.3
+      color: app.formats.display_color
+      halign: 'center'
+      valign: 'top'
+    Button:
+      size_hint_y: 0.4
+      font_name: "fonts/iosevka-regular.ttf"
+      font_size: self.height / 1.75
+      font_style: "bold"
+      background_color: [0.3, 0.3, 0.3, 1]
+      color: app.formats.display_color
+      text: str(int(app.servo.speed))
+      text_size: self.size
+      halign: 'center'
+      valign: 'middle'
+    Label:
+      text: "Acc: {}".format(app.servo.acceleration)
+      font_size: self.height / 1.75
+      size_hint_y: 0.3
+      color: app.formats.display_color
+      halign: 'center'
+      valign: 'top'
+  Button:
+    width: self.height
+    size_hint_x: 1
+    text: "Stop" if root.enable_jog else "Start"
+    text_halign: "center"
+    font_size: self.height / 4
+    font_style: "bold"
+    halign: "center"
+    background_color: app.formats.cancel_color if root.enable_jog else app.formats.accept_color
+    on_release: root.enable_jog = not root.enable_jog

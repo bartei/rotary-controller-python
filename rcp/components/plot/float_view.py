@@ -1,4 +1,3 @@
-import math
 import os
 
 from kivy import Logger
@@ -8,7 +7,7 @@ from kivy.lang import Builder
 from kivy.uix.floatlayout import FloatLayout
 from kivy.properties import ListProperty, NumericProperty, ObjectProperty
 
-from rcp.components.coordbar import CoordBar
+from rcp.components.home.coordbar import CoordBar
 from rcp.dispatchers.circle_pattern import CirclePatternDispatcher
 
 log = Logger.getChild(__name__)
