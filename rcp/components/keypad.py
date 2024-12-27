@@ -1,27 +1,19 @@
 from kivy.app import App
 from kivy.core.window import Window
 from kivy.logger import Logger
-from kivy.properties import NumericProperty, StringProperty
+from kivy.properties import NumericProperty
 from kivy.uix.popup import Popup
-from kivy.uix.button import Button
 from kivy.uix.boxlayout import BoxLayout
 from kivy.uix.label import Label
 
 from rcp.components.toolbars.image_button import ImageButton
+from rcp.components.toolbars.keypad_button import KeypadButton
+from rcp.components.toolbars.keypad_icon_button import KeypadIconButton
+
 log = Logger.getChild(__name__)
 
 
-class KeypadButton(Button):
-    font_size = NumericProperty("32sp")
-    font_name = StringProperty("fonts/Manrope-Bold.ttf")
-
-class KeypadIconButton(Button):
-    font_name = "fonts/Font Awesome 6 Free-Solid-900.otf"
-    font_size = NumericProperty("32sp")
-    text = "\uf55a"
-
 class Keypad(Popup):
-
     set_method = None
     container = None
     current_value = NumericProperty(0)
@@ -67,8 +59,8 @@ class Keypad(Popup):
         row4 = BoxLayout(orientation="horizontal")
         row4.add_widget(KeypadButton(text="0",on_release=self.add_text,background_color=[1, 1, 1, 1]))
         row4.add_widget(KeypadButton(text=".",on_release=self.dot_key,background_color=[1, 1, 1, 1]))
-        row4.add_widget(KeypadIconButton(text="\uf00d",on_release=self.cancel,background_color="#cf3a3a"))
-        row4.add_widget(KeypadIconButton(text="\uf00c",on_release=self.confirm,background_color="#349e65"))
+        row4.add_widget(KeypadIconButton(text="\uf00d",on_release=self.cancel,background_color=self.app.formats.cancel_color))
+        row4.add_widget(KeypadIconButton(text="\uf00c",on_release=self.confirm,background_color=self.app.formats.accept_color))
         layout.add_widget(row4)
 
         self.add_widget(layout)

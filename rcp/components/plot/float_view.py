@@ -34,7 +34,7 @@ class FloatView(FloatLayout):
         self.app.bind(update_tick=self.update_tick)
 
     def update_tick(self, *arg, **kv):
-        coord_bars: list[CoordBar] = self.app.home.scales
+        coord_bars: list[CoordBar] = self.app.scales
         self.tool_x = coord_bars[0].scaledPosition
         self.tool_y = coord_bars[1].scaledPosition
 

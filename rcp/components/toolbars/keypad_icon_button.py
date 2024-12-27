@@ -1,11 +1,10 @@
 from kivy.uix.button import Button
-from kivy.properties import NumericProperty, StringProperty
+from kivy.properties import NumericProperty
 
-
-class KeypadButton(Button):
+class KeypadIconButton(Button):
     text_halign = "center"
     font_style = "bold"
-    font_name = StringProperty("fonts/Manrope-Bold.ttf")
+    font_name = "fonts/Font Awesome 6 Free-Solid-900.otf"
     halign = "center"
     background_color = [1, 1, 1, 1]
     return_value = NumericProperty(0)

@@ -1,47 +1,56 @@
 from kivy.app import App
 from kivy.logger import Logger
-from kivy.properties import NumericProperty
+from kivy.properties import ObjectProperty, StringProperty
 from kivy.uix.popup import Popup
+from kivy.uix.gridlayout import GridLayout
 from kivy.uix.button import Button
-from kivy.uix.boxlayout import BoxLayout
-from rcp.components.home.elsbar import FEED_MODES
+from kivy.uix.tabbedpanel import TabbedPanel, TabbedPanelItem
+
+from rcp import feeds
 
 log = Logger.getChild(__name__)
 
-class KeypadButton(Button):
+
+class FeedButton(Button):
     text_halign = "center"
     font_style = "bold"
+    font_name = StringProperty("fonts/Manrope-Bold.ttf")
     halign = "center"
-    background_color = [0.2, 1, 0.2, 1]
-    return_value = NumericProperty(0)
+    background_color = [1, 1, 1, 1]
+    return_value = ObjectProperty(None)
 
     def __init__(self, **kwargs):
         super().__init__(**kwargs)
 
     def on_height(self, instance, value):
-        self.font_size = value / 4
+        self.font_size = value / 3
 
 
-class FeedsPopup(Popup):
-    set_method = None
-    container = None
-
+class FeedsTablePopup(Popup):
     def __init__(self, **kwargs):
         self.app = App.get_running_app()
         super().__init__(**kwargs)
-        self.title = f"Select Feed Mode"
-        self.size_hint = (0.8, 0.3)
+        self.title = f"Select Feed"
+        self.title_size = "20sp"
+        self.size_hint = (0.8, 0.8)
         self.auto_dismiss = False
 
-        layout = BoxLayout(orientation="vertical")
+        panel = TabbedPanel(
+            do_default_tab=False,
+            tab_width=150,
+        )
 
-        row1 = BoxLayout(orientation="horizontal")
-        for mode in FEED_MODES:
-            row1.add_widget(
-                KeypadButton(text=mode.name, return_value=mode.id, on_release=self.confirm)
-            )
-        layout.add_widget(row1)
-        self.add_widget(layout)
+        for name, table in feeds.table.items():
+            layout = GridLayout(cols=5)
+            for idx, pitch in enumerate(table):
+                layout.add_widget(
+                    FeedButton(text=pitch.name, return_value=(name, idx), on_release=self.confirm)
+                )
+            tab = TabbedPanelItem(text=name)
+            tab.add_widget(layout)
+            panel.add_widget(tab)
+
+        self.add_widget(panel)
         self.callback_fn = None
         self.current_value = None
 
@@ -55,14 +64,12 @@ class FeedsPopup(Popup):
             self.current_value = float(current_value)
 
         self.callback_fn = callback_fn
-        self.set_method = None
-        self.container = None
         self.open()
 
-    def confirm(self, instance: KeypadButton):
+    def confirm(self, instance: FeedButton):
         try:
             value = instance.return_value
-            self.callback_fn(value)
+            self.callback_fn(table_name=value[0], index=value[1])
             self.dismiss()
         except Exception as e:
             log.error(e.__str__())

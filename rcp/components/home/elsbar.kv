@@ -1,32 +1,39 @@
 #: import Factory kivy.factory.Factory
 #: import Keypad components.keypad
-#: import FeedsPopup components.feeds_popup
+#: import FeedsTablePopup components.home.feeds_table_popup
 
 <ElsBar>:
   orientation: "horizontal"
   size_hint_y: None
   height: 128
-  feed_button: feed_button
 
   Button:
-    id: feed_button
     width: self.height
     size_hint_x: None
-    text: ":("
+    text: root.mode_name
+    text_halign: "center"
+    font_size: self.height / 6
+    font_style: "bold"
+    halign: "center"
+    background_color: app.formats.display_color
+    on_release: Factory.FeedsTablePopup().show_with_callback(root.set_feed_ratio)
+
+  Button:
+    width: self.height
+    size_hint_x: None
+    font_name: "fonts/Font Awesome 6 Free-Solid-900.otf"
+    text: "\uf060"
     text_halign: "center"
     font_size: self.height / 4
     font_style: "bold"
     halign: "center"
-    background_color: [0.2, 1, 0.2, 1]
-    on_release: Factory.FeedsPopup().show_with_callback(root.set_feed_mode)
-
+    on_release: root.previous_feed()
 
   BoxLayout:
-    size_hint_x: None
-    width: 100
+    size_hint_x: 1
     orientation: 'vertical'
     Label:
-      text: "Num"
+      text: root.mode_name
       font_size: self.height / 1.5
       size_hint_y: 0.3
       color: app.formats.display_color
@@ -39,31 +46,19 @@
       font_style: "bold"
       background_color: [0.3, 0.3, 0.3, 1]
       color: app.formats.display_color
-      text: "123"
+      text: root.feed_name
       text_size: self.size
       halign: 'center'
       valign: 'middle'
-      on_release: root.do_drop()
+#      on_release: root.do_drop()
 
-  BoxLayout:
+  Button:
+    width: self.height
     size_hint_x: None
-    width: 100
-    orientation: 'vertical'
-    Label:
-      text: "Num"
-      font_size: self.height / 1.5
-      size_hint_y: 0.3
-      color: app.formats.display_color
-      halign: 'center'
-      valign: 'top'
-    Button:
-      size_hint_y: 0.7
-      font_name: "fonts/iosevka-regular.ttf"
-      font_size: self.height / 2
-      font_style: "bold"
-      background_color: [0.3, 0.3, 0.3, 1]
-      color: app.formats.display_color
-      text: "123"
-      text_size: self.size
-      halign: 'center'
-      valign: 'middle'
+    font_name: "fonts/Font Awesome 6 Free-Solid-900.otf"
+    text: "\uf061"
+    text_halign: "center"
+    font_size: self.height / 4
+    font_style: "bold"
+    halign: "center"
+    on_release: root.next_feed()

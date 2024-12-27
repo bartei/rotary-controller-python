@@ -1,5 +1,7 @@
 import os
+from fractions import Fraction
 
+from kivy.app import App
 from kivy.factory import Factory
 from kivy.logger import Logger
 from kivy.lang import Builder
@@ -7,25 +9,14 @@ from kivy.properties import StringProperty, ObjectProperty, NumericProperty
 from kivy.uix.boxlayout import BoxLayout
 from pydantic import BaseModel
 
+from rcp.components.home.coordbar import CoordBar
+from rcp import feeds
+from rcp.dispatchers import SavingDispatcher
+
 
 class FeedMode(BaseModel):
     id: int
     name: str
-
-
-FEED_MODES = [
-    FeedMode(id=1, name="Feed\nMM"),
-    FeedMode(id=2, name="Feed\nIN"),
-    FeedMode(id=3, name="Thread\nMM"),
-    FeedMode(id=4, name="Thread\nIN"),
-]
-
-def get_feed_mode_by_id(feed_id: int) -> FeedMode | None:
-    global FEED_MODES
-    result = [item for item in FEED_MODES if item.id == feed_id]
-    if len(result) == 0:
-        return None
-    return result[0]
 
 log = Logger.getChild(__name__)
 
@@ -37,21 +28,42 @@ if os.path.exists(kv_file):
 
 class ElsBar(BoxLayout):
     feed_button = ObjectProperty(None)
-    mode = NumericProperty(1)
+    feed_ratio = ObjectProperty(None)
+
+    mode_name = StringProperty(":(")
+    feed_name = StringProperty(":(")
+    current_feeds_table = ObjectProperty(None)
+    current_feeds_index = NumericProperty(0)
 
     def __init__(self, **kwargs):
+        self.app = App.get_running_app()
         super().__init__(**kwargs)
-        self.set_feed_mode(mode=1)
+        self.bind(current_feeds_table=self.update_feeds_ratio)
+        self.bind(current_feeds_index=self.update_feeds_ratio)
+        # self.set_feed_ratio(ratio=Fraction("0.4"), mode=1)
 
     def update_current_position(self):
         Factory.Keypad().show_with_callback(self.servo.set_current_position, self.servo.scaledPosition)
 
-    def set_feed_mode(self, mode):
-        feed_mode = get_feed_mode_by_id(mode)
-        if feed_mode is None:
-            log.error("Received invalid feed mode")
-            return
+    def set_feed_ratio(self, table_name, index):
+        table_instance = feeds.table[table_name]
+        self.mode_name = table_name
+        self.current_feeds_table = table_instance
+        self.current_feeds_index = index
 
-        log.info(f"Setting feed mode to {feed_mode.id} = {feed_mode.name}")
-        self.feed_button.text = feed_mode.name
-        self.mode = feed_mode.id
+    def update_feeds_ratio(self, instance, value):
+        ratio = self.current_feeds_table[self.current_feeds_index].ratio
+        spindle_scale: CoordBar = self.app.get_spindle_scale()
+        if spindle_scale is not None:
+            spindle_scale.syncRatioNum = ratio.numerator
+            spindle_scale.syncRatioDen = ratio.denominator
+        self.feed_name = self.current_feeds_table[self.current_feeds_index].name
+        log.info(f"Configured ratio is: {ratio.numerator}/{ratio.denominator}")
+
+    def next_feed(self):
+        if self.current_feeds_index < len(self.current_feeds_table) -1:
+            self.current_feeds_index = (self.current_feeds_index + 1)
+
+    def previous_feed(self):
+        if self.current_feeds_index > 0:
+            self.current_feeds_index = (self.current_feeds_index - 1)

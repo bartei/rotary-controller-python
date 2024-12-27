@@ -1,6 +1,5 @@
 #: import Factory kivy.factory.Factory
 #: import Keypad components.keypad
-#: import FeedsPopup components.feeds_popup
 
 <JogBar>:
   orientation: "horizontal"
@@ -65,9 +64,32 @@
       color: app.formats.display_color
       halign: 'center'
       valign: 'top'
+
+  BoxLayout:
+    size_hint_x: 0.5
+    orientation: 'vertical'
+    Label:
+      text: "Position"
+      font_size: self.height / 1.75
+      size_hint_y: 0.3
+      color: app.formats.display_color
+      halign: 'center'
+      valign: 'top'
+    Button:
+      size_hint_y: 0.7
+      font_name: "fonts/iosevka-regular.ttf"
+      font_size: self.height / 3
+      font_style: "bold"
+      background_color: [0.3, 0.3, 0.3, 1]
+      color: app.formats.display_color
+      text: app.formats.angle_format.format(app.servo.scaledPosition)
+      text_size: self.size
+      halign: 'center'
+      valign: 'middle'
+
   Button:
     width: self.height
-    size_hint_x: 1
+    size_hint_x: 0.5
     text: "Stop" if root.enable_jog else "Start"
     text_halign: "center"
     font_size: self.height / 4

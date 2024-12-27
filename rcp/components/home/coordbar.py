@@ -13,7 +13,6 @@ from kivy.properties import NumericProperty, StringProperty, ObjectProperty, Lis
 from kivy.uix.boxlayout import BoxLayout
 from kivy.app import App
 
-from rcp.components.home.servobar import ServoBar
 from rcp.dispatchers import SavingDispatcher
 from rcp.utils.ctype_calc import uint32_subtract_to_int32
 from rcp.utils.devices import SCALES_COUNT
@@ -26,7 +25,6 @@ if os.path.exists(kv_file):
 
 
 class CoordBar(BoxLayout, SavingDispatcher):
-    servo = ObjectProperty(None)
     device = ObjectProperty()
     inputIndex = NumericProperty(0)
     axisName = StringProperty("?")
@@ -64,12 +62,11 @@ class CoordBar(BoxLayout, SavingDispatcher):
     ]
     _force_save = ["offsets"]
 
-    def __init__(self, servo: ServoBar, **kv):
+    def __init__(self, **kv):
         from rcp.main import MainApp
         self.app: MainApp = App.get_running_app()
         super().__init__(**kv)
 
-        self.servo: ServoBar = servo
         self.speed_history = collections.deque(maxlen=5)
         self.previous_axis_time: float = 0
         self.previous_axis_pos: Decimal = Decimal(0)
@@ -109,6 +106,9 @@ class CoordBar(BoxLayout, SavingDispatcher):
         self.device['scales'][self.inputIndex]['syncEnable'] = self.syncEnable
 
     def set_sync_ratio(self, *args, **kv):
+        if not self.app.connected:
+            return
+
         # check and make sure the denominator is not 0
         if self.syncRatioDen == 0:
             self.syncRatioDen = 1
@@ -118,7 +118,7 @@ class CoordBar(BoxLayout, SavingDispatcher):
         else:
             scale_ratio = Fraction(self.ratioNum, self.ratioDen) * self.app.formats.factor
 
-        servo_ratio = Fraction(self.servo.ratioNum, self.servo.ratioDen)
+        servo_ratio = Fraction(self.app.servo.ratioNum, self.app.servo.ratioDen)
         sync_ratio = Fraction(self.syncRatioNum, self.syncRatioDen)
 
         final_ratio = scale_ratio * sync_ratio / servo_ratio

@@ -24,7 +24,8 @@ class HomeToolbar(BoxLayout):
         # Current Format Button
         current_format = ToolbarButton(
             text = "",
-            on_release=self.app.formats.toggle
+            width = self.width,
+            on_release=self.app.formats.toggle,
         )
         def update_current_format(*_):
             current_format.text = self.app.formats.current_format
@@ -39,6 +40,7 @@ class HomeToolbar(BoxLayout):
 
         current_offset = ToolbarButton(
             text = "",
+            width = self.width,
             on_release=keypad_current_offset
         )
         def update_current_offset(*_):
@@ -53,7 +55,8 @@ class HomeToolbar(BoxLayout):
         magic_wand = ToolbarButton(
             font_name="fonts/Font Awesome 6 Free-Solid-900.otf",
             text="\ue2ca",
-            on_release=popup_scene
+            width = self.width,
+            on_release=popup_scene,
         )
         self.add_widget(magic_wand)
 
@@ -70,8 +73,10 @@ class HomeToolbar(BoxLayout):
             ModePopup().show_with_callback(self.app.set_mode, self.app.current_mode)
         mode_button = ToolbarButton(
             text="IDX",
+            width = self.width,
             on_release=popup_mode
         )
+        update_current_mode()
         self.app.bind(current_mode=update_current_mode)
         self.add_widget(mode_button)
 
@@ -81,8 +86,8 @@ class HomeToolbar(BoxLayout):
         setup = ToolbarButton(
             font_name="fonts/Font Awesome 6 Free-Solid-900.otf",
             text="\uf085",
+            width = self.width,
             on_release=popup_setup
         )
         self.add_widget(setup)
-
         self.add_widget(Widget())

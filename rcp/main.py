@@ -1,4 +1,5 @@
 import os
+from typing import List
 
 from keke import ktrace
 from kivy.app import App
@@ -10,13 +11,14 @@ from kivy.properties import (
     NumericProperty,
     ConfigParserProperty,
     BooleanProperty,
-    ObjectProperty,
+    ObjectProperty, ListProperty,
 )
 
 from rcp.components.appsettings import config
+from rcp.components.home.coordbar import CoordBar
 from rcp.components.home.home_page import HomePage
+from rcp.components.home.servobar import ServoBar
 from rcp.dispatchers.formats import FormatsDispatcher
-from rcp.dispatchers.servo import ServoDispatcher
 from rcp.network.models import Wireless, NetworkInterface
 from rcp.utils import communication, devices
 from kivy.core.window import Window
@@ -67,8 +69,14 @@ class MainApp(App):
     home = ObjectProperty()
     update_tick = NumericProperty(0)
 
-    servo: ServoDispatcher = ObjectProperty()
-    current_mode = NumericProperty(1)
+    servo: ServoBar = ObjectProperty()
+    scales: List[CoordBar] = ListProperty()
+    current_mode = ConfigParserProperty(
+        defaultvalue=1, section="device", key="current_mode", config=config, val_type=int
+    )
+    scales_count = ConfigParserProperty(
+        defaultvalue=4, section="device", key="scales_count", config=config, val_type=int
+    )
 
     task_update = None
 
@@ -116,6 +124,15 @@ class MainApp(App):
     def set_mode(self, mode_id: int):
         self.current_mode = mode_id
 
+    def get_spindle_scale(self):
+        """
+        Returns the current spindle scale if there is one configured, otherwise None
+        """
+        filtered_scales = [item for item in self.scales if item.spindleMode is True]
+        if len(filtered_scales) != 1:
+            return None
+        return filtered_scales[0]
+
     def update(self, *args):
         try:
             self.fast_data_values = self.device['fastData'].refresh()
@@ -146,13 +163,13 @@ class MainApp(App):
 
     def build(self):
         self.formats = FormatsDispatcher(id_override="0")
-        self.servo = ServoDispatcher(
+        self.servo = ServoBar(
             id_override="0",
         )
-        self.home = HomePage(
-            device=self.device,
-            servo=self.servo,
-        )
+        for i in range(4):
+            self.scales.append(CoordBar(inputIndex=i, device=self.device, id_override=f"{i}"))
+
+        self.home = HomePage()
         self.task_update = Clock.schedule_interval(self.update, 1.0 / 30)
         Clock.schedule_interval(self.blinker, 1.0 / 4)
 
