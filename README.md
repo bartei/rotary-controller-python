@@ -132,3 +132,43 @@ cd /var/log
 ls # --> This will show you a list of log files, look for the latest one produced by kivy and cat the contents
 ```
 
+## Configuration of the servo axis parameters
+
+The servo axis can be configured to operate in one of two possible modes:
+ - Rotary Table
+ - Electronic Lead Screw
+
+When the servo is configured to operate in rotary table mode, the position is reported back in degrees, therefore
+the configuration of the numerator and denominator for the input encoder shall be configured to reflect a full 
+rotation of the controlled device.
+
+When the servo is configured to operate in ELS mode, the position reported back is a relative offset of the leadscrew
+travel.
+
+Internally the system always operates in metric, regardless of the mode selected by the user, so all the ratios
+and settings in the setup page have to reflect 
+
+parameters:
+- lead screw pitch configuration in mm (how many steps does it take to advance for the specified pitch)
+- encoder input for the spindle, we know how many steps for a full rotation
+
+the user configures the feed amount per revolution, the system calculates the ratio for the output axis so that
+one full revolution of the spindle moves the output axis by the required amount:
+
+lead screw pitch configuration as in how many steps to move a given amount, for example:
+4TPI lead screw:
+4 TPI means 4 threads per inch, so the pitch is 0.25" -> 1/4
+
+Since we operate in metric, this number has to be converted to metric:
+1/4 * 10/254
+
+Let's look at the final ratio that needs to be configured in order to get the required feed:
+
+Example:
+encoder: 4096 pulses per revolution
+
+lead screw: 4TPI
+
+required feed: 0.003" per revolution
+
+lead_screw_pulses = spindle_pulses * spindle_ratio * lead_screw_pitch * pulses_per_pitch * requested_feed

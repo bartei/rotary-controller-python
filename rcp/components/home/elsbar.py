@@ -26,21 +26,29 @@ if os.path.exists(kv_file):
     Builder.load_file(kv_file)
 
 
-class ElsBar(BoxLayout):
+class ElsBar(BoxLayout, SavingDispatcher):
     feed_button = ObjectProperty(None)
     feed_ratio = ObjectProperty(None)
 
     mode_name = StringProperty(":(")
     feed_name = StringProperty(":(")
-    current_feeds_table = ObjectProperty(None)
     current_feeds_index = NumericProperty(0)
+
+    _skip_save = [
+        "position",
+        "x", "y",
+        "minimum_width",
+        "minimum_height",
+        "width", "height",
+    ]
 
     def __init__(self, **kwargs):
         self.app = App.get_running_app()
         super().__init__(**kwargs)
-        self.bind(current_feeds_table=self.update_feeds_ratio)
+        if not self.mode_name in feeds.table.keys():
+            self.mode_name = feeds.table.keys()[0]
+        self.current_feeds_table = feeds.table[self.mode_name]
         self.bind(current_feeds_index=self.update_feeds_ratio)
-        # self.set_feed_ratio(ratio=Fraction("0.4"), mode=1)
 
     def update_current_position(self):
         Factory.Keypad().show_with_callback(self.servo.set_current_position, self.servo.scaledPosition)

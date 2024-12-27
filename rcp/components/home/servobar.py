@@ -34,12 +34,17 @@ class ServoBar(BoxLayout, SavingDispatcher):
     divisions = NumericProperty(12)
     index = NumericProperty(0)
     servoEnable = NumericProperty(0)
-    stepsPerTurn = NumericProperty(4096)
     unitsPerTurn = NumericProperty(360.0)
     oldOffset = NumericProperty(0.0)
 
+    elsMode = BooleanProperty(False)
+    leadScrewPitch = NumericProperty(0.25)
+    leadScrewPitchIn = BooleanProperty(True)
+    leadScrewPitchSteps = BooleanProperty(800)
+
     position = NumericProperty(0)
     scaledPosition = NumericProperty(0)
+    formattedPosition = StringProperty("--")
 
     disableControls = BooleanProperty(False)
     _skip_save = [
@@ -48,6 +53,7 @@ class ServoBar(BoxLayout, SavingDispatcher):
         "device",
         "position",
         "scaledPosition",
+        "formattedPosition",
         "servoEnable",
         "oldOffset",
         "offset",
@@ -60,6 +66,8 @@ class ServoBar(BoxLayout, SavingDispatcher):
     def __init__(self, **kv):
         self.app = App.get_running_app()
         super().__init__(**kv)
+        self.configure_lead_screw_ratio(self, None)
+
         # App event bindings
         self.app.bind(connected=self.connected)
         self.app.bind(connected=self.update_positions)
@@ -72,6 +80,12 @@ class ServoBar(BoxLayout, SavingDispatcher):
         self.bind(ratioNum=self.update_scaledPosition)
         self.bind(ratioDen=self.update_scaledPosition)
         self.bind(position=self.update_scaledPosition)
+        self.bind(elsMode=self.update_scaledPosition)
+        self.app.formats.bind(current_format=self.update_scaledPosition)
+
+        self.bind(leadScrewPitch=self.configure_lead_screw_ratio)
+        self.bind(leadScrewPitchIn=self.configure_lead_screw_ratio)
+        self.bind(leadScrewPitchSteps=self.configure_lead_screw_ratio)
 
         # Private variables that don't need dispatchers etc
         self.encoderPrevious = 0
@@ -83,6 +97,18 @@ class ServoBar(BoxLayout, SavingDispatcher):
         self.positions = dict()
         self.disableControls = True
         self.servoEnable = 0
+
+    def configure_lead_screw_ratio(self, instance, value):
+        # Configure the ratio when operating in ELS mode
+        if self.elsMode is True:
+            leadScrewPitch = Fraction(self.leadScrewPitch)
+
+            if self.leadScrewPitchIn is True:
+                leadScrewPitch = leadScrewPitch * Fraction(254, 10)
+
+            leadScrewRatio = leadScrewPitch * Fraction(1, self.leadScrewPitchSteps)
+            self.ratioNum = leadScrewRatio.numerator
+            self.ratioDen = leadScrewRatio.denominator
 
     def connected(self, instance, value):
         try:
@@ -141,10 +167,13 @@ class ServoBar(BoxLayout, SavingDispatcher):
 
     def update_scaledPosition(self, *args, **kv):
         ratio = Fraction(self.ratioNum, self.ratioDen)
-        if self.unitsPerTurn != 0:
+
+        if self.elsMode is False and self.unitsPerTurn > 0:
             self.scaledPosition = float(self.position * ratio) % self.unitsPerTurn
+            self.formattedPosition = self.app.formats.angle_format.format(self.scaledPosition)
         else:
-            self.scaledPosition = float(self.position * ratio)
+            self.scaledPosition = float(self.position * ratio) * self.app.formats.factor
+            self.formattedPosition = self.app.formats.position_format.format(self.scaledPosition)
 
     def on_index(self, instance, value):
         ratio = Fraction(self.ratioNum, self.ratioDen)

@@ -75,6 +75,10 @@ class CoordBar(BoxLayout, SavingDispatcher):
         self.app.formats.bind(factor=self.set_sync_ratio)
         self.app.bind(connected=self.init_connection)
         self.app.bind(update_tick=self.update_tick)
+        self.bind(position=self.update_scaledPosition)
+        self.bind(speed=self.update_scaledPosition)
+        self.bind(ratioNum=self.update_scaledPosition)
+        self.bind(ratioDen=self.update_scaledPosition)
         Clock.schedule_interval(self.speed_task, 1.0/25.0)
 
         # Private variables that don't need dispatchers etc
@@ -135,24 +139,26 @@ class CoordBar(BoxLayout, SavingDispatcher):
             return
         self.set_sync_ratio()
 
-    def on_position(self, instance, value):
-        self.update_scaledPosition()
-
-    def on_ratioNum(self, instance, value):
-        self.update_scaledPosition()
-
-    def on_ratioDen(self, instance, value):
-        self.update_scaledPosition()
 
     def update_scaledPosition(self, *args, **kv):
-        self.scaledPosition = float(
-            self.position * Fraction(self.ratioNum, self.ratioDen) + self.offsets[self.app.currentOffset]
-        ) * self.app.formats.factor
 
         if self.spindleMode:
+            # When working in spindle mode we report the position in degrees
+            self.scaledPosition = float(
+                self.position * Fraction(self.ratioNum, self.ratioDen) + self.offsets[self.app.currentOffset]
+            ) * 360.0
+
+            if self.scaledPosition > 360.0:
+                self.scaledPosition -= 360.0
+                self.position -= self.stepsPerRev
+
             self.formattedPosition = self.app.formats.angle_speed_format.format(self.speed)
-            self.formattedSpeed = self.app.formats.angle_speed_format.format(self.speed)
+            self.formattedSpeed = self.app.formats.position_format.format(self.scaledPosition)
         else:
+            self.scaledPosition = float(
+                self.position * Fraction(self.ratioNum, self.ratioDen) + self.offsets[self.app.currentOffset]
+            ) * self.app.formats.factor
+
             self.formattedPosition = self.app.formats.position_format.format(self.scaledPosition)
             self.formattedSpeed = self.app.formats.speed_format.format(self.speed)
 

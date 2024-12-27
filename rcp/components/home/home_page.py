@@ -35,7 +35,7 @@ class HomePage(BoxLayout):
         self.add_widget(toolbar)
         self.add_widget(self.bars_container)
         self.bars_container.add_widget(StatusBar())
-        self.els_bar = ElsBar()
+        self.els_bar = ElsBar(id_override="0")
         self.jog_bar = JogBar()
 
         self.next_mode = self.app.current_mode
