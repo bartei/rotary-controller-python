@@ -63,7 +63,7 @@ class CoordBar(BoxLayout, SavingDispatcher):
     _force_save = ["offsets"]
 
     def __init__(self, **kv):
-        from rcp.main import MainApp
+        from rcp.app import MainApp
         self.app: MainApp = App.get_running_app()
         super().__init__(**kv)
 
@@ -79,6 +79,7 @@ class CoordBar(BoxLayout, SavingDispatcher):
         self.bind(speed=self.update_scaledPosition)
         self.bind(ratioNum=self.update_scaledPosition)
         self.bind(ratioDen=self.update_scaledPosition)
+        self.update_scaledPosition(self, None)
         Clock.schedule_interval(self.speed_task, 1.0/25.0)
 
         # Private variables that don't need dispatchers etc
@@ -139,9 +140,7 @@ class CoordBar(BoxLayout, SavingDispatcher):
             return
         self.set_sync_ratio()
 
-
-    def update_scaledPosition(self, *args, **kv):
-
+    def update_scaledPosition(self, instance, value):
         if self.spindleMode:
             # When working in spindle mode we report the position in degrees
             self.scaledPosition = float(
@@ -151,6 +150,10 @@ class CoordBar(BoxLayout, SavingDispatcher):
             if self.scaledPosition > 360.0:
                 self.scaledPosition -= 360.0
                 self.position -= self.stepsPerRev
+
+            if self.scaledPosition < 0:
+                self.scaledPosition += 360.0
+                self.position += self.stepsPerRev
 
             self.formattedPosition = self.app.formats.angle_speed_format.format(self.speed)
             self.formattedSpeed = self.app.formats.position_format.format(self.scaledPosition)

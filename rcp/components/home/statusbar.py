@@ -1,4 +1,3 @@
-from kivy.app import App
 from kivy.clock import Clock
 from kivy.logger import Logger
 from kivy.properties import NumericProperty
@@ -16,7 +15,8 @@ class StatusBar(BoxLayout):
     fps = NumericProperty(0)
 
     def __init__(self, **kv):
-        self.app = App.get_running_app()
+        from rcp.app import MainApp
+        self.app: MainApp = MainApp.get_running_app()
         super().__init__(**kv)
         Clock.schedule_interval(self.update, 1.0 / 5)
         self.size_hint = (1, None)
@@ -83,4 +83,3 @@ class StatusBar(BoxLayout):
             self.cycles = self.app.fast_data_values['cycles']
         except Exception as e:
             log.debug(e.__str__(), exc_info=True)
-

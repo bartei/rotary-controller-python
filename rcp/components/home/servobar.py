@@ -6,12 +6,11 @@ from fractions import Fraction
 
 from kivy.logger import Logger
 from kivy.properties import StringProperty, NumericProperty, BooleanProperty
-from kivy.app import App
-from kivy.factory import Factory
 from kivy.lang import Builder
 from kivy.uix.boxlayout import BoxLayout
 
 from rcp.dispatchers import SavingDispatcher
+from rcp.components.keypad import Keypad
 from rcp.utils.ctype_calc import uint32_subtract_to_int32
 
 log = Logger.getChild(__name__)
@@ -64,7 +63,8 @@ class ServoBar(BoxLayout, SavingDispatcher):
     ]
 
     def __init__(self, **kv):
-        self.app = App.get_running_app()
+        from rcp.app import MainApp
+        self.app: MainApp = MainApp.get_running_app()
         super().__init__(**kv)
         self.configure_lead_screw_ratio(self, None)
 
@@ -82,6 +82,7 @@ class ServoBar(BoxLayout, SavingDispatcher):
         self.bind(position=self.update_scaledPosition)
         self.bind(elsMode=self.update_scaledPosition)
         self.app.formats.bind(current_format=self.update_scaledPosition)
+        self.update_scaledPosition(self, None)
 
         self.bind(leadScrewPitch=self.configure_lead_screw_ratio)
         self.bind(leadScrewPitchIn=self.configure_lead_screw_ratio)
@@ -165,7 +166,7 @@ class ServoBar(BoxLayout, SavingDispatcher):
         except Exception as e:
             log.error(f"Unable to read servo: {e.__str__()}")
 
-    def update_scaledPosition(self, *args, **kv):
+    def update_scaledPosition(self, instance, value):
         ratio = Fraction(self.ratioNum, self.ratioDen)
 
         if self.elsMode is False and self.unitsPerTurn > 0:
@@ -235,4 +236,5 @@ class ServoBar(BoxLayout, SavingDispatcher):
         self.position = int(value / ratio)
 
     def update_current_position(self):
-        Factory.Keypad().show_with_callback(self.set_current_position, self.scaledPosition)
+        keypad = Keypad()
+        keypad.show_with_callback(self.set_current_position, self.scaledPosition)

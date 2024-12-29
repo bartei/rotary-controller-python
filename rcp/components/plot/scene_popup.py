@@ -1,7 +1,6 @@
 import os
 
 from kivy import Logger
-from kivy.app import App
 from kivy.lang import Builder
 from kivy.properties import ObjectProperty
 from kivy.uix.popup import Popup
@@ -18,7 +17,8 @@ class ScenePopup(Popup):
     float_view = ObjectProperty()
 
     def __init__(self, **kwargs):
-        self.app = App.get_running_app()
+        from rcp.app import MainApp
+        self.app: MainApp = MainApp.get_running_app()
         super().__init__(**kwargs)
 
     def on_touch_down(self, touch):

@@ -1,4 +1,3 @@
-from kivy.app import App
 from kivy.logger import Logger
 from kivy.properties import ObjectProperty, StringProperty
 from kivy.uix.popup import Popup
@@ -28,7 +27,8 @@ class FeedButton(Button):
 
 class FeedsTablePopup(Popup):
     def __init__(self, **kwargs):
-        self.app = App.get_running_app()
+        from rcp.app import MainApp
+        self.app: MainApp = MainApp.get_running_app()
         super().__init__(**kwargs)
         self.title = f"Select Feed"
         self.title_size = "20sp"

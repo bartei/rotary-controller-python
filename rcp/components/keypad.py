@@ -1,4 +1,3 @@
-from kivy.app import App
 from kivy.core.window import Window
 from kivy.logger import Logger
 from kivy.properties import NumericProperty
@@ -19,7 +18,8 @@ class Keypad(Popup):
     current_value = NumericProperty(0)
 
     def __init__(self, **kwargs):
-        self.app = App.get_running_app()
+        from rcp.app import MainApp
+        self.app: MainApp = MainApp.get_running_app()
         super().__init__(**kwargs)
         self.title = f"Old Value: {self.current_value}"
         self.size_hint = (0.8, 0.8)

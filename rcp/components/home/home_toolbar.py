@@ -1,4 +1,3 @@
-from kivy.app import App
 from kivy.logger import Logger
 from kivy.uix.boxlayout import BoxLayout
 from kivy.uix.widget import Widget
@@ -14,7 +13,8 @@ log = Logger.getChild(__name__)
 
 class HomeToolbar(BoxLayout):
     def __init__(self, **kv):
-        self.app = App.get_running_app()
+        from rcp.app import MainApp
+        self.app: MainApp = MainApp.get_running_app()
         super(HomeToolbar, self).__init__(**kv)
         self.size_hint_x = None
         self.size_hint_y = 1

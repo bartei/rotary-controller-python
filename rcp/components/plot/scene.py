@@ -1,7 +1,6 @@
 import os
 
 from kivy import Logger
-from kivy.app import App
 from kivy.lang import Builder
 from kivy.uix.floatlayout import FloatLayout
 from kivy.properties import NumericProperty, ListProperty
@@ -27,7 +26,8 @@ class Scene(FloatLayout, StencilView):
     tool_y = NumericProperty(0.0)
 
     def __init__(self, **kwargs):
-        self.app = App.get_running_app()
+        from rcp.app import MainApp
+        self.app: MainApp = MainApp.get_running_app()
         super(Scene, self).__init__(**kwargs)
         # self.bind(pos=self.update_canvas)
         self.bind(size=self.update_points)

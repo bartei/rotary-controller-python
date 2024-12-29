@@ -1,6 +1,5 @@
 import os
 
-from kivy.app import App
 from kivy.logger import Logger
 from kivy.lang import Builder
 from kivy.properties import NumericProperty, BooleanProperty
@@ -18,7 +17,8 @@ class JogBar(BoxLayout):
     enable_jog = BooleanProperty(False)
 
     def __init__(self, **kwargs):
-        self.app = App.get_running_app()
+        from rcp.app import MainApp
+        self.app: MainApp = MainApp.get_running_app()
         super().__init__(**kwargs)
         self.bind(desired_speed=self.update_jog)
         self.bind(enable_jog=self.update_jog)

@@ -24,7 +24,8 @@ class HomePage(BoxLayout):
     orientation = "horizontal"
 
     def __init__(self, **kv):
-        self.app = App.get_running_app()
+        from rcp.app import MainApp
+        self.app: MainApp = MainApp.get_running_app()
         super().__init__(**kv)
         self.bars_container = BoxLayout(
             orientation="vertical",
@@ -38,7 +39,10 @@ class HomePage(BoxLayout):
         self.els_bar = ElsBar(id_override="0")
         self.jog_bar = JogBar()
 
+        # Configure Current Mode, and disable Indexing mode if servo is set to ELS
         self.next_mode = self.app.current_mode
+        if self.app.servo.elsMode and self.next_mode == 1:
+            self.next_mode = 2
 
         coord_bars = []
         for scale in self.app.scales:

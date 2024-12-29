@@ -1,7 +1,5 @@
 import os
-from fractions import Fraction
 
-from kivy.app import App
 from kivy.factory import Factory
 from kivy.logger import Logger
 from kivy.lang import Builder
@@ -43,7 +41,8 @@ class ElsBar(BoxLayout, SavingDispatcher):
     ]
 
     def __init__(self, **kwargs):
-        self.app = App.get_running_app()
+        from rcp.app import MainApp
+        self.app: MainApp = MainApp.get_running_app()
         super().__init__(**kwargs)
         if not self.mode_name in feeds.table.keys():
             self.mode_name = next(iter(feeds.table.keys()))

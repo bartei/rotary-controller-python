@@ -7,6 +7,15 @@
   size_hint_y: None
   height: 128
 
+  Button:
+    width: 96
+    size_hint_x: None
+    text: app.servo.name
+    font_size: self.height / 1.5
+    font_style: "bold"
+    background_color: [0.2, 1, 0.2, 1] if app.servo.servoEnable else [0.3, 0.3, 0.3, 1]
+    on_release: app.servo.toggle_enable()
+
   BoxLayout:
     orientation: "vertical"
     size_hint_x: 0.8
@@ -35,17 +44,6 @@
       size_hint_y: 0.20
       max: int(app.servo.maxSpeed)
       value: int(abs(app.servo.speed))
-
-  Button:
-    width: self.height
-    size_hint_x: None
-    text: root.mode_name
-    text_halign: "center"
-    font_size: self.height / 6
-    font_style: "bold"
-    halign: "center"
-    background_color: app.formats.display_color
-    on_release: Factory.FeedsTablePopup().show_with_callback(root.set_feed_ratio)
 
   Button:
     width: self.height
@@ -80,7 +78,7 @@
       text_size: self.size
       halign: 'center'
       valign: 'middle'
-#      on_release: root.do_drop()
+      on_release: Factory.FeedsTablePopup().show_with_callback(root.set_feed_ratio)
 
   Button:
     width: self.height

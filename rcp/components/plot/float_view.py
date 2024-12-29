@@ -1,7 +1,6 @@
 import os
 
 from kivy import Logger
-from kivy.app import App
 from kivy.core.window import Window
 from kivy.lang import Builder
 from kivy.uix.floatlayout import FloatLayout
@@ -26,7 +25,8 @@ class FloatView(FloatLayout):
     tool_y = NumericProperty(0)
 
     def __init__(self, **kwargs):
-        self.app = App.get_running_app()
+        from rcp.app import MainApp
+        self.app: MainApp = MainApp.get_running_app()
         super().__init__(**kwargs)
         # Window.bind(mouse_pos=self.window_mouse_pos)
         Window.bind(on_motion=self.on_motion)
