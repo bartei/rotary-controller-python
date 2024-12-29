@@ -46,8 +46,9 @@ class ElsBar(BoxLayout, SavingDispatcher):
         self.app = App.get_running_app()
         super().__init__(**kwargs)
         if not self.mode_name in feeds.table.keys():
-            self.mode_name = feeds.table.keys()[0]
+            self.mode_name = next(iter(feeds.table.keys()))
         self.current_feeds_table = feeds.table[self.mode_name]
+        self.update_feeds_ratio(self, None)
         self.bind(current_feeds_index=self.update_feeds_ratio)
 
     def update_current_position(self):

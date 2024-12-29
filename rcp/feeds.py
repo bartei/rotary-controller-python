@@ -71,8 +71,32 @@ FEED_IN = [
     FeedConfiguration(name="0.040", ratio=Fraction("254/10") * Fraction("40/1000"), mode=3),
 ]
 
+FEED_MM = [
+    FeedConfiguration(name="0.01", ratio=Fraction("1/100"), mode=4),
+    FeedConfiguration(name="0.02", ratio=Fraction("2/100"), mode=4),
+    FeedConfiguration(name="0.03", ratio=Fraction("3/100"), mode=4),
+    FeedConfiguration(name="0.04", ratio=Fraction("4/100"), mode=4),
+    FeedConfiguration(name="0.05", ratio=Fraction("5/100"), mode=4),
+    FeedConfiguration(name="0.06", ratio=Fraction("6/100"), mode=4),
+    FeedConfiguration(name="0.07", ratio=Fraction("7/100"), mode=4),
+    FeedConfiguration(name="0.08", ratio=Fraction("8/100"), mode=4),
+    FeedConfiguration(name="0.09", ratio=Fraction("9/100"), mode=4),
+    FeedConfiguration(name="0.10", ratio=Fraction("10/100"), mode=4),
+    FeedConfiguration(name="0.12", ratio=Fraction("12/100"), mode=4),
+    FeedConfiguration(name="0.14", ratio=Fraction("14/100"), mode=4),
+    FeedConfiguration(name="0.16", ratio=Fraction("16/100"), mode=4),
+    FeedConfiguration(name="0.18", ratio=Fraction("18/100"), mode=4),
+    FeedConfiguration(name="0.20", ratio=Fraction("20/100"), mode=4),
+    FeedConfiguration(name="0.22", ratio=Fraction("22/100"), mode=4),
+    FeedConfiguration(name="0.24", ratio=Fraction("24/100"), mode=4),
+    FeedConfiguration(name="0.26", ratio=Fraction("26/100"), mode=4),
+    FeedConfiguration(name="0.28", ratio=Fraction("28/100"), mode=4),
+    FeedConfiguration(name="0.30", ratio=Fraction("30/100"), mode=4),
+]
+
 table = {
     "Thread MM": THREAD_MM,
     "Thread IN": THREAD_IN,
     "Feed IN": FEED_IN,
+    "Feed MM": FEED_MM,
 }
