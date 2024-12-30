@@ -1,6 +1,7 @@
 from keke import ktrace
 from kivy.base import EventLoop
 from kivy.logger import Logger, KivyFormatter
+from kivy.core.window import Window
 
 log = Logger.getChild(__name__)
 
