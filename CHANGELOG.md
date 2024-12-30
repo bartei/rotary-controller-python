@@ -1,6 +1,29 @@
 # CHANGELOG
 
 
+## v1.0.12 (2024-12-30)
+
+### Bug Fixes
+
+- Cleanup and startup optimizations
+  ([`9c5fbba`](https://github.com/bartei/rotary-controller-python/commit/9c5fbba964da48d0cf1922959518321369530f22))
+
+- Continue els mode forms and more code improvements
+  ([`431b66f`](https://github.com/bartei/rotary-controller-python/commit/431b66f6edccb07dfd72a10f59afa8ee1fd9a7c3))
+
+- Disable mouse pointer
+  ([`911968e`](https://github.com/bartei/rotary-controller-python/commit/911968eff492c07832c24f7fa9559b926cca1b1b))
+
+- Els mode wip
+  ([`02665f9`](https://github.com/bartei/rotary-controller-python/commit/02665f94e0ca4c372d774407ba9b701cc948564e))
+
+- Feed init
+  ([`41edeba`](https://github.com/bartei/rotary-controller-python/commit/41edeba56e0ae164a1b3294fabf33f3065e8c961))
+
+- Working ELS mode to be tested carefully
+  ([`ab1d313`](https://github.com/bartei/rotary-controller-python/commit/ab1d3130bb4d0a0196ccc16d1f69c3d31b0a8f6f))
+
+
 ## v1.0.11 (2024-12-17)
 
 
