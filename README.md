@@ -134,41 +134,71 @@ ls # --> This will show you a list of log files, look for the latest one produce
 
 ## Configuration of the servo axis parameters
 
-The servo axis can be configured to operate in one of two possible modes:
- - Rotary Table
- - Electronic Lead Screw
+Here’s the improved text in **Markdown** format:
 
-When the servo is configured to operate in rotary table mode, the position is reported back in degrees, therefore
-the configuration of the numerator and denominator for the input encoder shall be configured to reflect a full 
-rotation of the controlled device.
+---
 
-When the servo is configured to operate in ELS mode, the position reported back is a relative offset of the leadscrew
-travel.
+# Description of Servo Operation Modes and Configuration
 
-Internally the system always operates in metric, regardless of the mode selected by the user, so all the ratios
-and settings in the setup page have to reflect 
+When the servo is configured to operate in **rotary table mode**, the position is reported in **degrees**. Therefore, the configuration of the numerator and denominator for the input encoder must be set to reflect a full rotation of the controlled device. This ensures accurate reporting and control of the servo's position.
 
-parameters:
-- lead screw pitch configuration in mm (how many steps does it take to advance for the specified pitch)
-- encoder input for the spindle, we know how many steps for a full rotation
+In contrast, when the servo is configured to operate in **ELS (Electronic Leadscrew) mode**, the position is reported as a **relative offset of the leadscrew travel**, rather than an absolute value.
 
-the user configures the feed amount per revolution, the system calculates the ratio for the output axis so that
-one full revolution of the spindle moves the output axis by the required amount:
+## Internal Operation
 
-lead screw pitch configuration as in how many steps to move a given amount, for example:
-4TPI lead screw:
-4 TPI means 4 threads per inch, so the pitch is 0.25" -> 1/4
+Internally, the system always operates using **metric units**, regardless of the mode selected by the user. Consequently, all ratios and settings in the setup page must be configured using metric values. This consistency is essential for precise calculations and control.
 
-Since we operate in metric, this number has to be converted to metric:
-1/4 * 10/254
+---
 
-Let's look at the final ratio that needs to be configured in order to get the required feed:
+## Configuration Parameters
 
-Example:
-encoder: 4096 pulses per revolution
+The system requires the following parameters to be configured:
 
-lead screw: 4TPI
+1. **Leadscrew Pitch**:
+    - Specifies the pitch of the leadscrew in millimeters.
+    - For example, the pitch determines how far the axis moves for a complete rotation of the leadscrew.
 
-required feed: 0.003" per revolution
+2. **Spindle Encoder Input**:
+    - Indicates how many pulses the spindle encoder generates per full revolution.
 
-lead_screw_pulses = spindle_pulses * spindle_ratio * lead_screw_pitch * pulses_per_pitch * requested_feed
+3. **Feed Amount Per Revolution**:
+    - The user configures the desired feed (movement of the axis) per spindle revolution.
+    - The system calculates the output axis ratio to ensure one full spindle revolution moves the output axis by the specified amount.
+
+---
+
+## Example: Leadscrew Pitch
+
+For a leadscrew with a pitch of **4 TPI (Threads Per Inch)**:
+- **4 TPI** means there are 4 threads per inch, resulting in a pitch of \( \frac{1}{4} \) inches, or \( 0.25 \) inches.
+- Since the system operates in metric, the pitch is converted to millimeters:
+
+\[
+\text{Pitch in mm} = \frac{1}{4} \times \frac{10}{254} \approx 0.00984 \, \text{mm}
+\]
+
+---
+
+## Calculating the Final Ratio
+
+To achieve the required feed rate, the system computes the final ratio for the leadscrew based on the following equation:
+
+\[
+\text{lead\_screw\_pulses} = \text{spindle\_pulses} \times \text{spindle\_ratio} \times \text{lead\_screw\_pitch} \times \text{pulses\_per\_pitch} \times \text{requested\_feed}
+\]
+
+### Example:
+
+- **Spindle Encoder**: \( 4096 \) pulses per revolution.
+- **Leadscrew Pitch**: \( 4 \, \text{TPI} \).
+- **Required Feed**: \( 0.003 \, \text{inches per revolution} \).
+
+### Steps:
+
+1. Convert the pitch to metric:
+   \[
+   \frac{1}{4} \times \frac{10}{254} \approx 0.00984 \, \text{mm}
+   \]
+
+2. Calculate the necessary lead screw pulses based on the formula above.
+
