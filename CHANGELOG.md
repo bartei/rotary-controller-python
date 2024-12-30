@@ -1,6 +1,14 @@
 # CHANGELOG
 
 
+## v1.0.13 (2024-12-30)
+
+### Bug Fixes
+
+- Forgotten import in the main.py for hiding the cursor
+  ([`655eaac`](https://github.com/bartei/rotary-controller-python/commit/655eaac6f49cd7965f40ea4154c1bcf48826bc16))
+
+
 ## v1.0.12 (2024-12-30)
 
 ### Bug Fixes
@@ -22,6 +30,11 @@
 
 - Working ELS mode to be tested carefully
   ([`ab1d313`](https://github.com/bartei/rotary-controller-python/commit/ab1d3130bb4d0a0196ccc16d1f69c3d31b0a8f6f))
+
+### Chores
+
+- Cleanup README.md
+  ([`06da564`](https://github.com/bartei/rotary-controller-python/commit/06da564dc4d5f9acd9c0b41536ac01aacd0fb510))
 
 
 ## v1.0.11 (2024-12-17)
