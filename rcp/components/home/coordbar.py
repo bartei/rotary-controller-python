@@ -123,7 +123,13 @@ class CoordBar(BoxLayout, SavingDispatcher):
         else:
             scale_ratio = Fraction(self.ratioNum, self.ratioDen) * self.app.formats.factor
 
-        servo_ratio = Fraction(self.app.servo.ratioNum, self.app.servo.ratioDen)
+        if self.app.servo.elsMode:
+            # ELS Mode, the output is always metric so we need to account for the conversion
+            servo_ratio = Fraction(self.app.servo.ratioNum, self.app.servo.ratioDen) * self.app.formats.factor
+        else:
+            # NON Els mode we're in degrees always
+            servo_ratio = Fraction(self.app.servo.ratioNum, self.app.servo.ratioDen)
+
         sync_ratio = Fraction(self.syncRatioNum, self.syncRatioDen)
 
         final_ratio = scale_ratio * sync_ratio / servo_ratio

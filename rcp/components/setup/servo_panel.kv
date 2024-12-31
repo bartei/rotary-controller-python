@@ -18,12 +18,12 @@
       TitleItem:
         name: "Gearing Ratios"
       NumberItem:
-        disabled: not root.servo.elsMode
+        disabled: root.servo.elsMode
         name: "Ratio Numerator"
         value: root.servo.ratioNum
         on_value: root.servo.ratioNum = self.value
       NumberItem:
-        disabled: not root.servo.elsMode
+        disabled: root.servo.elsMode
         name: "Ratio Denominator"
         value: root.servo.ratioDen
         on_value: root.servo.ratioDen = self.value
@@ -40,10 +40,6 @@
         value: root.servo.acceleration
         on_value: root.servo.acceleration = self.value
 
-      NumberItem:
-        name: "Units/Turn"
-        value: root.servo.unitsPerTurn
-        on_value: root.servo.unitsPerTurn = self.value
 
       TitleItem:
         name: "Rotary Table Mode Settings"
@@ -62,7 +58,7 @@
         on_value: root.servo.elsMode = self.value
       NumberItem:
         disabled: not root.servo.elsMode
-        name: "Lead Screw Pitch in MM"
+        name: "Lead Screw Pitch in IN" if root.servo.leadScrewPitchIn else "Lead Screw Pitch in MM"
         value: root.servo.leadScrewPitch
         on_value: root.servo.leadScrewPitch = self.value
       BooleanItem:
