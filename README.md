@@ -132,21 +132,21 @@ cd /var/log
 ls # --> This will show you a list of log files, look for the latest one produced by kivy and cat the contents
 ```
 
-## Configuration of the servo axis parameters
-
-Here’s the improved text in **Markdown** format:
-
----
 
 # Description of Servo Operation Modes and Configuration
 
-When the servo is configured to operate in **rotary table mode**, the position is reported in **degrees**. Therefore, the configuration of the numerator and denominator for the input encoder must be set to reflect a full rotation of the controlled device. This ensures accurate reporting and control of the servo's position.
+When the servo is configured to operate in **rotary table mode**, the position is reported in **degrees**. Therefore, 
+the configuration of the numerator and denominator for the input encoder must be set to reflect a full rotation of the 
+controlled device. This ensures accurate reporting and control of the servo's position.
 
-In contrast, when the servo is configured to operate in **ELS (Electronic Leadscrew) mode**, the position is reported as a **relative offset of the leadscrew travel**, rather than an absolute value.
+In contrast, when the servo is configured to operate in **ELS (Electronic Leadscrew) mode**, the position is reported 
+as a **relative offset of the leadscrew travel**, rather than an absolute value.
 
 ## Internal Operation
 
-Internally, the system always operates using **metric units**, regardless of the mode selected by the user. Consequently, all ratios and settings in the setup page must be configured using metric values. This consistency is essential for precise calculations and control.
+Internally, the system always operates using **metric units**, regardless of the mode selected by the user. 
+Consequently, all ratios and settings in the setup page must be configured using metric values. This consistency is 
+essential for precise calculations and control.
 
 ---
 
@@ -163,19 +163,16 @@ The system requires the following parameters to be configured:
 
 3. **Feed Amount Per Revolution**:
     - The user configures the desired feed (movement of the axis) per spindle revolution.
-    - The system calculates the output axis ratio to ensure one full spindle revolution moves the output axis by the specified amount.
+    - The system calculates the output axis ratio to ensure one full spindle revolution moves the output axis by the 
+      specified amount.
 
 ---
 
 ## Example: Leadscrew Pitch
 
 For a leadscrew with a pitch of **4 TPI (Threads Per Inch)**:
-- **4 TPI** means there are 4 threads per inch, resulting in a pitch of \( \frac{1}{4} \) inches, or \( 0.25 \) inches.
-- Since the system operates in metric, the pitch is converted to millimeters:
-
-\[
-\text{Pitch in mm} = \frac{1}{4} \times \frac{10}{254} \approx 0.00984 \, \text{mm}
-\]
+- **4 TPI** means there are 4 threads per inch, resulting in a pitch of 1/4 inches, or 0.25 inches.
+- Since the system operates in metric, the pitch is converted to millimeters: pitch_in_mm = 1/4 * 10/254
 
 ---
 
@@ -183,22 +180,17 @@ For a leadscrew with a pitch of **4 TPI (Threads Per Inch)**:
 
 To achieve the required feed rate, the system computes the final ratio for the leadscrew based on the following equation:
 
-\[
-\text{lead\_screw\_pulses} = \text{spindle\_pulses} \times \text{spindle\_ratio} \times \text{lead\_screw\_pitch} \times \text{pulses\_per\_pitch} \times \text{requested\_feed}
-\]
+lead_screw_pulses = spindle_pulses * spindle_ratio * lead_screw_pitch * pulses_per_pitch * requested_feed
 
 ### Example:
 
-- **Spindle Encoder**: \( 4096 \) pulses per revolution.
-- **Leadscrew Pitch**: \( 4 \, \text{TPI} \).
-- **Required Feed**: \( 0.003 \, \text{inches per revolution} \).
+- **Spindle Encoder**: 4096 pulses per revolution.
+- **Leadscrew Pitch**: 4 TPI
+- **Required Feed**: 0.003 inches per revolution
 
 ### Steps:
 
 1. Convert the pitch to metric:
-   \[
-   \frac{1}{4} \times \frac{10}{254} \approx 0.00984 \, \text{mm}
-   \]
+   1/4 * 10/254
 
 2. Calculate the necessary lead screw pulses based on the formula above.
-
