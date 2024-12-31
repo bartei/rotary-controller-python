@@ -1,12 +1,18 @@
 # CHANGELOG
 
 
+## v1.0.15 (2024-12-31)
+
+
 ## v1.0.14 (2024-12-31)
 
 ### Bug Fixes
 
 - Corrections to the setup page
   ([`ce9a7db`](https://github.com/bartei/rotary-controller-python/commit/ce9a7db0078e4ea332a6206aeeb2f407ec8582ad))
+
+- Drop compatibility with Python <=3.9
+  ([`804200d`](https://github.com/bartei/rotary-controller-python/commit/804200d2381a011d59a86575249899a445ca932a))
 
 
 ## v1.0.13 (2024-12-30)
