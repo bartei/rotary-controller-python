@@ -1,6 +1,14 @@
 # CHANGELOG
 
 
+## v1.0.17 (2025-03-13)
+
+### Bug Fixes
+
+- Update dependenciea
+  ([`3faff4e`](https://github.com/bartei/rotary-controller-python/commit/3faff4e27ef3764f679b4dbf34232362eb7ab273))
+
+
 ## v1.0.16 (2024-12-31)
 
 
@@ -212,7 +220,7 @@ BREAKING CHANGE: new communication and servo handling
 
 ci: Cleanup of cicd
 
-### BREAKING CHANGES
+### Breaking Changes
 
 - New communication and servo handling
 
