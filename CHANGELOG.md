@@ -1,6 +1,14 @@
 # CHANGELOG
 
 
+## v1.0.18 (2025-04-26)
+
+### Bug Fixes
+
+- Allow python 3.9
+  ([`c218f22`](https://github.com/bartei/rotary-controller-python/commit/c218f22cc850c0e1f9b3b955db2d92a9ea6887e0))
+
+
 ## v1.0.17 (2025-03-13)
 
 ### Bug Fixes
