@@ -61,7 +61,7 @@
             );
         default = pythonSet.mkVirtualEnv "rcp" workspace.deps.default;
       in {
-        packages = default;
+        packages.default = default;
       }
     );
 
