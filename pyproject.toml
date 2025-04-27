@@ -5,7 +5,7 @@ description = "Rotary Controller Python"
 authors = [
     { name = "Stefano Bertelli", email = "stefano@provvedo.com" }
 ]
-requires-python = ">=3.9,<4.0"
+requires-python = ">=3.10,<4.0"
 license = "MIT"
 readme = "README.md"
 dependencies = [
@@ -20,6 +20,8 @@ dependencies = [
     "pyyaml>=6.0.2",
 ]
 
+[project.scripts]
+rcp = "rcp:main"
 
 [build-system]
 requires = ["hatchling"]
