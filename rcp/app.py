@@ -80,12 +80,13 @@ class MainApp(App):
 
         super().__init__(**kv)
 
-        sound_file = f"{os.path.dirname(__file__)}/sounds/beep.mp3"
-        self.sound = SoundLoader.load(sound_file)
+        # sound_file = f"{os.path.dirname(__file__)}/sounds/beep.mp3"
+        # self.sound = SoundLoader.load(sound_file)
 
     def beep(self, *args, **kv):
-        self.sound.volume = self.formats.volume
-        self.sound.play()
+        pass
+        # self.sound.volume = self.formats.volume
+        # self.sound.play()
 
     @staticmethod
     def load_help(help_file_name):

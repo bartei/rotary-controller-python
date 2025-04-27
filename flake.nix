@@ -38,9 +38,10 @@
       overlay = workspace.mkPyprojectOverlay {
         sourcePreference = "wheel"; # or sourcePreference = "sdist";
       };
+      currentSystem = builtins.currentSystem;
 
       # This example is only using x86_64-linux
-      pkgs = nixpkgs.legacyPackages.x86_64-linux;
+      pkgs = nixpkgs.legacyPackages.${currentSystem};
 
       # Use Python 3.12 from nixpkgs
       python = pkgs.python312;
@@ -58,18 +59,19 @@
             ]
           );
 
-    in
+    in rec
     {
       # Package a virtual environment as our main application.
       #
       # Enable no optional dependencies for production build.
-      packages.x86_64-linux.default = pythonSet.mkVirtualEnv "rcp" workspace.deps.default;
+      default = pythonSet.mkVirtualEnv "rcp" workspace.deps.default;
+      packages.${currentSystem}.default = default;
 
       # Make hello runnable with `nix run`
-      apps.x86_64-linux = {
+      apps.${currentSystem} = {
         default = {
           type = "app";
-          program = "${self.packages.x86_64-linux.default}/bin/rcp";
+          program = "${self.default}/bin/rcp";
         };
       };
 
