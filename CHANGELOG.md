@@ -1,6 +1,20 @@
 # CHANGELOG
 
 
+## v1.0.19 (2025-04-27)
+
+### Bug Fixes
+
+- Add flake
+  ([`0082a30`](https://github.com/bartei/rotary-controller-python/commit/0082a30e968c152fc3da26b97cb8a5e4a0d7666d))
+
+- Lockfile
+  ([`313554d`](https://github.com/bartei/rotary-controller-python/commit/313554d6223052611382e5dbba03797eab684d89))
+
+- Pyproject
+  ([`f4b0d16`](https://github.com/bartei/rotary-controller-python/commit/f4b0d16db502b24fa99ec64cc0031035f4cf3270))
+
+
 ## v1.0.18 (2025-04-26)
 
 ### Bug Fixes
