@@ -1,6 +1,9 @@
 # CHANGELOG
 
 
+## v1.0.20 (2025-04-27)
+
+
 ## v1.0.19 (2025-04-27)
 
 ### Bug Fixes
@@ -13,6 +16,9 @@
 
 - Pyproject
   ([`f4b0d16`](https://github.com/bartei/rotary-controller-python/commit/f4b0d16db502b24fa99ec64cc0031035f4cf3270))
+
+- Testing stuff
+  ([`9063708`](https://github.com/bartei/rotary-controller-python/commit/90637081efec1082bd3d308de7e538f20a2b1cf1))
 
 
 ## v1.0.18 (2025-04-26)
