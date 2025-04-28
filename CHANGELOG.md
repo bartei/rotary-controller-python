@@ -1,7 +1,15 @@
 # CHANGELOG
 
 
+## v1.0.23 (2025-04-28)
+
+
 ## v1.0.22 (2025-04-27)
+
+### Bug Fixes
+
+- Python312
+  ([`be92eb1`](https://github.com/bartei/rotary-controller-python/commit/be92eb1d0c0fb4ddcf99375a6582fefe1b09564e))
 
 
 ## v1.0.21 (2025-04-27)
