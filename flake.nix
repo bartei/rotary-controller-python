@@ -41,24 +41,24 @@
         inherit (nixpkgs) lib;
         workspace = uv2nix.lib.workspace.loadWorkspace { workspaceRoot = ./.; };
 
-        hacks = builtins.callPackage pyproject-nix.build.hacks {};
+#        overlay = workspace.mkPyprojectOverlay {
+#          sourcePreference = "wheel"; # or sourcePreference = "sdist";
+#        };
 
-        overlay = final: prev: {
-          # Adapt torch from nixpkgs
-          sourcePreference = "wheel"; # or sourcePreference = "sdist";
-          torch = hacks.nixpkgsPrebuilt {
-            from = pkgs.python311Packages.kivy;
-            prev = prev.kivy;
-          };
-        };
-
+        # Use Python 3.12 from nixpkgs
         python = pkgs.python311;
 
         # Construct package set
-        pythonSet = (pkgs.callPackage pyproject-nix.build.packages {
+        pythonSet =
+          # Use base package set from pyproject.nix builders
+          (pkgs.callPackage pyproject-nix.build.packages {
             inherit python;
-        }).overrideScope overlay;
-
+          }).overrideScope(
+            lib.composeManyExtensions [
+              pyproject-build-systems.overlays.default
+#              overlay
+            ]
+          );
         default = pythonSet.mkVirtualEnv "rcp" workspace.deps.default;
       in {
         packages.default = default;
