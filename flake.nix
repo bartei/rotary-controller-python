@@ -55,10 +55,8 @@
             (lib.composeManyExtensions [
               pyproject-build-systems.overlays.default
               overlay
-
-              # 🔧 Inject patch to kivy
               (self: super: {
-                kivy = super.kivy.overridePythonAttrs (old: {
+                kivy = super.kivy.override (old: {
                   postPatch = lib.optionalString pkgs.stdenv.hostPlatform.isLinux ''
                     substituteInPlace kivy/lib/mtdev.py \
                       --replace "LoadLibrary('libmtdev.so.1')" "LoadLibrary('${pkgs.mtdev}/lib/libmtdev.so.1')"
