@@ -40,31 +40,24 @@
         pkgs = import nixpkgs { inherit system; };
         inherit (nixpkgs) lib;
         workspace = uv2nix.lib.workspace.loadWorkspace { workspaceRoot = ./.; };
-        overlay = workspace.mkPyprojectOverlay {
+
+        hacks = builtins.callPackage pyproject-nix.build.hacks {};
+
+        overlay = final: prev: {
+          # Adapt torch from nixpkgs
           sourcePreference = "wheel"; # or sourcePreference = "sdist";
+          torch = hacks.nixpkgsPrebuilt {
+            from = pkgs.python311Packages.kivy;
+            prev = prev.kivy;
+          };
         };
 
-        # Use Python 3.12 from nixpkgs
-        python = pkgs.python312;
+        python = pkgs.python311;
 
         # Construct package set
-        pythonSet =
-          (pkgs.callPackage pyproject-nix.build.packages {
+        pythonSet = (pkgs.callPackage pyproject-nix.build.packages {
             inherit python;
-          }).overrideScope
-            (lib.composeManyExtensions [
-              pyproject-build-systems.overlays.default
-              overlay
-              (self: super: {
-                kivy = super.kivy.override (old: {
-                  postPatch = lib.optionalString pkgs.stdenv.hostPlatform.isLinux ''
-                    substituteInPlace kivy/lib/mtdev.py \
-                      --replace "LoadLibrary('libmtdev.so.1')" "LoadLibrary('${pkgs.mtdev}/lib/libmtdev.so.1')"
-                  '';
-                  nativeBuildInputs = (old.nativeBuildInputs or []) ++ [ pkgs.mtdev ];
-                });
-              })
-            ]);
+        }).overrideScope overlay;
 
         default = pythonSet.mkVirtualEnv "rcp" workspace.deps.default;
       in {
