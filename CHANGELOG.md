@@ -1,9 +1,15 @@
 # CHANGELOG
 
 
+## v1.0.25 (2025-05-02)
+
+
 ## v1.0.24 (2025-05-02)
 
 ### Bug Fixes
+
+- Testing flake with pi
+  ([`04774ad`](https://github.com/bartei/rotary-controller-python/commit/04774ad0a9ba2bfbc5c734ecbf52bdc7bf3ec646))
 
 - Testing flake with pi
   ([`eae9348`](https://github.com/bartei/rotary-controller-python/commit/eae93486e0798ccda593bbaaa52e99d1ccf7959a))
