@@ -41,24 +41,25 @@
         inherit (nixpkgs) lib;
         workspace = uv2nix.lib.workspace.loadWorkspace { workspaceRoot = ./.; };
 
-#        overlay = workspace.mkPyprojectOverlay {
-#          sourcePreference = "wheel"; # or sourcePreference = "sdist";
-#        };
+        overlay = workspace.mkPyprojectOverlay {
+          sourcePreference = "wheel"; # or sourcePreference = "sdist";
+        };
 
         # Use Python 3.12 from nixpkgs
-        python = pkgs.python311;
+        python = pkgs.python312;
 
         # Construct package set
         pythonSet =
           # Use base package set from pyproject.nix builders
           (pkgs.callPackage pyproject-nix.build.packages {
             inherit python;
-          }).overrideScope(
-            lib.composeManyExtensions [
-              pyproject-build-systems.overlays.default
-#              overlay
-            ]
-          );
+          }).overrideScope
+            (
+              lib.composeManyExtensions [
+                pyproject-build-systems.overlays.default
+                overlay
+              ]
+            );
         default = pythonSet.mkVirtualEnv "rcp" workspace.deps.default;
       in {
         packages.default = default;
