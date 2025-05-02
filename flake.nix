@@ -49,16 +49,25 @@
 
         # Construct package set
         pythonSet =
-          # Use base package set from pyproject.nix builders
           (pkgs.callPackage pyproject-nix.build.packages {
             inherit python;
           }).overrideScope
-            (
-              lib.composeManyExtensions [
-                pyproject-build-systems.overlays.default
-                overlay
-              ]
-            );
+            (lib.composeManyExtensions [
+              pyproject-build-systems.overlays.default
+              overlay
+
+              # 🔧 Inject patch to kivy
+              (self: super: {
+                kivy = super.kivy.overridePythonAttrs (old: {
+                  postPatch = lib.optionalString pkgs.stdenv.hostPlatform.isLinux ''
+                    substituteInPlace kivy/lib/mtdev.py \
+                      --replace "LoadLibrary('libmtdev.so.1')" "LoadLibrary('${pkgs.mtdev}/lib/libmtdev.so.1')"
+                  '';
+                  nativeBuildInputs = (old.nativeBuildInputs or []) ++ [ pkgs.mtdev ];
+                });
+              })
+            ]);
+
         default = pythonSet.mkVirtualEnv "rcp" workspace.deps.default;
       in {
         packages.default = default;
