@@ -1,12 +1,18 @@
 # CHANGELOG
 
 
+## v1.0.30 (2025-05-04)
+
+
 ## v1.0.29 (2025-05-04)
 
 ### Bug Fixes
 
 - Cleanup and fix pyproject error in python compatibility string
   ([`d693f28`](https://github.com/bartei/rotary-controller-python/commit/d693f28bd91a04ae755b1cc33e5559fdd62bb00b))
+
+- Error with callback when setting new position for coordbar.py
+  ([`0f8b9a4`](https://github.com/bartei/rotary-controller-python/commit/0f8b9a48bde647cd700d58e3916db57697f3c787))
 
 
 ## v1.0.28 (2025-05-03)
