@@ -1,6 +1,14 @@
 # CHANGELOG
 
 
+## v1.0.29 (2025-05-04)
+
+### Bug Fixes
+
+- Cleanup and fix pyproject error in python compatibility string
+  ([`d693f28`](https://github.com/bartei/rotary-controller-python/commit/d693f28bd91a04ae755b1cc33e5559fdd62bb00b))
+
+
 ## v1.0.28 (2025-05-03)
 
 ### Bug Fixes
@@ -10,6 +18,11 @@
 
 
 ## v1.0.27 (2025-05-02)
+
+### Bug Fixes
+
+- Make our code compatible with 3.9 so we can use it in bullseye
+  ([`e42edbd`](https://github.com/bartei/rotary-controller-python/commit/e42edbdf754c45cb097b4331193efb496b457e23))
 
 
 ## v1.0.26 (2025-05-02)
