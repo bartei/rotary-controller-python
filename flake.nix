@@ -42,7 +42,18 @@
         workspace = uv2nix.lib.workspace.loadWorkspace { workspaceRoot = ./.; };
 
         overlay = workspace.mkPyprojectOverlay {
-          sourcePreference = "wheel"; # or sourcePreference = "sdist";
+          sourcePreference = "wheel"; # or
+          #sourcePreference = "sdist";
+        };
+
+        hacks = pkgs.callPackage pyproject-nix.build.hacks {};
+
+        overlayKivy = final: prev: {
+          # Adapt Kivy from nixpkgs
+          kivy = hacks.nixpkgsPrebuilt {
+            from = pkgs.python312Packages.kivy;
+            prev = prev.kivy;
+          };
         };
 
         # Use Python 3.12 from nixpkgs
@@ -58,6 +69,7 @@
               lib.composeManyExtensions [
                 pyproject-build-systems.overlays.default
                 overlay
+                overlayKivy
               ]
             );
         default = pythonSet.mkVirtualEnv "rcp" workspace.deps.default;
