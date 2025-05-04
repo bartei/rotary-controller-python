@@ -6,7 +6,6 @@ from kivy.core.window import Window
 log = Logger.getChild(__name__)
 
 Window.show_cursor = False
-Window.size = (720, 400)
 
 for h in log.root.handlers:
     h.formatter = KivyFormatter('%(asctime)s - %(name)s:%(lineno)s-%(funcName)s - %(levelname)s - %(message)s')

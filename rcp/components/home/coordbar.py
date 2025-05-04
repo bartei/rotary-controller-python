@@ -146,7 +146,7 @@ class CoordBar(BoxLayout, SavingDispatcher):
             return
         self.set_sync_ratio()
 
-    def update_scaledPosition(self, instance, value):
+    def update_scaledPosition(self, instance=None, value=None):
         if self.spindleMode:
             # When working in spindle mode we report the position in degrees
             self.scaledPosition = float(
