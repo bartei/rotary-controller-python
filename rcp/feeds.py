@@ -1,10 +1,12 @@
+from typing import Optional
+
 from pydantic import BaseModel
 from fractions import Fraction
 
 class FeedConfiguration(BaseModel):
-    name: str | None = None
-    mode: int | None = None
-    ratio: Fraction | None = None
+    name: Optional[str] = None
+    mode: Optional[int] = None
+    ratio: Optional[Fraction] = None
 
 THREAD_MM = [
     FeedConfiguration(name="0.35", ratio=Fraction("0.35"), mode=1),
