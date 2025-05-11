@@ -1,6 +1,14 @@
 # CHANGELOG
 
 
+## v1.0.32 (2025-05-11)
+
+### Bug Fixes
+
+- Increase refresh rate and disable cursor
+  ([`85cde83`](https://github.com/bartei/rotary-controller-python/commit/85cde831b277dc133c82ddee4f2d57e37bc55716))
+
+
 ## v1.0.31 (2025-05-11)
 
 ### Bug Fixes
