@@ -2,7 +2,6 @@
 #: import Keypad rcp.components.keypad
 #: import ToolbarButton rcp.components.toolbars.toolbar_button
 #: import CirclePopup rcp.components.plot.circle_popup
-#: import ImageButton rcp.components.toolbars.image_button
 
 <PlotToolbar>:
   size_hint_y: None
@@ -27,22 +26,34 @@
     text: "\uf00e"
     on_release: root.float_view.zoom = root.float_view.zoom * 1.1
 
-  ImageButton:
+  ToolbarButton:
     # Circle Pattern
+    text: "Circ"
     size_hint: None, None
     width: root.height
     height: self.width
-    source: "pictures/circular-pattern-icon-white.png"
     on_release: Factory.CirclePopup(ref=root.float_view.circle_pattern).show()
 
-  ImageButton:
-    # Rect Patterm
+  ToolbarButton:
+    text: "Rect"
     size_hint: None, None
     width: root.height
     height: self.width
-    source: "pictures/rectangular-pattern-icon-white.png"
-#    text: "REC"
-#    on_release: root.float_view.connect_rect()
+
+  ToolbarButton:
+    text: "<"
+    size_hint: None, None
+    width: root.height
+    height: self.width
+    on_release: root.prev_point()
+
+  ToolbarButton:
+    text: ">"
+    size_hint: None, None
+    width: root.height
+    height: self.width
+    on_release: root.next_point()
+
 
   Widget:
     size_hint_x: 1

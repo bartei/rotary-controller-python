@@ -5,7 +5,6 @@ from kivy.uix.popup import Popup
 from kivy.uix.boxlayout import BoxLayout
 from kivy.uix.label import Label
 
-from rcp.components.toolbars.image_button import ImageButton
 from rcp.components.toolbars.keypad_button import KeypadButton
 from rcp.components.toolbars.keypad_icon_button import KeypadIconButton
 
@@ -46,7 +45,7 @@ class Keypad(Popup):
         row2.add_widget(KeypadButton(text="4",on_release=self.add_text,background_color=[1, 1, 1, 1]))
         row2.add_widget(KeypadButton(text="5",on_release=self.add_text,background_color=[1, 1, 1, 1]))
         row2.add_widget(KeypadButton(text="6",on_release=self.add_text,background_color=[1, 1, 1, 1]))
-        row2.add_widget(ImageButton(on_release=self.halve_value,source="pictures/half-icon-white.png"))
+        row2.add_widget(KeypadButton(text="1/2",on_release=self.halve_value))
         layout.add_widget(row2)
 
         row3 = BoxLayout(orientation="horizontal")

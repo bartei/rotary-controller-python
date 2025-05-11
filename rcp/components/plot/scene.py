@@ -35,6 +35,7 @@ class Scene(FloatLayout, StencilView):
         self.bind(points=self.update_points)
         self.bind(tool_x=self.update_points)
         self.bind(tool_y=self.update_points)
+        self.bind(selected_point=self.update_points)
 
     def update_points(self, *args):
         self.scaled_points = [
@@ -89,4 +90,4 @@ class Scene(FloatLayout, StencilView):
                 self.selected_point = i
                 break
 
-        self.update_points()
+        # self.update_points()

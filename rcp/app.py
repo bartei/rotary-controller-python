@@ -156,7 +156,7 @@ class MainApp(App):
             self.scales.append(CoordBar(inputIndex=i, device=self.device, id_override=f"{i}"))
 
         self.home = HomePage()
-        self.task_update = Clock.schedule_interval(self.update, 1.0 / 30)
+        self.task_update = Clock.schedule_interval(self.update, 1.0 / 20)
         Clock.schedule_interval(self.blinker, 1.0 / 4)
 
         self.beep()
