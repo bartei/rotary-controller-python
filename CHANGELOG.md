@@ -1,6 +1,14 @@
 # CHANGELOG
 
 
+## v1.0.31 (2025-05-11)
+
+### Bug Fixes
+
+- Add buttons to plot view
+  ([`2ccbd6e`](https://github.com/bartei/rotary-controller-python/commit/2ccbd6eb7463be1145077509adc9942052880aa9))
+
+
 ## v1.0.30 (2025-05-04)
 
 
