@@ -1,6 +1,14 @@
 # CHANGELOG
 
 
+## v1.0.33 (2025-06-21)
+
+### Bug Fixes
+
+- Add link to Discord
+  ([`7257554`](https://github.com/bartei/rotary-controller-python/commit/72575549fcf450efb2fde0418822f5fc589268f9))
+
+
 ## v1.0.32 (2025-05-11)
 
 ### Bug Fixes
