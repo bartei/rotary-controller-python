@@ -1,5 +1,8 @@
 # Rotary Controller Python
 
+![Discord](https://img.shields.io/discord/1386014070632878100?style=social&link=https%3A%2F%2Fdiscord.gg%2F69Qr5PSu)
+
+
 This project is a Kivy based user interface developed for the Raspberry PI for the control of rotary tables and
 similar devices on manual milling machines, tool grinders and similar equipment.
 
