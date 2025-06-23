@@ -1,6 +1,6 @@
 [project]
 name = "rcp"
-version = "1.0.33"
+version = "1.0.34"
 description = "Rotary Controller Python"
 authors = [
     { name = "Stefano Bertelli", email = "stefano@provvedo.com" }
