@@ -1,19 +1,27 @@
 import collections
-import math
 import time
+import os
+
 from fractions import Fraction
 
 from kivy.logger import Logger
 from kivy.properties import StringProperty, NumericProperty, BooleanProperty
-from kivy.app import App
+from kivy.lang import Builder
+from kivy.uix.boxlayout import BoxLayout
 
 from rcp.dispatchers import SavingDispatcher
+from rcp.components.keypad import Keypad
 from rcp.utils.ctype_calc import uint32_subtract_to_int32
 
 log = Logger.getChild(__name__)
 
+kv_file = os.path.join(os.path.dirname(__file__), __file__.replace(".py", ".kv"))
+if os.path.exists(kv_file):
+    log.info(f"Loading KV file: {kv_file}")
+    Builder.load_file(kv_file)
 
-class ServoDispatcher(SavingDispatcher):
+
+class ServoBar(BoxLayout, SavingDispatcher):
     name = StringProperty("R")
     maxSpeed = NumericProperty(1000)
     acceleration = NumericProperty(1000)
@@ -25,15 +33,17 @@ class ServoDispatcher(SavingDispatcher):
     divisions = NumericProperty(12)
     index = NumericProperty(0)
     servoEnable = NumericProperty(0)
-    stepsPerTurn = NumericProperty(4096)
     unitsPerTurn = NumericProperty(360.0)
     oldOffset = NumericProperty(0.0)
 
-    # indexOffset = NumericProperty(0.0)
-    # oldIndexOffset = NumericProperty(0.0)
+    elsMode = BooleanProperty(False)
+    leadScrewPitch = NumericProperty(0.25)
+    leadScrewPitchIn = BooleanProperty(True)
+    leadScrewPitchSteps = BooleanProperty(800)
 
     position = NumericProperty(0)
     scaledPosition = NumericProperty(0)
+    formattedPosition = StringProperty("--")
 
     disableControls = BooleanProperty(False)
     _skip_save = [
@@ -42,20 +52,22 @@ class ServoDispatcher(SavingDispatcher):
         "device",
         "position",
         "scaledPosition",
+        "formattedPosition",
         "servoEnable",
         "oldOffset",
         "offset",
         "index",
-        # "indexOffset",
-        # "oldIndexOffset",
         "disableControls",
         "speed",
         "direction",
     ]
 
     def __init__(self, **kv):
-        self.app = App.get_running_app()
+        from rcp.app import MainApp
+        self.app: MainApp = MainApp.get_running_app()
         super().__init__(**kv)
+        self.configure_lead_screw_ratio(self, None)
+
         # App event bindings
         self.app.bind(connected=self.connected)
         self.app.bind(connected=self.update_positions)
@@ -68,15 +80,36 @@ class ServoDispatcher(SavingDispatcher):
         self.bind(ratioNum=self.update_scaledPosition)
         self.bind(ratioDen=self.update_scaledPosition)
         self.bind(position=self.update_scaledPosition)
+        self.bind(elsMode=self.update_scaledPosition)
+        self.app.formats.bind(current_format=self.update_scaledPosition)
+        self.update_scaledPosition(self, None)
+
+        self.bind(leadScrewPitch=self.configure_lead_screw_ratio)
+        self.bind(leadScrewPitchIn=self.configure_lead_screw_ratio)
+        self.bind(leadScrewPitchSteps=self.configure_lead_screw_ratio)
 
         # Private variables that don't need dispatchers etc
         self.encoderPrevious = 0
         self.encoderCurrent = 0
         self.previous_axis_time = time.time()
-        self.speed_history = collections.deque(maxlen=10)
+        self.speed_history = collections.deque(maxlen=4)
         self.previousIndex = 0
         self.step_positions = dict()
         self.positions = dict()
+        self.disableControls = True
+        self.servoEnable = 0
+
+    def configure_lead_screw_ratio(self, instance, value):
+        # Configure the ratio when operating in ELS mode
+        if self.elsMode is True:
+            leadScrewPitch = Fraction(self.leadScrewPitch)
+
+            if self.leadScrewPitchIn is True:
+                leadScrewPitch = leadScrewPitch * Fraction(254, 10)
+
+            leadScrewRatio = leadScrewPitch * Fraction(1, self.leadScrewPitchSteps)
+            self.ratioNum = leadScrewRatio.numerator
+            self.ratioDen = leadScrewRatio.denominator
 
     def connected(self, instance, value):
         try:
@@ -122,17 +155,26 @@ class ServoDispatcher(SavingDispatcher):
 
             delta = uint32_subtract_to_int32(self.encoderCurrent, self.encoderPrevious)
             self.position += delta
-            if self.app.fast_data_values['stepsToGo'] == 0 and self.servoEnable != 0:
+            if (
+                    self.app.fast_data_values['stepsToGo'] == 0 and
+                    self.servoEnable != 0 and
+                    self.disableControls
+                    and self.app.connected
+            ):
+                log.info("Disable Controls False")
                 self.disableControls = False
         except Exception as e:
             log.error(f"Unable to read servo: {e.__str__()}")
 
-    def update_scaledPosition(self, *args, **kv):
+    def update_scaledPosition(self, instance, value):
         ratio = Fraction(self.ratioNum, self.ratioDen)
-        if self.unitsPerTurn != 0:
+
+        if self.elsMode is False and self.unitsPerTurn > 0:
             self.scaledPosition = float(self.position * ratio) % self.unitsPerTurn
+            self.formattedPosition = self.app.formats.angle_format.format(self.scaledPosition)
         else:
-            self.scaledPosition = float(self.position * ratio)
+            self.scaledPosition = float(self.position * ratio) * self.app.formats.factor
+            self.formattedPosition = self.app.formats.position_format.format(self.scaledPosition)
 
     def on_index(self, instance, value):
         ratio = Fraction(self.ratioNum, self.ratioDen)
@@ -173,12 +215,15 @@ class ServoDispatcher(SavingDispatcher):
     def on_servoEnable(self, instance, value):
         self.app.device['fastData']['servoEnable'] = self.servoEnable
         if self.servoEnable != 0:
+            log.info("Disable Controls False")
             self.disableControls = False
         else:
+            log.info("Disable Controls True")
             self.disableControls = True
 
     def toggle_enable(self):
         if not self.app.connected:
+            self.servoEnable = 0
             return
 
         if self.servoEnable != 0:
@@ -189,3 +234,7 @@ class ServoDispatcher(SavingDispatcher):
     def set_current_position(self, value):
         ratio = Fraction(self.ratioNum, self.ratioDen)
         self.position = int(value / ratio)
+
+    def update_current_position(self):
+        keypad = Keypad()
+        keypad.show_with_callback(self.set_current_position, self.scaledPosition)

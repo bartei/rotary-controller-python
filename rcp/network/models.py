@@ -11,10 +11,10 @@ class Wireless(BaseModel):
 class NetworkInterface(BaseModel):
     name: str
     dhcp: bool
-    address: str | None = None
-    netmask: int | None = None
-    gateway: str | None = None
-    wireless: Wireless | None = None
+    address: Optional[str] = None
+    netmask: Optional[int] = None
+    gateway: Optional[str] = None
+    wireless: Optional[Wireless] = None
 
 
 class RfkillStatus(BaseModel):

@@ -1,0 +1,92 @@
+#: import Factory kivy.factory.Factory
+#: import Keypad components.keypad
+#: import FeedsTablePopup components.home.feeds_table_popup
+
+<ElsBar>:
+  orientation: "horizontal"
+  size_hint_y: None
+  height: 128
+
+  Button:
+    width: 96
+    size_hint_x: None
+    text: app.servo.name
+    font_size: self.height / 1.5
+    font_style: "bold"
+    background_color: [0.2, 1, 0.2, 1] if app.servo.servoEnable else [0.3, 0.3, 0.3, 1]
+    on_release: app.servo.toggle_enable()
+
+  BoxLayout:
+    orientation: "vertical"
+    size_hint_x: 0.8
+    Label:
+      text: "Current"
+      text_size: self.size
+      size_hint_y: 0.15
+      font_size: 16
+      color: app.display_color
+      halign: 'center'
+      valign: 'top'
+    Button:
+      size_hint_y: 0.30
+      font_name: "fonts/iosevka-regular.ttf"
+      font_size: self.height / 2
+      font_style: "bold"
+      background_color: [0.2, 0.2, 0.2, 1]
+      color: app.formats.display_color
+      text: app.servo.formattedPosition
+      text_size: self.size
+      halign: 'center'
+      valign: 'middle'
+      disabled: app.servo.disableControls
+      on_release: app.servo.update_current_position()
+    ProgressBar:
+      size_hint_y: 0.20
+      max: int(app.servo.maxSpeed)
+      value: int(abs(app.servo.speed))
+
+  Button:
+    width: self.height
+    size_hint_x: None
+    font_name: "fonts/Font Awesome 6 Free-Solid-900.otf"
+    text: "\uf060"
+    text_halign: "center"
+    font_size: self.height / 4
+    font_style: "bold"
+    halign: "center"
+    on_release: root.previous_feed()
+
+  BoxLayout:
+    width: self.height
+    size_hint_x: None
+    orientation: 'vertical'
+    Label:
+      text: root.mode_name
+      font_size: self.height / 1.5
+      size_hint_y: 0.3
+      color: app.formats.display_color
+      halign: 'center'
+      valign: 'top'
+    Button:
+      size_hint_y: 0.7
+      font_name: "fonts/iosevka-regular.ttf"
+      font_size: self.height / 2
+      font_style: "bold"
+      background_color: [0.3, 0.3, 0.3, 1]
+      color: app.formats.display_color
+      text: root.feed_name
+      text_size: self.size
+      halign: 'center'
+      valign: 'middle'
+      on_release: Factory.FeedsTablePopup().show_with_callback(root.set_feed_ratio)
+
+  Button:
+    width: self.height
+    size_hint_x: None
+    font_name: "fonts/Font Awesome 6 Free-Solid-900.otf"
+    text: "\uf061"
+    text_halign: "center"
+    font_size: self.height / 4
+    font_style: "bold"
+    halign: "center"
+    on_release: root.next_feed()

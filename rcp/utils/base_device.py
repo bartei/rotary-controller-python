@@ -309,7 +309,7 @@ class BaseDevice:
 
                 self.dm.connected = True
             except Exception as e:
-                log.error(e.__str__())
+                # log.debug(e.__str__())
                 self.dm.connected = False
                 return
 

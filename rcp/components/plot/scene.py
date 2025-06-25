@@ -1,14 +1,11 @@
 import os
 
 from kivy import Logger
-from kivy.app import App
 from kivy.lang import Builder
 from kivy.uix.floatlayout import FloatLayout
 from kivy.properties import NumericProperty, ListProperty
 from kivy.graphics import Color, Line, Ellipse
 from kivy.uix.stencilview import StencilView
-
-from rcp.components.coordbar import CoordBar
 
 # from rcp.components.plot.point_widget import PointWidget
 
@@ -29,7 +26,8 @@ class Scene(FloatLayout, StencilView):
     tool_y = NumericProperty(0.0)
 
     def __init__(self, **kwargs):
-        self.app = App.get_running_app()
+        from rcp.app import MainApp
+        self.app: MainApp = MainApp.get_running_app()
         super(Scene, self).__init__(**kwargs)
         # self.bind(pos=self.update_canvas)
         self.bind(size=self.update_points)
@@ -37,6 +35,7 @@ class Scene(FloatLayout, StencilView):
         self.bind(points=self.update_points)
         self.bind(tool_x=self.update_points)
         self.bind(tool_y=self.update_points)
+        self.bind(selected_point=self.update_points)
 
     def update_points(self, *args):
         self.scaled_points = [
@@ -91,4 +90,4 @@ class Scene(FloatLayout, StencilView):
                 self.selected_point = i
                 break
 
-        self.update_points()
+        # self.update_points()

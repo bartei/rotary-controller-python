@@ -9,11 +9,10 @@ from kivy.logger import Logger
 from kivy.factory import Factory
 from kivy.clock import Clock
 from kivy.lang import Builder
-from kivy.properties import NumericProperty, StringProperty, ObjectProperty, ListProperty, BooleanProperty, DictProperty
+from kivy.properties import NumericProperty, StringProperty, ObjectProperty, ListProperty, BooleanProperty
 from kivy.uix.boxlayout import BoxLayout
 from kivy.app import App
 
-from rcp.components.servobar import ServoBar
 from rcp.dispatchers import SavingDispatcher
 from rcp.utils.ctype_calc import uint32_subtract_to_int32
 from rcp.utils.devices import SCALES_COUNT
@@ -26,7 +25,6 @@ if os.path.exists(kv_file):
 
 
 class CoordBar(BoxLayout, SavingDispatcher):
-    servo = ObjectProperty(None)
     device = ObjectProperty()
     inputIndex = NumericProperty(0)
     axisName = StringProperty("?")
@@ -57,15 +55,18 @@ class CoordBar(BoxLayout, SavingDispatcher):
         "currentOffset",
         "formattedSpeed",
         "formattedPosition",
+        "x", "y",
+        "minimum_width",
+        "minimum_height",
+        "width", "height",
     ]
     _force_save = ["offsets"]
 
-    def __init__(self, servo: ServoBar, **kv):
-        from rcp.main import MainApp
+    def __init__(self, **kv):
+        from rcp.app import MainApp
         self.app: MainApp = App.get_running_app()
         super().__init__(**kv)
 
-        self.servo: ServoBar = servo
         self.speed_history = collections.deque(maxlen=5)
         self.previous_axis_time: float = 0
         self.previous_axis_pos: Decimal = Decimal(0)
@@ -74,6 +75,11 @@ class CoordBar(BoxLayout, SavingDispatcher):
         self.app.formats.bind(factor=self.set_sync_ratio)
         self.app.bind(connected=self.init_connection)
         self.app.bind(update_tick=self.update_tick)
+        self.bind(position=self.update_scaledPosition)
+        self.bind(speed=self.update_scaledPosition)
+        self.bind(ratioNum=self.update_scaledPosition)
+        self.bind(ratioDen=self.update_scaledPosition)
+        self.update_scaledPosition(self, None)
         Clock.schedule_interval(self.speed_task, 1.0/25.0)
 
         # Private variables that don't need dispatchers etc
@@ -105,6 +111,9 @@ class CoordBar(BoxLayout, SavingDispatcher):
         self.device['scales'][self.inputIndex]['syncEnable'] = self.syncEnable
 
     def set_sync_ratio(self, *args, **kv):
+        if not self.app.connected:
+            return
+
         # check and make sure the denominator is not 0
         if self.syncRatioDen == 0:
             self.syncRatioDen = 1
@@ -114,7 +123,13 @@ class CoordBar(BoxLayout, SavingDispatcher):
         else:
             scale_ratio = Fraction(self.ratioNum, self.ratioDen) * self.app.formats.factor
 
-        servo_ratio = Fraction(self.servo.ratioNum, self.servo.ratioDen)
+        if self.app.servo.elsMode:
+            # ELS Mode, the output is always metric so we need to account for the conversion
+            servo_ratio = Fraction(self.app.servo.ratioNum, self.app.servo.ratioDen) * self.app.formats.factor
+        else:
+            # NON Els mode we're in degrees always
+            servo_ratio = Fraction(self.app.servo.ratioNum, self.app.servo.ratioDen)
+
         sync_ratio = Fraction(self.syncRatioNum, self.syncRatioDen)
 
         final_ratio = scale_ratio * sync_ratio / servo_ratio
@@ -131,24 +146,28 @@ class CoordBar(BoxLayout, SavingDispatcher):
             return
         self.set_sync_ratio()
 
-    def on_position(self, instance, value):
-        self.update_scaledPosition()
-
-    def on_ratioNum(self, instance, value):
-        self.update_scaledPosition()
-
-    def on_ratioDen(self, instance, value):
-        self.update_scaledPosition()
-
-    def update_scaledPosition(self, *args, **kv):
-        self.scaledPosition = float(
-            self.position * Fraction(self.ratioNum, self.ratioDen) + self.offsets[self.app.currentOffset]
-        ) * self.app.formats.factor
-
+    def update_scaledPosition(self, instance=None, value=None):
         if self.spindleMode:
+            # When working in spindle mode we report the position in degrees
+            self.scaledPosition = float(
+                self.position * Fraction(self.ratioNum, self.ratioDen) + self.offsets[self.app.currentOffset]
+            ) * 360.0
+
+            if self.scaledPosition > 360.0:
+                self.scaledPosition -= 360.0
+                self.position -= self.stepsPerRev
+
+            if self.scaledPosition < 0:
+                self.scaledPosition += 360.0
+                self.position += self.stepsPerRev
+
             self.formattedPosition = self.app.formats.angle_speed_format.format(self.speed)
-            self.formattedSpeed = self.app.formats.angle_speed_format.format(self.speed)
+            self.formattedSpeed = self.app.formats.position_format.format(self.scaledPosition)
         else:
+            self.scaledPosition = float(
+                self.position * Fraction(self.ratioNum, self.ratioDen) + self.offsets[self.app.currentOffset]
+            ) * self.app.formats.factor
+
             self.formattedPosition = self.app.formats.position_format.format(self.scaledPosition)
             self.formattedSpeed = self.app.formats.speed_format.format(self.speed)
 
