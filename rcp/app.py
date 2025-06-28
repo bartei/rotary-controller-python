@@ -12,20 +12,10 @@ from rcp.components.home.home_page import HomePage
 from rcp.components.home.servobar import ServoBar
 from rcp.dispatchers.formats import FormatsDispatcher
 from rcp.main import log
-from rcp.network.models import NetworkInterface, Wireless
 from rcp.utils import communication, devices
 
 
 class MainApp(App):
-    network_settings = ObjectProperty(
-        defaultvalue=NetworkInterface(
-            name="wlan0",
-            dhcp=False,
-            address="10.0.0.1/24",
-            gateway="10.0.0.254",
-            wireless=Wireless(ssid="test", password="test"),
-        )
-    )
     display_color = ConfigParserProperty(
         defaultvalue="#ffffffff",
         section="formatting",

@@ -30,18 +30,13 @@ class NetworkPanel(BoxLayout):
     gateway = StringProperty("")
     wpa_psk = StringProperty("")
     status_text = StringProperty("Ready")
-    profile = ObjectProperty()
-    connection_method = StringProperty("")
-    refresh_task = ObjectProperty()
     wifi_enabled = BooleanProperty(False)
 
     def __init__(self, **kv):
         super().__init__(**kv)
         self.ids['grid_layout'].bind(minimum_height=self.ids['grid_layout'].setter('height'))
 
-        self.profile = "profile"
         self.wpa_psk = "psk"
-        self.connection_method = "method"
         self.apply_thread = None
         self.disable_thread = None
         self.wifi_enabled = nmcli.radio().wifi
@@ -58,26 +53,33 @@ class NetworkPanel(BoxLayout):
         self.log("Request Wifi Rescanning")
         self.update_devices([item.device for item in nmcli.device() if item.device_type in ["wifi"]])
 
+        time.sleep(5)
         if self.wifi_enabled:
-            time.sleep(5)
+            try:
+                status = nmcli.general.status()
+                self.log(f"{status.state.value} {status.connectivity.value} {status.wifi}")
+            except Exception as e:
+                log.error(e.__str__())
+
             nmcli.device.wifi_rescan()
             self.update_networks(list(set([item.ssid for item in nmcli.device.wifi()])))
         self.update_connection_properties()
 
     def connect_thread(self, *args, **kv):
         self.log("Request Wifi Connection")
-        try:
+        if self.network in [item.name for item in nmcli.connection()]:
+            log.info(f"Found existing profile for {self.network}, deleting")
+            nmcli.connection.delete(name=self.network)
+            time.sleep(2)
+            log.info(f"Creating new wifi connection for: {self.network}")
             nmcli.device.wifi_connect(ssid=self.network, password=self.wpa_psk, ifname=self.device)
+        try:
         except Exception as e:
-            log.error(e.__str__())
+            log.info(f"Error creating connection {self.network}: {e.__str__()}")
             return
 
         self.update_devices([item.device for item in nmcli.device() if item.device_type in ["wifi"]])
         self.update_networks(list(set([item.ssid for item in nmcli.device.wifi()])))
-
-        status = nmcli.device.show(self.device)
-        status
-
         self.update_connection_properties()
         self.log("Connection reconfigured")
 
@@ -120,8 +122,12 @@ class NetworkPanel(BoxLayout):
         connection_status = nmcli.connection.show(name=connection_name, show_secrets=True)
         self.network = connection_status.get('802-11-wireless.ssid', "")
         self.wpa_psk = connection_status.get('802-11-wireless-security.psk', "")
-        self.address = device_status.get('IP4.ADDRESS[1]')
-        self.gateway = device_status.get('IP4.GATEWAY')
+        if "100" in device_status.get("GENERAL.STATE"):
+            self.address = device_status.get('IP4.ADDRESS[1]', "")
+            self.gateway = device_status.get('IP4.GATEWAY', "")
+        else:
+            self.address = ""
+            self.gateway = ""
 
 
     def apply(self):
