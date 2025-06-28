@@ -17,16 +17,16 @@
         options: root.devices
         value: root.devices[0] if len(root.devices) > 0 else ""
 
+      BooleanItem:
+        name: "Enable Interface"
+        value: root.wifi_enabled
+        on_value: root.wifi_enabled = self.value
+
       DropDownItem:
         name: "Network"
         options: root.networks
         value: root.network
         on_value: root.network = self.value
-
-      StringItem:
-        name: "Wifi Network"
-        value: root.wpa_ssid
-        on_value: root.wpa_ssid = self.value
 
       StringItem:
         name: "Wifi Password"
@@ -36,19 +36,19 @@
       StringItem:
         name: "IP Address"
         value: root.address
-        disabled: root.connection_method == "auto"
+        disabled: True
         on_value: root.address = self.value
 
       StringItem:
         name: "Netmask Bits"
         value: root.netmask
-        disabled: root.connection_method == "auto"
+        disabled: True
         on_value: root.netmask = self.value
 
       StringItem:
         name: "Default Gateway"
         value: root.gateway
-        disabled: root.connection_method == "auto"
+        disabled: True
         on_value: root.gateway = self.value
 
 
@@ -73,8 +73,3 @@
           text: "Apply"
           background_color: "#3acf3a"
           on_release: root.apply()
-
-        Button:
-          text: "Disable"
-          background_color: "#cf3a3a"
-          on_release: root.disable()
