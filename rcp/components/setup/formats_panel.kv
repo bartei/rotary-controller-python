@@ -39,10 +39,15 @@
         height: 32
         orientation: "horizontal"
         Button:
-          size_hint_x: 0.2
+          size_hint_x: 0.15
           text: "Test"
           on_release: app.beep()
+        Button:
+          size_hint_x: 0.15
+          text: "Mute"
+          on_release: root.toggle_mute()
         Slider:
+          id: volume_slider
           size_hint_x: 0.7
           min: 0
           max: 0.5
