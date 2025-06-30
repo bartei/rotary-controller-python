@@ -1,4 +1,5 @@
 #: import StringItem rcp.components.forms.string_item
+#: import DropDownItem rcp.components.forms.dropdown_item
 
 <FormatsPanel>:
   orientation: "vertical"
@@ -30,6 +31,11 @@
         name: "Angle Format"
         value: root.formats.angle_format
         on_value: root.formats.angle_format = self.value
+      DropDownItem:
+        name: "Beep Tone"
+        value: root.get_display_name(root.formats.beep_tone)
+        options: root.beep_display_options
+        on_value: root.formats.beep_tone = root.get_filename(self.value)
       Label:
         size_hint_y: None
         height: 32
@@ -40,7 +46,7 @@
         orientation: "horizontal"
         Button:
           size_hint_x: 0.15
-          text: "Test"
+          text: "Test Beep"
           on_release: app.beep()
         Button:
           size_hint_x: 0.15

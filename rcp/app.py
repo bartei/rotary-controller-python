@@ -80,13 +80,25 @@ class MainApp(App):
 
         super().__init__(**kv)
 
-        sound_file = f"{os.path.dirname(__file__)}/sounds/beep.mp3"
+        # Sound will be loaded after formats is initialized
+
+    def load_beep_sound(self):
+        """Load the selected beep sound file"""
+        sound_file = f"{os.path.dirname(__file__)}/sounds/{self.formats.beep_tone}"
         self.sound = SoundLoader.load(sound_file)
+        if not self.sound:
+            # Fallback to default beep if file doesn't exist
+            fallback_file = f"{os.path.dirname(__file__)}/sounds/beep.mp3"
+            self.sound = SoundLoader.load(fallback_file)
 
     def beep(self, *args, **kv):
         if self.sound:
             self.sound.volume = self.formats.volume
             self.sound.play()
+    
+    def update_beep_tone(self, instance, value):
+        """Update the beep sound when tone selection changes"""
+        self.load_beep_sound()
 
     @staticmethod
     def load_help(help_file_name):
@@ -149,6 +161,10 @@ class MainApp(App):
 
     def build(self):
         self.formats = FormatsDispatcher(id_override="0")
+        # Bind beep tone changes to update the sound
+        self.formats.bind(beep_tone=self.update_beep_tone)
+        # Load initial beep sound
+        self.load_beep_sound()
         self.servo = ServoBar(
             id_override="0",
         )
