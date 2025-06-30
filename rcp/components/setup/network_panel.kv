@@ -17,21 +17,31 @@
         options: root.devices
         value: root.devices[0] if len(root.devices) > 0 else ""
 
+      StringItem:
+        name: "Hardware Address"
+        disabled: True
+        value: root.hwaddr
+
       BooleanItem:
         name: "Enable Interface"
         value: root.wifi_enabled
         on_value: root.wifi_enabled = self.value
 
+      StringItem:
+        name: "State"
+        disabled: True
+        value: root.state
+
       DropDownItem:
-        name: "Network"
+        name: "Connection"
         options: root.networks
-        value: root.network
-        on_value: root.network = self.value
+        value: root.connection
+        on_value: root.connection = self.value
 
       StringItem:
         name: "Wifi Password"
-        value: root.wpa_psk
-        on_value: root.wpa_psk = self.value
+        value: root.password
+        on_value: root.password = self.value
 
       StringItem:
         name: "IP Address"
@@ -40,17 +50,16 @@
         on_value: root.address = self.value
 
       StringItem:
-        name: "Netmask Bits"
-        value: root.netmask
+        name: "DNS Server"
+        value: root.dns
         disabled: True
-        on_value: root.netmask = self.value
+        on_value: root.dns = self.value
 
       StringItem:
         name: "Default Gateway"
         value: root.gateway
         disabled: True
         on_value: root.gateway = self.value
-
 
       BoxLayout:
         size_hint_y: None
@@ -68,6 +77,11 @@
         size_hint_y: None
         height: 48
         orientation: "horizontal"
+
+        Button:
+          text: "Scan"
+          background_color: "#3acf3a"
+          on_release: root.scan()
 
         Button:
           text: "Apply"
