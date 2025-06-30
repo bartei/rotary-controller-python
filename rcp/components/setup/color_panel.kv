@@ -1,0 +1,40 @@
+<ColorPanel>:
+  orientation: "vertical"
+  padding: 20
+  spacing: 10
+  
+  Label:
+    size_hint_y: None
+    height: 40
+    text: "Display Color Settings"
+    font_size: 24
+    halign: "center"
+    
+  Label:
+    size_hint_y: None
+    height: 32
+    text: "Choose the color for the digits display"
+    
+  ColorPicker:
+    padding: 10
+    color: root.formats.display_color
+    on_color: root.formats.display_color = self.color
+    
+  BoxLayout:
+    size_hint_y: None
+    height: 50
+    orientation: "horizontal"
+    padding: [0, 20, 0, 0]
+    
+    Button:
+      size_hint_x: 0.3
+      text: "Reset to White"
+      on_release: root.formats.display_color = [1, 1, 1, 1]
+      
+    Widget:
+      size_hint_x: 0.4
+      
+    Button:
+      size_hint_x: 0.3
+      text: "Preview Color"
+      background_color: root.formats.display_color
