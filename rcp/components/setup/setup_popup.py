@@ -1,5 +1,4 @@
 import os
-from distutils.dep_util import newer
 
 from kivy.lang import Builder
 from kivy.logger import Logger

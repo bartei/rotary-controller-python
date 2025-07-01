@@ -52,6 +52,7 @@ class MainApp(App):
     scales_count = ConfigParserProperty(
         defaultvalue=4, section="device", key="scales_count", config=config, val_type=int
     )
+    sound = ObjectProperty()
 
     task_update = None
 
@@ -70,9 +71,7 @@ class MainApp(App):
 
         super().__init__(**kv)
 
-        # Sound will be loaded after formats is initialized
-
-    def load_beep_sound(self):
+    def load_beep_sound(self, instance, value):
         """Load the selected beep sound file"""
         sound_file = f"{os.path.dirname(__file__)}/sounds/{self.formats.beep_tone}"
         self.sound = SoundLoader.load(sound_file)
@@ -82,13 +81,10 @@ class MainApp(App):
             self.sound = SoundLoader.load(fallback_file)
 
     def beep(self, *args, **kv):
-        if self.sound:
+        if self.sound is not None:
             self.sound.volume = self.formats.volume
             self.sound.play()
-    
-    def update_beep_tone(self, instance, value):
-        """Update the beep sound when tone selection changes"""
-        self.load_beep_sound()
+
 
     @staticmethod
     def load_help(help_file_name):
@@ -152,9 +148,9 @@ class MainApp(App):
     def build(self):
         self.formats = FormatsDispatcher(id_override="0")
         # Bind beep tone changes to update the sound
-        self.formats.bind(beep_tone=self.update_beep_tone)
+        # self.formats.bind(beep_tone=self.update_beep_tone)
         # Load initial beep sound
-        self.load_beep_sound()
+        # self.load_beep_sound()
         self.servo = ServoBar(
             id_override="0",
         )

@@ -1,5 +1,6 @@
 from fractions import Fraction
 
+from kivy.app import App
 from kivy.logger import Logger
 from kivy.properties import (
     NumericProperty,
@@ -35,9 +36,13 @@ class FormatsDispatcher(SavingDispatcher):
     beep_tone = StringProperty("beep.mp3")
 
     def __init__(self, **kv):
+        from rcp.app import MainApp
+        self.app: MainApp = App.get_running_app()
+
         super().__init__(**kv)
         self.bind(current_format=self.update_format)
         self.update_format()
+        self.bind(beep_tone=self.app.load_beep_sound)
 
     def update_format(self, *args, **kv):
         if self.current_format == "MM":

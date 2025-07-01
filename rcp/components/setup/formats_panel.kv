@@ -11,11 +11,42 @@
       cols: 1
       spacing: 1
       size_hint_y: None
+
+      TitleItem:
+        name: "Display Formats"
+      StringItem:
+        name: "Angle Format"
+        value: root.formats.angle_format
+        on_value: root.formats.angle_format = self.value
+      StringItem:
+        name: "Metric Position"
+        value: root.formats.metric_position
+        on_value: root.formats.metric_position = self.value
+      StringItem:
+        name: "Metric Speed"
+        value: root.formats.metric_speed
+        on_value: root.formats.metric_speed = self.value
+      StringItem:
+        name: "Imperial Position"
+        value: root.formats.imperial_position
+        on_value: root.formats.imperial_position = self.value
+      StringItem:
+        name: "Imperial Speed"
+        value: root.formats.imperial_speed
+        on_value: root.formats.imperial_speed = self.value
+      Button:
+        size_hint_y: None
+        height: 40
+        text: "Exit Application"
+        on_release: app.stop()
+
+      TitleItem:
+        name: "Sound Settings"
       DropDownItem:
         name: "Beep Tone"
-        value: root.get_display_name(root.formats.beep_tone)
-        options: root.beep_display_options
-        on_value: root.formats.beep_tone = root.get_filename(self.value)
+        value: root.formats.beep_tone
+        options: root.beep_options
+        on_value: root.formats.beep_tone = self.value
       Label:
         size_hint_y: None
         height: 32
@@ -44,44 +75,3 @@
           text: "{}".format(int(root.formats.volume * 200))
           font_name: "fonts/iosevka-regular.ttf"
           font_size: 32
-      Widget:
-        size_hint_y: None
-        height: 20
-      Label:
-        size_hint_y: None
-        height: 50
-        text: "Display Formats"
-        font_size: 28
-        bold: True
-        halign: "center"
-      Widget:
-        size_hint_y: None
-        height: 10
-      StringItem:
-        name: "Angle Format"
-        value: root.formats.angle_format
-        on_value: root.formats.angle_format = self.value
-      StringItem:
-        name: "Metric Position"
-        value: root.formats.metric_position
-        on_value: root.formats.metric_position = self.value
-      StringItem:
-        name: "Metric Speed"
-        value: root.formats.metric_speed
-        on_value: root.formats.metric_speed = self.value
-      StringItem:
-        name: "Imperial Position"
-        value: root.formats.imperial_position
-        on_value: root.formats.imperial_position = self.value
-      StringItem:
-        name: "Imperial Speed"
-        value: root.formats.imperial_speed
-        on_value: root.formats.imperial_speed = self.value
-      Widget:
-        size_hint_y: None
-        height: 30
-      Button:
-        size_hint_y: None
-        height: 40
-        text: "Exit Application"
-        on_release: app.stop()
