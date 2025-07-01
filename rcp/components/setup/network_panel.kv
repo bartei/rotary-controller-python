@@ -14,47 +14,56 @@
       size_hint_y: None
       DropDownItem:
         name: "Network Interface"
-        options: root.get_all_network_interfaces()
-        value: root.get_all_network_interfaces()[0] if len(root.get_all_network_interfaces()) > 0 else ""
-
-      DropDownItem:
-        name: "Connection Method"
-        options: ["auto", "manual"]
-        value: root.connection_method
-        on_value: root.connection_method = self.value
+        options: root.devices
+        value: root.devices[0] if len(root.devices) > 0 else ""
 
       StringItem:
-        name: "Wifi Network"
-        value: root.wpa_ssid
-        on_value: root.wpa_ssid = self.value
+        name: "Hardware Address"
+        disabled: True
+        value: root.hwaddr
+
+      BooleanItem:
+        name: "Enable Interface"
+        value: root.wifi_enabled
+        on_value: root.wifi_enabled = self.value
+
+      StringItem:
+        name: "State"
+        disabled: True
+        value: root.state
+
+      DropDownItem:
+        name: "Connection"
+        options: root.networks
+        value: root.connection
+        on_value: root.connection = self.value
 
       StringItem:
         name: "Wifi Password"
-        value: root.wpa_psk
-        on_value: root.wpa_psk = self.value
+        value: root.password
+        on_value: root.password = self.value
 
       StringItem:
         name: "IP Address"
         value: root.address
-        disabled: root.connection_method == "auto"
+        disabled: True
         on_value: root.address = self.value
 
       StringItem:
-        name: "Netmask Bits"
-        value: root.netmask
-        disabled: root.connection_method == "auto"
-        on_value: root.netmask = self.value
+        name: "DNS Server"
+        value: root.dns
+        disabled: True
+        on_value: root.dns = self.value
 
       StringItem:
         name: "Default Gateway"
         value: root.gateway
-        disabled: root.connection_method == "auto"
+        disabled: True
         on_value: root.gateway = self.value
-
 
       BoxLayout:
         size_hint_y: None
-        height: 64
+        height: 160
         orientation: "horizontal"
         Label:
           size_hint_x: 0.3
@@ -70,11 +79,11 @@
         orientation: "horizontal"
 
         Button:
+          text: "Scan"
+          background_color: "#3acf3a"
+          on_release: root.scan()
+
+        Button:
           text: "Apply"
           background_color: "#3acf3a"
           on_release: root.apply()
-
-        Button:
-          text: "Disable"
-          background_color: "#cf3a3a"
-          on_release: root.disable()

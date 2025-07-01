@@ -1,6 +1,6 @@
 import os
+from distutils.dep_util import newer
 
-from kivy.app import App
 from kivy.lang import Builder
 from kivy.logger import Logger
 from kivy.properties import ObjectProperty
@@ -20,6 +20,10 @@ class SetupPopup(Popup):
     screen_selector: BoxLayout = ObjectProperty()
 
     def on_dismiss(self):
-        current_app = App.get_running_app()
-        # current_app.manual_full_update()
-        log.info("Close setup page")
+        log.debug("Close setup page")
+        network_panels = [item for item in self.ids['screen_manager'].screens if item.name == "network"]
+
+        # Network panel screen is instantiated, get a reference to its NetworkPanel Instance
+        if len(network_panels) == 1:
+            network_panel = network_panels[0].children[0]
+            network_panel.on_dismiss(self, None)

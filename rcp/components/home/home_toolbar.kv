@@ -1,0 +1,36 @@
+#: import ToolbarButton components.toolbars.toolbar_button
+#: import Factory kivy.factory.Factory
+#: import Keypad components.keypad
+
+<HomeToolbar>:
+  orientation: "vertical"
+  width: self.height / 5
+  size_hint_x: None
+  size_hint_y: 1
+
+  ToolbarButton:
+    width: root.width
+    text: app.formats.current_format
+    on_release: app.formats.toggle()
+
+  ToolbarButton:
+    width: root.width
+    text: "P{:d}".format(app.currentOffset)
+    on_release: Factory.Keypad().show(app, 'currentOffset')
+
+  ToolbarButton:
+    width: root.width
+    font_name: "fonts/Font Awesome 6 Free-Solid-900.otf"
+    text: "\ue2ca"
+    on_release: root.popup_scene()
+
+  ToolbarButton:
+    width: root.width
+    text: root.current_mode_desc
+    on_release: root.popup_mode()
+
+  ToolbarButton:
+    width: root.width
+    font_name: "fonts/Font Awesome 6 Free-Solid-900.otf"
+    text: "\uf085"
+    on_release: root.popup_setup()

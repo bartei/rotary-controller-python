@@ -1,11 +1,11 @@
 [project]
 name = "rcp"
-version = "1.0.34"
+version = "1.0.35-rc.5"
 description = "Rotary Controller Python"
 authors = [
     { name = "Stefano Bertelli", email = "stefano@provvedo.com" }
 ]
-requires-python = ">=3.9,<4.0"
+requires-python = ">=3.10,<4.0"
 license = "MIT"
 readme = "README.md"
 dependencies = [
@@ -14,14 +14,13 @@ dependencies = [
     "keke>=0.1.4",
     "kivy>=2.3.0",
     "minimalmodbus>=2.1.1",
+    "nmcli>=1.5.0",
     "pydantic>=2.10.3",
     "pytest>=8.3.4",
     "python-semantic-release>=9.15.2",
     "pyyaml>=6.0.2",
 ]
 
-[project.scripts]
-rcp = "rcp:main"
 
 [build-system]
 requires = ["hatchling"]

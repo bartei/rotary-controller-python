@@ -1,9 +1,7 @@
 #: import SetupScreenManager rcp.components.setup.setup_screen_manager
 
 <SetupPopup>:
-  id: setup_popup
   screen_manager: screen_manager
-  screen_selector: screen_selector
   title: "Setup"
   size_hint: 1, 1
   auto_dismiss: False
@@ -31,7 +29,7 @@
         on_release: root.screen_manager.current = "servo"
       Button:
         text: "Network"
-#        on_release: root.screen_manager.current = "network"
+        on_release: root.screen_manager.current = "network"
       Button:
         text: "Prefs"
         on_release: root.screen_manager.current = "formats"
@@ -44,4 +42,3 @@
 
     SetupScreenManager:
       id: screen_manager
-      setup_popup: setup_popup
