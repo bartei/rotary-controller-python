@@ -63,18 +63,6 @@
 
       BoxLayout:
         size_hint_y: None
-        height: 160
-        orientation: "horizontal"
-        Label:
-          size_hint_x: 0.3
-          text: "Status:"
-        TextInput:
-          readonly: True
-          multiline: True
-          text: root.status_text
-
-      BoxLayout:
-        size_hint_y: None
         height: 48
         orientation: "horizontal"
 
@@ -87,3 +75,12 @@
           text: "Apply"
           background_color: "#3acf3a"
           on_release: root.apply()
+
+      TitleItem:
+        name: "Status"
+      TextInput:
+        size_hint_y: None
+        height: 160
+        readonly: True
+        multiline: True
+        text: root.status_text
