@@ -12,7 +12,7 @@ log = Logger.getChild(__name__)
 
 
 class FormatsDispatcher(SavingDispatcher):
-    _force_save = ['display_color']
+    _force_save = ['display_color', 'beep_tone']
     metric_position = StringProperty("{:+0.3f}")
     metric_speed = StringProperty("{:+0.3f}")
 
@@ -32,6 +32,7 @@ class FormatsDispatcher(SavingDispatcher):
     cancel_color = ListProperty([1, 0.2, 0.2, 1])
 
     volume = NumericProperty(0.2)
+    beep_tone = StringProperty("beep.mp3")
 
     def __init__(self, **kv):
         super().__init__(**kv)
