@@ -30,8 +30,9 @@
         halign: 'right'
         valign: 'center'
         on_release: root.update_position()
-      Label:
+      Button:
         size_hint_y: 0.3
+        background_color: (0, 0, 0, 1)
         font_name: "fonts/iosevka-regular.ttf"
         font_size: self.height / 1.5
         font_style: "bold"
@@ -40,6 +41,7 @@
         text_size: self.size
         halign: 'right'
         valign: 'top'
+        on_release: root.toggle_speed_mode()
 
     BoxLayout:
       size_hint_x: None
