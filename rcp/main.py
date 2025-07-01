@@ -2,10 +2,15 @@ from keke import ktrace
 from kivy.base import EventLoop
 from kivy.logger import Logger, KivyFormatter
 from kivy.core.window import Window
+import platform
 
 log = Logger.getChild(__name__)
 
-Window.show_cursor = False
+if "arm" in platform.machine():
+    Window.show_cursor = False
+else:
+    Window.show_cursor = True
+    Window.size = (1024, 600)
 
 for h in log.root.handlers:
     h.formatter = KivyFormatter('%(asctime)s - %(name)s:%(lineno)s-%(funcName)s - %(levelname)s - %(message)s')
