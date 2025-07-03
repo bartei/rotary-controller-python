@@ -107,8 +107,11 @@ class FormatsPanel(BoxLayout):
             log.info(output)
             self.update_status(f"return code: {p.returncode}")
             self.update_status(f"output: {output}")
+
             if p.stderr is not None:
                 error = p.stderr.read().decode()
                 log.error(output)
                 self.update_status(f"err: {error}")
+
+            if p.returncode != 0:
                 return
