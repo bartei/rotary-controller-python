@@ -93,12 +93,13 @@ class FormatsPanel(BoxLayout):
                 stdout=subprocess.PIPE,
                 stdin=subprocess.PIPE,
             )
-            out, err = p.communicate(timeout=300)
-            self.update_status(out)
-
-            # sleep a little bit to allow the main thread to refresh the screen with the new status
-            time.sleep(1)
+            p.wait(timeout=300)
+            output = p.stdout.read()
+            error = p.stderr.read()
+            self.update_status(output)
+            log.info(output)
 
             if p.returncode != 0:
-                self.update_status(f"exit code: {p.returncode}, error: {err}")
+                self.update_status(f"exit code: {p.returncode}, error: {error}")
+                log.error(error)
                 return
