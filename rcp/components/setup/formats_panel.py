@@ -35,7 +35,7 @@ class FormatsPanel(BoxLayout):
         self.status = ""
 
     def fetch_releases(self):
-        log.info("Try to retrieve all the releases from Github")
+        self.update_status("Retrieve all the releases from Github")
         url = f"https://api.github.com/repos/bartei/rotary-controller-python/releases"
         response = requests.get(url)
         if response.status_code != 200:
