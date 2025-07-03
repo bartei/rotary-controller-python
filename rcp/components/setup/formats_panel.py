@@ -95,11 +95,12 @@ class FormatsPanel(BoxLayout):
             )
             p.wait(timeout=300)
             output = p.stdout.read()
-            error = p.stderr.read()
             self.update_status(output)
             log.info(output)
 
             if p.returncode != 0:
                 self.update_status(f"exit code: {p.returncode}, error: {error}")
+                if p.stderr is not None:
+                    error = p.stderr.read()
                 log.error(error)
                 return
