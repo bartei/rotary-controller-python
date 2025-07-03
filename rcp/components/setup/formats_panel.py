@@ -73,11 +73,16 @@ class FormatsPanel(BoxLayout):
 
     async def perform_install(self, dt):
         self.update_status(f"Performing installation of a new release: {self.current_release} -> {self.selected_release}")
-        if not os.path.exists("/rotary-controller-python"):
-            self.update_status("Unable to perform automatic updates, you're not running on the official platform")
-            return
 
-        os.chdir("/rotary-controller-python")
+        project_folder = os.path.abspath(os.path.join(
+            os.path.dirname(__file__),
+            "..",
+            "..",
+            ".."
+        ))
+
+        os.chdir(project_folder)
+        self.update_status(f"Found project folder at: {project_folder}")
 
         commands = [
             "git fetch --all --tags",
@@ -92,19 +97,18 @@ class FormatsPanel(BoxLayout):
                 c,
                 shell=True,
                 stdout=subprocess.PIPE,
-                stdin=subprocess.PIPE,
+                stderr=subprocess.PIPE,
             )
 
             while p.poll() is None:
                 await asyncio.sleep(1)
 
-            output = p.stdout.read()
-            self.update_status(output)
+            output = p.stdout.read().decode()
             log.info(output)
-
-            if p.returncode != 0:
-                self.update_status(f"exit code: {p.returncode}, error: {error}")
-                if p.stderr is not None:
-                    error = p.stderr.read()
-                log.error(error)
+            self.update_status(f"return code: {p.returncode}")
+            self.update_status(f"output: {output}")
+            if p.stderr is not None:
+                error = p.stderr.read().decode()
+                log.error(output)
+                self.update_status(f"err: {error}")
                 return
