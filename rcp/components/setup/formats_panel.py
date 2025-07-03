@@ -74,15 +74,13 @@ class FormatsPanel(BoxLayout):
     async def perform_install(self, dt):
         self.update_status(f"Performing installation of a new release: {self.current_release} -> {self.selected_release}")
 
-        project_folder = os.path.abspath(os.path.join(
-            os.path.dirname(__file__),
-            "..",
-            "..",
-            ".."
-        ))
+        project_folder = "/rotary-controller-python"
+        if not os.path.isdir(project_folder):
+            self.update_status(f"Project folder not found at the expected location: {project_folder}")
+            return
 
-        os.chdir(project_folder)
         self.update_status(f"Found project folder at: {project_folder}")
+        os.chdir(project_folder)
 
         commands = [
             "git fetch --all --tags",
