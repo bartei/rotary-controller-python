@@ -77,8 +77,8 @@ class FormatsPanel(BoxLayout):
         os.chdir("/rotary-controller-python")
 
         commands = [
-            "git fetch -p",
-            f"git checkout {self.selected_release}",
+            "git fetch --all --tags",
+            f"git checkout tags/{self.selected_release}",
             "pip install .",
             "reboot"
         ]
