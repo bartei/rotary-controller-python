@@ -2,6 +2,7 @@ from keke import ktrace
 from kivy.base import EventLoop
 from kivy.logger import Logger, KivyFormatter
 from kivy.core.window import Window
+import asyncio
 
 log = Logger.getChild(__name__)
 
@@ -14,4 +15,4 @@ if __name__ == "__main__":
     from rcp.app import MainApp
     # Monkeypatch to add more trace events
     EventLoop.idle = ktrace()(EventLoop.idle)
-    MainApp().run()
+    asyncio.run(MainApp().async_run())

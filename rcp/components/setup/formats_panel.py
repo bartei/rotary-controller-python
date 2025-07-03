@@ -1,3 +1,4 @@
+import asyncio
 import os
 import importlib.metadata
 import subprocess
@@ -67,10 +68,10 @@ class FormatsPanel(BoxLayout):
         self.status = self.status + status + "\n"
 
     def install_release(self):
-        threading.Thread(target=self.perform_install).start()
         log.info("User wants to install a different release!")
+        Clock.schedule_once(lambda dt: asyncio.ensure_future(self.perform_install(dt)))
 
-    def perform_install(self):
+    async def perform_install(self, dt):
         self.update_status(f"Performing installation of a new release: {self.current_release} -> {self.selected_release}")
         if not os.path.exists("/rotary-controller-python"):
             self.update_status("Unable to perform automatic updates, you're not running on the official platform")
@@ -93,7 +94,10 @@ class FormatsPanel(BoxLayout):
                 stdout=subprocess.PIPE,
                 stdin=subprocess.PIPE,
             )
-            p.wait(timeout=300)
+
+            while p.poll() is None:
+                await asyncio.sleep(1)
+
             output = p.stdout.read()
             self.update_status(output)
             log.info(output)
