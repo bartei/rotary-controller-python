@@ -46,8 +46,8 @@ class FormatsPanel(BoxLayout):
 
         releases = response.json()[:10]
         # Get only official releases
-        # releases = [item['tag_name'] for item in releases if item['prerelease'] == False]
-        releases = [item['tag_name'] for item in releases]
+        releases = [item['tag_name'] for item in releases if item['prerelease'] == False]
+        # releases = [item['tag_name'] for item in releases]
 
         # Get the current version of the rcp package:
         self.update_releases(releases)
