@@ -1,6 +1,7 @@
 import os
 import importlib.metadata
 import subprocess
+import time
 from sys import stdout
 
 from kivy.lang import Builder
@@ -94,6 +95,10 @@ class FormatsPanel(BoxLayout):
             )
             out, err = p.communicate(timeout=300)
             self.update_status(out)
+
+            # sleep a little bit to allow the main thread to refresh the screen with the new status
+            time.sleep(1)
+
             if p.returncode != 0:
                 self.update_status(f"exit code: {p.returncode}, error: {err}")
                 return
