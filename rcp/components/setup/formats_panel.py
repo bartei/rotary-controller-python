@@ -42,9 +42,10 @@ class FormatsPanel(BoxLayout):
             log.error(f"Failed to fetch releases: {response.status_code} - {response.text}")
             return
 
-        releases = response.json()
+        releases = response.json()[:10]
         # Get only official releases
-        releases = [item['tag_name'] for item in releases if item['prerelease'] == False][:10]
+        # releases = [item['tag_name'] for item in releases if item['prerelease'] == False]
+        releases = [item['tag_name'] for item in releases]
 
         # Get the current version of the rcp package:
         self.update_releases(releases)
