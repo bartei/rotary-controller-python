@@ -1,13 +1,21 @@
 <TitleItem>:
-  height: 60
+  height: 36
   size_hint_y: None
   BoxLayout:
-    orientation: "horizontal"
+    orientation: "vertical"
     Label:
-      italic: True
       text: root.name
       text_size: root.size
-      font_size: self.height / 2.5
-      bold: True
+#      font_size: self.height / 2.5
       valign: root.valign
       halign: root.halign
+    Widget:
+      height: 2
+      width: root.width
+      size_hint: None, None
+      canvas:
+        Color:
+          rgba: 0.75, 0.75, 0.75, 1
+        Rectangle:
+          size: self.size
+          pos: self.pos

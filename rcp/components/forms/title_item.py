@@ -14,5 +14,5 @@ if os.path.exists(kv_file):
 
 class TitleItem(BoxLayout):
     name = StringProperty("")
-    valign = StringProperty("bottom")
+    valign = StringProperty("center")
     halign = StringProperty("center")

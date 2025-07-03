@@ -11,6 +11,7 @@ readme = "README.md"
 dependencies = [
     "cachetools>=5.5.0",
     "coverage>=7.6.9",
+    "importlib>=1.0.4",
     "keke>=0.1.4",
     "kivy>=2.3.0",
     "minimalmodbus>=2.1.1",

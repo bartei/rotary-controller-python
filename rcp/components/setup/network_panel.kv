@@ -12,6 +12,10 @@
       cols: 1
       spacing: 1
       size_hint_y: None
+
+      TitleItem:
+        name: "Network Interface"
+
       DropDownItem:
         name: "Network Interface"
         options: root.devices
@@ -32,6 +36,9 @@
         disabled: True
         value: root.state
 
+      TitleItem:
+        name: "Connection Properties"
+
       DropDownItem:
         name: "Connection"
         options: root.networks
@@ -42,6 +49,9 @@
         name: "Wifi Password"
         value: root.password
         on_value: root.password = self.value
+
+      TitleItem:
+        name: "IP Properties"
 
       StringItem:
         name: "IP Address"
@@ -60,6 +70,9 @@
         value: root.gateway
         disabled: True
         on_value: root.gateway = self.value
+
+      TitleItem:
+        name: "Commands"
 
       BoxLayout:
         size_hint_y: None
