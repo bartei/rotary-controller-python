@@ -1,43 +1,37 @@
-#: import SetupScreenManager rcp.components.setup.setup_screen_manager
+#: import ScalePanel rcp.components.setup.scale_panel
 
 <SetupPopup>:
-  screen_manager: screen_manager
-  title: "Setup"
+  title: "Setup Menu"
   size_hint: 1, 1
   auto_dismiss: False
-  BoxLayout:
-    orientation: "horizontal"
-    BoxLayout:
-      id: screen_selector
-      size_hint_x: None
-      width: 128
-      orientation: "vertical"
-      Button:
-        text: "Scale 0"
-        on_release: root.screen_manager.current = "scale_0"
-      Button:
-        text: "Scale 1"
-        on_release: root.screen_manager.current = "scale_1"
-      Button:
-        text: "Scale 2"
-        on_release: root.screen_manager.current = "scale_2"
-      Button:
-        text: "Scale 3"
-        on_release: root.screen_manager.current = "scale_3"
-      Button:
-        text: "Servo"
-        on_release: root.screen_manager.current = "servo"
-      Button:
-        text: "Network"
-        on_release: root.screen_manager.current = "network"
-      Button:
-        text: "Formats"
-        on_release: root.screen_manager.current = "formats"
-      Button:
-        text: "Exit"
-        on_release: root.dismiss()
-
-    BoxLayout:
-      orientation: "vertical"
-      SetupScreenManager:
-        id: screen_manager
+  GridLayout:
+    spacing: 4
+    padding: 4
+    cols: 4
+    Button:
+      text: "Scale 0"
+      on_release: Factory.ScalePanel(scale=app.scales[0]).open()
+    Button:
+      text: "Scale 1"
+      on_release: Factory.ScalePanel(scale=app.scales[1]).open()
+#      on_release: root.screen_manager.current = "scale_1"
+    Button:
+      text: "Scale 2"
+      on_release: Factory.ScalePanel(scale=app.scales[2]).open()
+#      on_release: root.screen_manager.current = "scale_2"
+    Button:
+      text: "Scale 3"
+      on_release: Factory.ScalePanel(scale=app.scales[3]).open()
+#      on_release: root.screen_manager.current = "scale_3"
+    Button:
+      text: "Servo"
+#      on_release: root.screen_manager.current = "servo"
+    Button:
+      text: "Network"
+#      on_release: root.screen_manager.current = "network"
+    Button:
+      text: "Formats"
+#      on_release: root.screen_manager.current = "formats"
+    Button:
+      text: "Exit"
+      on_release: root.dismiss()
