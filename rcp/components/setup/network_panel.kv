@@ -1,3 +1,4 @@
+#: import TitleItem rcp.components.forms.title_item
 #: import StringItem rcp.components.forms.string_item
 #: import BooleanItem rcp.components.forms.boolean_item
 #: import DropDownItem rcp.components.forms.dropdown_item
@@ -5,6 +6,7 @@
 #: import SsidPopup rcp.components.setup.ssid_popup
 
 <NetworkPanel>:
+  title: "Network Settings"
   orientation: "vertical"
   ScrollView:
     do_scroll_x: False
@@ -88,3 +90,10 @@
         readonly: True
         multiline: True
         text: root.status_text
+
+      Button:
+        height: 60
+        size_hint_y: None
+        background_color: app.formats.accept_color
+        text: "Exit"
+        on_release: root.dismiss()

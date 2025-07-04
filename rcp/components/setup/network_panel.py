@@ -1,13 +1,11 @@
 import asyncio
 import os
-from functools import partial
-
 import nmcli
 
 from kivy.clock import Clock
 from kivy.properties import StringProperty, ListProperty, BooleanProperty, ObjectProperty
 from kivy.logger import Logger
-from kivy.uix.boxlayout import BoxLayout
+from kivy.uix.popup import Popup
 from kivy.lang import Builder
 
 nmcli.disable_use_sudo()
@@ -19,7 +17,7 @@ if os.path.exists(kv_file):
     Builder.load_file(kv_file)
 
 
-class NetworkPanel(BoxLayout):
+class NetworkPanel(Popup):
     setup_popup = ObjectProperty()
     networks = ListProperty(["Loading"])
     connection = StringProperty("")
@@ -151,6 +149,6 @@ class NetworkPanel(BoxLayout):
         log.info(f"Selected network: {selected_network}")
         self.connection = selected_network
 
-    def on_dismiss(self, instance, value):
+    def on_dismiss(self):
         log.debug("Dismiss signal received, stopping status_update_task")
         self.status_update_task.cancel()
