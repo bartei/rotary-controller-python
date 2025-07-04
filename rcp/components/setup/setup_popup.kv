@@ -1,4 +1,5 @@
 #: import ScalePanel rcp.components.setup.scale_panel
+#: import NetworkPanel rcp.components.setup.network_panel
 
 <SetupPopup>:
   title: "Setup Menu"
@@ -14,24 +15,19 @@
     Button:
       text: "Scale 1"
       on_release: Factory.ScalePanel(scale=app.scales[1]).open()
-#      on_release: root.screen_manager.current = "scale_1"
     Button:
       text: "Scale 2"
       on_release: Factory.ScalePanel(scale=app.scales[2]).open()
-#      on_release: root.screen_manager.current = "scale_2"
     Button:
       text: "Scale 3"
       on_release: Factory.ScalePanel(scale=app.scales[3]).open()
-#      on_release: root.screen_manager.current = "scale_3"
     Button:
       text: "Servo"
-#      on_release: root.screen_manager.current = "servo"
     Button:
       text: "Network"
-#      on_release: root.screen_manager.current = "network"
+      on_release: Factory.NetworkPanel().open()
     Button:
       text: "Formats"
-#      on_release: root.screen_manager.current = "formats"
     Button:
       text: "Exit"
       on_release: root.dismiss()

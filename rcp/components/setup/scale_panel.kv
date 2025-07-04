@@ -4,6 +4,8 @@
 #: import BooleanItem rcp.components.forms.boolean_item
 
 <ScalePanel>:
+  title: "Scale Settings for Scale {}".format(self.scale.inputIndex)
+
   orientation: "vertical"
   ScrollView:
     do_scroll_x: False
@@ -45,7 +47,7 @@
         value: root.scale.spindleMode
         on_value: root.scale.spindleMode = self.value
       Button:
-        height: 40
+        height: 60
         size_hint_y: None
         background_color: app.formats.accept_color
         text: "Exit"
