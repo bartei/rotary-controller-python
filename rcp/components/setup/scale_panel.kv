@@ -44,3 +44,9 @@
         name: "Spindle Mode"
         value: root.scale.spindleMode
         on_value: root.scale.spindleMode = self.value
+      Button:
+        height: 40
+        size_hint_y: None
+        background_color: app.formats.accept_color
+        text: "Exit"
+        on_release: root.dismiss()
