@@ -8,7 +8,7 @@ from kivy.clock import Clock
 from kivy.properties import ObjectProperty, StringProperty, ListProperty, BooleanProperty, ColorProperty
 from kivy.logger import Logger
 from kivy.uix.gridlayout import GridLayout
-from kivy.uix.popup import Popup
+from kivy.uix.modalview import ModalView
 from kivy.uix.button import Button
 from kivy.lang import Builder
 
@@ -22,7 +22,7 @@ if os.path.exists(kv_file):
     Builder.load_file(kv_file)
 
 
-class SsidPopup(Popup):
+class SsidPopup(ModalView):
     container: GridLayout = ObjectProperty()
     callback = ObjectProperty()
     current_value = StringProperty()
@@ -84,11 +84,3 @@ class SsidPopup(Popup):
         log.info(f"Received: {self.selected_network}")
         self.callback(self.selected_network)
         self.dismiss()
-
-    # def show_with_callback(self, callback_fn, current_value=None):
-    #     if current_value is not None:
-    #         # Use the specified current value if passed
-    #         self.current_value = current_value
-    #
-    #     self.callback = callback_fn
-    #     self.open()
