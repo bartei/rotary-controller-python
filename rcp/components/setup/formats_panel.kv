@@ -1,5 +1,7 @@
 #: import StringItem rcp.components.forms.string_item
 #: import NumberItem rcp.components.forms.number_item
+#: import ColorItem rcp.components.forms.color_item
+
 
 <FormatsPanel>:
   orientation: "vertical"
@@ -59,11 +61,31 @@
 
       TitleItem:
         name: "Colors"
-      ColorPicker:
-        size_hint_y: None
-        height: 320
+
+      ColorItem:
+        name: "Home Screen Digits"
         color: root.formats.display_color
         on_color: root.formats.display_color = self.color
+
+      ColorItem:
+        name: "Accept Color"
+        color: root.formats.accept_color
+        on_color: root.formats.accept_color = self.color
+
+      ColorItem:
+        name: "Cancel Color"
+        color: root.formats.cancel_color
+        on_color: root.formats.cancel_color = self.color
+
+      ColorItem:
+        name: "Indicators On Color"
+        color: root.formats.color_on
+        on_color: root.formats.color_on = self.color
+
+      ColorItem:
+        name: "Indicators Off Color"
+        color: root.formats.color_off
+        on_color: root.formats.color_off = self.color
 
       TitleItem:
         name: "Software Update"

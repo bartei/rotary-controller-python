@@ -1,6 +1,8 @@
 #: import StringItem rcp.components.forms.string_item
 #: import BooleanItem rcp.components.forms.boolean_item
 #: import DropDownItem rcp.components.forms.dropdown_item
+#: import ButtonItem rcp.components.forms.button_item
+#: import SsidPopup rcp.components.setup.ssid_popup
 
 <NetworkPanel>:
   orientation: "vertical"
@@ -39,16 +41,23 @@
       TitleItem:
         name: "Connection Properties"
 
-      DropDownItem:
-        name: "Connection"
-        options: root.networks
-        value: root.connection
-        on_value: root.connection = self.value
+      ButtonItem:
+        name: "Network"
+        value: root.connection if root.connection is not None else ""
+        disabled: root.lock
+        on_release: Factory.SsidPopup(callback=root.select_network, selected_network=root.connection).open()
 
       StringItem:
         name: "Wifi Password"
         value: root.password
+        disabled: root.lock
         on_value: root.password = self.value
+
+      ButtonItem:
+        name: "Apply configuration"
+        value: "Apply"
+        disabled: root.lock
+        on_release: root.apply()
 
       TitleItem:
         name: "IP Properties"
@@ -70,24 +79,6 @@
         value: root.gateway
         disabled: True
         on_value: root.gateway = self.value
-
-      TitleItem:
-        name: "Commands"
-
-      BoxLayout:
-        size_hint_y: None
-        height: 48
-        orientation: "horizontal"
-
-        Button:
-          text: "Scan"
-          background_color: "#3acf3a"
-          on_release: root.scan()
-
-        Button:
-          text: "Apply"
-          background_color: "#3acf3a"
-          on_release: root.apply()
 
       TitleItem:
         name: "Status"

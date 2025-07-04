@@ -1,0 +1,57 @@
+<ColorPickerPopup>:
+  title: "Select Color"
+  size_hint: 0.6, 0.8
+  auto_dismiss: True
+
+  BoxLayout:
+    size_hint: 1, 1
+    padding: 4
+    spacing: 4
+    orientation: "vertical"
+    ColorPicker:
+      id: picker
+      color: root.color
+
+    BoxLayout:
+      size_hint_y: None
+      height: 40
+      orientation: "horizontal"
+
+      Button:
+        text: "Cancel"
+        background_color: app.formats.cancel_color
+        on_release: root.dismiss()
+
+      Button:
+        text: "Apply"
+        background_color: app.formats.accept_color
+        on_release: root.apply()
+
+<ColorItem>:
+  value: "#ffffff"
+  height: 36
+  size_hint_y: None
+  BoxLayout:
+    orientation: "horizontal"
+    Button:
+      size_hint_x: None
+      width: self.height
+      font_name: "fonts/Font Awesome 6 Free-Solid-900.otf"
+      font_size: 21
+      text: "\uf129"
+    Label:
+      size_hint_x: 0.7
+      text: root.name
+    BoxLayout:
+      size_hint_x: None
+      width: 250
+
+      orientation: "vertical"
+      Button:
+        canvas.after:
+          Color:
+            rgba: root.color
+          Rectangle:
+            pos: self.pos[0] + 4, self.pos[1] + 4
+            size: self.size[0] - 9, self.size[1] - 8
+        on_release: Factory.ColorPickerPopup(color=root.color, callback=root.set_color).open()
