@@ -1,5 +1,5 @@
 <StringItem>:
-  height: 36
+  height: 60
   size_hint_y: None
   BoxLayout:
     orientation: "horizontal"
@@ -18,5 +18,8 @@
       width: 250
       multiline: False
       text: root.value
+      font_size: 24
+      valign: "center"
+      halign: "center"
       disabled: root.disabled
       on_text_validate: root.value = self.text
