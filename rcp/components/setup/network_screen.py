@@ -19,7 +19,7 @@ if os.path.exists(kv_file):
     Builder.load_file(kv_file)
 
 
-class NetworkPanel(Screen):
+class NetworkScreen(Screen):
     setup_popup = ObjectProperty()
     networks = ListProperty(["Loading"])
     connection = StringProperty("")

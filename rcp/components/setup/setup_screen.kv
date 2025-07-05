@@ -1,0 +1,35 @@
+<SetupScreen>:
+  title: "Setup Menu"
+  size_hint: 1, 1
+  auto_dismiss: False
+  GridLayout:
+    spacing: 36
+    padding: 36
+    cols: 4
+    Button:
+      text: "Scale 0"
+    Button:
+      text: "Scale 1"
+    Button:
+      text: "Scale 2"
+    Button:
+      text: "Scale 3"
+    Button:
+      text: "Servo"
+    Button:
+      text: "Network"
+      on_release:
+        app.manager.transition.direction = 'left'
+        app.manager.current = "network"
+
+    Button:
+      text: "Formats"
+      on_release:
+        app.manager.transition.direction = 'left'
+        app.manager.current = "formats"
+
+    Button:
+      text: "Exit"
+      on_release:
+        app.manager.transition.direction = 'right'
+        app.manager.current = "home"

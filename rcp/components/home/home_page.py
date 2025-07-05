@@ -1,10 +1,6 @@
-import asyncio
 import os
-import time
-from contextlib import ExitStack
 
 from keke import TraceOutput
-from kivy.app import App
 from kivy.core.window import Window
 from kivy.logger import Logger
 from kivy.properties import ObjectProperty
@@ -16,7 +12,6 @@ from kivy.lang import Builder
 from rcp.components.home.jogbar import JogBar
 from rcp.components.home.statusbar import StatusBar
 from rcp.components.home.elsbar import ElsBar
-from rcp.components.home.home_toolbar import HomeToolbar
 
 log = Logger.getChild(__name__)
 kv_file = os.path.join(os.path.dirname(__file__), __file__.replace(".py", ".kv"))
@@ -25,23 +20,16 @@ if os.path.exists(kv_file):
     Builder.load_file(kv_file)
 
 
-class HomePage(BoxLayout):
+class HomePage(Screen):
     device = ObjectProperty()
     servo = ObjectProperty()
-    orientation = "horizontal"
 
     def __init__(self, **kv):
         from rcp.app import MainApp
         self.app: MainApp = MainApp.get_running_app()
         super().__init__(**kv)
-        self.bars_container = BoxLayout(
-            orientation="vertical",
-            size_hint_y=1,
-            size_hint_x=1,
-        )
-        toolbar = HomeToolbar()
-        self.add_widget(toolbar)
-        self.add_widget(self.bars_container)
+
+        self.bars_container = self.ids['bars_container']
         self.bars_container.add_widget(StatusBar())
         self.els_bar = ElsBar(id_override="0")
         self.jog_bar = JogBar()
@@ -60,9 +48,7 @@ class HomePage(BoxLayout):
 
         self._keyboard = Window._system_keyboard
         self._keyboard.bind(on_key_down=self._on_keyboard_down)
-        self.exit_stack = ExitStack()
         self.app.bind(current_mode=self.change_mode)
-        # When the application starts we restore the last selected mode
         self.change_mode(self, self.next_mode)
 
     def change_mode(self, instance, value):
@@ -106,7 +92,3 @@ class HomePage(BoxLayout):
         if text == "t" and "ctrl" in modifiers:
             self.exit_stack.enter_context(TraceOutput(file=open("trace.out", "w")))
             return True  # Return True to accept the key. False would reject the key press.
-
-
-class HomeScreen(Screen):
-    pass

@@ -5,17 +5,20 @@ from kivy.app import App
 from kivy.clock import Clock
 from kivy.uix.screenmanager import ScreenManager
 from kivy.core.audio import SoundLoader
-from kivy.properties import ObjectProperty, ConfigParserProperty, BooleanProperty, NumericProperty, ListProperty
+from kivy.properties import ObjectProperty, ConfigParserProperty, BooleanProperty, NumericProperty, ListProperty, \
+    StringProperty
 
 from rcp.components.appsettings import config
-from rcp.components.home.coordbar import CoordBar
 from rcp.components.home.home_page import HomePage
+from rcp.components.home.coordbar import CoordBar
 from rcp.components.home.servobar import ServoBar
+from rcp.components.setup.setup_screen import SetupScreen
+from rcp.components.setup.network_screen import NetworkScreen
+from rcp.components.setup.formats_screen import FormatsScreen
+
 from rcp.dispatchers.formats import FormatsDispatcher
 from rcp.main import log
 from rcp.utils import communication, devices
-from rcp.components.setup.network_panel import NetworkPanel
-from rcp.components.home.home_page import HomeScreen
 
 class MainApp(App):
     display_color = ConfigParserProperty(
@@ -55,6 +58,7 @@ class MainApp(App):
         defaultvalue=4, section="device", key="scales_count", config=config, val_type=int
     )
 
+    previous = ListProperty()
     manager = ObjectProperty()
 
     task_update = None
@@ -138,6 +142,10 @@ class MainApp(App):
     def blinker(self, *args):
         self.blink = not self.blink
 
+    def set_previous(self, instance, value):
+        self.previous.append(value)
+        log.info(f"Previous history: {self.previous}")
+
     def build(self):
         self.formats = FormatsDispatcher(id_override="0")
         self.servo = ServoBar(
@@ -146,16 +154,14 @@ class MainApp(App):
         for i in range(4):
             self.scales.append(CoordBar(inputIndex=i, device=self.device, id_override=f"{i}"))
 
-        # self.home = HomePage()
         self.task_update = Clock.schedule_interval(self.update, 1.0 / 30)
         Clock.schedule_interval(self.blinker, 1.0 / 4)
-
         self.beep()
 
         self.manager = ScreenManager()
-        self.manager.add_widget(HomeScreen(name="home"))
-        self.manager.add_widget(NetworkPanel(name="settings"))
+        self.manager.add_widget(HomePage(name="home"))
+        self.manager.add_widget(SetupScreen(name="setup_screen"))
+        self.manager.add_widget(NetworkScreen(name="network"))
+        self.manager.add_widget(FormatsScreen(name="formats"))
+        self.manager.bind(current=self.set_previous)
         return self.manager
-
-    def on_stop(self):
-        self.home.exit_stack.close()

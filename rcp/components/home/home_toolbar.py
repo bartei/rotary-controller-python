@@ -5,8 +5,6 @@ from kivy.properties import StringProperty
 from kivy.uix.boxlayout import BoxLayout
 from kivy.lang import Builder
 
-from rcp.components.plot.scene_popup import ScenePopup
-from rcp.components.setup.setup_popup import SetupPopup
 from rcp.components.home.mode_popup import ModePopup
 
 log = Logger.getChild(__name__)
@@ -25,8 +23,8 @@ class HomeToolbar(BoxLayout):
         super(HomeToolbar, self).__init__(**kv)
         self.app.bind(current_mode=self.update_current_mode)
 
-    def popup_scene(self, *_):
-        ScenePopup().open()
+    # def popup_scene(self, *_):
+    #     ScenePopup().open()
 
     def update_current_mode(self, instance, value):
         if self.app.current_mode == 1:
@@ -38,9 +36,3 @@ class HomeToolbar(BoxLayout):
 
     def popup_mode(self, *_):
         ModePopup().show_with_callback(self.app.set_mode, self.app.current_mode)
-
-    def popup_setup(self, *_):
-        SetupPopup().open()
-
-    def select_network(self, stuff):
-        log.info(stuff)

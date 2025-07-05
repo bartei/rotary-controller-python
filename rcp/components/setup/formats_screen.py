@@ -6,7 +6,7 @@ import subprocess
 from kivy.lang import Builder
 from kivy.logger import Logger
 from kivy.properties import ObjectProperty, ListProperty, StringProperty, BooleanProperty
-from kivy.uix.popup import Popup
+from kivy.uix.screenmanager import Screen
 import threading
 import requests
 
@@ -19,16 +19,14 @@ if os.path.exists(kv_file):
     Builder.load_file(kv_file)
 
 
-class FormatsPanel(Popup):
-    formats = ObjectProperty()
+class FormatsScreen(Screen):
     releases = ListProperty([])
     selected_release = StringProperty("")
     current_release = StringProperty("v" + importlib.metadata.version("rcp"))
     enable_update_button = BooleanProperty(False)
     status = StringProperty("")
 
-    def __init__(self, formats, **kv):
-        self.formats = formats
+    def __init__(self, **kv):
         super().__init__(**kv)
         self.ids['grid_layout'].bind(minimum_height=self.ids['grid_layout'].setter('height'))
         threading.Thread(target=self.fetch_releases).start()
