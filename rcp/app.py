@@ -3,6 +3,7 @@ from typing import List
 
 from kivy.app import App
 from kivy.clock import Clock
+from kivy.uix.screenmanager import ScreenManager
 from kivy.core.audio import SoundLoader
 from kivy.properties import ObjectProperty, ConfigParserProperty, BooleanProperty, NumericProperty, ListProperty
 
@@ -13,7 +14,8 @@ from rcp.components.home.servobar import ServoBar
 from rcp.dispatchers.formats import FormatsDispatcher
 from rcp.main import log
 from rcp.utils import communication, devices
-
+from rcp.components.setup.network_panel import NetworkPanel
+from rcp.components.home.home_page import HomeScreen
 
 class MainApp(App):
     display_color = ConfigParserProperty(
@@ -52,6 +54,8 @@ class MainApp(App):
     scales_count = ConfigParserProperty(
         defaultvalue=4, section="device", key="scales_count", config=config, val_type=int
     )
+
+    manager = ObjectProperty()
 
     task_update = None
 
@@ -93,9 +97,6 @@ class MainApp(App):
 
         with open(help_file_path, "r") as f:
             return f.read()
-
-    def on_network_settings(self):
-        print(self.network_settings.dict())
 
     def set_mode(self, mode_id: int):
         self.current_mode = mode_id
@@ -145,12 +146,16 @@ class MainApp(App):
         for i in range(4):
             self.scales.append(CoordBar(inputIndex=i, device=self.device, id_override=f"{i}"))
 
-        self.home = HomePage()
+        # self.home = HomePage()
         self.task_update = Clock.schedule_interval(self.update, 1.0 / 30)
         Clock.schedule_interval(self.blinker, 1.0 / 4)
 
         self.beep()
-        return self.home
+
+        self.manager = ScreenManager()
+        self.manager.add_widget(HomeScreen(name="home"))
+        self.manager.add_widget(NetworkPanel(name="settings"))
+        return self.manager
 
     def on_stop(self):
         self.home.exit_stack.close()

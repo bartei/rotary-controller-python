@@ -39,4 +39,6 @@
     width: root.width
     font_name: "fonts/Font Awesome 6 Free-Solid-900.otf"
     text: "M"
-    on_release: Factory.SsidPopup(callback=root.select_network, selected_network="").open()
+    on_press:
+      app.manager.transition.direction = 'left'
+      app.manager.current = 'settings'

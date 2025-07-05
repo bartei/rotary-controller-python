@@ -5,7 +5,9 @@ import nmcli
 from kivy.clock import Clock
 from kivy.properties import StringProperty, ListProperty, BooleanProperty, ObjectProperty
 from kivy.logger import Logger
-from kivy.uix.popup import Popup
+from kivy.uix.boxlayout import BoxLayout
+from kivy.uix.screenmanager import Screen
+
 from kivy.lang import Builder
 
 nmcli.disable_use_sudo()
@@ -17,7 +19,7 @@ if os.path.exists(kv_file):
     Builder.load_file(kv_file)
 
 
-class NetworkPanel(Popup):
+class NetworkPanel(Screen):
     setup_popup = ObjectProperty()
     networks = ListProperty(["Loading"])
     connection = StringProperty("")
