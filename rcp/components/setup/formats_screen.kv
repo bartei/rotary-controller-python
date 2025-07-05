@@ -5,7 +5,6 @@
 <FormatsScreen>:
   formats: app.formats
   BoxLayout:
-    title: "Network Settings"
     orientation: "vertical"
     padding: 10
     ScreenHeader:
@@ -92,35 +91,3 @@
           name: "Indicators Off Color"
           color: root.formats.color_off
           on_color: root.formats.color_off = self.color
-
-        TitleItem:
-          name: "Software Update"
-        StringItem:
-          name: "Currently installed release"
-          value: root.current_release
-          disabled: True
-        DropDownItem:
-          name: "Available releases"
-          options: root.releases
-          value: root.selected_release
-          on_value: root.selected_release = self.value
-        BoxLayout:
-          height: 60
-          size_hint_y: None
-          orientation: "horizontal"
-          Button:
-            text: "Install Selected Release"
-            disabled: not root.enable_update_button
-            on_release: root.install_release()
-          Button:
-            text: "Exit Application"
-            on_release: app.stop()
-
-        TitleItem:
-          name: "Update Status"
-        TextInput:
-          size_hint_y: None
-          height: 200
-          readonly: True
-          multiline: True
-          text: root.status

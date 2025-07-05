@@ -181,5 +181,9 @@ class MainApp(App):
         # Add screen for servo setup
         self.manager.add_widget(ServoScreen(name="servo", servo=self.servo))
 
+        # Add screen for servo setup
+        from rcp.components.setup.update_screen import UpdateScreen
+        self.manager.add_widget(UpdateScreen(name="update"))
+
         self.manager.bind(current=self.set_previous)
         return self.manager

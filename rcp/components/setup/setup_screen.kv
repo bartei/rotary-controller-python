@@ -5,7 +5,7 @@
   GridLayout:
     spacing: 36
     padding: 36
-    cols: 4
+    cols: 3
     Button:
       text: "Scale 0"
       on_release:
@@ -46,6 +46,12 @@
       on_release:
         app.manager.transition.direction = 'left'
         app.manager.current = "formats"
+
+    Button:
+      text: "Software Update"
+      on_release:
+        app.manager.transition.direction = 'left'
+        app.manager.current = "update"
 
     Button:
       text: "Exit"
