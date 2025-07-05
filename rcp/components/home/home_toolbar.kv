@@ -22,7 +22,7 @@
     width: root.width
     font_name: "fonts/Font Awesome 6 Free-Solid-900.otf"
     text: "\ue2ca"
-#    on_release: root.popup_scene()
+    on_press: app.goto("plot")
 
   ToolbarButton:
     width: root.width
@@ -34,6 +34,7 @@
     width: root.width
     font_name: "fonts/Font Awesome 6 Free-Solid-900.otf"
     text: "\uf085"
-    on_press:
-      app.manager.transition.direction = 'left'
-      app.manager.current = 'setup_screen'
+    on_press: app.goto("setup_screen")
+
+  Widget:
+    size_hint_y: 1

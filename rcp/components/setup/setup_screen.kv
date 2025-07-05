@@ -8,53 +8,28 @@
     cols: 3
     Button:
       text: "Scale 0"
-      on_release:
-        app.manager.transition.direction = 'left'
-        app.manager.current = "scale_0"
+      on_release: app.goto("scale_0")
     Button:
       text: "Scale 1"
-      on_release:
-        app.manager.transition.direction = 'left'
-        app.manager.current = "scale_1"
-
+      on_release: app.goto("scale_1")
     Button:
       text: "Scale 2"
-      on_release:
-        app.manager.transition.direction = 'left'
-        app.manager.current = "scale_2"
-
+      on_release: app.goto("scale_2")
     Button:
       text: "Scale 3"
-      on_release:
-        app.manager.transition.direction = 'left'
-        app.manager.current = "scale_3"
-
+      on_release: app.goto("scale_3")
     Button:
       text: "Servo"
-      on_release:
-        app.manager.transition.direction = 'left'
-        app.manager.current = "servo"
-
+      on_release: app.goto("servo")
     Button:
       text: "Network"
-      on_release:
-        app.manager.transition.direction = 'left'
-        app.manager.current = "network"
-
+      on_release: app.goto("network")
     Button:
       text: "Formats"
-      on_release:
-        app.manager.transition.direction = 'left'
-        app.manager.current = "formats"
-
+      on_release: app.goto("formats")
     Button:
       text: "Software Update"
-      on_release:
-        app.manager.transition.direction = 'left'
-        app.manager.current = "update"
-
+      on_release: app.goto("update")
     Button:
       text: "Exit"
-      on_release:
-        app.manager.transition.direction = 'right'
-        app.manager.current = "home"
+      on_release: app.back()

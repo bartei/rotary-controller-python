@@ -1,0 +1,21 @@
+#: import PlotToolbar rcp.components.plot.plot_toolbar
+#: import FloatView rcp.components.plot.float_view
+
+<PlotScreen>:
+  toolbar: toolbar
+  float_view: float_view
+
+  BoxLayout:
+    orientation: "vertical"
+    padding: 10
+    ScreenHeader:
+      text: "Plot View"
+
+    BoxLayout:
+      orientation: "vertical"
+      FloatView:
+        id: float_view
+      PlotToolbar:
+        id: toolbar
+        float_view: root.float_view
+        popup_instance: root

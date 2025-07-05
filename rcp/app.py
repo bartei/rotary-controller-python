@@ -3,7 +3,7 @@ from typing import List
 
 from kivy.app import App
 from kivy.clock import Clock
-from kivy.uix.screenmanager import ScreenManager
+from kivy.uix.screenmanager import ScreenManager, CardTransition, FadeTransition
 from kivy.core.audio import SoundLoader
 from kivy.properties import ObjectProperty, ConfigParserProperty, BooleanProperty, NumericProperty, ListProperty, \
     StringProperty
@@ -63,6 +63,8 @@ class MainApp(App):
 
     previous = ListProperty()
     manager = ObjectProperty()
+
+    version = StringProperty()
 
     task_update = None
 
@@ -149,6 +151,17 @@ class MainApp(App):
         self.previous.append(value)
         log.info(f"Previous history: {self.previous}")
 
+    def back(self):
+        # self.manager.transition.mode = "pop"
+        self.manager.current = self.previous.pop()
+        log.debug(f"Back array {self.previous}")
+
+    def goto(self, screen: str):
+        # self.manager.transition.mode = "push"
+        self.previous.append(self.manager.current)
+        log.debug(f"Goto array {self.previous}")
+        self.manager.current = screen
+
     def build(self):
         self.formats = FormatsDispatcher(id_override="0")
         self.servo = ServoBar(
@@ -161,8 +174,11 @@ class MainApp(App):
         Clock.schedule_interval(self.blinker, 1.0 / 4)
         self.beep()
 
+        import importlib.metadata
+        self.version = "v" + importlib.metadata.version("rcp")
 
-        self.manager = ScreenManager()
+        self.manager = ScreenManager(transition=FadeTransition())
+        self.manager.transition.duration = .05
         self.manager.add_widget(HomePage(name="home"))
         self.manager.add_widget(SetupScreen(name="setup_screen"))
         self.manager.add_widget(NetworkScreen(name="network"))
@@ -185,5 +201,9 @@ class MainApp(App):
         from rcp.components.setup.update_screen import UpdateScreen
         self.manager.add_widget(UpdateScreen(name="update"))
 
-        self.manager.bind(current=self.set_previous)
+        # Add screen for plot view
+        from rcp.components.plot.plot_screen import PlotScreen
+        self.manager.add_widget(PlotScreen(name="plot"))
+        self.manager.current = "home"
+
         return self.manager

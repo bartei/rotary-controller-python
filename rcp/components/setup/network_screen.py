@@ -47,7 +47,6 @@ class NetworkScreen(Screen):
 
         Clock.schedule_once(lambda dt: asyncio.ensure_future(self.refresh()))
         self.status_update_task = Clock.schedule_interval(lambda dt: asyncio.ensure_future(self.status_update()), timeout=1)
-        # self.status_update_task = Clock.schedule_interval(self.status_update_thread, timeout=1)
 
     def log(self, message: str):
         log.info(message)

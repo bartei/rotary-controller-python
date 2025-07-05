@@ -1,0 +1,22 @@
+#: import LedButton rcp.components.toolbars.led_button
+
+<StatusBar>:
+  size_hint: 1, None
+  height: 32
+  orientation: "horizontal"
+
+  LedButton:
+    label: "COM"
+    checkbox_value: app.connected or app.blink
+
+  LedButton:
+    label: "{:0.0f}".format(0 if root.interval == 0 else (100000000 / root.interval))
+
+  LedButton:
+    label: "{:0.0f}".format(root.fps)
+
+  LedButton:
+    label: "{:0.0f}".format(root.cycles)
+
+  LedButton:
+    label: app.version
