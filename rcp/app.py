@@ -57,6 +57,7 @@ class MainApp(App):
     scales_count = ConfigParserProperty(
         defaultvalue=4, section="device", key="scales_count", config=config, val_type=int
     )
+    color_picker = ObjectProperty()
 
     previous = ListProperty()
     manager = ObjectProperty()
@@ -158,10 +159,14 @@ class MainApp(App):
         Clock.schedule_interval(self.blinker, 1.0 / 4)
         self.beep()
 
+        from rcp.components.setup.color_picker_screen import ColorPickerScreen
+        self.color_picker = ColorPickerScreen(name="color_picker")
+
         self.manager = ScreenManager()
         self.manager.add_widget(HomePage(name="home"))
         self.manager.add_widget(SetupScreen(name="setup_screen"))
         self.manager.add_widget(NetworkScreen(name="network"))
         self.manager.add_widget(FormatsScreen(name="formats"))
+        self.manager.add_widget(self.color_picker)
         self.manager.bind(current=self.set_previous)
         return self.manager

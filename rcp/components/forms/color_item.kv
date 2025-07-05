@@ -1,34 +1,3 @@
-<ColorPickerPopup>:
-  title: "Select Color"
-  size_hint: 0.6, 0.8
-  auto_dismiss: True
-
-  BoxLayout:
-    size_hint: 1, 1
-    padding: 4
-    spacing: 4
-    orientation: "vertical"
-    ColorPicker:
-      color: root.color
-      on_color:
-        root.color = self.color
-
-    BoxLayout:
-      size_hint_y: None
-      height: 40
-      orientation: "horizontal"
-
-      Button:
-        text: "Cancel"
-        background_color: app.formats.cancel_color
-        on_release: root.dismiss()
-
-      Button:
-        text: "Apply"
-        background_color: app.formats.accept_color
-        on_release: root.apply()
-
-
 <ColorItem>:
   value: "#ffffff"
   height: 36
@@ -57,4 +26,8 @@
           Rectangle:
             pos: self.pos[0] + 4, self.pos[1] + 4
             size: self.size[0] - 9, self.size[1] - 8
-        on_release: root.open_picker()
+        on_release:
+          app.color_picker.callback = root.set_color
+          app.color_picker.color = root.color
+          app.manager.transition.direction = 'left'
+          app.manager.current = "color_picker"
