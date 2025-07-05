@@ -49,6 +49,7 @@ class UpdateScreen(Screen):
             releases = [item['tag_name'] for item in releases if item['prerelease'] == False]
             # releases = [item['tag_name'] for item in releases]
             self.releases = releases
+            self.selected_release = releases[0]
         except Exception as e:
             self.update_status(e.__str__())
 
