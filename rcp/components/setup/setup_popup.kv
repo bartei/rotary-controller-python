@@ -11,23 +11,25 @@
     cols: 4
     Button:
       text: "Scale 0"
-      on_release: Factory.ScalePanel(scale=app.scales[0]).open()
+      on_release: root.scale_panel(scale=app.scales[0])
     Button:
       text: "Scale 1"
-      on_release: Factory.ScalePanel(scale=app.scales[1]).open()
+      on_release: root.scale_panel(scale=app.scales[1])
     Button:
       text: "Scale 2"
-      on_release: Factory.ScalePanel(scale=app.scales[2]).open()
+      on_release: root.scale_panel(scale=app.scales[2])
     Button:
       text: "Scale 3"
-      on_release: Factory.ScalePanel(scale=app.scales[3]).open()
+      on_release: root.scale_panel(scale=app.scales[3])
     Button:
       text: "Servo"
+      on_release: root.servo_panel()
     Button:
       text: "Network"
-      on_release: Factory.NetworkPanel().open()
+      on_release: root.network_panel()
     Button:
       text: "Formats"
+      on_release: root.formats_panel()
     Button:
       text: "Exit"
       on_release: root.dismiss()

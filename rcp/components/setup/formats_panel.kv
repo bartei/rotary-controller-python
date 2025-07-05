@@ -118,3 +118,9 @@
         readonly: True
         multiline: True
         text: root.status
+      Button:
+        height: 60
+        size_hint_y: None
+        background_color: app.formats.accept_color
+        text: "Exit"
+        on_release: root.dismiss()
