@@ -7,10 +7,9 @@ from kivy.lang import Builder
 from kivy.logger import Logger
 from kivy.properties import ListProperty, StringProperty, BooleanProperty
 from kivy.uix.screenmanager import Screen
-import threading
 import requests
 
-from kivy.clock import Clock, mainthread
+from kivy.clock import Clock
 
 log = Logger.getChild(__name__)
 kv_file = os.path.join(os.path.dirname(__file__), __file__.replace(".py", ".kv"))
