@@ -28,24 +28,30 @@ class UpdateScreen(Screen):
 
     def __init__(self, **kv):
         super().__init__(**kv)
-        threading.Thread(target=self.fetch_releases).start()
+        self.schedule_refresh_releases()
         self.status = ""
 
-    def fetch_releases(self):
+    def schedule_refresh_releases(self):
+        log.info("User wants to install a different release!")
+        Clock.schedule_once(lambda dt: asyncio.ensure_future(self.refresh_releases(dt)))
+
+    async def refresh_releases(self, dt):
         self.update_status("Retrieve all the releases from Github")
         url = f"https://api.github.com/repos/bartei/rotary-controller-python/releases"
-        response = requests.get(url)
-        if response.status_code != 200:
-            log.error(f"Failed to fetch releases: {response.status_code} - {response.text}")
-            return
+        try:
+            response = requests.get(url)
+            if response.status_code != 200:
+                log.error(f"Failed to fetch releases: {response.status_code} - {response.text}")
+                return
 
-        releases = response.json()[:10]
-        # Get only official releases
-        releases = [item['tag_name'] for item in releases if item['prerelease'] == False]
-        # releases = [item['tag_name'] for item in releases]
+            releases = response.json()[:10]
 
-        # Get the current version of the rcp package:
-        self.update_releases(releases)
+            # Get only official releases
+            releases = [item['tag_name'] for item in releases if item['prerelease'] == False]
+            # releases = [item['tag_name'] for item in releases]
+            self.releases = releases
+        except Exception as e:
+            self.update_status(e.__str__())
 
     def on_selected_release(self, instance, value):
         log.info(f"Selected release: {self.selected_release}")
@@ -54,11 +60,6 @@ class UpdateScreen(Screen):
         else:
             self.enable_update_button = False
 
-    @mainthread
-    def update_releases(self, releases: list[str]):
-        self.releases = releases
-
-    @mainthread
     def update_status(self, status: str):
         self.status = self.status + status + "\n"
 

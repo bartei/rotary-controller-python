@@ -18,11 +18,19 @@
         spacing: 1
         size_hint_y: None
 
-        StringItem:
+        ButtonItem:
+          height: 60
           name: "Currently installed release"
           value: root.current_release
-          disabled: True
+        ButtonItem:
+          height: 60
+          name: "Refresh available releases"
+          value: "Refresh"
+          on_release:
+            root.schedule_refresh_releases()
+
         DropDownItem:
+          height: 60
           name: "Available releases"
           options: root.releases
           value: root.selected_release
