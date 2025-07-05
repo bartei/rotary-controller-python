@@ -71,4 +71,9 @@
         name: "Lead Screw Pitch Steps"
         value: root.servo.leadScrewPitchSteps
         on_value: root.servo.leadScrewPitchSteps = self.value
-
+      Button:
+        height: 60
+        size_hint_y: None
+        background_color: app.formats.accept_color
+        text: "Exit"
+        on_release: root.dismiss()

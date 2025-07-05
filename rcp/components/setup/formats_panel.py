@@ -2,13 +2,11 @@ import asyncio
 import os
 import importlib.metadata
 import subprocess
-import time
-from sys import stdout
 
 from kivy.lang import Builder
 from kivy.logger import Logger
 from kivy.properties import ObjectProperty, ListProperty, StringProperty, BooleanProperty
-from kivy.uix.boxlayout import BoxLayout
+from kivy.uix.popup import Popup
 import threading
 import requests
 
@@ -21,7 +19,7 @@ if os.path.exists(kv_file):
     Builder.load_file(kv_file)
 
 
-class FormatsPanel(BoxLayout):
+class FormatsPanel(Popup):
     formats = ObjectProperty()
     releases = ListProperty([])
     selected_release = StringProperty("")
