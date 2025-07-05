@@ -9,8 +9,9 @@
     spacing: 4
     orientation: "vertical"
     ColorPicker:
-      id: picker
       color: root.color
+      on_color:
+        root.color = self.color
 
     BoxLayout:
       size_hint_y: None
@@ -27,10 +28,12 @@
         background_color: app.formats.accept_color
         on_release: root.apply()
 
+
 <ColorItem>:
   value: "#ffffff"
   height: 36
   size_hint_y: None
+
   BoxLayout:
     orientation: "horizontal"
     Button:
@@ -54,4 +57,4 @@
           Rectangle:
             pos: self.pos[0] + 4, self.pos[1] + 4
             size: self.size[0] - 9, self.size[1] - 8
-        on_release: Factory.ColorPickerPopup(color=root.color, callback=root.set_color).open()
+        on_release: root.open_picker()

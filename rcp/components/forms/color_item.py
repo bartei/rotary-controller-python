@@ -8,7 +8,7 @@ from kivy.uix.popup import Popup
 log = Logger.getChild(__name__)
 kv_file = os.path.join(os.path.dirname(__file__), __file__.replace(".py", ".kv"))
 if os.path.exists(kv_file):
-    log.info(f"Loading KV file: {kv_file}")
+    log.info(f"Loading KV file {kv_file}")
     Builder.load_file(kv_file)
 
 
@@ -18,14 +18,9 @@ class ColorPickerPopup(Popup):
 
     def __init__(self, color, callback, **kw):
         super().__init__(**kw)
-        log.info(f"Received color: {color}")
         self.color = color
         self.callback = callback
-        self.ids['picker'].bind(color=self.on_color)
-
-    def on_color(self, instance, value):
-        log.info(f"color changed to: {instance.color}")
-        self.color = instance.color
+        log.info(f"Received color {self.color}")
 
     def apply(self):
         self.callback(self.color)
@@ -38,5 +33,9 @@ class ColorItem(BoxLayout):
     help_file = StringProperty()
 
     def set_color(self, color: list[float]):
-        log.debug(f"Color selected is: {color}")
+        log.debug(f"Color selected is {color}")
         self.color = color
+
+    def open_picker(self):
+        picker = ColorPickerPopup(color=self.color, callback=self.set_color)
+        picker.open()
