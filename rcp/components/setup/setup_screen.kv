@@ -1,35 +1,36 @@
 <SetupScreen>:
-  title: "Setup Menu"
-  size_hint: 1, 1
-  auto_dismiss: False
-  GridLayout:
-    spacing: 36
-    padding: 36
-    cols: 3
-    Button:
-      text: "Scale 0"
-      on_release: app.goto("scale_0")
-    Button:
-      text: "Scale 1"
-      on_release: app.goto("scale_1")
-    Button:
-      text: "Scale 2"
-      on_release: app.goto("scale_2")
-    Button:
-      text: "Scale 3"
-      on_release: app.goto("scale_3")
-    Button:
-      text: "Servo"
-      on_release: app.goto("servo")
-    Button:
-      text: "Network"
-      on_release: app.goto("network")
-    Button:
-      text: "Formats"
-      on_release: app.goto("formats")
-    Button:
-      text: "Software Update"
-      on_release: app.goto("update")
-    Button:
-      text: "Exit"
-      on_release: app.back()
+  BoxLayout:
+    title: "Network Settings"
+    orientation: "vertical"
+    padding: 10
+    ScreenHeader:
+      text: "Network Settings"
+
+    GridLayout:
+      spacing: 36
+      padding: 36
+      cols: 4
+      Button:
+        text: "Scale 0"
+        on_release: app.goto("scale_0")
+      Button:
+        text: "Scale 1"
+        on_release: app.goto("scale_1")
+      Button:
+        text: "Scale 2"
+        on_release: app.goto("scale_2")
+      Button:
+        text: "Scale 3"
+        on_release: app.goto("scale_3")
+      Button:
+        text: "Servo"
+        on_release: app.goto("servo")
+      Button:
+        text: "Network"
+        on_release: app.goto("network")
+      Button:
+        text: "Formats"
+        on_release: app.goto("formats")
+      Button:
+        text: "Software Update"
+        on_release: app.goto("update")
