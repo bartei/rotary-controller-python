@@ -4,7 +4,7 @@
 
 <HomeToolbar>:
   orientation: "vertical"
-  width: self.height / 5
+  width: self.height / 6
   size_hint_x: None
   size_hint_y: 1
 
@@ -34,3 +34,9 @@
     font_name: "fonts/Font Awesome 6 Free-Solid-900.otf"
     text: "\uf085"
     on_release: root.popup_setup()
+
+  ToolbarButton:
+    width: root.width
+    font_name: "fonts/Font Awesome 6 Free-Solid-900.otf"
+    text: "M"
+    on_release: Factory.SsidPopup(callback=root.select_network, selected_network="").open()

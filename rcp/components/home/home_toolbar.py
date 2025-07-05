@@ -41,3 +41,6 @@ class HomeToolbar(BoxLayout):
 
     def popup_setup(self, *_):
         SetupPopup().open()
+
+    def select_network(self, stuff):
+        log.info(stuff)
