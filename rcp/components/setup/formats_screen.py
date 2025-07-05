@@ -13,4 +13,3 @@ if os.path.exists(kv_file):
 
 class FormatsScreen(Screen):
     pass
-
