@@ -8,14 +8,33 @@
     cols: 4
     Button:
       text: "Scale 0"
+      on_release:
+        app.manager.transition.direction = 'left'
+        app.manager.current = "scale_0"
     Button:
       text: "Scale 1"
+      on_release:
+        app.manager.transition.direction = 'left'
+        app.manager.current = "scale_1"
+
     Button:
       text: "Scale 2"
+      on_release:
+        app.manager.transition.direction = 'left'
+        app.manager.current = "scale_2"
+
     Button:
       text: "Scale 3"
+      on_release:
+        app.manager.transition.direction = 'left'
+        app.manager.current = "scale_3"
+
     Button:
       text: "Servo"
+      on_release:
+        app.manager.transition.direction = 'left'
+        app.manager.current = "servo"
+
     Button:
       text: "Network"
       on_release:

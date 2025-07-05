@@ -12,6 +12,7 @@ from rcp.components.appsettings import config
 from rcp.components.home.home_page import HomePage
 from rcp.components.home.coordbar import CoordBar
 from rcp.components.home.servobar import ServoBar
+from rcp.components.setup.servo_screen import ServoScreen
 from rcp.components.setup.setup_screen import SetupScreen
 from rcp.components.setup.network_screen import NetworkScreen
 from rcp.components.setup.formats_screen import FormatsScreen
@@ -58,6 +59,7 @@ class MainApp(App):
         defaultvalue=4, section="device", key="scales_count", config=config, val_type=int
     )
     color_picker = ObjectProperty()
+    scale_screens = ListProperty()
 
     previous = ListProperty()
     manager = ObjectProperty()
@@ -159,14 +161,25 @@ class MainApp(App):
         Clock.schedule_interval(self.blinker, 1.0 / 4)
         self.beep()
 
-        from rcp.components.setup.color_picker_screen import ColorPickerScreen
-        self.color_picker = ColorPickerScreen(name="color_picker")
 
         self.manager = ScreenManager()
         self.manager.add_widget(HomePage(name="home"))
         self.manager.add_widget(SetupScreen(name="setup_screen"))
         self.manager.add_widget(NetworkScreen(name="network"))
         self.manager.add_widget(FormatsScreen(name="formats"))
+
+        # Add screen for color picker
+        from rcp.components.setup.color_picker_screen import ColorPickerScreen
+        self.color_picker = ColorPickerScreen(name="color_picker")
         self.manager.add_widget(self.color_picker)
+
+        # Add screens for scales setup
+        from rcp.components.setup.scale_screen import ScaleScreen
+        for i in range(len(self.scales)):
+            self.manager.add_widget(ScaleScreen(name=f"scale_{i}", scale=self.scales[i]))
+
+        # Add screen for servo setup
+        self.manager.add_widget(ServoScreen(name="servo", servo=self.servo))
+
         self.manager.bind(current=self.set_previous)
         return self.manager

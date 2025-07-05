@@ -22,23 +22,18 @@
     width: root.width
     font_name: "fonts/Font Awesome 6 Free-Solid-900.otf"
     text: "\ue2ca"
-    on_release: root.popup_scene()
+#    on_release: root.popup_scene()
 
   ToolbarButton:
     width: root.width
     text: root.current_mode_desc
-    on_release: root.popup_mode()
+    on_release:
+      Factory.ModePopup().show_with_callback(app.set_mode, app.current_mode)
 
   ToolbarButton:
     width: root.width
     font_name: "fonts/Font Awesome 6 Free-Solid-900.otf"
     text: "\uf085"
-    on_release: root.popup_setup()
-
-  ToolbarButton:
-    width: root.width
-    font_name: "fonts/Font Awesome 6 Free-Solid-900.otf"
-    text: "M"
     on_press:
       app.manager.transition.direction = 'left'
       app.manager.current = 'setup_screen'
