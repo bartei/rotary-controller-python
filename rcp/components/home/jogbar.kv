@@ -5,6 +5,15 @@
   orientation: "horizontal"
   size_hint_y: None
   height: 128
+  Button:
+    width: 96
+    size_hint_x: None
+    text: app.servo.name
+    font_size: self.height / 1.5
+    font_style: "bold"
+    background_color: [0.2, 1, 0.2, 1] if app.servo.servoEnable else [0.3, 0.3, 0.3, 1]
+    on_release: app.servo.toggle_enable()
+    disabled: root.enable_jog
 
   BoxLayout:
     size_hint_x: 0.3
@@ -96,4 +105,5 @@
     font_style: "bold"
     halign: "center"
     background_color: app.formats.cancel_color if root.enable_jog else app.formats.accept_color
+    disabled: not app.servo.servoEnable
     on_release: root.enable_jog = not root.enable_jog
