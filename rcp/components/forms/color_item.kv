@@ -1,0 +1,33 @@
+<ColorItem>:
+  value: "#ffffff"
+  height: 60
+  size_hint_y: None
+
+  BoxLayout:
+    orientation: "horizontal"
+    Button:
+      size_hint_x: None
+      width: self.height
+      font_name: "fonts/Font Awesome 6 Free-Solid-900.otf"
+      font_size: 21
+      text: "\uf129"
+    Label:
+      size_hint_x: 0.7
+      text: root.name
+    BoxLayout:
+      size_hint_x: None
+      width: 250
+
+      orientation: "vertical"
+      Button:
+        canvas.after:
+          Color:
+            rgba: root.color
+          Rectangle:
+            pos: self.pos[0] + 4, self.pos[1] + 4
+            size: self.size[0] - 9, self.size[1] - 8
+        on_release:
+          app.color_picker.callback = root.set_color
+          app.color_picker.color = root.color
+          app.manager.transition.direction = 'left'
+          app.manager.current = "color_picker"

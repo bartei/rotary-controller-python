@@ -1,0 +1,36 @@
+<SetupScreen>:
+  BoxLayout:
+    title: "Network Settings"
+    orientation: "vertical"
+    padding: 10
+    ScreenHeader:
+      text: "Network Settings"
+
+    GridLayout:
+      spacing: 36
+      padding: 36
+      cols: 4
+      Button:
+        text: "Scale 0: " + app.scales[0].axisName
+        on_release: app.goto("scale_0")
+      Button:
+        text: "Scale 1: " + app.scales[1].axisName
+        on_release: app.goto("scale_1")
+      Button:
+        text: "Scale 2: " + app.scales[2].axisName
+        on_release: app.goto("scale_2")
+      Button:
+        text: "Scale 3: " + app.scales[3].axisName
+        on_release: app.goto("scale_3")
+      Button:
+        text: "Servo"
+        on_release: app.goto("servo")
+      Button:
+        text: "Network"
+        on_release: app.goto("network")
+      Button:
+        text: "Formats"
+        on_release: app.goto("formats")
+      Button:
+        text: "Software Update"
+        on_release: app.goto("update")

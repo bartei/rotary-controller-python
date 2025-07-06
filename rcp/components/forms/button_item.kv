@@ -1,4 +1,5 @@
-<StringItem>:
+<ButtonItem>:
+  value: ""
   height: 60
   size_hint_y: None
   BoxLayout:
@@ -9,17 +10,11 @@
       font_name: "fonts/Font Awesome 6 Free-Solid-900.otf"
       font_size: 21
       text: "\uf129"
-#      on_release: Factory.Wifi().open()
     Label:
       size_hint_x: 0.7
       text: root.name
-    TextInput:
+    Button:
       size_hint_x: None
       width: 250
-      multiline: False
-      text: root.value
-      font_size: 24
-      valign: "center"
-      halign: "center"
-      disabled: root.disabled
-      on_text_validate: root.value = self.text
+      text: str(root.value)
+      on_release: root.dispatch_release()

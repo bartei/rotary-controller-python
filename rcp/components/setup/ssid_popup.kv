@@ -1,0 +1,51 @@
+#: import LedButton rcp.components.toolbars.led_button
+
+<SsidPopup>:
+  title: "Select Wireless Network"
+  size_hint: 0.6, 0.8
+  auto_dismiss: True
+
+  BoxLayout:
+    size_hint: 1, 1
+    padding: 4
+    spacing: 4
+    orientation: "vertical"
+    BoxLayout:
+      orientation: "horizontal"
+      size_hint_y: None
+      height: 40
+      LedButton:
+        size_hint_x: 0.7
+        label: "Scanning"
+        checkbox_value: app.blink and root.scanning
+      Button:
+        size_hint_x: 0.3
+        text: "Scan"
+        disabled: root.scanning
+        on_release: root.schedule_scan()
+
+    ScrollView:
+      do_scroll_x: False
+      do_scroll_y: True
+
+      GridLayout:
+        id: container
+        cols: 1
+        spacing: 1
+        size_hint_y: None
+        height: self.minimum_height
+
+    BoxLayout:
+      orientation: "horizontal"
+      size_hint_y: None
+      height: 40
+
+      Button:
+        text: "Cancel"
+        back_layer_color: app.formats.cancel_color
+        on_release: root.dismiss()
+
+      Button:
+        text: "Apply"
+        back_layer_color: app.formats.accept_color
+        on_release: root.apply()

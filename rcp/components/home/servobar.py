@@ -60,6 +60,8 @@ class ServoBar(BoxLayout, SavingDispatcher):
         "disableControls",
         "speed",
         "direction",
+        "x",
+        "width"
     ]
 
     def __init__(self, **kv):

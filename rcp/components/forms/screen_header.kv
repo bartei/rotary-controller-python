@@ -1,0 +1,33 @@
+<ScreenHeader>:
+  height: 60
+  size_hint_y: None
+  text: "Placeholder"
+  halign: "center"
+  valign: "center"
+
+  BoxLayout:
+    orientation: "vertical"
+    BoxLayout:
+      orientation: "horizontal"
+      Label:
+        text: root.text
+        text_size: root.size
+        bold: True
+        valign: root.valign
+        halign: root.halign
+      Button:
+        size_hint_x: None
+        width: 250
+        text: "Back"
+        on_release:
+          app.back()
+    Widget:
+      height: 3
+      width: root.width
+      size_hint: None, None
+      canvas:
+        Color:
+          rgba: 0.25, 0.25, 0.75, 1
+        Rectangle:
+          size: self.size
+          pos: self.pos

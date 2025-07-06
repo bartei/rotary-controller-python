@@ -1,0 +1,99 @@
+#: import ScreenHeader rcp.components.forms.screen_header
+#: import TitleItem rcp.components.forms.title_item
+#: import StringItem rcp.components.forms.string_item
+#: import BooleanItem rcp.components.forms.boolean_item
+#: import DropDownItem rcp.components.forms.dropdown_item
+#: import ButtonItem rcp.components.forms.button_item
+#: import SsidPopup rcp.components.setup.ssid_popup
+
+<NetworkScreen>:
+  BoxLayout:
+    title: "Network Settings"
+    orientation: "vertical"
+    padding: 10
+    ScreenHeader:
+      text: "Network Settings"
+
+    ScrollView:
+      do_scroll_x: False
+      do_scroll_y: True
+      GridLayout:
+        id: grid_layout
+        cols: 1
+        spacing: 1
+        size_hint_y: None
+
+        TitleItem:
+          name: "Network Interface"
+
+        DropDownItem:
+          name: "Network Interface"
+          options: root.devices
+          value: root.devices[0] if len(root.devices) > 0 else ""
+
+        StringItem:
+          name: "Hardware Address"
+          disabled: True
+          value: root.hwaddr
+
+        BooleanItem:
+          name: "Enable Interface"
+          value: root.wifi_enabled
+          on_value: root.wifi_enabled = self.value
+
+        StringItem:
+          name: "State"
+          disabled: True
+          value: root.state
+
+        TitleItem:
+          name: "Connection Properties"
+
+        ButtonItem:
+          name: "Network"
+          value: root.connection if root.connection is not None else ""
+          disabled: root.lock
+          on_release: Factory.SsidPopup(callback=root.select_network, selected_network=root.connection).open()
+
+        StringItem:
+          name: "Wifi Password"
+          value: root.password
+          disabled: root.lock
+          on_value: root.password = self.value
+
+        ButtonItem:
+          name: "Apply configuration"
+          value: "Apply"
+          disabled: root.lock
+          on_release: root.apply()
+
+        TitleItem:
+          name: "IP Properties"
+
+        StringItem:
+          name: "IP Address"
+          value: root.address
+          disabled: True
+          on_value: root.address = self.value
+
+        StringItem:
+          name: "DNS Server"
+          value: root.dns
+          disabled: True
+          on_value: root.dns = self.value
+
+        StringItem:
+          name: "Default Gateway"
+          value: root.gateway
+          disabled: True
+          on_value: root.gateway = self.value
+
+        TitleItem:
+          name: "Status"
+        TextInput:
+          size_hint_y: None
+          height: 160
+          readonly: True
+          multiline: True
+          text: root.status_text
+

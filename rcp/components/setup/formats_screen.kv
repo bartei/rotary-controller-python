@@ -1,0 +1,94 @@
+#: import StringItem rcp.components.forms.string_item
+#: import NumberItem rcp.components.forms.number_item
+#: import ColorItem rcp.components.forms.color_item
+
+<FormatsScreen>:
+  formats: app.formats
+  BoxLayout:
+    orientation: "vertical"
+    padding: 10
+    ScreenHeader:
+      text: "Format Settings"
+
+    ScrollView:
+      do_scroll_x: False
+      do_scroll_y: True
+      GridLayout:
+        id: grid_layout
+        cols: 1
+        spacing: 1
+        size_hint_y: None
+        height: self.minimum_height
+
+        TitleItem:
+          name: "Format Settings"
+        NumberItem:
+          name: "Metric Position Digits"
+          value: int(root.formats.metric_position.replace("{:+0.", "").replace("f}", ""))
+          on_value: root.formats.metric_position = "{:+0." + str(self.value) + "f}"
+        NumberItem:
+          name: "Metric Speed Digits"
+          value: int(root.formats.metric_speed.replace("{:+0.", "").replace("f}", ""))
+          on_value: root.formats.metric_speed = "{:+0." + str(self.value) + "f}"
+        NumberItem:
+          name: "Imperial Position Digits"
+          value: int(root.formats.imperial_position.replace("{:+0.", "").replace("f}", ""))
+          on_value: root.formats.imperial_position = "{:+0." + str(self.value) + "f}"
+        NumberItem:
+          name: "Imperial Speed Digits"
+          value: int(root.formats.imperial_speed.replace("{:+0.", "").replace("f}", ""))
+          on_value: root.formats.imperial_speed = "{:+0." + str(self.value) + "f}"
+        NumberItem:
+          name: "Angle Format Digits"
+          value: int(root.formats.angle_format.replace("{:+0.", "").replace("f}", ""))
+          on_value: root.formats.angle_format = "{:+0." + str(self.value) + "f}"
+
+        TitleItem:
+          name: "Sound Settings"
+        BoxLayout:
+          size_hint_y: None
+          height: 32
+          orientation: "horizontal"
+          Button:
+            size_hint_x: 0.2
+            text: "Test"
+            on_release: app.beep()
+          Slider:
+            size_hint_x: 0.7
+            min: 0
+            max: 0.5
+            value: root.formats.volume
+            on_touch_up: root.formats.volume = self.value
+          Label:
+            size_hint_x: 0.1
+            text: "{}".format(int(root.formats.volume * 200))
+            font_name: "fonts/iosevka-regular.ttf"
+            font_size: 32
+
+        TitleItem:
+          name: "Colors"
+
+        ColorItem:
+          name: "Home Screen Digits"
+          color: root.formats.display_color
+          on_color: root.formats.display_color = self.color
+
+        ColorItem:
+          name: "Accept Color"
+          color: root.formats.accept_color
+          on_color: root.formats.accept_color = self.color
+
+        ColorItem:
+          name: "Cancel Color"
+          color: root.formats.cancel_color
+          on_color: root.formats.cancel_color = self.color
+
+        ColorItem:
+          name: "Indicators On Color"
+          color: root.formats.color_on
+          on_color: root.formats.color_on = self.color
+
+        ColorItem:
+          name: "Indicators Off Color"
+          color: root.formats.color_off
+          on_color: root.formats.color_off = self.color

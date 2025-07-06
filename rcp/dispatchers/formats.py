@@ -3,7 +3,11 @@ from fractions import Fraction
 from kivy.logger import Logger
 from kivy.properties import (
     NumericProperty,
-    StringProperty, ListProperty, ObjectProperty, BooleanProperty,
+    StringProperty,
+    ListProperty,
+    ObjectProperty,
+    ColorProperty,
+    BooleanProperty
 )
 
 from rcp.dispatchers import SavingDispatcher
@@ -12,7 +16,16 @@ log = Logger.getChild(__name__)
 
 
 class FormatsDispatcher(SavingDispatcher):
-    _force_save = ['display_color', 'metric_speed_mode', 'imperial_speed_mode']
+    _force_save = [
+        'display_color',
+        'accept_color',
+        'cancel_color',
+        'color_on',
+        'color_off',
+        'metric_speed_mode',
+        'imperial_speed_mode'
+    ]
+
     metric_position = StringProperty("{:+0.3f}")
     metric_speed = StringProperty("{:+0.3f}")
 
@@ -36,9 +49,11 @@ class FormatsDispatcher(SavingDispatcher):
     # Speed conversion factor: 1.0 for standard units, higher for smaller units
     speed_conversion_factor = NumericProperty(1.0)
 
-    display_color = ListProperty([1, 1, 1, 1])
-    accept_color = ListProperty([0.2, 1, 0.2, 1])
-    cancel_color = ListProperty([1, 0.2, 0.2, 1])
+    display_color = ColorProperty("#ffcc35ff")
+    accept_color = ColorProperty("#32ff32ff")
+    cancel_color = ColorProperty("#ff3232ff")
+    color_on = ColorProperty("#ffcc32a0")
+    color_off = ColorProperty("#ffcc3220")
 
     volume = NumericProperty(0.2)
 
