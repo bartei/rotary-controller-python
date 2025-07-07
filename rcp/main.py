@@ -16,4 +16,7 @@ if __name__ == "__main__":
     from rcp.app import MainApp
     # Monkeypatch to add more trace events
     EventLoop.idle = ktrace()(EventLoop.idle)
-    asyncio.run(MainApp().async_run())
+    try:
+        asyncio.run(MainApp().async_run())
+    except KeyboardInterrupt:
+        log.info("Exiting Application")
