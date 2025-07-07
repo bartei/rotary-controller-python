@@ -1,6 +1,7 @@
 import os
 from typing import List
 
+
 from kivy.app import App
 from kivy.clock import Clock
 from kivy.uix.screenmanager import ScreenManager, CardTransition, FadeTransition
@@ -20,6 +21,9 @@ from rcp.components.setup.formats_screen import FormatsScreen
 from rcp.dispatchers.formats import FormatsDispatcher
 from rcp.main import log
 from rcp.utils import communication, devices
+
+import sentry_sdk
+
 
 class MainApp(App):
     display_color = ConfigParserProperty(
@@ -164,6 +168,14 @@ class MainApp(App):
 
     def build(self):
         self.formats = FormatsDispatcher(id_override="0")
+
+        if not self.formats.disable_error_reporting:
+            log.info("Error reporting is enabled, configuring Sentry")
+            sentry_sdk.init(
+                dsn="https://8fd20c0607e9c930a16d51a4b1eacc94@o4509625403506688.ingest.us.sentry.io/4509625405014016",
+                send_default_pii=False,
+            )
+
         self.servo = ServoBar(
             id_override="0",
         )

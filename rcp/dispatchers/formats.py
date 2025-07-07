@@ -3,7 +3,7 @@ from fractions import Fraction
 from kivy.logger import Logger
 from kivy.properties import (
     NumericProperty,
-    StringProperty, ListProperty, ObjectProperty, ColorProperty,
+    StringProperty, ListProperty, ObjectProperty, ColorProperty, BooleanProperty,
 )
 
 from rcp.dispatchers import SavingDispatcher
@@ -43,6 +43,8 @@ class FormatsDispatcher(SavingDispatcher):
     color_off = ColorProperty("#ffcc3220")
 
     volume = NumericProperty(0.2)
+
+    disable_error_reporting = BooleanProperty(False)
 
     def __init__(self, **kv):
         super().__init__(**kv)
