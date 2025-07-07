@@ -29,5 +29,4 @@
         on_release:
           app.color_picker.callback = root.set_color
           app.color_picker.color = root.color
-          app.manager.transition.direction = 'left'
-          app.manager.current = "color_picker"
+          app.goto("color_picker")

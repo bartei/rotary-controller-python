@@ -42,6 +42,10 @@
           name: "Angle Format Digits"
           value: int(root.formats.angle_format.replace("{:+0.", "").replace("f}", ""))
           on_value: root.formats.angle_format = "{:+0." + str(self.value) + "f}"
+        NumberItem:
+          name: "Default Font Size"
+          value: int(root.formats.font_size)
+          on_value: root.formats.font_size = int(self.value)
 
         TitleItem:
           name: "Sound Settings"

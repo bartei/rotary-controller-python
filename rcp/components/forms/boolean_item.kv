@@ -16,6 +16,7 @@
       size_hint_x: None
       width: 250
       multiline: False
+      font_size: 22
       text: 'ON' if root.value else 'OFF'
       state: 'down' if root.value else 'normal'
       on_release: root.value = True if self.state == 'down' else False

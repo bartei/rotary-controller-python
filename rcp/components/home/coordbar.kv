@@ -8,7 +8,7 @@
     width: 96
     size_hint_x: None
     text: root.axisName
-    font_size: self.height / 1.5
+    font_size: min(self.height / 1.5, self.width/1.5)
     background_color: [0.2, 1, 0.2, 1] if root.syncEnable else [0.3, 0.3, 0.3, 1]
     on_release: root.toggle_sync()
 
@@ -22,7 +22,7 @@
         id: pos_label
         size_hint_y: 0.7
         font_name: "fonts/iosevka-regular.ttf"
-        font_size: self.height / 1.5
+        font_size: min(self.height / 2, self.width/5)
         font_style: "bold"
         color: app.formats.display_color
         text: root.formattedPosition

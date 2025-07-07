@@ -29,6 +29,8 @@ class FormatsDispatcher(SavingDispatcher):
     angle_format = StringProperty("{:+0.1f}")
     angle_speed_format = StringProperty("{:+0.1f} RPM")
 
+    font_size = NumericProperty(24)
+
     current_format = StringProperty("MM")
     speed_format = StringProperty()
     position_format = StringProperty()

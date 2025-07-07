@@ -4,6 +4,14 @@ from kivy.logger import Logger, KivyFormatter
 from kivy.core.window import Window
 import platform
 import asyncio
+import sentry_sdk
+
+sentry_sdk.init(
+    dsn="https://8fd20c0607e9c930a16d51a4b1eacc94@o4509625403506688.ingest.us.sentry.io/4509625405014016",
+    # Add data like request headers and IP for users,
+    # see https://docs.sentry.io/platforms/python/data-management/data-collected/ for more info
+    send_default_pii=True,
+)
 
 log = Logger.getChild(__name__)
 

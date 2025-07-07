@@ -11,6 +11,5 @@ if os.path.exists(kv_file):
     log.info(f"Loading KV file: {kv_file}")
     Builder.load_file(kv_file)
 
-
 class SetupScreen(Screen):
     pass

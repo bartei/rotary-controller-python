@@ -12,19 +12,17 @@
 
     BoxLayout:
       size_hint_y: None
-      height: 40
+      height: 60
       orientation: "horizontal"
 
       Button:
         text: "Cancel"
         background_color: app.formats.cancel_color
-        on_release: root.dismiss()
+        on_release: app.back()
 
       Button:
         text: "Apply"
         background_color: app.formats.accept_color
         on_release:
           root.callback(root.color)
-          app.manager.transition.direction = 'right'
-          app.manager.current = app.previous[-2]
-          app.previous = app.previous[:-2]
+          app.back()
