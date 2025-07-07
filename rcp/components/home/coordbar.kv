@@ -22,7 +22,7 @@
         id: pos_label
         size_hint_y: 0.7
         font_name: "fonts/iosevka-regular.ttf"
-        font_size: min(self.height / 2, self.width/5)
+        font_size: min(self.height / 1.1, self.width/5)
         font_style: "bold"
         color: app.formats.display_color
         text: root.formattedPosition
@@ -43,7 +43,7 @@
 
     BoxLayout:
       size_hint_x: None
-      width: 100
+      width: 80
       orientation: 'vertical'
       Label:
         text: "Num"
@@ -55,7 +55,7 @@
       Button:
         size_hint_y: 0.7
         font_name: "fonts/iosevka-regular.ttf"
-        font_size: self.height / 2
+        font_size: self.width / 3
         font_style: "bold"
         background_color: [0.3, 0.3, 0.3, 1]
         color: app.formats.display_color
@@ -67,7 +67,7 @@
 
     BoxLayout:
       size_hint_x: None
-      width: 100
+      width: 80
       orientation: 'vertical'
       Label:
         text: "Den"
@@ -79,7 +79,7 @@
       Button:
         size_hint_y: 0.7
         font_name: "fonts/iosevka-regular.ttf"
-        font_size: self.height / 2
+        font_size: self.width / 3
         font_style: "bold"
         background_color: [0.3, 0.3, 0.3, 1]
         color: app.formats.display_color
