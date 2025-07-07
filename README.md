@@ -149,4 +149,3 @@ Licensed under MIT. See `LICENSE` for full terms.
 [2]: https://github.com/bartei/ospi"
 [3]: https://github.com/bartei/rotary-controller-f4"
 [4]: https://github.com/bartei/rotary-controller-pcb"
-
