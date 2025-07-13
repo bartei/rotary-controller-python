@@ -43,7 +43,11 @@ class NetworkScreen(Screen):
     def __init__(self, **kv):
         super().__init__(**kv)
         self.ids['grid_layout'].bind(minimum_height=self.ids['grid_layout'].setter('height'))
-        self.wifi_enabled = nmcli.radio().wifi
+        try:
+            self.wifi_enabled = nmcli.radio().wifi
+        except FileNotFoundError:
+            log.warning("nmcli not found, network features will be disabled.")
+            self.wifi_enabled = False
 
         Clock.schedule_once(lambda dt: asyncio.ensure_future(self.refresh()))
         self.status_update_task = Clock.schedule_interval(lambda dt: asyncio.ensure_future(self.status_update()), timeout=1)
@@ -53,6 +57,8 @@ class NetworkScreen(Screen):
         self.status_text += f"{message}\n"
 
     async def status_update(self):
+        if not self.wifi_enabled:
+            return
         if self.device != "":
             data = await asyncio.to_thread(nmcli.device.show, self.device)
             new_state = data.get("GENERAL.STATE")
@@ -61,6 +67,9 @@ class NetworkScreen(Screen):
                 await self.refresh()
 
     async def refresh(self):
+        if not self.wifi_enabled:
+            self.log("nmcli not available, network features disabled")
+            return
         log.debug("Refresh properties invoked")
 
         # Scan Devices
@@ -103,6 +112,9 @@ class NetworkScreen(Screen):
         self.lock = False
 
     async def connect(self):
+        if not self.wifi_enabled:
+            self.log("nmcli not available, network features disabled")
+            return        
         self.log("Request Wifi Connection")
 
         connections_dict = await asyncio.to_thread(nmcli.connection)
@@ -134,14 +146,18 @@ class NetworkScreen(Screen):
                 self.log(f"Unable to connect: {e.__str__()}")
 
     def on_wifi_enabled(self, instance, value):
-        if self.wifi_enabled:
-            self.log("Enable Wifi Connections")
-            nmcli.radio.wifi_on()
-            self.log("Run Scan to find the available access points")
-        else:
-            self.log("Disable Wifi Connections")
-            nmcli.radio.wifi_off()
-
+        try:
+            if self.wifi_enabled:
+                self.log("Enable Wifi Connections")
+                nmcli.radio.wifi_on()
+                self.log("Run Scan to find the available access points")
+            else:
+                self.log("Disable Wifi Connections")
+                nmcli.radio.wifi_off()
+        except FileNotFoundError:
+            log.warning("nmcli not found, network features will be disabled.")
+            self.wifi_enabled = False
+        
     def apply(self):
         self.lock = True
         Clock.schedule_once(lambda dt: asyncio.ensure_future(self.connect()))
