@@ -1,6 +1,6 @@
 from kivy.core.window import Window
 from kivy.logger import Logger
-from kivy.properties import NumericProperty
+from kivy.properties import NumericProperty, BooleanProperty
 from kivy.uix.popup import Popup
 from kivy.uix.boxlayout import BoxLayout
 from kivy.uix.label import Label
@@ -15,6 +15,7 @@ class Keypad(Popup):
     set_method = None
     container = None
     current_value = NumericProperty(0)
+    integer = BooleanProperty(False)
 
     def __init__(self, **kwargs):
         from rcp.app import MainApp
@@ -57,7 +58,10 @@ class Keypad(Popup):
 
         row4 = BoxLayout(orientation="horizontal")
         row4.add_widget(KeypadButton(text="0",on_release=self.add_text,background_color=[1, 1, 1, 1]))
-        row4.add_widget(KeypadButton(text=".",on_release=self.dot_key,background_color=[1, 1, 1, 1]))
+        if not self.integer:
+            row4.add_widget(KeypadButton(text=".",on_release=self.dot_key,background_color=[1, 1, 1, 1]))
+        else:
+            row4.add_widget(KeypadButton(text="00",on_release=self.add_text,background_color=[1, 1, 1, 1]))
         row4.add_widget(KeypadIconButton(text="\uf00d",on_release=self.cancel,background_color=self.app.formats.cancel_color))
         row4.add_widget(KeypadIconButton(text="\uf00c",on_release=self.confirm,background_color=self.app.formats.accept_color))
         layout.add_widget(row4)
@@ -87,7 +91,7 @@ class Keypad(Popup):
             self.dot_key()
         if text == "-":
             self.sign_key()
-        if text in ["0", "1", "2", "3", "4", "5", "6", "7", "8", "9"]:
+        if text in ["00", "0", "1", "2", "3", "4", "5", "6", "7", "8", "9"]:
             self.ids['value'].text += text
         if keycode[1] == "backspace":
             self.ids['value'].text = self.ids['value'].text[:-1]
@@ -129,6 +133,9 @@ class Keypad(Popup):
             if type(value) is str and "." in value:
                 value = float(value)
             else:
+                value = int(value)
+
+            if self.integer:
                 value = int(value)
 
             if self.callback_fn is not None:

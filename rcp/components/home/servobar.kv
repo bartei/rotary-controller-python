@@ -87,7 +87,7 @@
       halign: 'center'
       valign: 'middle'
       disabled: root.disableControls
-      on_release: Factory.Keypad().show(root, 'divisions')
+      on_release: Factory.Keypad(integer=True).show(root, 'divisions')
 
   BoxLayout:
     size_hint_x: None
@@ -131,4 +131,4 @@
         halign: 'center'
         valign: 'middle'
         disabled: root.disableControls
-        on_release: Factory.Keypad().show(root, 'index')
+        on_release: Factory.Keypad(integer=True).show(root, 'index')

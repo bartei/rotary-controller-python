@@ -63,7 +63,7 @@
         text_size: self.size
         halign: 'center'
         valign: 'middle'
-        on_release: Factory.Keypad().show(root, 'syncRatioNum')
+        on_release: Factory.Keypad(integer=True).show(root, 'syncRatioNum')
 
     BoxLayout:
       size_hint_x: None
@@ -87,7 +87,7 @@
         text_size: self.size
         halign: 'center'
         valign: 'middle'
-        on_release: Factory.Keypad().show(root, 'syncRatioDen')
+        on_release: Factory.Keypad(integer=True).show(root, 'syncRatioDen')
 
   Button:
     text: "Zero"
