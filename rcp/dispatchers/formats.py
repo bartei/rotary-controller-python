@@ -17,7 +17,9 @@ class FormatsDispatcher(SavingDispatcher):
         'accept_color',
         'cancel_color',
         'color_on',
-        'color_off'
+        'color_off',
+        'metric_speed_mode',
+        'imperial_speed_mode'
     ]
 
     metric_position = StringProperty("{:+0.3f}")
@@ -36,6 +38,10 @@ class FormatsDispatcher(SavingDispatcher):
     position_format = StringProperty()
     factor = ObjectProperty(Fraction(1, 1))
 
+    metric_speed_mode = BooleanProperty(True)
+    imperial_speed_mode = BooleanProperty(False)
+    speed_conversion_factor = NumericProperty(1.0)
+
     display_color = ColorProperty("#ffcc35ff")
     accept_color = ColorProperty("#32ff32ff")
     cancel_color = ColorProperty("#ff3232ff")
@@ -53,13 +59,32 @@ class FormatsDispatcher(SavingDispatcher):
 
     def update_format(self, *args, **kv):
         if self.current_format == "MM":
+            if self.metric_speed_mode:
+                self.speed_format = f"{self.metric_speed} M/min"
+                self.speed_conversion_factor = 1.0
+            else:
+                self.speed_format = f"{self.metric_speed} mm/min"
+                self.speed_conversion_factor = 1000
             self.speed_format = f"{self.metric_speed} M/min"
             self.position_format = self.metric_position
             self.factor = Fraction(1, 1)
         else:
+            if self.imperial_speed_mode:
+                self.speed_format = f"{self.imperial_speed} in/min"
+                self.speed_conversion_factor = 1.0
+            else:
+                self.speed_format = f"{self.imperial_speed} Ft/min"
+                self.speed_conversion_factor = 12.0
             self.speed_format = f"{self.imperial_speed} Ft/min"
             self.position_format = self.imperial_position
             self.factor = Fraction(10, 254)
+
+    def toggle_speed_mode(self):
+        if self.current_format == "MM":
+            self.metric_speed_mode = not self.metric_speed_mode
+        else:
+            self.imperial_speed_mode = not self.imperial_speed_mode
+        self.update_format()
 
     def toggle(self, *_):
         if self.current_format == "MM":
