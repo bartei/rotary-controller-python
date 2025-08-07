@@ -25,26 +25,32 @@
         NumberItem:
           name: "Metric Position Digits"
           value: int(root.formats.metric_position.replace("{:+0.", "").replace("f}", ""))
+          integer: True
           on_value: root.formats.metric_position = "{:+0." + str(self.value) + "f}"
         NumberItem:
           name: "Metric Speed Digits"
           value: int(root.formats.metric_speed.replace("{:+0.", "").replace("f}", ""))
+          integer: True
           on_value: root.formats.metric_speed = "{:+0." + str(self.value) + "f}"
         NumberItem:
           name: "Imperial Position Digits"
           value: int(root.formats.imperial_position.replace("{:+0.", "").replace("f}", ""))
+          integer: True
           on_value: root.formats.imperial_position = "{:+0." + str(self.value) + "f}"
         NumberItem:
           name: "Imperial Speed Digits"
           value: int(root.formats.imperial_speed.replace("{:+0.", "").replace("f}", ""))
+          integer: True
           on_value: root.formats.imperial_speed = "{:+0." + str(self.value) + "f}"
         NumberItem:
           name: "Angle Format Digits"
           value: int(root.formats.angle_format.replace("{:+0.", "").replace("f}", ""))
+          integer: True
           on_value: root.formats.angle_format = "{:+0." + str(self.value) + "f}"
         NumberItem:
           name: "Default Font Size"
           value: int(root.formats.font_size)
+          integer: True
           on_value: root.formats.font_size = int(self.value)
 
         TitleItem:

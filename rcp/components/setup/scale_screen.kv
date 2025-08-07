@@ -27,25 +27,30 @@
         NumberItem:
           name: "Ratio Numerator"
           value: root.scale.ratioNum
+          integer: True
           on_value: root.scale.ratioNum = int(self.value)
         NumberItem:
           name: "Ratio Denominator"
           value: root.scale.ratioDen
+          integer: True
           help_file: "scales.rst"
           on_value: root.scale.ratioDen = int(self.value)
         NumberItem:
           name: "Steps Per Revolution"
           value: root.scale.stepsPerRev
+          integer: True
           help_file: "scales.rst"
           on_value: root.scale.stepsPerRev = int(self.value)
         NumberItem:
           name: "Sync Ratio Numerator"
           value: root.scale.syncRatioNum
+          integer: True
           help_file: "scales.rst"
           on_value: root.scale.syncRatioNum = int(self.value)
         NumberItem:
           name: "Sync Ratio Denominator"
           value: root.scale.syncRatioDen
+          integer: True
           on_value: root.scale.syncRatioDen = int(self.value)
         BooleanItem:
           name: "Spindle Mode"
