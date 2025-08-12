@@ -25,22 +25,16 @@
           value: root.scale.axisName
           on_value: root.scale.axisName = self.value
         NumberItem:
-          name: "Ratio Numerator"
+          name: "Ratio Numerator" if not root.scale.spindleMode else "Degrees per revolution (default 360)"
           value: root.scale.ratioNum
           integer: True
           on_value: root.scale.ratioNum = int(self.value)
         NumberItem:
-          name: "Ratio Denominator"
+          name: "Ratio Denominator" if not root.scale.spindleMode else "Steps per revolution"
           value: root.scale.ratioDen
           integer: True
           help_file: "scales.rst"
           on_value: root.scale.ratioDen = int(self.value)
-        NumberItem:
-          name: "Steps Per Revolution"
-          value: root.scale.stepsPerRev
-          integer: True
-          help_file: "scales.rst"
-          on_value: root.scale.stepsPerRev = int(self.value)
         NumberItem:
           name: "Sync Ratio Numerator"
           value: root.scale.syncRatioNum

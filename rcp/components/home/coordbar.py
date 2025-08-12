@@ -37,7 +37,6 @@ class CoordBar(BoxLayout, SavingDispatcher):
 
     speed = NumericProperty(0)
     spindleMode = BooleanProperty(False)
-    stepsPerRev = NumericProperty(4096)
     stepsPerMM = NumericProperty(1000)
     offsets = ListProperty([0 for item in range(100)])
     syncButtonColor = ListProperty([0.3, 0.3, 0.3, 1])
@@ -136,11 +135,6 @@ class CoordBar(BoxLayout, SavingDispatcher):
         self.device['scales'][self.inputIndex]['syncRatioNum'] = final_ratio.numerator
         self.device['scales'][self.inputIndex]['syncRatioDen'] = final_ratio.denominator
 
-    def on_spindleMode(self, instance, value):
-        # when operating in spindle mode we set the numerator to 360 and the denominator to steps per rev
-        if self.spindleMode is True:
-            self.ratioNum = 360
-
     def on_syncRatioNum(self, instance, value):
         if self.app.home is None:
             return
@@ -160,11 +154,11 @@ class CoordBar(BoxLayout, SavingDispatcher):
 
             if self.scaledPosition > self.ratioNum:
                 self.scaledPosition -= self.ratioNum
-                self.position -= self.stepsPerRev
+                self.position -= self.ratioDen
 
             if self.scaledPosition < 0:
                 self.scaledPosition += self.ratioNum
-                self.position += self.stepsPerRev
+                self.position += self.ratioDen
 
             self.formattedPosition = self.app.formats.angle_speed_format.format(self.speed)
             self.formattedSpeed = self.app.formats.position_format.format(self.scaledPosition)
@@ -205,9 +199,6 @@ class CoordBar(BoxLayout, SavingDispatcher):
         if self.stepsPerMM == 0 and not self.spindleMode:
             return
 
-        if self.stepsPerRev == 0 and self.spindleMode:
-            return
-
         current_time = time.time()
         steps_per_second = self.app.fast_data_values.get('scaleSpeed', [0] * SCALES_COUNT)[self.inputIndex]
         self.speed_history.append(steps_per_second)
@@ -215,7 +206,7 @@ class CoordBar(BoxLayout, SavingDispatcher):
 
         # Calculate Revs/Min for spindleMode
         if self.spindleMode:
-            self.speed = (avg_steps_per_second / self.stepsPerRev) * 60
+            self.speed = (avg_steps_per_second / self.ratioDen) * 60
 
         # Calculate feeds
         if not self.spindleMode:
