@@ -78,6 +78,8 @@ class CoordBar(BoxLayout, SavingDispatcher):
         self.bind(speed=self.update_scaledPosition)
         self.bind(ratioNum=self.update_scaledPosition)
         self.bind(ratioDen=self.update_scaledPosition)
+        self.bind(syncRatioDen=self.set_sync_ratio)
+        self.bind(syncRatioNum=self.set_sync_ratio)
         self.update_scaledPosition(self, None)
         Clock.schedule_interval(self.speed_task, 1.0/25.0)
 
