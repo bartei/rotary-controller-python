@@ -136,6 +136,11 @@ class CoordBar(BoxLayout, SavingDispatcher):
         self.device['scales'][self.inputIndex]['syncRatioNum'] = final_ratio.numerator
         self.device['scales'][self.inputIndex]['syncRatioDen'] = final_ratio.denominator
 
+    def on_spindleMode(self, instance, value):
+        # when operating in spindle mode we set the numerator to 360 and the denominator to steps per rev
+        if self.spindleMode is True:
+            self.ratioNum = 360
+
     def on_syncRatioNum(self, instance, value):
         if self.app.home is None:
             return
@@ -151,14 +156,14 @@ class CoordBar(BoxLayout, SavingDispatcher):
             # When working in spindle mode we report the position in degrees
             self.scaledPosition = float(
                 self.position * Fraction(self.ratioNum, self.ratioDen) + self.offsets[self.app.currentOffset]
-            ) * 360.0
+            )
 
-            if self.scaledPosition > 360.0:
-                self.scaledPosition -= 360.0
+            if self.scaledPosition > self.ratioNum:
+                self.scaledPosition -= self.ratioNum
                 self.position -= self.stepsPerRev
 
             if self.scaledPosition < 0:
-                self.scaledPosition += 360.0
+                self.scaledPosition += self.ratioNum
                 self.position += self.stepsPerRev
 
             self.formattedPosition = self.app.formats.angle_speed_format.format(self.speed)
