@@ -72,6 +72,7 @@ class CoordBar(BoxLayout, SavingDispatcher):
         self.app.bind(currentOffset=self.update_scaledPosition)
         self.app.formats.bind(factor=self.update_scaledPosition)
         self.app.formats.bind(factor=self.set_sync_ratio)
+        self.app.formats.bind(speed_conversion_factor=self.update_scaledPosition)
         self.app.bind(connected=self.init_connection)
         self.app.bind(update_tick=self.update_tick)
         self.bind(position=self.update_scaledPosition)
@@ -170,7 +171,13 @@ class CoordBar(BoxLayout, SavingDispatcher):
             ) * self.app.formats.factor
 
             self.formattedPosition = self.app.formats.position_format.format(self.scaledPosition)
-            self.formattedSpeed = self.app.formats.speed_format.format(self.speed)
+            displayed_speed = self.speed * self.app.formats.speed_conversion_factor
+            self.formattedSpeed = self.app.formats.speed_format.format(displayed_speed)
+
+    def toggle_speed_mode(self):
+        self.app.beep()
+        self.app.formats.toggle_speed_mode()
+        self.update_scaledPosition()
 
     def on_newPosition(self, instance, value):
         self.set_current_position(value)
