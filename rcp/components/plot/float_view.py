@@ -23,6 +23,7 @@ class FloatView(FloatLayout):
     zoom = NumericProperty(1.0)
     tool_x = NumericProperty(0)
     tool_y = NumericProperty(0)
+    tool_z = NumericProperty(0)
 
     def __init__(self, **kwargs):
         from rcp.app import MainApp
@@ -37,6 +38,7 @@ class FloatView(FloatLayout):
         coord_bars: list[CoordBar] = self.app.scales
         self.tool_x = coord_bars[0].scaledPosition
         self.tool_y = coord_bars[1].scaledPosition
+        self.tool_z = coord_bars[2].scaledPosition
 
     def on_motion(self, window, etype, event):
         # will receive all motion events.

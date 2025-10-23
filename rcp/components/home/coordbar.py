@@ -67,6 +67,8 @@ class CoordBar(BoxLayout, SavingDispatcher):
         super().__init__(**kv)
 
         self.speed_history = collections.deque(maxlen=5)
+        self.previous_position = 0
+        self.motion_detected = True
         self.previous_axis_time: float = 0
         self.previous_axis_pos: Decimal = Decimal(0)
         self.app.bind(currentOffset=self.update_scaledPosition)
@@ -176,6 +178,8 @@ class CoordBar(BoxLayout, SavingDispatcher):
         self.set_current_position(value)
 
     def set_current_position(self, value):
+        self.previous_position = self.scaledPosition
+        self.motion_detected = False
         # 0 is the reference position for the DRO when offset 0 is selected we reset the absolute position of the scale
         if self.app.currentOffset == 0:
             self.position = float(value / self.app.formats.factor / Fraction(self.ratioNum, self.ratioDen))
@@ -192,7 +196,10 @@ class CoordBar(BoxLayout, SavingDispatcher):
             Factory.Keypad().show_with_callback(self.set_current_position, self.scaledPosition)
 
     def zero_position(self):
-        self.set_current_position(0)
+        if self.motion_detected:
+            self.set_current_position(0)
+        else:
+            self.set_current_position(self.previous_position)
 
     def speed_task(self, *args, **kv):
         if self.app is None or self.app.fast_data_values is None:
@@ -205,6 +212,10 @@ class CoordBar(BoxLayout, SavingDispatcher):
         steps_per_second = self.app.fast_data_values.get('scaleSpeed', [0] * SCALES_COUNT)[self.inputIndex]
         self.speed_history.append(steps_per_second)
         avg_steps_per_second = (sum(self.speed_history) / len(self.speed_history))
+
+        # Motion detection for zero undo
+        if steps_per_second > 0:
+            self.motion_detected = True
 
         # Calculate Revs/Min for spindleMode
         if self.spindleMode:

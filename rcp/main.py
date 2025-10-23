@@ -7,7 +7,7 @@ import asyncio
 
 log = Logger.getChild(__name__)
 
-Window.show_cursor = False
+# Window.show_cursor = False
 
 for h in log.root.handlers:
     h.formatter = KivyFormatter('%(asctime)s - %(name)s:%(lineno)s-%(funcName)s - %(levelname)s - %(message)s')

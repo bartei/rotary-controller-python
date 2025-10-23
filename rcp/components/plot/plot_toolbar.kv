@@ -42,3 +42,8 @@
     size_hint: 1, 1
     text: ">"
     on_release: root.next_point()
+
+  ToolbarButton:
+    size_hint: 1, 1
+    text: "Zero Z"
+    on_release: app.scales[2].zero_position()
