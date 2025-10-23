@@ -99,12 +99,11 @@
   Button:
     width: self.height
     size_hint_x: 0.2
-    text: "Stop" if root.enable_jog else "< Jog"
+    text: "< Jog"
     text_halign: "center"
     font_size: self.height / 4
     font_style: "bold"
     halign: "center"
-    background_color: app.formats.cancel_color if root.enable_jog else app.formats.accept_color
     disabled: not app.servo.servoEnable
     on_press: root.enable_jog_reverse = True
     on_release: root.enable_jog_reverse = False
@@ -121,16 +120,14 @@
     disabled: not app.servo.servoEnable
     on_release: root.enable_jog = not root.enable_jog
 
-
   Button:
     width: self.height
     size_hint_x: 0.2
-    text: "Stop" if root.enable_jog else "Jog >"
+    text: "Jog >"
     text_halign: "center"
     font_size: self.height / 4
     font_style: "bold"
     halign: "center"
-    background_color: app.formats.cancel_color if root.enable_jog else app.formats.accept_color
     disabled: not app.servo.servoEnable
     on_press: root.enable_jog = True
     on_release: root.enable_jog = False
