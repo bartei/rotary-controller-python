@@ -15,6 +15,7 @@ if os.path.exists(kv_file):
 class JogBar(BoxLayout):
     desired_speed = NumericProperty(0)
     enable_jog = BooleanProperty(False)
+    enable_jog_reverse = BooleanProperty(False)
 
     def __init__(self, **kwargs):
         from rcp.app import MainApp
@@ -22,6 +23,7 @@ class JogBar(BoxLayout):
         super().__init__(**kwargs)
         self.bind(desired_speed=self.update_jog)
         self.bind(enable_jog=self.update_jog)
+        self.bind(enable_jog_reverse=self.update_jog)
 
     def update_jog(self, instance, value):
         if self.desired_speed > self.app.servo.maxSpeed:
@@ -29,9 +31,16 @@ class JogBar(BoxLayout):
         if self.desired_speed < -self.app.servo.maxSpeed:
             self.desired_speed = -self.app.servo.maxSpeed
 
+        # Forward
         if self.enable_jog:
             self.app.servo.jogSpeed = self.desired_speed
             self.app.servo.servoEnable = 2
-        else:
+
+        # Reverse
+        if self.enable_jog_reverse:
+            self.app.servo.jogSpeed = -self.desired_speed
+            self.app.servo.servoEnable = 2
+
+        # Idle
+        if not self.enable_jog_reverse and not self.enable_jog:
             self.app.servo.jogSpeed = 0
-            # self.app.servo.servoEnable = 0
