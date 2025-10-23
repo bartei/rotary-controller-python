@@ -101,14 +101,14 @@
         font_name: "fonts/Font Awesome 6 Free-Solid-900.otf"
         text: "\uf060"
         disabled: root.disableControls
-        on_release: root.index = (root.index - 1) % root.divisions
+        on_release: root.go_previous()
       Button:
         font_size: 24
         font_style: "bold"
         font_name: "fonts/Font Awesome 6 Free-Solid-900.otf"
         text: "\uf061"
         disabled: root.disableControls
-        on_release: root.index = (root.index + 1) % root.divisions
+        on_release: root.go_next()
     BoxLayout:
       orientation: "vertical"
       Label:

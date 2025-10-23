@@ -31,7 +31,9 @@ class ServoBar(BoxLayout, SavingDispatcher):
     ratioDen = NumericProperty(360)
     offset = NumericProperty(0.0)
     divisions = NumericProperty(12)
+    preferredDirection = NumericProperty(1)
     index = NumericProperty(0)
+
     servoEnable = NumericProperty(0)
     unitsPerTurn = NumericProperty(360.0)
     oldOffset = NumericProperty(0.0)
@@ -57,6 +59,7 @@ class ServoBar(BoxLayout, SavingDispatcher):
         "oldOffset",
         "offset",
         "index",
+        "preferredDirection",
         "disableControls",
         "speed",
         "direction",
@@ -178,6 +181,15 @@ class ServoBar(BoxLayout, SavingDispatcher):
             self.scaledPosition = float(self.position * ratio) * self.app.formats.factor
             self.formattedPosition = self.app.formats.position_format.format(self.scaledPosition)
 
+    def go_next(self):
+        self.preferredDirection = 1
+        self.index = (self.index + 1) % self.divisions
+
+    def go_previous(self):
+        self.preferredDirection = -1
+        self.index = (self.index - 1) % self.divisions
+
+
     def on_index(self, instance, value):
         ratio = Fraction(self.ratioNum, self.ratioDen)
         self.index = self.index % self.divisions
@@ -187,10 +199,18 @@ class ServoBar(BoxLayout, SavingDispatcher):
         steps_per_turn = (self.unitsPerTurn / ratio)
         delta = self.step_positions[self.index] - self.step_positions[self.previousIndex]
 
-        if index_delta > half_divisions:
-            delta = -(steps_per_turn - delta)
-        if index_delta < -half_divisions:
-            delta = (delta + steps_per_turn)
+        if self.preferredDirection > 0:
+            if index_delta > half_divisions:
+                delta = -(steps_per_turn - delta)
+            if index_delta <= -half_divisions:
+                delta = (delta + steps_per_turn)
+
+        if self.preferredDirection < 0:
+            if index_delta >= half_divisions:
+                delta = -(steps_per_turn - delta)
+            if index_delta < -half_divisions:
+                delta = (delta + steps_per_turn)
+
         if delta != 0:
             self.app.device['servo']['direction'] = delta
             self.disableControls = True
