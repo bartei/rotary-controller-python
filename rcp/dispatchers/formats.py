@@ -27,7 +27,7 @@ class FormatsDispatcher(SavingDispatcher):
     imperial_speed = StringProperty("{:+0.4f}")
 
     angle_format = StringProperty("{:+0.1f}")
-    angle_speed_format = StringProperty("{:+0.1f} RPM")
+    angle_speed_format = StringProperty("{:+0.1f}")
 
     font_size = NumericProperty(24)
 
@@ -48,6 +48,7 @@ class FormatsDispatcher(SavingDispatcher):
 
     def __init__(self, **kv):
         super().__init__(**kv)
+        self.angle_speed_format = self.angle_speed_format.replace("RPM", "").replace(" ", "")
         self.bind(current_format=self.update_format)
         self.update_format()
 

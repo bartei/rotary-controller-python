@@ -48,6 +48,12 @@
           integer: True
           on_value: root.formats.angle_format = "{:+0." + str(self.value) + "f}"
         NumberItem:
+          name: "Angle Speed (RPM) Format Digits"
+          value: int(root.formats.angle_speed_format.replace("{:+0.", "").replace("f}", ""))
+          integer: True
+          on_value: root.formats.angle_speed_format = "{:+0." + str(self.value) + "f}"
+
+        NumberItem:
           name: "Default Font Size"
           value: int(root.formats.font_size)
           integer: True
