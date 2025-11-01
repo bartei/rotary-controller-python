@@ -66,7 +66,7 @@ class CoordBar(BoxLayout, SavingDispatcher):
         self.app: MainApp = App.get_running_app()
         super().__init__(**kv)
 
-        self.speed_history = collections.deque(maxlen=5)
+        self.speed_history = collections.deque(maxlen=25)
         self.previous_position = 0
         self.motion_detected = True
         self.previous_axis_time: float = 0
