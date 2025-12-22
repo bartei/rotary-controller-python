@@ -2,12 +2,9 @@ import struct
 from typing import Optional, List, Any
 
 from keke import ktrace, kev
-from rcp.utils import communication
 
-import logging
 from pydantic import BaseModel
-
-log = logging.getLogger(__name__)
+from loguru import logger as log
 
 
 class TypeDefinition(BaseModel):
@@ -25,63 +22,11 @@ class VariableDefinition(BaseModel):
     count: int = 1
 
 
-variable_definitions = [
-    TypeDefinition(
-        name="TIM_HandleTypeDef",
-        length=2,
-        struct_unpack_string="L",
-        read_function=communication.read_long,
-        write_function=communication.write_long
-    ),
-    TypeDefinition(
-        name="int16_t",
-        length=1,
-        struct_unpack_string="H",
-        read_function=communication.read_long,
-        write_function=communication.write_long
-    ),
-    TypeDefinition(
-        name="uint16_t",
-        length=1,
-        struct_unpack_string="h",
-        read_function=communication.read_unsigned,
-        write_function=communication.write_unsigned
-    ),
-    TypeDefinition(
-        name="bool",
-        length=1,
-        struct_unpack_string="h",
-        read_function=communication.read_unsigned,
-        write_function=communication.write_unsigned
-    ),
-    TypeDefinition(
-        name="uint32_t",
-        length=2,
-        struct_unpack_string="L",
-        read_function=communication.read_long,
-        write_function=communication.write_long
-    ),
-    TypeDefinition(
-        name="int32_t",
-        length=2,
-        struct_unpack_string="l",
-        read_function=communication.read_long,
-        write_function=communication.write_long
-    ),
-    TypeDefinition(
-        name="float",
-        length=2,
-        struct_unpack_string="f",
-        read_function=communication.read_float,
-        write_function=communication.write_float
-    ),
-]
-
-
 class BaseDevice:
     definition = ""
+    root_structure = False
 
-    def __init__(self, connection_manager, base_address):
+    def __init__(self, connection_manager, base_address=0):
         from rcp.utils.communication import ConnectionManager
         self.base_address = base_address
         self.size = 0
@@ -117,7 +62,7 @@ class BaseDevice:
         return
 
     @classmethod
-    def register_type(cls) -> TypeDefinition:
+    def register_type(cls, variable_definitions) -> TypeDefinition:
         current_address = 0
         size = 0
         name = None
@@ -139,39 +84,35 @@ class BaseDevice:
                 continue
 
             # Find type match
-            try:
-                identified_type = tokens[0]
-                identified_name = "".join(tokens[1:])
+            identified_type = tokens[0]
+            identified_name = "".join(tokens[1:])
 
-                matching_type = [
-                    item
-                    for item in variable_definitions
-                    if item.name == identified_type
-                ][0]
+            matching_type = [
+                item
+                for item in variable_definitions
+                if item.name == identified_type
+            ][0]
 
-                # Handle multi var definition separated by comma
-                if "," in identified_name:
-                    for name in identified_name.replace(" ", "").split(","):
-                        current_address = current_address + matching_type.length
-                        struct_unpack_string += matching_type.struct_unpack_string
-                        # size = current_address
-                    continue
+            # Handle multi var definition separated by comma
+            if "," in identified_name:
+                for name in identified_name.replace(" ", "").split(","):
+                    current_address = current_address + matching_type.length
+                    struct_unpack_string += matching_type.struct_unpack_string
+                    # size = current_address
+                continue
 
-                # Handle array definition
-                if "[" in identified_name:
-                    name, count = identified_name.split("[")
-                    count, _ = count.split("]")
-                    count = int(count)
+            # Handle array definition
+            if "[" in identified_name:
+                name, count = identified_name.split("[")
+                count, _ = count.split("]")
+                count = int(count)
 
-                    current_address += matching_type.length * count
-                    struct_unpack_string += matching_type.struct_unpack_string * count
-                    continue
+                current_address += matching_type.length * count
+                struct_unpack_string += matching_type.struct_unpack_string * count
+                continue
 
-                current_address = current_address + matching_type.length
-                struct_unpack_string += matching_type.struct_unpack_string
-            except Exception as e:
-                raise Exception(f"Unable to find a matching type for: {tokens[0]} ({e.__str__()})")
-
+            current_address = current_address + matching_type.length
+            struct_unpack_string += matching_type.struct_unpack_string
             size = current_address
 
         if name is None:
@@ -211,7 +152,7 @@ class BaseDevice:
 
                 matching_type = [
                     item
-                    for item in variable_definitions
+                    for item in self.dm.definitions
                     if item.name == identified_type
                 ][0]
 
@@ -309,7 +250,7 @@ class BaseDevice:
 
                 self.dm.connected = True
             except Exception as e:
-                # log.debug(e.__str__())
+                log.debug(e.__str__())
                 self.dm.connected = False
                 return
 

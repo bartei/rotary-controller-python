@@ -4,7 +4,7 @@ from typing import List
 
 from kivy.app import App
 from kivy.clock import Clock
-from kivy.uix.screenmanager import ScreenManager, CardTransition, FadeTransition
+from kivy.uix.screenmanager import ScreenManager, FadeTransition
 from kivy.core.audio import SoundLoader
 from kivy.properties import ObjectProperty, ConfigParserProperty, BooleanProperty, NumericProperty, ListProperty, \
     StringProperty
@@ -80,7 +80,7 @@ class MainApp(App):
                 baudrate=self.serial_baudrate,
                 address=self.serial_address
             )
-            self.device = devices.Global(connection_manager=self.connection_manager, base_address=0)
+            self.device = self.connection_manager['Global']
 
         except Exception as e:
             log.error(f"Communication cannot be started, will try again: {e.__str__()}")
