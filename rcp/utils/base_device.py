@@ -4,10 +4,8 @@ from typing import Optional, List, Any
 from keke import ktrace, kev
 from rcp.utils import communication
 
-import logging
+from loguru import logger as log
 from pydantic import BaseModel
-
-log = logging.getLogger(__name__)
 
 
 class TypeDefinition(BaseModel):
@@ -26,6 +24,20 @@ class VariableDefinition(BaseModel):
 
 
 variable_definitions = [
+    TypeDefinition(
+        name="UART_HandleTypeDef",
+        length=2,
+        struct_unpack_string="L",
+        read_function=communication.read_long,
+        write_function=communication.write_long
+    ),
+    TypeDefinition(
+        name="GPIO_TypeDef",
+        length=2,
+        struct_unpack_string="L",
+        read_function=communication.read_long,
+        write_function=communication.write_long
+    ),
     TypeDefinition(
         name="TIM_HandleTypeDef",
         length=2,

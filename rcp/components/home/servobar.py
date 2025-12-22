@@ -212,7 +212,7 @@ class ServoBar(BoxLayout, SavingDispatcher):
                 delta = (delta + steps_per_turn)
 
         if delta != 0:
-            self.app.device['servo']['direction'] = delta
+            self.app.device['servo']['stepsToGo'] = delta
             self.disableControls = True
             self.previousIndex = self.index
 
@@ -221,7 +221,7 @@ class ServoBar(BoxLayout, SavingDispatcher):
         delta = value - self.oldOffset
         delta_steps = int(delta / ratio)
         if delta_steps != 0:
-            self.app.device['servo']['direction'] = delta_steps
+            self.app.device['servo']['stepsToGo'] = delta_steps
             self.disableControls = True
             self.oldOffset = value
 

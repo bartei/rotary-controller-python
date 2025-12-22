@@ -93,7 +93,7 @@ class CoordBar(BoxLayout, SavingDispatcher):
         """
         This method is called when the connection is established
         """
-        self.syncEnable = self.device['scales'][self.inputIndex]['syncEnable']
+        self.syncEnable = self.device['servo']['syncEnable']
         self.set_sync_ratio()
 
     def update_tick(self, *args, **kv):
@@ -110,8 +110,14 @@ class CoordBar(BoxLayout, SavingDispatcher):
     def toggle_sync(self):
         if not self.app.connected:
             return
-        self.syncEnable = not self.device['scales'][self.inputIndex]['syncEnable']
-        self.device['scales'][self.inputIndex]['syncEnable'] = self.syncEnable
+        if self.syncEnable:
+            self.device['servo']['syncEnable'] = 0
+        else:
+            self.device['servo']['syncScaleIndex'] = self.inputIndex
+            self.device['servo']['syncEnable'] = 1
+
+        # self.syncEnable = not self.device['scales'][self.inputIndex]['syncEnable']
+        # self.device['scales'][self.inputIndex]['syncEnable'] = self.syncEnable
 
     def set_sync_ratio(self, *args, **kv):
         if not self.app.connected:
@@ -136,8 +142,8 @@ class CoordBar(BoxLayout, SavingDispatcher):
         sync_ratio = Fraction(self.syncRatioNum, self.syncRatioDen)
 
         final_ratio = scale_ratio * sync_ratio / servo_ratio
-        self.device['scales'][self.inputIndex]['syncRatioNum'] = final_ratio.numerator
-        self.device['scales'][self.inputIndex]['syncRatioDen'] = final_ratio.denominator
+        self.device['servo']['syncRatioNum'] = final_ratio.numerator
+        self.device['servo']['syncRatioDen'] = final_ratio.denominator
 
     def on_syncRatioNum(self, instance, value):
         if self.app.home is None:
