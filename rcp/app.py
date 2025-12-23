@@ -5,7 +5,6 @@ from typing import List
 from kivy.app import App
 from kivy.clock import Clock
 from kivy.uix.screenmanager import ScreenManager, FadeTransition
-from kivy.core.audio import SoundLoader
 from kivy.properties import ObjectProperty, ConfigParserProperty, BooleanProperty, NumericProperty, ListProperty, \
     StringProperty
 
@@ -20,7 +19,7 @@ from rcp.components.setup.formats_screen import FormatsScreen
 
 from rcp.dispatchers.formats import FormatsDispatcher
 from rcp.main import log
-from rcp.utils import communication, devices
+from rcp.utils import communication
 
 import sentry_sdk
 
@@ -87,8 +86,6 @@ class MainApp(App):
 
         super().__init__(**kv)
 
-        # sound_file = f"{os.path.dirname(__file__)}/sounds/beep.mp3"
-        # self.sound = SoundLoader.load(sound_file)
 
     def beep(self, *args, **kv):
         pass

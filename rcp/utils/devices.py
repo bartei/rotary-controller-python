@@ -2,6 +2,7 @@ import time
 from rcp.utils.base_device import BaseDevice, TypeDefinition
 from rcp.utils import communication
 SCALES_COUNT = 4
+SERVOS_COUNT = 3
 
 TimHandleTypeDef = TypeDefinition(
     name = "TIM_HandleTypeDef",
