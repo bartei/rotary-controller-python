@@ -1,27 +1,18 @@
 import os
 from typing import List
 
-
+import sentry_sdk
 from kivy.app import App
 from kivy.clock import Clock
-from kivy.uix.screenmanager import ScreenManager, FadeTransition
 from kivy.properties import ObjectProperty, ConfigParserProperty, BooleanProperty, NumericProperty, ListProperty, \
     StringProperty
+from loguru import logger as log
 
 from rcp.components.appsettings import config
-from rcp.components.home.home_page import HomePage
 from rcp.components.home.coordbar import CoordBar
 from rcp.components.home.servobar import ServoBar
-from rcp.components.setup.servo_screen import ServoScreen
-from rcp.components.setup.setup_screen import SetupScreen
-from rcp.components.setup.network_screen import NetworkScreen
-from rcp.components.setup.formats_screen import FormatsScreen
-
 from rcp.dispatchers.formats import FormatsDispatcher
-from rcp.main import log
 from rcp.utils import communication
-
-import sentry_sdk
 
 
 class MainApp(App):
@@ -39,32 +30,39 @@ class MainApp(App):
         defaultvalue="ABS", section="global", key="abs_inc", config=config, val_type=str
     )
     currentOffset = NumericProperty(0)
+
     tool = NumericProperty(0)
+
     serial_port = ConfigParserProperty(
         defaultvalue="/dev/serial0", section="device", key="serial_port", config=config, val_type=str
     )
+
     serial_baudrate = ConfigParserProperty(
         defaultvalue="115200", section="device", key="baudrate", config=config, val_type=int
     )
+
     serial_address = ConfigParserProperty(
         defaultvalue=17, section="device", key="address", config=config, val_type=int
     )
+
     device = ObjectProperty()
+
     home = ObjectProperty()
+
     update_tick = NumericProperty(0)
 
     servo: ServoBar = ObjectProperty()
+
     scales: List[CoordBar] = ListProperty()
+
     current_mode = ConfigParserProperty(
         defaultvalue=1, section="device", key="current_mode", config=config, val_type=int
     )
+
     scales_count = ConfigParserProperty(
         defaultvalue=4, section="device", key="scales_count", config=config, val_type=int
     )
-    color_picker = ObjectProperty()
-    scale_screens = ListProperty()
 
-    previous = ListProperty()
     manager = ObjectProperty()
 
     version = StringProperty()
@@ -148,21 +146,6 @@ class MainApp(App):
     def blinker(self, *args):
         self.blink = not self.blink
 
-    def set_previous(self, instance, value):
-        self.previous.append(value)
-        log.info(f"Previous history: {self.previous}")
-
-    def back(self):
-        # self.manager.transition.mode = "pop"
-        self.manager.current = self.previous.pop()
-        log.debug(f"Back array {self.previous}")
-
-    def goto(self, screen: str):
-        # self.manager.transition.mode = "push"
-        self.previous.append(self.manager.current)
-        log.debug(f"Goto array {self.previous}")
-        self.manager.current = screen
-
     def build(self):
         self.formats = FormatsDispatcher(id_override="0")
 
@@ -174,9 +157,7 @@ class MainApp(App):
                 traces_sample_rate=0.2,
             )
 
-        self.servo = ServoBar(
-            id_override="0",
-        )
+        self.servo = ServoBar(id_override="0")
         for i in range(4):
             self.scales.append(CoordBar(inputIndex=i, device=self.device, id_override=f"{i}"))
 
@@ -187,33 +168,6 @@ class MainApp(App):
         import importlib.metadata
         self.version = "v" + importlib.metadata.version("rcp")
 
-        self.manager = ScreenManager(transition=FadeTransition())
-        self.manager.transition.duration = .05
-        self.manager.add_widget(HomePage(name="home"))
-        self.manager.add_widget(SetupScreen(name="setup_screen"))
-        self.manager.add_widget(NetworkScreen(name="network"))
-        self.manager.add_widget(FormatsScreen(name="formats"))
-
-        # Add screen for color picker
-        from rcp.components.setup.color_picker_screen import ColorPickerScreen
-        self.color_picker = ColorPickerScreen(name="color_picker")
-        self.manager.add_widget(self.color_picker)
-
-        # Add screens for scales setup
-        from rcp.components.setup.scale_screen import ScaleScreen
-        for i in range(len(self.scales)):
-            self.manager.add_widget(ScaleScreen(name=f"scale_{i}", scale=self.scales[i]))
-
-        # Add screen for servo setup
-        self.manager.add_widget(ServoScreen(name="servo", servo=self.servo))
-
-        # Add screen for servo setup
-        from rcp.components.setup.update_screen import UpdateScreen
-        self.manager.add_widget(UpdateScreen(name="update"))
-
-        # Add screen for plot view
-        from rcp.components.plot.plot_screen import PlotScreen
-        self.manager.add_widget(PlotScreen(name="plot"))
-        self.manager.current = "home"
-
+        from rcp.components.manager import Manager
+        self.manager = Manager()
         return self.manager

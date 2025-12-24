@@ -1,3 +1,5 @@
+#: import ScreenHeader components.widgets.screen_header
+
 <SetupButton@Button>:
   font_size: 22
 
@@ -15,25 +17,25 @@
       cols: 4
       SetupButton:
         text: "Scale 0: " + app.scales[0].axisName
-        on_release: app.goto("scale_0")
+        on_release: app.manager.goto("scale_0")
       SetupButton:
         text: "Scale 1: " + app.scales[1].axisName
-        on_release: app.goto("scale_1")
+        on_release: app.manager.goto("scale_1")
       SetupButton:
         text: "Scale 2: " + app.scales[2].axisName
-        on_release: app.goto("scale_2")
+        on_release: app.manager.goto("scale_2")
       SetupButton:
         text: "Scale 3: " + app.scales[3].axisName
-        on_release: app.goto("scale_3")
+        on_release: app.manager.goto("scale_3")
       SetupButton:
         text: "Servo"
-        on_release: app.goto("servo")
+        on_release: app.manager.goto("servo")
       SetupButton:
         text: "Network"
-        on_release: app.goto("network")
+        on_release: app.manager.goto("network")
       SetupButton:
         text: "Formats"
-        on_release: app.goto("formats")
+        on_release: app.manager.goto("formats")
       SetupButton:
         text: "Update"
-        on_release: app.goto("update")
+        on_release: app.manager.goto("update")

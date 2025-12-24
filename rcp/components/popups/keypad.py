@@ -5,8 +5,8 @@ from kivy.uix.popup import Popup
 from kivy.uix.boxlayout import BoxLayout
 from kivy.uix.label import Label
 
-from rcp.components.toolbars.keypad_button import KeypadButton
-from rcp.components.toolbars.keypad_icon_button import KeypadIconButton
+from rcp.components.widgets.keypad_button import KeypadButton
+from rcp.components.widgets.keypad_icon_button import KeypadIconButton
 
 log = Logger.getChild(__name__)
 

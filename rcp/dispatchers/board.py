@@ -1,13 +1,12 @@
 from kivy.clock import Clock
-from kivy.logger import Logger
 from kivy.event import EventDispatcher
 from kivy.properties import NumericProperty, BooleanProperty, ListProperty, ObjectProperty, StringProperty
 
-from rcp.dispatchers import SavingDispatcher
+from rcp.dispatchers.saving_dispatcher import SavingDispatcher
 from rcp.utils.devices import SCALES_COUNT, SERVOS_COUNT
 from rcp.utils.communication import ConnectionManager
 
-log = Logger.getChild(__name__)
+from loguru import logger as log
 
 
 class Scale(EventDispatcher):
@@ -103,7 +102,7 @@ class ConnectionSettings(SavingDispatcher):
     serial_port = StringProperty("/dev/ttyUSB0")
 
 
-class RotaryControllerBoard(EventDispatcher):
+class Board(EventDispatcher):
     scales: list[Scale] = ListProperty()
     servos: list[Servo] = ListProperty()
     status: Status = ObjectProperty()

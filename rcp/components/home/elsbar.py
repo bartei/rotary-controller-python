@@ -9,7 +9,7 @@ from pydantic import BaseModel
 
 from rcp.components.home.coordbar import CoordBar
 from rcp import feeds
-from rcp.dispatchers import SavingDispatcher
+from rcp.dispatchers.saving_dispatcher import SavingDispatcher
 
 
 class FeedMode(BaseModel):

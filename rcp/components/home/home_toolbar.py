@@ -5,7 +5,7 @@ from kivy.properties import StringProperty
 from kivy.uix.boxlayout import BoxLayout
 from kivy.lang import Builder
 
-from rcp.components.home.mode_popup import ModePopup
+from rcp.components.popups.mode_popup import ModePopup
 
 log = Logger.getChild(__name__)
 

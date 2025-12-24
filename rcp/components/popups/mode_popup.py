@@ -3,7 +3,7 @@ from kivy.properties import NumericProperty
 from kivy.uix.popup import Popup
 from kivy.uix.boxlayout import BoxLayout
 
-from rcp.components.toolbars.keypad_button import KeypadButton
+from rcp.components.widgets.keypad_button import KeypadButton
 
 log = Logger.getChild(__name__)
 

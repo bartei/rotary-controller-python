@@ -6,7 +6,7 @@ from kivy.properties import (
     ListProperty,
 )
 
-from rcp.dispatchers import SavingDispatcher
+from rcp.dispatchers.saving_dispatcher import SavingDispatcher
 
 log = Logger.getChild(__name__)
 

@@ -18,11 +18,11 @@
       Button:
         text: "Cancel"
         background_color: app.formats.cancel_color
-        on_release: app.back()
+        on_release: app.manager.back()
 
       Button:
         text: "Apply"
         background_color: app.formats.accept_color
         on_release:
           root.callback(root.color)
-          app.back()
+          app.manager.back()

@@ -9,8 +9,8 @@ from kivy.properties import StringProperty, NumericProperty, BooleanProperty
 from kivy.lang import Builder
 from kivy.uix.boxlayout import BoxLayout
 
-from rcp.dispatchers import SavingDispatcher
-from rcp.components.keypad import Keypad
+from rcp.dispatchers.saving_dispatcher import SavingDispatcher
+from rcp.components.popups.keypad import Keypad
 from rcp.utils.ctype_calc import uint32_subtract_to_int32
 
 log = Logger.getChild(__name__)

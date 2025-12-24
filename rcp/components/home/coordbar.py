@@ -13,7 +13,7 @@ from kivy.properties import NumericProperty, StringProperty, ObjectProperty, Lis
 from kivy.uix.boxlayout import BoxLayout
 from kivy.app import App
 
-from rcp.dispatchers import SavingDispatcher
+from rcp.dispatchers.saving_dispatcher import SavingDispatcher
 from rcp.utils.ctype_calc import uint32_subtract_to_int32
 from rcp.utils.devices import SCALES_COUNT
 
