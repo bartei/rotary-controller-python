@@ -297,33 +297,28 @@ class BaseDevice:
     @ktrace()
     def refresh(self):
         remaining_size = self.size
-        max_size = 32
+        max_size = 128
         raw_data = []
         remaining_address = self.base_address
         with kev("read_registers"):
-            try:
-                while remaining_size > max_size:
-                    part_data = self.dm.device.read_registers(
-                        registeraddress=remaining_address,
-                        number_of_registers=max_size
-                    )
-                    remaining_size -= max_size
-                    remaining_address += max_size
-                    raw_data += part_data
+            while remaining_size > max_size:
+                part_data = self.dm.device.read_registers(
+                    registeraddress=remaining_address,
+                    number_of_registers=max_size
+                )
+                remaining_size -= max_size
+                remaining_address += max_size
+                raw_data += part_data
 
-                if remaining_size > 0:
-                    part_data = self.dm.device.read_registers(
-                        registeraddress=remaining_address,
-                        number_of_registers=remaining_size
-                    )
-                    remaining_address += remaining_size
-                    raw_data += part_data
+            if remaining_size > 0:
+                part_data = self.dm.device.read_registers(
+                    registeraddress=remaining_address,
+                    number_of_registers=remaining_size
+                )
+                remaining_address += remaining_size
+                raw_data += part_data
 
-                self.dm.connected = True
-            except Exception as e:
-                # log.debug(e.__str__())
-                self.dm.connected = False
-                return
+            self.dm.connected = True
 
         with kev("struct"):
             raw_bytes = struct.pack("<" + "H" * self.size, *raw_data)

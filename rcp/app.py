@@ -1,9 +1,11 @@
+import asyncio
 import os
+import time
 from typing import List
 
 
 from kivy.app import App
-from kivy.clock import Clock
+from kivy.clock import Clock, mainthread
 from kivy.uix.screenmanager import ScreenManager, CardTransition, FadeTransition
 from kivy.core.audio import SoundLoader
 from kivy.properties import ObjectProperty, ConfigParserProperty, BooleanProperty, NumericProperty, ListProperty, \
@@ -126,26 +128,13 @@ class MainApp(App):
     def update(self, *args):
         try:
             self.fast_data_values = self.device['fastData'].refresh()
-
         except Exception as e:
-            log.error(f"No connection: {e.__str__()}")
-            self.task_update.timeout = 2.0
+            self.task_update.timeout = 1.0
             self.connection_manager.connected = False
+            return
 
-        # Handle state change connected -> disconnected
-        if not self.connection_manager.connected:
-            self.connected = self.connection_manager.connected
-            self.task_update.timeout = 2.0
-            self.update_tick = (self.update_tick + 1) % 100
-
-        # Handle state change disconnected -> connected
-        if not self.connected and self.connection_manager.connected:
-            self.task_update.timeout = 1.0 / 30
-            self.connected = self.connection_manager.connected
-
-        if self.connection_manager.connected:
-            self.update_tick = (self.update_tick + 1) % 100
-
+        self.task_update.timeout = 1.0 / 25
+        self.update_tick = (self.update_tick + 1) % 100
         self.connected = self.connection_manager.connected
 
     def blinker(self, *args):
@@ -183,7 +172,7 @@ class MainApp(App):
         for i in range(4):
             self.scales.append(CoordBar(inputIndex=i, device=self.device, id_override=f"{i}"))
 
-        self.task_update = Clock.schedule_interval(self.update, 1.0 / 30)
+        self.task_update = Clock.schedule_interval(self.update, 1.0)
         Clock.schedule_interval(self.blinker, 1.0 / 4)
         self.beep()
 
