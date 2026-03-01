@@ -1,0 +1,56 @@
+#: import NumberItem rcp.components.widgets.number_item
+
+<RectPopup>:
+    title: "Rectangular Pattern Parameters"
+    size_hint: 0.8, 0.8
+    auto_dismiss: False
+
+    BoxLayout:
+        orientation: 'vertical'
+        GridLayout:
+            id: grid_layout
+            cols: 1
+            spacing: 1
+            size_hint_y: None
+            NumberItem:
+                name: "Origin X"
+                value: root.ref.origin_x
+                on_value: root.ref.origin_x = self.value
+            NumberItem:
+                name: "Origin Y"
+                value: root.ref.origin_y
+                on_value: root.ref.origin_y = self.value
+            NumberItem:
+                name: "Columns"
+                value: root.ref.columns
+                on_value: root.ref.columns = self.value
+                integer: True
+            NumberItem:
+                name: "Rows"
+                value: root.ref.rows
+                on_value: root.ref.rows = self.value
+                integer: True
+            NumberItem:
+                name: "Spacing X"
+                value: root.ref.spacing_x
+                on_value: root.ref.spacing_x = self.value
+            NumberItem:
+                name: "Spacing Y"
+                value: root.ref.spacing_y
+                on_value: root.ref.spacing_y = self.value
+            NumberItem:
+                name: "Angle"
+                value: root.ref.angle
+                on_value: root.ref.angle = self.value
+        Widget:
+            size_hint_y: 1
+        BoxLayout:
+            size_hint_y: None
+            height: 48
+            orientation: "horizontal"
+
+            Button:
+                font_name: "fonts/Font Awesome 6 Free-Solid-900.otf"
+                text: "\uf00c"
+                background_color: "#349e65"
+                on_release: root.dismiss()

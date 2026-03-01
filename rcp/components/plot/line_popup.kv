@@ -1,0 +1,46 @@
+#: import NumberItem rcp.components.widgets.number_item
+
+<LinePopup>:
+    title: "Line Pattern Parameters"
+    size_hint: 0.8, 0.8
+    auto_dismiss: False
+
+    BoxLayout:
+        orientation: 'vertical'
+        GridLayout:
+            cols: 1
+            spacing: 1
+            size_hint_y: None
+            NumberItem:
+                name: "Start X"
+                value: root.ref.origin_x
+                on_value: root.ref.origin_x = self.value
+            NumberItem:
+                name: "Start Y"
+                value: root.ref.origin_y
+                on_value: root.ref.origin_y = self.value
+            NumberItem:
+                name: "End X"
+                value: root.ref.end_x
+                on_value: root.ref.end_x = self.value
+            NumberItem:
+                name: "End Y"
+                value: root.ref.end_y
+                on_value: root.ref.end_y = self.value
+            NumberItem:
+                name: "Holes Count"
+                value: root.ref.holes_count
+                on_value: root.ref.holes_count = self.value
+                integer: True
+        Widget:
+            size_hint_y: 1
+        BoxLayout:
+            size_hint_y: None
+            height: 48
+            orientation: "horizontal"
+
+            Button:
+                font_name: "fonts/Font Awesome 6 Free-Solid-900.otf"
+                text: "\uf00c"
+                background_color: "#349e65"
+                on_release: root.dismiss()
