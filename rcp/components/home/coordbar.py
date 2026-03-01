@@ -70,8 +70,8 @@ class CoordBar(BoxLayout, SavingDispatcher):
         self.app.bind(currentOffset=self.update_scaledPosition)
         self.app.formats.bind(factor=self.update_scaledPosition)
         self.app.formats.bind(factor=self.set_sync_ratio)
-        self.app.bind(connected=self.init_connection)
-        self.app.bind(update_tick=self.update_tick)
+        self.app.board.bind(connected=self.init_connection)
+        self.app.board.bind(update_tick=self.update_tick)
         self.bind(position=self.update_scaledPosition)
         self.bind(speed=self.update_scaledPosition)
         self.bind(ratioNum=self.update_scaledPosition)
@@ -94,23 +94,23 @@ class CoordBar(BoxLayout, SavingDispatcher):
 
     def update_tick(self, *args, **kv):
         try:
-            if not self.app.connected:
+            if not self.app.board.connected:
                 return
 
             self.encoderPrevious = self.encoderCurrent
-            self.encoderCurrent = self.app.fast_data_values['scaleCurrent'][self.inputIndex]
+            self.encoderCurrent = self.app.board.fast_data_values['scaleCurrent'][self.inputIndex]
             self.position += uint32_subtract_to_int32(self.encoderCurrent, self.encoderPrevious)
         except Exception as e:
             log.error(f"Unable to update scale: {e.__str__()}")
 
     def toggle_sync(self):
-        if not self.app.connected:
+        if not self.app.board.connected:
             return
         self.syncEnable = not self.device['scales'][self.inputIndex]['syncEnable']
         self.device['scales'][self.inputIndex]['syncEnable'] = self.syncEnable
 
     def set_sync_ratio(self, *args, **kv):
-        if not self.app.connected:
+        if not self.app.board.connected:
             return
 
         # check and make sure the denominator is not 0
@@ -198,14 +198,14 @@ class CoordBar(BoxLayout, SavingDispatcher):
             self.set_current_position(self.previous_position)
 
     def speed_task(self, *args, **kv):
-        if self.app is None or self.app.fast_data_values is None:
+        if self.app is None or self.app.board.fast_data_values is None:
             return
 
         if self.stepsPerMM == 0 and not self.spindleMode:
             return
 
         current_time = time.time()
-        steps_per_second = self.app.fast_data_values.get('scaleSpeed', [0] * SCALES_COUNT)[self.inputIndex]
+        steps_per_second = self.app.board.fast_data_values.get('scaleSpeed', [0] * SCALES_COUNT)[self.inputIndex]
         self.speed_history.append(steps_per_second)
         avg_steps_per_second = (sum(self.speed_history) / len(self.speed_history))
 

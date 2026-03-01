@@ -23,14 +23,14 @@ class StatusBar(BoxLayout):
 
     def update(self, *args, **kv):
         self.fps = Clock.get_fps()
-        if not self.app.connected:
+        if not self.app.board.connected:
             return
 
-        if self.app.fast_data_values is None:
+        if self.app.board.fast_data_values is None:
             # There is no connection yet
             return
         try:
-            self.interval = self.app.fast_data_values['executionInterval']
-            self.cycles = self.app.fast_data_values['cycles']
+            self.interval = self.app.board.fast_data_values['executionInterval']
+            self.cycles = self.app.board.fast_data_values['cycles']
         except Exception as e:
             log.debug(e.__str__(), exc_info=True)

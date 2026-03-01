@@ -1,74 +1,57 @@
-<SmallCoordsLabel@Label>:
+<CoordsHeading@Label>:
     size_hint_y: None
-    height: 20
-    halign: "left"
-    valign: "middle"
+    height: 25
     font_name: "fonts/iosevka-regular.ttf"
-    font_size: "16"
+    font_size: 14
+    halign: "left"
     text_size: self.size
     color: [1, 1, 1, 0.5]
 
+<CoordsValue@Label>:
+    size_hint_y: None
+    height: 25
+    font_name: "fonts/iosevka-regular.ttf"
+    font_size: 14
+    halign: "left"
+    text_size: self.size
+    color: [1, 1, 1, 1]
+
 <CoordsOverlay>:
     orientation: 'vertical'
-#    pos: root.scroll_view.pos
-#    size: root.scroll_view.size
+    padding: 2
+    spacing: 2
 
-    Label:
-        size_hint_y: None
-        height: 24
-        halign: "left"
-        valign: "middle"
-        font_name: "fonts/iosevka-regular.ttf"
-        text_size: self.size
+    canvas.before:
+        Color:
+            rgba: 0.102, 0.102, 0.180, 0.85
+        RoundedRectangle:
+            size: self.size
+            pos: self.pos
+            radius: [6]
+
+    CoordsValue:
         text: "Zoom: {:0.2f} %".format(root.zoom * 100)
 
-    # Distance to go
-    Label:
-        size_hint_y: None
-        height: 24
-        halign: "left"
-        valign: "middle"
-        font_name: "fonts/iosevka-regular.ttf"
-        text_size: self.size
+    CoordsHeading:
         text: "Distance to go"
-    Label:
+    BoxLayout:
+        id: dtg_box
+        orientation: 'vertical'
         size_hint_y: None
-        height: 24
-        halign: "left"
-        valign: "middle"
-        font_name: "fonts/iosevka-regular.ttf"
-        text_size: self.size
-        text: 'X: {:0.3f}'.format(root.selected_x - root.tool_x)
-    Label:
-        size_hint_y: None
-        height: 24
-        halign: "left"
-        valign: "middle"
-        font_name: "fonts/iosevka-regular.ttf"
-        text_size: self.size
-        text: 'Y: {:0.3f}'.format(root.selected_y - root.tool_y)
-    Label:
-        size_hint_y: None
-        height: 24
-        halign: "left"
-        valign: "middle"
-        font_name: "fonts/iosevka-regular.ttf"
-        text_size: self.size
-        text: 'Z: {:0.3f}'.format(root.tool_z)
+        height: self.minimum_height
 
-
-    SmallCoordsLabel:
+    CoordsHeading:
         text: "Selected"
-    SmallCoordsLabel:
-        text: 'X: {:0.3f}'.format(root.selected_x)
-    SmallCoordsLabel:
-        text: 'Y: {:0.3f}'.format(root.selected_y)
-    SmallCoordsLabel:
-        text: "Tool"
-    SmallCoordsLabel:
-        text: 'X: {:0.3f}'.format(root.tool_x)
-    SmallCoordsLabel:
-        text: 'Y: {:0.3f}'.format(root.tool_y)
+    BoxLayout:
+        id: sel_box
+        orientation: 'vertical'
+        size_hint_y: None
+        height: self.minimum_height
 
-    Widget:
-        size_hint_y: 1
+    CoordsHeading:
+        text: "Tool"
+    BoxLayout:
+        id: tool_box
+        orientation: 'vertical'
+        size_hint_y: None
+        height: self.minimum_height

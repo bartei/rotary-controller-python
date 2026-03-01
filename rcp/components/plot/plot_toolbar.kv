@@ -2,6 +2,8 @@
 #: import Keypad rcp.components.popups.keypad
 #: import ToolbarButton rcp.components.toolbars.toolbar_button
 #: import CirclePopup rcp.components.plot.circle_popup
+#: import RectPopup rcp.components.plot.rect_popup
+#: import LinePopup rcp.components.plot.line_popup
 
 <PlotToolbar>:
   spacing: 10
@@ -24,26 +26,49 @@
     on_release: root.float_view.zoom = root.float_view.zoom * 1.1
 
   ToolbarButton:
-    # Circle Pattern
+    # Plane Selection
     size_hint: 1, 1
-    text: "Circ"
-    on_release: Factory.CirclePopup(ref=root.float_view.circle_pattern).show()
+    text: root.plane_label
+    on_release: root.cycle_plane()
 
   ToolbarButton:
+    # Circle Pattern (dharmachakra — spoked wheel)
     size_hint: 1, 1
-    text: "Rect"
+    font_name: "fonts/Font Awesome 6 Free-Solid-900.otf"
+    text: "\uf655"
+    on_release: root.float_view.active_pattern = "circle"; Factory.CirclePopup(ref=root.float_view.circle_pattern).show()
 
   ToolbarButton:
+    # Rectangular Pattern (grip — 3x2 grid)
     size_hint: 1, 1
-    text: "<"
+    font_name: "fonts/Font Awesome 6 Free-Solid-900.otf"
+    text: "\uf58d"
+    on_release: root.float_view.active_pattern = "rect"; Factory.RectPopup(ref=root.float_view.rect_pattern).show()
+
+  ToolbarButton:
+    # Line Pattern (ellipsis — 3 dots in a row)
+    size_hint: 1, 1
+    font_name: "fonts/Font Awesome 6 Free-Solid-900.otf"
+    text: "\uf141"
+    on_release: root.float_view.active_pattern = "line"; Factory.LinePopup(ref=root.float_view.line_pattern).show()
+
+  ToolbarButton:
+    # Previous Point
+    size_hint: 1, 1
+    font_name: "fonts/Font Awesome 6 Free-Solid-900.otf"
+    text: "\uf053"
     on_release: root.prev_point()
 
   ToolbarButton:
+    # Next Point
     size_hint: 1, 1
-    text: ">"
+    font_name: "fonts/Font Awesome 6 Free-Solid-900.otf"
+    text: "\uf054"
     on_release: root.next_point()
 
   ToolbarButton:
+    # Zero Z
     size_hint: 1, 1
-    text: "Zero Z"
+    font_name: "fonts/Font Awesome 6 Free-Solid-900.otf"
+    text: "\uf05b"
     on_release: app.scales[2].zero_position()

@@ -3,17 +3,15 @@ from typing import List
 
 import sentry_sdk
 from kivy.app import App
-from kivy.clock import Clock
-from kivy.properties import ObjectProperty, ConfigParserProperty, BooleanProperty, NumericProperty, ListProperty, \
-    StringProperty
+from kivy.properties import ObjectProperty, ConfigParserProperty, NumericProperty, ListProperty, StringProperty
 from kivy.logger import Logger
 log = Logger.getChild(__name__)
 
 from rcp.components.appsettings import config
 from rcp.components.home.coordbar import CoordBar
 from rcp.components.home.servobar import ServoBar
+from rcp.dispatchers.board import Board
 from rcp.dispatchers.formats import FormatsDispatcher
-from rcp.utils import communication
 
 
 class MainApp(App):
@@ -24,8 +22,6 @@ class MainApp(App):
         config=config,
     )
 
-    blink = BooleanProperty(False)
-    connected = BooleanProperty(False)
     formats = ObjectProperty()
     abs_inc = ConfigParserProperty(
         defaultvalue="ABS", section="global", key="abs_inc", config=config, val_type=str
@@ -34,23 +30,9 @@ class MainApp(App):
 
     tool = NumericProperty(0)
 
-    serial_port = ConfigParserProperty(
-        defaultvalue="/dev/serial0", section="device", key="serial_port", config=config, val_type=str
-    )
-
-    serial_baudrate = ConfigParserProperty(
-        defaultvalue="115200", section="device", key="baudrate", config=config, val_type=int
-    )
-
-    serial_address = ConfigParserProperty(
-        defaultvalue=17, section="device", key="address", config=config, val_type=int
-    )
-
-    device = ObjectProperty()
+    board = ObjectProperty()
 
     home = ObjectProperty()
-
-    update_tick = NumericProperty(0)
 
     servo: ServoBar = ObjectProperty()
 
@@ -68,21 +50,7 @@ class MainApp(App):
 
     version = StringProperty()
 
-    task_update = None
-
     def __init__(self, **kv):
-        self.fast_data_values = dict()
-        try:
-            self.connection_manager = communication.ConnectionManager(
-                serial_device=self.serial_port,
-                baudrate=self.serial_baudrate,
-                address=self.serial_address
-            )
-            self.device = self.connection_manager['Global']
-
-        except Exception as e:
-            log.error(f"Communication cannot be started, will try again: {e.__str__()}")
-
         super().__init__(**kv)
 
 
@@ -119,36 +87,9 @@ class MainApp(App):
             return None
         return filtered_scales[0]
 
-    def update(self, *args):
-        try:
-            self.fast_data_values = self.device['fastData'].refresh()
-
-        except Exception as e:
-            log.error(f"No connection: {e.__str__()}")
-            self.task_update.timeout = 2.0
-            self.connection_manager.connected = False
-
-        # Handle state change connected -> disconnected
-        if not self.connection_manager.connected:
-            self.connected = self.connection_manager.connected
-            self.task_update.timeout = 2.0
-            self.update_tick = (self.update_tick + 1) % 100
-
-        # Handle state change disconnected -> connected
-        if not self.connected and self.connection_manager.connected:
-            self.task_update.timeout = 1.0 / 30
-            self.connected = self.connection_manager.connected
-
-        if self.connection_manager.connected:
-            self.update_tick = (self.update_tick + 1) % 100
-
-        self.connected = self.connection_manager.connected
-
-    def blinker(self, *args):
-        self.blink = not self.blink
-
     def build(self):
         self.formats = FormatsDispatcher(id_override="0")
+        self.board = Board(config=config)
 
         if not self.formats.disable_error_reporting:
             log.info("Error reporting is enabled, configuring Sentry")
@@ -160,10 +101,8 @@ class MainApp(App):
 
         self.servo = ServoBar(id_override="0")
         for i in range(4):
-            self.scales.append(CoordBar(inputIndex=i, device=self.device, id_override=f"{i}"))
+            self.scales.append(CoordBar(inputIndex=i, device=self.board.device, id_override=f"{i}"))
 
-        self.task_update = Clock.schedule_interval(self.update, 1.0 / 30)
-        Clock.schedule_interval(self.blinker, 1.0 / 4)
         self.beep()
 
         import importlib.metadata

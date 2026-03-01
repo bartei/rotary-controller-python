@@ -68,10 +68,10 @@ class ServoBar(BoxLayout, SavingDispatcher):
         super().__init__(**kv)
         self.configure_lead_screw_ratio(self, None)
 
-        # App event bindings
-        self.app.bind(connected=self.connected)
-        self.app.bind(connected=self.update_positions)
-        self.app.bind(update_tick=self.update_tick)
+        # Board event bindings
+        self.app.board.bind(connected=self.connected)
+        self.app.board.bind(connected=self.update_positions)
+        self.app.board.bind(update_tick=self.update_tick)
 
         # Widget event bindings
         self.bind(divisions=self.update_positions)
@@ -113,12 +113,12 @@ class ServoBar(BoxLayout, SavingDispatcher):
 
     def connected(self, instance, value):
         try:
-            if self.app.connected:
-                self.encoderPrevious = self.app.fast_data_values['servoCurrent']
-                self.encoderCurrent = self.app.fast_data_values['servoCurrent']
-                self.servoEnable = self.app.fast_data_values['servoEnable']
-                self.app.device['servo']['maxSpeed'] = self.maxSpeed
-                self.app.device['servo']['acceleration'] = self.acceleration
+            if self.app.board.connected:
+                self.encoderPrevious = self.app.board.fast_data_values['servoCurrent']
+                self.encoderCurrent = self.app.board.fast_data_values['servoCurrent']
+                self.servoEnable = self.app.board.fast_data_values['servoEnable']
+                self.app.board.device['servo']['maxSpeed'] = self.maxSpeed
+                self.app.board.device['servo']['acceleration'] = self.acceleration
 
                 if self.servoEnable == 0:
                     self.disableControls = True
@@ -142,24 +142,24 @@ class ServoBar(BoxLayout, SavingDispatcher):
 
     def update_tick(self, instance, value):
         try:
-            if not self.app.connected:
+            if not self.app.board.connected:
                 return
 
             self.encoderPrevious = self.encoderCurrent
-            self.encoderCurrent = self.app.fast_data_values['servoCurrent']
-            self.servoEnable = self.app.fast_data_values['servoEnable']
+            self.encoderCurrent = self.app.board.fast_data_values['servoCurrent']
+            self.servoEnable = self.app.board.fast_data_values['servoEnable']
 
-            steps_per_second = self.app.fast_data_values['servoSpeed']
+            steps_per_second = self.app.board.fast_data_values['servoSpeed']
             self.speed_history.append(steps_per_second)
             self.speed = (sum(self.speed_history) / len(self.speed_history))
 
             delta = uint32_subtract_to_int32(self.encoderCurrent, self.encoderPrevious)
             self.position += delta
             if (
-                    self.app.fast_data_values['stepsToGo'] == 0 and
+                    self.app.board.fast_data_values['stepsToGo'] == 0 and
                     self.servoEnable != 0 and
                     self.disableControls
-                    and self.app.connected
+                    and self.app.board.connected
             ):
                 log.info("Disable Controls False")
                 self.disableControls = False
@@ -207,7 +207,7 @@ class ServoBar(BoxLayout, SavingDispatcher):
                 delta = (delta + steps_per_turn)
 
         if delta != 0:
-            self.app.device['servo']['direction'] = delta
+            self.app.board.device['servo']['direction'] = delta
             self.disableControls = True
             self.previousIndex = self.index
 
@@ -216,21 +216,21 @@ class ServoBar(BoxLayout, SavingDispatcher):
         delta = value - self.oldOffset
         delta_steps = int(delta / ratio)
         if delta_steps != 0:
-            self.app.device['servo']['direction'] = delta_steps
+            self.app.board.device['servo']['direction'] = delta_steps
             self.disableControls = True
             self.oldOffset = value
 
     def on_maxSpeed(self, instance, value):
-        self.app.device['servo']['maxSpeed'] = self.maxSpeed
+        self.app.board.device['servo']['maxSpeed'] = self.maxSpeed
 
     def on_jogSpeed(self, instance, value):
-        self.app.device['servo']['jogSpeed'] = self.jogSpeed
+        self.app.board.device['servo']['jogSpeed'] = self.jogSpeed
 
     def on_acceleration(self, instance, value):
-        self.app.device['servo']['acceleration'] = self.acceleration
+        self.app.board.device['servo']['acceleration'] = self.acceleration
 
     def on_servoEnable(self, instance, value):
-        self.app.device['fastData']['servoEnable'] = self.servoEnable
+        self.app.board.device['fastData']['servoEnable'] = self.servoEnable
         if self.servoEnable != 0:
             log.info("Disable Controls False")
             self.disableControls = False
@@ -239,7 +239,7 @@ class ServoBar(BoxLayout, SavingDispatcher):
             self.disableControls = True
 
     def toggle_enable(self):
-        if not self.app.connected:
+        if not self.app.board.connected:
             self.servoEnable = 0
             return
 

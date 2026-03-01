@@ -2,28 +2,30 @@
 #: import CoordsOverlay rcp.components.plot.coords_overlay
 <FloatView>:
     scene_canvas: scene_canvas
-    BoxLayout:
-        orientation: "horizontal"
+
+    ScrollView:
         pos: root.pos
         size: root.size
-
-        ScrollView:
-            scroll_x: 0.5
-            scroll_y: 0.5
-            scroll_wheel_distance: 0
-            RelativeLayout:
-                size_hint: None, None
-                size: 10000, 10000
-                Scene:
-                    id: scene_canvas
-                    zoom: root.zoom
-                    points: root.circle_pattern.points
-                    tool_x: root.tool_x
-                    tool_y: root.tool_y
+        scroll_x: 0.5
+        scroll_y: 0.5
+        scroll_wheel_distance: 0
+        RelativeLayout:
+            size_hint: None, None
+            size: 10000, 10000
+            Scene:
+                id: scene_canvas
+                zoom: root.zoom
+                points: root.active_points
+                tool_x: root.tool_x
+                tool_y: root.tool_y
 
     CoordsOverlay:
-        pos: root.pos
-        size: root.size
+        size_hint: None, None
+        width: 180
+        height: self.minimum_height
+        pos: root.x + 10, root.top - self.height - 10
         zoom: root.zoom
-        selected_x: root.circle_pattern.points[root.scene_canvas.selected_point][0]
-        selected_y: root.circle_pattern.points[root.scene_canvas.selected_point][1]
+        selected_x: root.active_points[root.scene_canvas.selected_point][0] if root.active_points else 0
+        selected_y: root.active_points[root.scene_canvas.selected_point][1] if root.active_points else 0
+        plane_h_index: root.plane_h_index
+        plane_v_index: root.plane_v_index
