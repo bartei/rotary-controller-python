@@ -1,6 +1,7 @@
 from kivy.uix.screenmanager import ScreenManager, FadeTransition
 from kivy.properties import ListProperty
-from loguru import logger as log
+from kivy.logger import Logger
+log = Logger.getChild(__name__)
 
 
 class Manager(ScreenManager):

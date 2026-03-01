@@ -1,8 +1,5 @@
-import os
-
 from kivy.factory import Factory
 from kivy.logger import Logger
-from kivy.lang import Builder
 from kivy.properties import StringProperty, ObjectProperty, NumericProperty
 from kivy.uix.boxlayout import BoxLayout
 from pydantic import BaseModel
@@ -10,6 +7,7 @@ from pydantic import BaseModel
 from rcp.components.home.coordbar import CoordBar
 from rcp import feeds
 from rcp.dispatchers.saving_dispatcher import SavingDispatcher
+from rcp.utils.kv_loader import load_kv
 
 
 class FeedMode(BaseModel):
@@ -17,11 +15,7 @@ class FeedMode(BaseModel):
     name: str
 
 log = Logger.getChild(__name__)
-
-kv_file = os.path.join(os.path.dirname(__file__), __file__.replace(".py", ".kv"))
-if os.path.exists(kv_file):
-    log.info(f"Loading KV file: {kv_file}")
-    Builder.load_file(kv_file)
+load_kv(__file__)
 
 
 class ElsBar(BoxLayout, SavingDispatcher):

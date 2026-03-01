@@ -43,8 +43,7 @@ class SavingDispatcher(EventDispatcher):
 
     @property
     def filename(self):
-        home_folder = os.environ.get('HOME')
-        settings_folder = Path(home_folder) / ".config" / "rotary-controller-python"
+        settings_folder = Path.home() / ".config" / "rotary-controller-python"
         os.makedirs(settings_folder, exist_ok=True)
 
         settings_path = settings_folder / f"{self.__class__.__name__}-{self.id_override}.yaml"

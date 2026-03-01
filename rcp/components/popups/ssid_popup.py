@@ -1,5 +1,4 @@
 import asyncio
-import os
 
 import nmcli
 
@@ -9,16 +8,13 @@ from kivy.logger import Logger
 from kivy.uix.gridlayout import GridLayout
 from kivy.uix.modalview import ModalView
 from kivy.uix.button import Button
-from kivy.lang import Builder
+
+from rcp.utils.kv_loader import load_kv
 
 nmcli.disable_use_sudo()
 
 log = Logger.getChild(__name__)
-
-kv_file = os.path.join(os.path.dirname(__file__), __file__.replace(".py", ".kv"))
-if os.path.exists(kv_file):
-    log.info(f"Loading KV file: {kv_file}")
-    Builder.load_file(kv_file)
+load_kv(__file__)
 
 
 class SsidPopup(ModalView):

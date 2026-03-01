@@ -10,18 +10,21 @@ license = "MIT"
 readme = "README.md"
 dependencies = [
     "cachetools>=5.5.0",
-    "coverage>=7.6.9",
-    "importlib>=1.0.4",
     "keke>=0.1.4",
     "kivy>=2.3.0",
-    "loguru>=0.7.3",
     "minimalmodbus>=2.1.1",
     "nmcli>=1.5.0",
     "pydantic>=2.10.3",
+    "pyyaml>=6.0.2",
+    "aiohttp>=3.9.0",
+    "sentry-sdk>=2.32.0",
+]
+
+[dependency-groups]
+dev = [
+    "coverage>=7.6.9",
     "pytest>=8.3.4",
     "python-semantic-release>=9.15.2",
-    "pyyaml>=6.0.2",
-    "sentry-sdk>=2.32.0",
 ]
 
 [build-system]
@@ -36,7 +39,7 @@ hvcs = "github"
 remove_dist = false
 upload_to_pypi = false
 build_command = "uv build"
-preselease = false
+prerelease = false
 
 [tool.semantic_release.branches.main]
 match = "main"

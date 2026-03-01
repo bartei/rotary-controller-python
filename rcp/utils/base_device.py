@@ -4,7 +4,8 @@ from typing import Optional, List, Any
 from keke import ktrace, kev
 
 from pydantic import BaseModel
-from loguru import logger as log
+from kivy.logger import Logger
+log = Logger.getChild(__name__)
 
 
 class TypeDefinition(BaseModel):
@@ -116,7 +117,7 @@ class BaseDevice:
             size = current_address
 
         if name is None:
-            raise "Unable to identify the typedef name from the provided definition"
+            raise ValueError("Unable to identify the typedef name from the provided definition")
 
         return TypeDefinition(
             name=name,

@@ -1,7 +1,8 @@
 import asyncio
 from keke import ktrace
 from kivy.base import EventLoop
-from loguru import logger as log
+from kivy.logger import Logger
+log = Logger.getChild(__name__)
 
 
 if __name__ == "__main__":

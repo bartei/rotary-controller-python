@@ -1,5 +1,3 @@
-import os
-
 from keke import TraceOutput
 from kivy.core.window import Window
 from kivy.logger import Logger
@@ -7,17 +5,14 @@ from kivy.properties import ObjectProperty
 from kivy.clock import Clock
 from kivy.uix.boxlayout import BoxLayout
 from kivy.uix.screenmanager import Screen
-from kivy.lang import Builder
 
 from rcp.components.home.jogbar import JogBar
 from rcp.components.home.statusbar import StatusBar
 from rcp.components.home.elsbar import ElsBar
+from rcp.utils.kv_loader import load_kv
 
 log = Logger.getChild(__name__)
-kv_file = os.path.join(os.path.dirname(__file__), __file__.replace(".py", ".kv"))
-if os.path.exists(kv_file):
-    log.info(f"Loading KV file: {kv_file}")
-    Builder.load_file(kv_file)
+load_kv(__file__)
 
 
 class HomePage(Screen):

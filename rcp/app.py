@@ -6,7 +6,8 @@ from kivy.app import App
 from kivy.clock import Clock
 from kivy.properties import ObjectProperty, ConfigParserProperty, BooleanProperty, NumericProperty, ListProperty, \
     StringProperty
-from loguru import logger as log
+from kivy.logger import Logger
+log = Logger.getChild(__name__)
 
 from rcp.components.appsettings import config
 from rcp.components.home.coordbar import CoordBar

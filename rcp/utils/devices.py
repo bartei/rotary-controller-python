@@ -1,4 +1,3 @@
-import time
 from rcp.utils.base_device import BaseDevice, TypeDefinition
 from rcp.utils import communication
 SCALES_COUNT = 4
@@ -15,15 +14,15 @@ TimHandleTypeDef = TypeDefinition(
 Int16 = TypeDefinition(
     name = "int16_t",
     length = 1,
-    struct_unpack_string = "H",
-    read_function = communication.read_long,
-    write_function = communication.write_long,
+    struct_unpack_string = "h",
+    read_function = communication.read_signed,
+    write_function = communication.write_signed,
 )
 
 UInt16 = TypeDefinition(
     name ="uint16_t",
     length=1,
-    struct_unpack_string="h",
+    struct_unpack_string="H",
     read_function=communication.read_unsigned,
     write_function=communication.write_unsigned,
 )
@@ -31,7 +30,7 @@ UInt16 = TypeDefinition(
 Bool = TypeDefinition(
     name="bool",
     length=1,
-    struct_unpack_string="h",
+    struct_unpack_string="H",
     read_function=communication.read_unsigned,
     write_function=communication.write_unsigned
 )
@@ -118,25 +117,3 @@ typedef struct {
   fastData_t fastData;
 } rampsSharedData_t;
 """
-
-
-# current_module = sys.modules[__name__]
-# clsmembers = [
-#     item
-#     for item in inspect.getmembers(sys.modules[__name__], inspect.isclass)
-#     if issubclass(item[1], BaseDevice) and item[0] != "BaseDevice"
-# ]
-#
-# unloaded_list = copy.deepcopy(clsmembers)
-# iterations_limit = 3
-# while len(unloaded_list) > 0 and iterations_limit > 0:
-#     failure_list = []
-#     for my_class in unloaded_list:
-#         my_class[1]: BaseDevice
-#         try:
-#             definition = my_class[1].register_type()
-#             variable_definitions.append(definition)
-#         except Exception as e:
-#             failure_list.append(my_class)
-#     unloaded_list = copy.deepcopy(failure_list)
-#     iterations_limit -= 1

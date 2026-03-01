@@ -1,17 +1,12 @@
-import os
-
-from kivy.lang import Builder
 from kivy.logger import Logger
 from kivy.properties import BooleanProperty, StringProperty, ColorProperty
 from kivy.uix.behaviors import ButtonBehavior
 from kivy.uix.boxlayout import BoxLayout
 
-log = Logger.getChild(__name__)
+from rcp.utils.kv_loader import load_kv
 
-kv_file = os.path.join(os.path.dirname(__file__), __file__.replace(".py", ".kv"))
-if os.path.exists(kv_file):
-    log.info(f"Loading KV file: {kv_file}")
-    Builder.load_file(kv_file)
+log = Logger.getChild(__name__)
+load_kv(__file__)
 
 
 class LedButton(ButtonBehavior, BoxLayout):

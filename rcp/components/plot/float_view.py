@@ -1,19 +1,14 @@
-import os
-
-from kivy import Logger
+from kivy.logger import Logger
 from kivy.core.window import Window
-from kivy.lang import Builder
 from kivy.uix.floatlayout import FloatLayout
 from kivy.properties import ListProperty, NumericProperty, ObjectProperty
 
 from rcp.components.home.coordbar import CoordBar
 from rcp.dispatchers.circle_pattern import CirclePatternDispatcher
+from rcp.utils.kv_loader import load_kv
 
 log = Logger.getChild(__name__)
-kv_file = os.path.join(os.path.dirname(__file__), __file__.replace(".py", ".kv"))
-if os.path.exists(kv_file):
-    log.info(f"Loading KV file: {kv_file}")
-    Builder.load_file(kv_file)
+load_kv(__file__)
 
 
 class FloatView(FloatLayout):

@@ -6,7 +6,8 @@ from rcp.dispatchers.saving_dispatcher import SavingDispatcher
 from rcp.utils.devices import SCALES_COUNT, SERVOS_COUNT
 from rcp.utils.communication import ConnectionManager
 
-from loguru import logger as log
+from kivy.logger import Logger
+log = Logger.getChild(__name__)
 
 
 class Scale(EventDispatcher):

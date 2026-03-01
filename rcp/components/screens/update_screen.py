@@ -1,21 +1,18 @@
 import asyncio
-import os
 import importlib.metadata
+import os
 import subprocess
 
-from kivy.lang import Builder
+import aiohttp
+from kivy.clock import Clock
 from kivy.logger import Logger
 from kivy.properties import ListProperty, StringProperty, BooleanProperty
 from kivy.uix.screenmanager import Screen
-import requests
 
-from kivy.clock import Clock
+from rcp.utils.kv_loader import load_kv
 
 log = Logger.getChild(__name__)
-kv_file = os.path.join(os.path.dirname(__file__), __file__.replace(".py", ".kv"))
-if os.path.exists(kv_file):
-    log.info(f"Loading KV file: {kv_file}")
-    Builder.load_file(kv_file)
+load_kv(__file__)
 
 
 class UpdateScreen(Screen):
@@ -36,22 +33,23 @@ class UpdateScreen(Screen):
 
     async def refresh_releases(self, dt):
         self.update_status("Retrieve all the releases from Github")
-        url = f"https://api.github.com/repos/bartei/rotary-controller-python/releases"
+        url = "https://api.github.com/repos/bartei/rotary-controller-python/releases"
         try:
-            response = requests.get(url)
-            if response.status_code != 200:
-                log.error(f"Failed to fetch releases: {response.status_code} - {response.text}")
-                return
+            async with aiohttp.ClientSession() as session:
+                async with session.get(url) as response:
+                    if response.status != 200:
+                        text = await response.text()
+                        log.error(f"Failed to fetch releases: {response.status} - {text}")
+                        return
 
-            releases = response.json()[:10]
+                    releases = (await response.json())[:10]
 
             # Get only official releases
             releases = [item['tag_name'] for item in releases if item['prerelease'] == False]
-            # releases = [item['tag_name'] for item in releases]
             self.releases = releases
             self.selected_release = releases[0]
         except Exception as e:
-            self.update_status(e.__str__())
+            self.update_status(str(e))
 
     def on_selected_release(self, instance, value):
         log.info(f"Selected release: {self.selected_release}")
