@@ -109,9 +109,8 @@ class Keypad(Popup):
         else:
             try:
                 self.current_value = getattr(container, set_method)
-            except Exception as e:
-                log.debug(e.__str__())
-                pass
+            except AttributeError as e:
+                log.debug(str(e))
             # try to get the current value from the container method specified if
         self.set_method = set_method
         self.container = container
@@ -145,8 +144,8 @@ class Keypad(Popup):
 
             self._keyboard.release()
             self.dismiss()
-        except Exception as e:
-            log.error(e.__str__())
+        except (ValueError, TypeError, AttributeError) as e:
+            log.error(str(e))
             return
 
     def cancel(self, *args, **kwargs):

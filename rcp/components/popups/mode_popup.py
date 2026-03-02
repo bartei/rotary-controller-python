@@ -46,7 +46,7 @@ class ModePopup(Popup):
             self.callback_fn(value)
             self.dismiss()
         except Exception as e:
-            log.error(e.__str__())
+            log.error(str(e))
             return
 
     def cancel(self, *args, **kwargs):

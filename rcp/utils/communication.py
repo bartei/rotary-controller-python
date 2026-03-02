@@ -12,21 +12,33 @@ class ConnectionManager:
     def __init__(
         self, serial_device="/dev/ttyUSB0", baudrate=115200, address=17, debug=False
     ):
-        try:
-            self.device: minimalmodbus.Instrument = minimalmodbus.Instrument(
-                port=serial_device, slaveaddress=address, debug=debug
-            )
-            self.device.serial.timeout = 0.1
-            self.device.serial.write_timeout = 0.1
-            self.device.serial.baudrate = baudrate
-            self.connected = True
-        except Exception as e:
-            log.error(e.__str__())
-            self.connected = False
+        self.serial_device = serial_device
+        self.baudrate = baudrate
+        self.address = address
+        self.debug = debug
+        self.device: minimalmodbus.Instrument | None = None
+        self.connected = False
 
         self.definitions = []
         self.structures = dict()
         self._load_structures()
+
+    def connect(self):
+        if self.connected:
+            return
+        try:
+            self.device = minimalmodbus.Instrument(
+                port=self.serial_device, slaveaddress=self.address, debug=self.debug
+            )
+            self.device.serial.timeout = 0.1
+            self.device.serial.write_timeout = 0.1
+            self.device.serial.baudrate = self.baudrate
+            self.connected = True
+            log.info(f"Connected to {self.serial_device}")
+        except Exception as e:
+            self.device = None
+            self.connected = False
+            log.error(f"Failed to connect to {self.serial_device}: {str(e)}")
 
     def _load_structures(self):
         from rcp.utils import devices
@@ -82,7 +94,7 @@ def read_float(dm: ConnectionManager, address) -> float:
         return value
     except Exception as e:
         dm.connected = False
-        log.error(e.__str__())
+        log.error(str(e))
         return 0
 
 
@@ -95,7 +107,7 @@ def write_float(dm, address, value, variable_name: Optional[str] = ""):
         log.info(f"Write {variable_name}: float {value} to address {address}")
     except Exception as e:
         dm.connected = False
-        log.error(e.__str__())
+        log.error(str(e))
 
 
 def read_long(dm, address) -> int:
@@ -107,7 +119,7 @@ def read_long(dm, address) -> int:
         return value
     except Exception as e:
         dm.connected = False
-        log.error(e.__str__())
+        log.error(str(e))
         return 0
 
 
@@ -123,7 +135,7 @@ def write_long(dm, address, value, variable_name: Optional[str] = ""):
         log.info(f"Write {variable_name}: long {value} to address {address}")
     except Exception as e:
         dm.connected = False
-        log.error(e.__str__())
+        log.error(str(e))
 
 
 def read_unsigned(dm, address):
@@ -133,7 +145,7 @@ def read_unsigned(dm, address):
         return value
     except Exception as e:
         dm.connected = False
-        log.error(e.__str__())
+        log.error(str(e))
         return 0
 
 
@@ -144,7 +156,7 @@ def write_unsigned(dm, address, value, variable_name: Optional[str] = ""):
         log.info(f"Write {variable_name}: unsigned {value} to address {address}")
     except Exception as e:
         dm.connected = False
-        log.error(e.__str__())
+        log.error(str(e))
 
 
 def read_signed(dm, address):
@@ -154,7 +166,7 @@ def read_signed(dm, address):
         return value
     except Exception as e:
         dm.connected = False
-        log.error(e.__str__())
+        log.error(str(e))
         return 0
 
 
@@ -165,11 +177,12 @@ def write_signed(dm, address, value, variable_name: Optional[str] = ""):
         log.info(f"Write {variable_name}: signed {value} to address {address}")
     except Exception as e:
         dm.connected = False
-        log.error(e.__str__())
+        log.error(str(e))
 
 
 if __name__ == "__main__":
     connection_manager = ConnectionManager()
+    connection_manager.connect()
     device = connection_manager['Global']
 
     while True:

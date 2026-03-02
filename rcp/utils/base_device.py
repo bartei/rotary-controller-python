@@ -40,8 +40,8 @@ class BaseDevice:
     def __getitem__(self, key):
         try:
             var: VariableDefinition = [item for item in self.variables if item.name == key][0]
-        except Exception as e:
-            raise Exception(f"Variable with name: {key} not found ({e.__str__()})")
+        except IndexError:
+            raise KeyError(f"Variable with name: {key} not found")
 
         if var.count > 1:
             list_type = list()
@@ -56,8 +56,8 @@ class BaseDevice:
     def __setitem__(self, key, value):
         try:
             var = [item for item in self.variables if item.name == key][0]
-        except Exception as e:
-            raise Exception(f"Variable with name: {key} not found ({e.__str__()})")
+        except IndexError:
+            raise KeyError(f"Variable with name: {key} not found")
 
         var.type.write_function(self.dm, var.address + self.base_address, value, key)
         return
@@ -194,7 +194,7 @@ class BaseDevice:
                 self.struct_unpack_string += matching_type.struct_unpack_string
 
             except Exception as e:
-                raise Exception(f"Unable to find a matching type for: {tokens[0]}: {e.__str__()}")
+                raise ValueError(f"Unable to find a matching type for: {tokens[0]}: {str(e)}") from e
 
         self.size = current_address
 
@@ -251,7 +251,7 @@ class BaseDevice:
 
                 self.dm.connected = True
             except Exception as e:
-                log.debug(e.__str__())
+                log.debug(str(e))
                 self.dm.connected = False
                 return
 

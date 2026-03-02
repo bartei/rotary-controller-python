@@ -23,7 +23,7 @@ class NumberItem(BoxLayout):
             else:
                 self.value = int(value)
         except Exception as e:
-            log.error(e.__str__())
+            log.error(str(e))
 
     def on_value(self, instance, value):
         self.validate(value)

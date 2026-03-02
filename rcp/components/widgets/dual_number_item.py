@@ -18,10 +18,10 @@ class DualNumberItem(BoxLayout):
         try:
             self.scaled_value = value / self.ratio
         except Exception as e:
-            log.error(e.__str__())
+            log.error(str(e))
 
     def on_scaled_value(self, instance, value):
         try:
             self.value = value * self.ratio
         except Exception as e:
-            log.error(e.__str__())
+            log.error(str(e))

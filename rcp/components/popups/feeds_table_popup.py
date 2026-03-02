@@ -72,7 +72,7 @@ class FeedsTablePopup(Popup):
             self.callback_fn(table_name=value[0], index=value[1])
             self.dismiss()
         except Exception as e:
-            log.error(e.__str__())
+            log.error(str(e))
             return
 
     def cancel(self, *args, **kwargs):

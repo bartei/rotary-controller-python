@@ -67,7 +67,7 @@ class SsidPopup(ModalView):
                 self.container.add_widget(btn)
 
         except Exception as e:
-            log.info(e.__str__())
+            log.info(str(e))
 
         finally:
             self.scanning = False

@@ -9,18 +9,6 @@
 
 ---
 
-## Inconsistencies
-
-### 2. Exception Handling Anti-patterns
-- **Issue:** Throughout the codebase, exceptions are caught too broadly (`except Exception as e`) and logged with `e.__str__()` instead of `str(e)` or just `e`. Several catch blocks silently swallow errors (e.g., `board.py:96-98` with bare `pass`).
-- **Action:**
-  - Replace `e.__str__()` with `str(e)` or pass `e` directly to the logger
-  - Catch specific exception types where possible
-  - Remove bare `pass` in except blocks; at minimum log the error
-  - Use `log.exception()` or `exc_info=True` for unexpected errors to preserve stack traces
-
----
-
 ## Architecture
 
 ### 3. God Object: MainApp

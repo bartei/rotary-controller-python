@@ -125,7 +125,7 @@ class ServoBar(BoxLayout, SavingDispatcher):
                 else:
                     self.disableControls = False
         except Exception as e:
-            log.error(e.__str__())
+            log.error(str(e))
 
     def update_positions(self, *args, **kv):
         ratio = Fraction(self.ratioNum, self.ratioDen)
@@ -164,7 +164,7 @@ class ServoBar(BoxLayout, SavingDispatcher):
                 log.info("Disable Controls False")
                 self.disableControls = False
         except Exception as e:
-            log.error(f"Unable to read servo: {e.__str__()}")
+            log.error(f"Unable to read servo: {str(e)}")
 
     def update_scaledPosition(self, instance, value):
         ratio = Fraction(self.ratioNum, self.ratioDen)

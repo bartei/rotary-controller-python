@@ -101,7 +101,7 @@ class CoordBar(BoxLayout, SavingDispatcher):
             self.encoderCurrent = self.app.board.fast_data_values['scaleCurrent'][self.inputIndex]
             self.position += uint32_subtract_to_int32(self.encoderCurrent, self.encoderPrevious)
         except Exception as e:
-            log.error(f"Unable to update scale: {e.__str__()}")
+            log.error(f"Unable to update scale: {str(e)}")
 
     def toggle_sync(self):
         if not self.app.board.connected:

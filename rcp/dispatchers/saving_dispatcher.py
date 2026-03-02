@@ -91,8 +91,8 @@ def read_settings(file: str):
         with open(file, "r") as f:
             data = yaml.safe_load(f.read())
             return data
-    except Exception as e:
-        log.error(e.__str__())
+    except (OSError, yaml.YAMLError) as e:
+        log.error(str(e))
         return None
 
 
@@ -103,6 +103,6 @@ def write_settings(file: str, data, triggered_by: Optional[str] = ""):
             yaml.dump(data, f)
         return True
 
-    except Exception as e:
-        log.error(e.__str__())
+    except (OSError, yaml.YAMLError) as e:
+        log.error(str(e))
         return False

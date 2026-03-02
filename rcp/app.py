@@ -89,7 +89,7 @@ class MainApp(App):
 
     def build(self):
         self.formats = FormatsDispatcher(id_override="0")
-        self.board = Board(config=config)
+        self.board = Board()
 
         if not self.formats.disable_error_reporting:
             log.info("Error reporting is enabled, configuring Sentry")

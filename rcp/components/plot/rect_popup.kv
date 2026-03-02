@@ -7,43 +7,43 @@
 
     BoxLayout:
         orientation: 'vertical'
-        GridLayout:
-            id: grid_layout
-            cols: 1
-            spacing: 1
-            size_hint_y: None
-            NumberItem:
-                name: "Origin X"
-                value: root.ref.origin_x
-                on_value: root.ref.origin_x = self.value
-            NumberItem:
-                name: "Origin Y"
-                value: root.ref.origin_y
-                on_value: root.ref.origin_y = self.value
-            NumberItem:
-                name: "Columns"
-                value: root.ref.columns
-                on_value: root.ref.columns = self.value
-                integer: True
-            NumberItem:
-                name: "Rows"
-                value: root.ref.rows
-                on_value: root.ref.rows = self.value
-                integer: True
-            NumberItem:
-                name: "Spacing X"
-                value: root.ref.spacing_x
-                on_value: root.ref.spacing_x = self.value
-            NumberItem:
-                name: "Spacing Y"
-                value: root.ref.spacing_y
-                on_value: root.ref.spacing_y = self.value
-            NumberItem:
-                name: "Angle"
-                value: root.ref.angle
-                on_value: root.ref.angle = self.value
-        Widget:
-            size_hint_y: 1
+        ScrollView:
+            GridLayout:
+                id: grid_layout
+                cols: 1
+                spacing: 1
+                size_hint_y: None
+                height: self.minimum_height
+                NumberItem:
+                    name: "Origin X"
+                    value: root.ref.origin_x
+                    on_value: root.ref.origin_x = self.value
+                NumberItem:
+                    name: "Origin Y"
+                    value: root.ref.origin_y
+                    on_value: root.ref.origin_y = self.value
+                NumberItem:
+                    name: "Columns"
+                    value: root.ref.columns
+                    on_value: root.ref.columns = self.value
+                    integer: True
+                NumberItem:
+                    name: "Rows"
+                    value: root.ref.rows
+                    on_value: root.ref.rows = self.value
+                    integer: True
+                NumberItem:
+                    name: "Spacing X"
+                    value: root.ref.spacing_x
+                    on_value: root.ref.spacing_x = self.value
+                NumberItem:
+                    name: "Spacing Y"
+                    value: root.ref.spacing_y
+                    on_value: root.ref.spacing_y = self.value
+                NumberItem:
+                    name: "Angle"
+                    value: root.ref.angle
+                    on_value: root.ref.angle = self.value
         BoxLayout:
             size_hint_y: None
             height: 48

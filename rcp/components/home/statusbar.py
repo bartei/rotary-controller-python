@@ -33,4 +33,4 @@ class StatusBar(BoxLayout):
             self.interval = self.app.board.fast_data_values['executionInterval']
             self.cycles = self.app.board.fast_data_values['cycles']
         except Exception as e:
-            log.debug(e.__str__(), exc_info=True)
+            log.debug(str(e), exc_info=True)

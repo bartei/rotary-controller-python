@@ -90,7 +90,7 @@ class NetworkScreen(Screen):
                     self.wireless_auth_alg = conn.get('802-11-wireless-security.auth-alg') or ""
                     self.password = conn.get('802-11-wireless-security.psk') or ""
                 except Exception as e:
-                    log.error(e.__str__())
+                    log.error(str(e))
             else:
                 self.key_mgmt = ""
                 self.wireless_mode = ""
@@ -117,7 +117,7 @@ class NetworkScreen(Screen):
                 await asyncio.to_thread(nmcli.connection.up, name=connection)
                 await asyncio.sleep(5)
             except Exception as e:
-                self.log(f"Unable to edit connection: {e.__str__()}")
+                self.log(f"Unable to edit connection: {str(e)}")
         else:
             self.log(f"Creating a new connection profile for {self.connection} with device: {self.device}")
             try:
@@ -128,7 +128,7 @@ class NetworkScreen(Screen):
                     ifname=self.device
                 )
             except Exception as e:
-                self.log(f"Unable to connect: {e.__str__()}")
+                self.log(f"Unable to connect: {str(e)}")
 
     def on_wifi_enabled(self, instance, value):
         if self.wifi_enabled:
