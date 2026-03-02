@@ -1,0 +1,90 @@
+#: import ScreenHeader components.widgets.screen_header
+#: import TitleItem rcp.components.widgets.title_item
+#: import StringItem rcp.components.widgets.string_item
+#: import ButtonItem rcp.components.widgets.button_item
+
+<SystemScreen>:
+  BoxLayout:
+    title: "System"
+    orientation: "vertical"
+    padding: 10
+    ScreenHeader:
+      text: "System"
+
+    Label:
+      text: "System information is only available on Raspberry Pi"
+      size_hint_y: None
+      height: self.texture_size[1] + 20
+      font_size: 20
+      opacity: 0 if root.is_pi else 1
+
+    ScrollView:
+      do_scroll_x: False
+      do_scroll_y: True
+      opacity: 1 if root.is_pi else 0
+      disabled: not root.is_pi
+      GridLayout:
+        id: grid_layout
+        cols: 1
+        spacing: 1
+        size_hint_y: None
+        height: self.minimum_height
+
+        TitleItem:
+          name: "Storage Devices"
+        StringItem:
+          name: "Root Device"
+          disabled: True
+          value: root.root_device
+        StringItem:
+          name: "Disk Device"
+          disabled: True
+          value: root.disk_device
+        StringItem:
+          name: "Partition Number"
+          disabled: True
+          value: root.partition_number
+        StringItem:
+          name: "Disk Size"
+          disabled: True
+          value: root.disk_size_str
+        StringItem:
+          name: "Partition Size"
+          disabled: True
+          value: root.partition_size_str
+
+        TitleItem:
+          name: "Filesystem Usage"
+        StringItem:
+          name: "Total"
+          disabled: True
+          value: root.fs_total_str
+        StringItem:
+          name: "Used"
+          disabled: True
+          value: root.fs_used_str
+        StringItem:
+          name: "Free"
+          disabled: True
+          value: root.fs_free_str
+
+        TitleItem:
+          name: "Resize Root Partition"
+        ButtonItem:
+          name: "Refresh Storage Info"
+          value: "Refresh"
+          on_release: root.refresh_storage_info()
+        ButtonItem:
+          name: "Resize Partition"
+          value: "Running..." if root.is_running else ("Resize" if root.can_resize else "Already full")
+          disabled: not root.can_resize or root.is_running
+          on_release: root.prompt_resize()
+
+        TitleItem:
+          name: "Operation Output"
+        TextInput:
+          size_hint_y: None
+          height: 200
+          readonly: True
+          multiline: True
+          text: root.status

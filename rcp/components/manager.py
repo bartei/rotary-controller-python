@@ -43,6 +43,9 @@ class Manager(ScreenManager):
         from rcp.components.screens.update_screen import UpdateScreen
         self.add_widget(UpdateScreen(name="update"))
 
+        from rcp.components.screens.system_screen import SystemScreen
+        self.add_widget(SystemScreen(name="system"))
+
         # Add screen for plot view
         from rcp.components.plot.plot_screen import PlotScreen
         self.add_widget(PlotScreen(name="plot"))
