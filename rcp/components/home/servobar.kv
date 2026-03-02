@@ -8,11 +8,11 @@
   Button:
     width: 96
     size_hint_x: None
-    text: root.name
+    text: app.servo.name
     font_size: min(self.height / 1.5, self.width/1.5)
     font_style: "bold"
-    background_color: [0.2, 1, 0.2, 1] if root.servoEnable else [0.3, 0.3, 0.3, 1]
-    on_release: root.toggle_enable()
+    background_color: [0.2, 1, 0.2, 1] if app.servo.servoEnable else [0.3, 0.3, 0.3, 1]
+    on_release: app.servo.toggle_enable()
   BoxLayout:
     orientation: "vertical"
     size_hint_x: 0.2
@@ -31,16 +31,16 @@
       font_style: "bold"
       background_color: [0.2, 0.2, 0.2, 1]
       color: app.formats.display_color
-      text: root.formattedPosition
+      text: app.servo.formattedPosition
       text_size: self.size
       halign: 'center'
       valign: 'middle'
-      disabled: root.disableControls
-      on_release: root.update_current_position()
+      disabled: app.servo.disableControls
+      on_release: app.servo.update_current_position()
     ProgressBar:
       size_hint_y: 0.20
-      max: int(root.maxSpeed)
-      value: int(abs(root.speed))
+      max: int(app.servo.maxSpeed)
+      value: int(abs(app.servo.speed))
 
   BoxLayout:
     orientation: "vertical"
@@ -60,12 +60,12 @@
       font_style: "bold"
       background_color: [0.2, 0.2, 0.2, 1]
       color: app.formats.display_color
-      text: app.formats.angle_format.format(root.offset)
+      text: app.formats.angle_format.format(app.servo.offset)
       text_size: self.size
       halign: 'center'
       valign: 'middle'
-      disabled: root.disableControls
-      on_release: Factory.Keypad().show(root, 'offset')
+      disabled: app.servo.disableControls
+      on_release: Factory.Keypad().show(app.servo, 'offset')
 
     Label:
       text: "Divisions"
@@ -82,12 +82,12 @@
       font_style: "bold"
       background_color: [0.2, 0.2, 0.2, 1]
       color: app.formats.display_color
-      text: str(int(root.divisions))
+      text: str(int(app.servo.divisions))
       text_size: self.size
       halign: 'center'
       valign: 'middle'
-      disabled: root.disableControls
-      on_release: Factory.Keypad(integer=True).show(root, 'divisions')
+      disabled: app.servo.disableControls
+      on_release: Factory.Keypad(integer=True).show(app.servo, 'divisions')
 
   BoxLayout:
     size_hint_x: None
@@ -100,15 +100,15 @@
         font_style: "bold"
         font_name: "fonts/Font Awesome 6 Free-Solid-900.otf"
         text: "\uf060"
-        disabled: root.disableControls
-        on_release: root.go_previous()
+        disabled: app.servo.disableControls
+        on_release: app.servo.go_previous()
       Button:
         font_size: 24
         font_style: "bold"
         font_name: "fonts/Font Awesome 6 Free-Solid-900.otf"
         text: "\uf061"
-        disabled: root.disableControls
-        on_release: root.go_next()
+        disabled: app.servo.disableControls
+        on_release: app.servo.go_next()
     BoxLayout:
       orientation: "vertical"
       Label:
@@ -126,9 +126,9 @@
         font_style: "bold"
         background_color: [0.2, 0.2, 0.2, 1]
         color: app.formats.display_color
-        text: str(int(root.index))
+        text: str(int(app.servo.index))
         text_size: self.size
         halign: 'center'
         valign: 'middle'
-        disabled: root.disableControls
-        on_release: Factory.Keypad(integer=True).show(root, 'index')
+        disabled: app.servo.disableControls
+        on_release: Factory.Keypad(integer=True).show(app.servo, 'index')

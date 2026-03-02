@@ -14,6 +14,7 @@ log = Logger.getChild(__name__)
 class SavingDispatcher(EventDispatcher):
     _skip_save = []
     _force_save = []
+    _save_class_name: str | None = None
     id_override = StringProperty("")
 
     def __init__(self, *args, **kwargs):
@@ -46,7 +47,8 @@ class SavingDispatcher(EventDispatcher):
         settings_folder = Path.home() / ".config" / "rotary-controller-python"
         os.makedirs(settings_folder, exist_ok=True)
 
-        settings_path = settings_folder / f"{self.__class__.__name__}-{self.id_override}.yaml"
+        class_name = self._save_class_name or self.__class__.__name__
+        settings_path = settings_folder / f"{class_name}-{self.id_override}.yaml"
         return settings_path
 
     def read_settings(self):

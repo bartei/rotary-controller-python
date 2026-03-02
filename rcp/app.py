@@ -1,5 +1,4 @@
 import os
-from typing import List
 
 import sentry_sdk
 from kivy.app import App
@@ -8,10 +7,10 @@ from kivy.logger import Logger
 log = Logger.getChild(__name__)
 
 from rcp.components.appsettings import config
-from rcp.components.home.coordbar import CoordBar
-from rcp.components.home.servobar import ServoBar
 from rcp.dispatchers.board import Board
 from rcp.dispatchers.formats import FormatsDispatcher
+from rcp.dispatchers.scale import ScaleDispatcher
+from rcp.dispatchers.servo import ServoDispatcher
 
 
 class MainApp(App):
@@ -34,9 +33,9 @@ class MainApp(App):
 
     home = ObjectProperty()
 
-    servo: ServoBar = ObjectProperty()
+    servo: ServoDispatcher = ObjectProperty()
 
-    scales: List[CoordBar] = ListProperty()
+    scales: list[ScaleDispatcher] = ListProperty()
 
     current_mode = ConfigParserProperty(
         defaultvalue=1, section="device", key="current_mode", config=config, val_type=int
@@ -79,17 +78,11 @@ class MainApp(App):
         self.current_mode = mode_id
 
     def get_spindle_scale(self):
-        """
-        Returns the current spindle scale if there is one configured, otherwise None
-        """
-        filtered_scales = [item for item in self.scales if item.spindleMode is True]
-        if len(filtered_scales) != 1:
-            return None
-        return filtered_scales[0]
+        return self.board.get_spindle_scale()
 
     def build(self):
         self.formats = FormatsDispatcher(id_override="0")
-        self.board = Board()
+        self.board = Board(formats=self.formats, offset_provider=self)
 
         if not self.formats.disable_error_reporting:
             log.info("Error reporting is enabled, configuring Sentry")
@@ -99,9 +92,9 @@ class MainApp(App):
                 traces_sample_rate=0.2,
             )
 
-        self.servo = ServoBar(id_override="0")
-        for i in range(4):
-            self.scales.append(CoordBar(inputIndex=i, device=self.board.device, id_override=f"{i}"))
+        # Backward compat aliases — most KV files use app.servo / app.scales
+        self.servo = self.board.servo
+        self.scales = list(self.board.scales)
 
         self.beep()
 

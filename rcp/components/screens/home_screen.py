@@ -6,6 +6,8 @@ from kivy.clock import Clock
 from kivy.uix.boxlayout import BoxLayout
 from kivy.uix.screenmanager import Screen
 
+from rcp.components.home.coordbar import CoordBar
+from rcp.components.home.servobar import ServoBar
 from rcp.components.home.jogbar import JogBar
 from rcp.components.home.statusbar import StatusBar
 from rcp.components.home.elsbar import ElsBar
@@ -34,12 +36,14 @@ class HomePage(Screen):
         if self.app.servo.elsMode and self.next_mode == 1:
             self.next_mode = 2
 
-        coord_bars = []
-        for scale in self.app.scales:
-            self.bars_container.add_widget(scale)
+        self.coord_bars = []
+        for scale_disp in self.app.scales:
+            cb = CoordBar(scale=scale_disp)
+            self.coord_bars.append(cb)
+            self.bars_container.add_widget(cb)
 
-        self.scales = coord_bars
-        self.bars_container.add_widget(self.app.servo)
+        self.servo_bar = ServoBar()
+        self.bars_container.add_widget(self.servo_bar)
 
         self._keyboard = Window._system_keyboard
         self._keyboard.bind(on_key_down=self._on_keyboard_down)
@@ -65,7 +69,7 @@ class HomePage(Screen):
         if self.next_mode == 1: # IDX
             self.bars_container: BoxLayout
             self.bars_container.remove_widget(self.bars_container.children[0])
-            self.bars_container.add_widget(self.app.servo)
+            self.bars_container.add_widget(self.servo_bar)
         if self.next_mode == 2: # ELS
             self.bars_container: BoxLayout
             self.bars_container.remove_widget(self.bars_container.children[0])

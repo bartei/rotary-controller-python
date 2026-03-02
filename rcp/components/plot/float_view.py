@@ -3,7 +3,6 @@ from kivy.core.window import Window
 from kivy.uix.floatlayout import FloatLayout
 from kivy.properties import ListProperty, NumericProperty, ObjectProperty, StringProperty
 
-from rcp.components.home.coordbar import CoordBar
 from rcp.dispatchers.circle_pattern import CirclePatternDispatcher
 from rcp.dispatchers.line_pattern import LinePatternDispatcher
 from rcp.dispatchers.rect_pattern import RectPatternDispatcher
@@ -50,7 +49,7 @@ class FloatView(FloatLayout):
         self.app.board.bind(update_tick=self.update_tick)
 
     def update_tick(self, *arg, **kv):
-        coord_bars: list[CoordBar] = self.app.scales
+        coord_bars = self.app.scales
         self.tool_x = coord_bars[self.plane_h_index].scaledPosition
         self.tool_y = coord_bars[self.plane_v_index].scaledPosition
         self.tool_z = coord_bars[2].scaledPosition

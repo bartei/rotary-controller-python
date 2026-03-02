@@ -4,7 +4,6 @@ from kivy.properties import StringProperty, ObjectProperty, NumericProperty
 from kivy.uix.boxlayout import BoxLayout
 from pydantic import BaseModel
 
-from rcp.components.home.coordbar import CoordBar
 from rcp import feeds
 from rcp.dispatchers.saving_dispatcher import SavingDispatcher
 from rcp.utils.kv_loader import load_kv
@@ -45,7 +44,7 @@ class ElsBar(BoxLayout, SavingDispatcher):
         self.bind(current_feeds_index=self.update_feeds_ratio)
 
     def update_current_position(self):
-        Factory.Keypad().show_with_callback(self.servo.set_current_position, self.servo.scaledPosition)
+        Factory.Keypad().show_with_callback(self.app.servo.set_current_position, self.app.servo.scaledPosition)
 
     def set_feed_ratio(self, table_name, index):
         table_instance = feeds.table[table_name]
@@ -55,7 +54,7 @@ class ElsBar(BoxLayout, SavingDispatcher):
 
     def update_feeds_ratio(self, instance, value):
         ratio = self.current_feeds_table[self.current_feeds_index].ratio
-        spindle_scale: CoordBar = self.app.get_spindle_scale()
+        spindle_scale = self.app.board.get_spindle_scale()
         if spindle_scale is not None:
             spindle_scale.syncRatioNum = ratio.numerator
             spindle_scale.syncRatioDen = ratio.denominator

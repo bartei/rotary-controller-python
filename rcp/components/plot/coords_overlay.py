@@ -5,7 +5,7 @@ from kivy.uix.boxlayout import BoxLayout
 from kivy.uix.label import Label
 from kivy.properties import NumericProperty
 
-from rcp.components.home.coordbar import CoordBar
+from rcp.dispatchers.scale import ScaleDispatcher
 from rcp.utils.kv_loader import load_kv
 
 log = Logger.getChild(__name__)
@@ -27,7 +27,7 @@ class CoordsOverlay(BoxLayout):
         self._tool_labels: list[tuple[int, str, Label]] = []
         super().__init__(**kwargs)
 
-        self._axes: list[tuple[int, CoordBar]] = [
+        self._axes: list[tuple[int, ScaleDispatcher]] = [
             (i, s) for i, s in enumerate(self.app.scales)
             if not s.spindleMode
         ]
@@ -64,7 +64,7 @@ class CoordsOverlay(BoxLayout):
         self._update_values()
 
     def _update_values(self, *args):
-        coord_bars: list[CoordBar] = self.app.scales
+        coord_bars: list[ScaleDispatcher] = self.app.scales
         h_idx = int(self.plane_h_index)
         v_idx = int(self.plane_v_index)
 

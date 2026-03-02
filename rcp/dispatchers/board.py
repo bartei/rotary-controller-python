@@ -1,8 +1,10 @@
 from kivy.clock import Clock
 from kivy.event import EventDispatcher
-from kivy.properties import NumericProperty, BooleanProperty, ObjectProperty
+from kivy.properties import NumericProperty, BooleanProperty, ObjectProperty, ListProperty
 
 from rcp.components.appsettings import config
+from rcp.dispatchers.scale import ScaleDispatcher
+from rcp.dispatchers.servo import ServoDispatcher
 from rcp.utils.communication import ConnectionManager
 
 from kivy.logger import Logger
@@ -14,8 +16,10 @@ class Board(EventDispatcher):
     update_tick = NumericProperty(0)
     blink = BooleanProperty(False)
     device = ObjectProperty(None, allownone=True)
+    servo = ObjectProperty(None, allownone=True)
+    scales = ListProperty()
 
-    def __init__(self, **kv):
+    def __init__(self, formats, offset_provider, **kv):
         super().__init__(**kv)
         self.fast_data_values = dict()
 
@@ -31,8 +35,22 @@ class Board(EventDispatcher):
         self.device = self.connection_manager['Global']
         self.connection_manager.connect()
 
+        self.servo = ServoDispatcher(board=self, formats=formats, id_override="0")
+        for i in range(4):
+            self.scales.append(ScaleDispatcher(
+                board=self, formats=formats, servo=self.servo,
+                offset_provider=offset_provider,
+                inputIndex=i, id_override=f"{i}",
+            ))
+
         self.task_update = Clock.schedule_interval(self.update, 1.0 / 30)
         Clock.schedule_interval(self.blinker, 1.0 / 4)
+
+    def get_spindle_scale(self):
+        filtered = [s for s in self.scales if s.spindleMode is True]
+        if len(filtered) != 1:
+            return None
+        return filtered[0]
 
     def update(self, *args):
         if not self.connection_manager.connected:
