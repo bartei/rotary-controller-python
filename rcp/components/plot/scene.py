@@ -2,7 +2,7 @@ import math
 
 from kivy.logger import Logger
 from kivy.uix.floatlayout import FloatLayout
-from kivy.properties import NumericProperty, ListProperty
+from kivy.properties import BooleanProperty, NumericProperty, ListProperty
 from kivy.graphics import Color, Line, Ellipse, Rectangle
 from kivy.uix.stencilview import StencilView
 
@@ -19,6 +19,7 @@ ORIGIN_COLOR = (0.306, 0.804, 0.769, 1)      # #4ecdc4
 SELECTED_COLOR = (1.0, 0.8, 0.208, 1)        # #ffcc35
 UNSELECTED_COLOR = (0.306, 0.804, 0.769, 0.4)  # #4ecdc4 @ 40%
 TOOL_COLOR = (1.0, 0.42, 0.42, 1)            # #ff6b6b
+AT_POSITION_COLOR = (0.2, 1.0, 0.2, 1)      # bright green
 
 GRID_SPACING = 50  # world-space mm
 
@@ -31,6 +32,7 @@ class Scene(FloatLayout, StencilView):
     dot_size = NumericProperty(20)
     tool_x = NumericProperty(0.0)
     tool_y = NumericProperty(0.0)
+    at_position = BooleanProperty(False)
 
     def __init__(self, **kwargs):
         from rcp.app import MainApp
@@ -42,6 +44,7 @@ class Scene(FloatLayout, StencilView):
         self.bind(tool_x=self.update_points)
         self.bind(tool_y=self.update_points)
         self.bind(selected_point=self.update_points)
+        self.bind(at_position=self.update_points)
 
     def update_points(self, *args):
         self.scaled_points = [
@@ -112,8 +115,8 @@ class Scene(FloatLayout, StencilView):
                 # Vertical arm
                 Line(points=[px, py - arm, px, py + arm], width=w)
 
-            # 6. Tool position — coral red diamond
-            Color(*TOOL_COLOR)
+            # 6. Tool position — diamond (green when at position, coral red otherwise)
+            Color(*(AT_POSITION_COLOR if self.at_position else TOOL_COLOR))
             tx = self.tool_x * self.zoom + cx
             ty = self.tool_y * self.zoom + cy
             r = self.dot_size * 0.7  # diamond half-size

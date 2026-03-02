@@ -46,6 +46,8 @@ class FormatsDispatcher(SavingDispatcher):
 
     disable_error_reporting = BooleanProperty(False)
 
+    position_tolerance = NumericProperty(0.05)
+
     def __init__(self, **kv):
         super().__init__(**kv)
         self.angle_speed_format = self.angle_speed_format.replace("RPM", "").replace(" ", "")

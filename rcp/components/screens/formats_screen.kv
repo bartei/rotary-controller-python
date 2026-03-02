@@ -59,6 +59,11 @@
           integer: True
           on_value: root.formats.font_size = int(self.value)
 
+        NumberItem:
+          name: "Position Tolerance (mm)"
+          value: root.formats.position_tolerance
+          on_value: root.formats.position_tolerance = self.value
+
         TitleItem:
           name: "Sound Settings"
         BoxLayout:

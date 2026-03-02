@@ -1,7 +1,9 @@
 from kivy.logger import Logger
 from kivy.core.window import Window
 from kivy.uix.floatlayout import FloatLayout
-from kivy.properties import ListProperty, NumericProperty, ObjectProperty, StringProperty
+import math
+
+from kivy.properties import BooleanProperty, ListProperty, NumericProperty, ObjectProperty, StringProperty
 
 from rcp.dispatchers.circle_pattern import CirclePatternDispatcher
 from rcp.dispatchers.line_pattern import LinePatternDispatcher
@@ -29,6 +31,7 @@ class FloatView(FloatLayout):
     plane_v_index = NumericProperty(1)
     plane_h_label = StringProperty("X")
     plane_v_label = StringProperty("Y")
+    at_position = BooleanProperty(False)
 
     def __init__(self, **kwargs):
         from rcp.app import MainApp
@@ -53,6 +56,17 @@ class FloatView(FloatLayout):
         self.tool_x = coord_bars[self.plane_h_index].scaledPosition
         self.tool_y = coord_bars[self.plane_v_index].scaledPosition
         self.tool_z = coord_bars[2].scaledPosition
+
+        if self.active_points and self.scene_canvas:
+            idx = self.scene_canvas.selected_point
+            if 0 <= idx < len(self.active_points):
+                pt = self.active_points[idx]
+                dist = math.hypot(self.tool_x - pt[0], self.tool_y - pt[1])
+                self.at_position = dist <= self.app.formats.position_tolerance
+            else:
+                self.at_position = False
+        else:
+            self.at_position = False
 
     def build_plane_pairs(self):
         from itertools import combinations
