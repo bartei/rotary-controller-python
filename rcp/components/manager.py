@@ -28,8 +28,13 @@ class Manager(ScreenManager):
 
         # Add screen for color picker
         from rcp.components.screens.color_picker_screen import ColorPickerScreen
-        self.color_picker = ColorPickerScreen(name="color_picker")
-        self.add_widget(self.color_picker)
+        self.app.color_picker = ColorPickerScreen(name="color_picker")
+        self.add_widget(self.app.color_picker)
+
+        # Add screen for font picker
+        from rcp.components.screens.font_picker_screen import FontPickerScreen
+        self.app.font_picker = FontPickerScreen(name="font_picker")
+        self.add_widget(self.app.font_picker)
 
         # Add screens for scales setup
         from rcp.components.screens.scale_screen import ScaleScreen

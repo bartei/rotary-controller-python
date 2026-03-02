@@ -30,6 +30,7 @@ class FormatsDispatcher(SavingDispatcher):
     angle_speed_format = StringProperty("{:+0.1f}")
 
     font_size = NumericProperty(24)
+    font_name = StringProperty("fonts/iosevka-regular.ttf")
 
     current_format = StringProperty("MM")
     speed_format = StringProperty()

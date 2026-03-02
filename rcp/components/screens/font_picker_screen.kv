@@ -1,0 +1,33 @@
+<FontPickerScreen>:
+  BoxLayout:
+    orientation: "vertical"
+    padding: 10
+    ScreenHeader:
+      text: "Font Picker"
+
+    ScrollView:
+      do_scroll_x: False
+      do_scroll_y: True
+      GridLayout:
+        id: font_grid
+        cols: 1
+        spacing: 2
+        size_hint_y: None
+        height: self.minimum_height
+
+    BoxLayout:
+      size_hint_y: None
+      height: 60
+      orientation: "horizontal"
+
+      Button:
+        text: "Cancel"
+        background_color: app.formats.cancel_color
+        on_release: app.manager.back()
+
+      Button:
+        text: "Apply"
+        background_color: app.formats.accept_color
+        on_release:
+          root.callback(root.font_path)
+          app.manager.back()

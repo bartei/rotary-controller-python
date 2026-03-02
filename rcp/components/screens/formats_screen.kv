@@ -1,6 +1,7 @@
 #: import StringItem rcp.components.widgets.string_item
 #: import NumberItem rcp.components.widgets.number_item
 #: import ColorItem rcp.components.widgets.color_item
+#: import FontItem rcp.components.widgets.font_item
 
 <FormatsScreen>:
   formats: app.formats
@@ -58,6 +59,11 @@
           value: int(root.formats.font_size)
           integer: True
           on_value: root.formats.font_size = int(self.value)
+
+        FontItem:
+          name: "Display Font"
+          font_path: app.formats.font_name
+          on_font_path: app.formats.font_name = self.font_path
 
         NumberItem:
           name: "Position Tolerance (mm)"

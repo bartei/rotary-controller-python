@@ -35,13 +35,11 @@ class BaseDevice:
         self.fast_data = dict()
         self.dm: ConnectionManager = connection_manager
         self.variables: List[VariableDefinition or BaseDevice] = []
+        self._variable_index: dict[str, VariableDefinition] = {}
         self.parse_addresses_from_definition()
 
     def __getitem__(self, key):
-        try:
-            var: VariableDefinition = [item for item in self.variables if item.name == key][0]
-        except IndexError:
-            raise KeyError(f"Variable with name: {key} not found")
+        var = self._variable_index[key]
 
         if var.count > 1:
             list_type = list()
@@ -54,11 +52,7 @@ class BaseDevice:
             return var.type.read_function(self.dm, var.address + self.base_address)
 
     def __setitem__(self, key, value):
-        try:
-            var = [item for item in self.variables if item.name == key][0]
-        except IndexError:
-            raise KeyError(f"Variable with name: {key} not found")
-
+        var = self._variable_index[key]
         var.type.write_function(self.dm, var.address + self.base_address, value, key)
         return
 
@@ -196,6 +190,7 @@ class BaseDevice:
             except Exception as e:
                 raise ValueError(f"Unable to find a matching type for: {tokens[0]}: {str(e)}") from e
 
+        self._variable_index = {v.name: v for v in self.variables}
         self.size = current_address
 
     def set_fast_data(self, values: List):

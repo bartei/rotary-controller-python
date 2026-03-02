@@ -1,0 +1,26 @@
+<FontItem>:
+  height: 60
+  size_hint_y: None
+
+  BoxLayout:
+    orientation: "horizontal"
+    Button:
+      size_hint_x: None
+      width: self.height
+      font_name: "fonts/Font Awesome 6 Free-Solid-900.otf"
+      font_size: 21
+      text: "\uf129"
+    Label:
+      size_hint_x: 0.7
+      text: root.name
+    Button:
+      size_hint_x: None
+      width: 250
+      font_name: root.font_path
+      font_size: 22
+      background_color: (0.25, 0.25, 0.25, 1)
+      text: "+123.456"
+      on_release:
+        app.font_picker.callback = root.set_font
+        app.font_picker.font_path = root.font_path
+        app.manager.goto("font_picker")
