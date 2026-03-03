@@ -3,6 +3,7 @@ from unittest.mock import patch, MagicMock
 import pytest
 
 from tests.dispatchers.conftest import MockFormats, MockOffsetProvider
+from rcp.dispatchers.axis import AxisDispatcher
 from rcp.dispatchers.board import Board
 from rcp.dispatchers.servo import ServoDispatcher
 from rcp.dispatchers.scale import ScaleDispatcher
@@ -46,6 +47,11 @@ class TestBoardCreation:
         for i, s in enumerate(board.scales):
             assert s.inputIndex == i
 
+    def test_creates_four_axis_dispatchers(self, board):
+        assert len(board.axes) == 4
+        for a in board.axes:
+            assert isinstance(a, AxisDispatcher)
+
 
 class TestGetSpindleScale:
     def test_returns_none_when_no_spindle(self, board):
@@ -62,3 +68,24 @@ class TestGetSpindleScale:
         board.scales[0].spindleMode = True
         board.scales[1].spindleMode = True
         assert board.get_spindle_scale() is None
+
+
+class TestGetSpindleAxis:
+    def test_returns_none_when_no_spindle(self, board):
+        for a in board.axes:
+            a.spindleMode = False
+        assert board.get_spindle_axis() is None
+
+    def test_returns_spindle_axis(self, board):
+        board.axes[2].spindleMode = True
+        result = board.get_spindle_axis()
+        assert result is board.axes[2]
+
+    def test_returns_none_when_multiple_spindles(self, board):
+        board.axes[0].spindleMode = True
+        board.axes[1].spindleMode = True
+        assert board.get_spindle_axis() is None
+
+    def test_spindle_propagates_to_primary_scale(self, board):
+        board.axes[2].spindleMode = True
+        assert board.scales[2].spindleMode is True

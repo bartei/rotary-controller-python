@@ -3,35 +3,34 @@
 
 ## Resolved
 
-### ~~3. God Object: MainApp~~ RESOLVED
-- `MainApp` has been significantly refactored (~107 lines). `Board`, `ServoDispatcher`, and `ScaleDispatcher` have been extracted to their own modules.
-
-### ~~4. Dual Architecture in board.py~~ RESOLVED
-- `rcp/dispatchers/board.py` now contains a single clean `Board` class (~84 lines).
-
-### ~~9. Double Assignment Bug~~ RESOLVED
-- Logic moved to `ServoDispatcher`; the double assignment is gone.
-
-### ~~8c. coord_bars unused~~ RESOLVED
-- `coord_bars` in `home_screen.py` is now populated and used.
-
 ### ~~10. No Test Suite~~ RESOLVED (partially)
-- Test suite now has 129 tests across 8 files:
+- Test suite now has 142 tests across 9 files:
   - `tests/dispatchers/test_board.py`
   - `tests/dispatchers/test_saving_dispatcher.py`
   - `tests/dispatchers/test_scale_dispatcher.py`
   - `tests/dispatchers/test_servo_dispatcher.py`
   - `tests/plot/test_at_position.py`
+  - `tests/screens/test_update_screen.py`
   - `tests/test_kv_loader.py`
   - `tests/test_kv_syntax.py`
   - `tests/utils/test_platform.py`
 - Still missing test coverage for: `utils/ctype_calc.py`, `feeds.py`, `utils/base_device.py`, `utils/devices.py`, `dispatchers/circle_pattern.py`, `dispatchers/line_pattern.py`, `dispatchers/rect_pattern.py`
 
-### ~~11. Linear Search in BaseDevice.__getitem__ / __setitem__~~ RESOLVED
-- Added `_variable_index` dict built once in `parse_addresses_from_definition()`. O(1) dict lookup replaces O(n) list comprehension.
+### ~~New: Dev Branch Installation~~ RESOLVED
+- Update screen now supports installing the `dev` branch for testing pre-release features
+- Gated behind "Allow installation of experimental versions" toggle
+- Warning confirmation dialog before dev install
+- Tested with 11 dedicated tests in `tests/screens/test_update_screen.py`
 
-### ~~1. Shell Injection in Update Screen~~ RESOLVED (non-issue)
-- Tag names come from our own GitHub releases, not user input. The release process is controlled server-side, so this is not an exploitable vector.
+### ~~New: Font Selection~~ RESOLVED
+- Added font picker screen (`rcp/components/screens/font_picker_screen.py`) following the ColorPickerScreen pattern
+- Added `FontItem` widget (`rcp/components/widgets/font_item.py`) following the ColorItem pattern
+- Font selection persisted via `font_name` property in `FormatsDispatcher`
+- Custom font applies to: `coordbar.kv`, `servobar.kv`, `elsbar.kv`, `jogbar.kv`
+- All other UI elements (global Label/Button rules, coords_overlay, formats_screen) remain hardcoded to iosevka
+
+### ~~New: Color/Font Picker Registration~~ RESOLVED
+- Fixed `color_picker` and `font_picker` screen references — stored on `self.app` (MainApp) instead of `self` (Manager) so KV `app.color_picker` / `app.font_picker` references work correctly
 
 ---
 

@@ -71,4 +71,4 @@
     size_hint: 1, 1
     font_name: "fonts/Font Awesome 6 Free-Solid-900.otf"
     text: "\uf05b"
-    on_release: app.scales[2].zero_position()
+    on_release: app.axes[2].zero_position() if len(app.axes) > 2 else None

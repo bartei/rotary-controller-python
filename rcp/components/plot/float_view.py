@@ -52,10 +52,12 @@ class FloatView(FloatLayout):
         self.app.board.bind(update_tick=self.update_tick)
 
     def update_tick(self, *arg, **kv):
-        coord_bars = self.app.scales
-        self.tool_x = coord_bars[self.plane_h_index].scaledPosition
-        self.tool_y = coord_bars[self.plane_v_index].scaledPosition
-        self.tool_z = coord_bars[2].scaledPosition
+        axes = self.app.axes
+        h = int(self.plane_h_index)
+        v = int(self.plane_v_index)
+        self.tool_x = axes[h].scaledPosition if h < len(axes) else 0.0
+        self.tool_y = axes[v].scaledPosition if v < len(axes) else 0.0
+        self.tool_z = axes[2].scaledPosition if len(axes) > 2 else 0.0
 
         if self.active_points and self.scene_canvas:
             idx = self.scene_canvas.selected_point
@@ -71,8 +73,8 @@ class FloatView(FloatLayout):
     def build_plane_pairs(self):
         from itertools import combinations
         non_spindle = [
-            i for i, s in enumerate(self.app.scales)
-            if not s.spindleMode
+            i for i, a in enumerate(self.app.axes)
+            if not a.spindleMode
         ]
         self.plane_pairs = list(combinations(non_spindle, 2))
         if not self.plane_pairs:
@@ -89,12 +91,18 @@ class FloatView(FloatLayout):
         log.info(f"plane now: {self.plane_label} (index={self._plane_index})")
 
     def _apply_plane(self):
+        if not self.plane_pairs:
+            return
+        self._plane_index = min(self._plane_index, len(self.plane_pairs) - 1)
         h, v = self.plane_pairs[self._plane_index]
+        axes = self.app.axes
+        # Clamp to valid range in case axes were removed
+        h = min(h, len(axes) - 1) if axes else 0
+        v = min(v, len(axes) - 1) if axes else 0
         self.plane_h_index = h
         self.plane_v_index = v
-        scales = self.app.scales
-        self.plane_h_label = scales[h].axisName if h < len(scales) else "?"
-        self.plane_v_label = scales[v].axisName if v < len(scales) else "?"
+        self.plane_h_label = axes[h].axis_name if h < len(axes) else "?"
+        self.plane_v_label = axes[v].axis_name if v < len(axes) else "?"
         self.plane_label = f"{self.plane_h_label}-{self.plane_v_label}"
 
     def update_active_points(self, *args):

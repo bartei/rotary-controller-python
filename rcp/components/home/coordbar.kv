@@ -7,9 +7,9 @@
   Button:
     width: 96
     size_hint_x: None
-    text: root.scale.axisName if root.scale else "?"
+    text: root.axis.axis_name if root.axis else "?"
     font_size: min(self.height / 1.5, self.width/1.5)
-    background_color: [0.2, 1, 0.2, 1] if (root.scale and root.scale.syncEnable) else [0.3, 0.3, 0.3, 1]
+    background_color: [0.2, 1, 0.2, 1] if (root.axis and root.axis.syncEnable) else [0.3, 0.3, 0.3, 1]
     on_release: root.toggle_sync()
 
   BoxLayout:
@@ -25,7 +25,7 @@
         font_size: min(self.height / 1.1, self.width/5)
         font_style: "bold"
         color: app.formats.display_color
-        text: root.scale.formattedPosition if root.scale else "--"
+        text: root.axis.formattedPosition if root.axis else "--"
         text_size: self.size
         halign: 'right'
         valign: 'center'
@@ -36,7 +36,7 @@
         font_size: self.height / 1.5
         font_style: "bold"
         color: app.formats.display_color
-        text: root.scale.formattedSpeed if root.scale else "--"
+        text: root.axis.formattedSpeed if root.axis else "--"
         text_size: self.size
         halign: 'right'
         valign: 'top'
@@ -59,11 +59,11 @@
         font_style: "bold"
         background_color: [0.3, 0.3, 0.3, 1]
         color: app.formats.display_color
-        text: str(int(root.scale.syncRatioNum)) if root.scale else "--"
+        text: str(int(root.axis.syncRatioNum)) if root.axis else "--"
         text_size: self.size
         halign: 'center'
         valign: 'middle'
-        on_release: Factory.Keypad(integer=True).show(root.scale, 'syncRatioNum') if root.scale else None
+        on_release: Factory.Keypad(integer=True).show(root.axis, 'syncRatioNum') if root.axis else None
 
     BoxLayout:
       size_hint_x: None
@@ -83,11 +83,11 @@
         font_style: "bold"
         background_color: [0.3, 0.3, 0.3, 1]
         color: app.formats.display_color
-        text: str(int(root.scale.syncRatioDen)) if root.scale else "--"
+        text: str(int(root.axis.syncRatioDen)) if root.axis else "--"
         text_size: self.size
         halign: 'center'
         valign: 'middle'
-        on_release: Factory.Keypad(integer=True).show(root.scale, 'syncRatioDen') if root.scale else None
+        on_release: Factory.Keypad(integer=True).show(root.axis, 'syncRatioDen') if root.axis else None
 
   Button:
     text: "Zero"

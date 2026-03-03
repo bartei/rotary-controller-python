@@ -7,17 +7,19 @@ load_kv(__file__)
 
 
 class CoordBar(BoxLayout):
-    """Pure UI widget displaying scale state. All logic lives in ScaleDispatcher."""
-    scale = ObjectProperty()
+    """Pure UI widget displaying axis state. All logic lives in AxisDispatcher."""
+    axis = ObjectProperty()
 
     def update_position(self):
-        if self.scale is not None:
-            self.scale.update_position()
+        if self.axis is not None:
+            self.axis.update_position()
 
     def toggle_sync(self):
-        if self.scale is not None:
-            self.scale.toggle_sync()
+        if self.axis is not None:
+            from rcp.app import MainApp
+            app = MainApp.get_running_app()
+            self.axis.toggle_sync(all_axes=list(app.axes))
 
     def zero_position(self):
-        if self.scale is not None:
-            self.scale.zero_position()
+        if self.axis is not None:
+            self.axis.zero_position()

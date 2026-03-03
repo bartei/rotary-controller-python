@@ -12,21 +12,17 @@
       text: "Setup"
 
     GridLayout:
-      spacing: 36
-      padding: 36
+      spacing: 20
+      padding: 20
       cols: 4
+      row_force_default: True
+      row_default_height: (self.height - self.padding[1] - self.padding[3] - self.spacing[1] * 2) / 3
       SetupButton:
-        text: "Scale 0: " + app.scales[0].axisName
-        on_release: app.manager.goto("scale_0")
+        text: "Inputs"
+        on_release: app.manager.goto("inputs_setup")
       SetupButton:
-        text: "Scale 1: " + app.scales[1].axisName
-        on_release: app.manager.goto("scale_1")
-      SetupButton:
-        text: "Scale 2: " + app.scales[2].axisName
-        on_release: app.manager.goto("scale_2")
-      SetupButton:
-        text: "Scale 3: " + app.scales[3].axisName
-        on_release: app.manager.goto("scale_3")
+        text: "Axes"
+        on_release: app.manager.goto("axes_setup")
       SetupButton:
         text: "Servo"
         on_release: app.manager.goto("servo")

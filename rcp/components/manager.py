@@ -36,10 +36,21 @@ class Manager(ScreenManager):
         self.app.font_picker = FontPickerScreen(name="font_picker")
         self.add_widget(self.app.font_picker)
 
-        # Add screens for scales setup
+        # Add inputs listing screen and individual scale screens
+        from rcp.components.screens.inputs_setup_screen import InputsSetupScreen
+        self.add_widget(InputsSetupScreen(name="inputs_setup"))
+
         from rcp.components.screens.scale_screen import ScaleScreen
         for i in range(len(self.app.scales)):
             self.add_widget(ScaleScreen(name=f"scale_{i}", scale=self.app.scales[i]))
+
+        # Add axes configuration screens
+        from rcp.components.screens.axes_setup_screen import AxesSetupScreen
+        self.add_widget(AxesSetupScreen(name="axes_setup"))
+
+        from rcp.components.screens.axis_screen import AxisScreen
+        for ax in self.app.axes:
+            self.add_widget(AxisScreen(name=f"axis_{ax.id_override}", axis=ax))
 
         # Add screen for servo setup
         from rcp.components.screens.servo_screen import ServoScreen

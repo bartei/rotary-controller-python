@@ -27,7 +27,8 @@ class HomePage(Screen):
         super().__init__(**kv)
 
         self.bars_container = self.ids['bars_container']
-        self.bars_container.add_widget(StatusBar())
+        self.status_bar = StatusBar()
+        self.bars_container.add_widget(self.status_bar)
         self.els_bar = ElsBar(id_override="0")
         self.jog_bar = JogBar()
 
@@ -37,18 +38,41 @@ class HomePage(Screen):
             self.next_mode = 2
 
         self.coord_bars = []
-        for scale_disp in self.app.scales:
-            cb = CoordBar(scale=scale_disp)
-            self.coord_bars.append(cb)
-            self.bars_container.add_widget(cb)
-
         self.servo_bar = ServoBar()
+        # The "mode bar" is the bottom widget that swaps between servo/els/jog
+        self.mode_bar = self.servo_bar
+
+        self._build_coord_bars()
         self.bars_container.add_widget(self.servo_bar)
 
         self._keyboard = Window._system_keyboard
         self._keyboard.bind(on_key_down=self._on_keyboard_down)
         self.app.bind(current_mode=self.change_mode)
+        self.app.bind(axes=self._on_axes_changed)
         self.change_mode(self, self.next_mode)
+
+    def _build_coord_bars(self):
+        """Create CoordBar widgets for each axis and add them to the container."""
+        for axis_disp in self.app.axes:
+            cb = CoordBar(axis=axis_disp)
+            self.coord_bars.append(cb)
+            self.bars_container.add_widget(cb)
+
+    def _on_axes_changed(self, instance, value):
+        """Rebuild coord bars when the axes list changes."""
+        # Remove old coord bars
+        for cb in self.coord_bars:
+            self.bars_container.remove_widget(cb)
+        self.coord_bars.clear()
+
+        # Remove the mode bar (bottom widget) so we can re-add it after new coord bars
+        self.bars_container.remove_widget(self.mode_bar)
+
+        # Rebuild
+        self._build_coord_bars()
+
+        # Re-add the current mode bar at the bottom
+        self.bars_container.add_widget(self.mode_bar)
 
     def change_mode(self, instance, value):
         self.next_mode = value
@@ -65,19 +89,15 @@ class HomePage(Screen):
         self.jog_bar.enable_jog = False
         self.app.servo.servoEnable = 0
 
-        # Visualize things properly
-        if self.next_mode == 1: # IDX
-            self.bars_container: BoxLayout
-            self.bars_container.remove_widget(self.bars_container.children[0])
-            self.bars_container.add_widget(self.servo_bar)
-        if self.next_mode == 2: # ELS
-            self.bars_container: BoxLayout
-            self.bars_container.remove_widget(self.bars_container.children[0])
-            self.bars_container.add_widget(self.els_bar)
-        if self.next_mode == 3: # JOG
-            self.bars_container: BoxLayout
-            self.bars_container.remove_widget(self.bars_container.children[0])
-            self.bars_container.add_widget(self.jog_bar)
+        # Swap the bottom mode bar
+        self.bars_container.remove_widget(self.mode_bar)
+        if self.next_mode == 1:  # IDX
+            self.mode_bar = self.servo_bar
+        elif self.next_mode == 2:  # ELS
+            self.mode_bar = self.els_bar
+        elif self.next_mode == 3:  # JOG
+            self.mode_bar = self.jog_bar
+        self.bars_container.add_widget(self.mode_bar)
 
     def on_touch_down(self, touch):
         self.app.beep()

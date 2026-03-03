@@ -1,0 +1,22 @@
+#: import ScreenHeader components.widgets.screen_header
+
+<InputsSetupScreen>:
+  BoxLayout:
+    orientation: "vertical"
+    padding: 10
+    ScreenHeader:
+      text: "Scale Inputs"
+
+    GridLayout:
+      id: inputs_container
+      spacing: 20
+      padding: 20
+      cols: 4
+      row_force_default: True
+      row_default_height: (self.height - self.padding[1] - self.padding[3] - self.spacing[1] * 2) / 3
+
+    BoxLayout:
+      id: page_footer
+      orientation: "horizontal"
+      size_hint_y: None
+      height: 0

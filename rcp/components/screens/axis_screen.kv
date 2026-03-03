@@ -1,0 +1,116 @@
+#: import NumberItem rcp.components.widgets.number_item
+#: import StringItem rcp.components.widgets.string_item
+#: import DropDownItem rcp.components.widgets.dropdown_item
+#: import BooleanItem rcp.components.widgets.boolean_item
+#: import TitleItem rcp.components.widgets.title_item
+
+<AxisScreen>:
+  BoxLayout:
+    orientation: "vertical"
+    padding: 10
+    ScreenHeader:
+      text: "Axis: {}".format(root.axis.axis_name if root.axis else "?")
+
+    ScrollView:
+      do_scroll_x: False
+      do_scroll_y: True
+      GridLayout:
+        id: grid_layout
+        cols: 1
+        spacing: 1
+        size_hint_y: None
+        height: self.minimum_height
+
+        StringItem:
+          name: "Axis Name"
+          value: root.axis.axis_name if root.axis else "?"
+          on_value: root.axis.axis_name = self.value
+        BooleanItem:
+          name: "Spindle Mode"
+          value: root.axis.spindleMode if root.axis else False
+          on_value: root.axis.spindleMode = self.value
+
+        TitleItem:
+          name: "Sync Ratio"
+        NumberItem:
+          name: "Sync Ratio Numerator"
+          value: root.axis.syncRatioNum if root.axis else 360
+          integer: True
+          on_value: root.axis.syncRatioNum = int(self.value)
+        NumberItem:
+          name: "Sync Ratio Denominator"
+          value: root.axis.syncRatioDen if root.axis else 100
+          integer: True
+          on_value: root.axis.syncRatioDen = int(self.value)
+
+        TitleItem:
+          name: "Transform Configuration"
+        DropDownItem:
+          name: "Transform Type"
+          value: root.transform_type_label
+          options: ["Identity", "Scaling", "Weighted Sum", "Angle Cos", "Angle Sin"]
+          on_value: root.transform_type_label = self.value
+
+        DropDownItem:
+          name: "Scale Input"
+          options: root.input_0_options
+          value: root.input_0
+          on_value: root.input_0 = self.value
+
+        # Scaling params
+        NumberItem:
+          disabled: root.transform_type_label not in ["Scaling", "Weighted Sum"]
+          name: "Weight Numerator"
+          value: root.weight_num
+          integer: True
+          on_value: root.weight_num = int(self.value)
+        NumberItem:
+          disabled: root.transform_type_label not in ["Scaling", "Weighted Sum"]
+          name: "Weight Denominator"
+          value: root.weight_den
+          integer: True
+          on_value: root.weight_den = int(self.value)
+
+        # Weighted Sum second input
+        DropDownItem:
+          disabled: root.transform_type_label != "Weighted Sum"
+          name: "Second Scale Input"
+          options: root.input_1_options
+          value: root.input_1
+          on_value: root.input_1 = self.value
+        NumberItem:
+          disabled: root.transform_type_label != "Weighted Sum"
+          name: "Second Weight Numerator"
+          value: root.weight_1_num
+          integer: True
+          on_value: root.weight_1_num = int(self.value)
+        NumberItem:
+          disabled: root.transform_type_label != "Weighted Sum"
+          name: "Second Weight Denominator"
+          value: root.weight_1_den
+          integer: True
+          on_value: root.weight_1_den = int(self.value)
+
+        # Angle params
+        NumberItem:
+          disabled: root.transform_type_label not in ["Angle Cos", "Angle Sin"]
+          name: "Angle (degrees)"
+          value: root.angle_degrees
+          on_value: root.angle_degrees = self.value
+
+    BoxLayout:
+      orientation: "horizontal"
+      size_hint_y: None
+      height: 60
+      spacing: 10
+      padding: [36, 0, 36, 10]
+      Button:
+        text: "Apply Transform"
+        font_size: 22
+        background_color: [0.2, 0.6, 0.2, 1]
+        on_release: root.apply_transform()
+      Button:
+        text: "Remove Axis"
+        font_size: 22
+        background_color: [0.8, 0.2, 0.2, 1]
+        on_release: root.remove_axis()
