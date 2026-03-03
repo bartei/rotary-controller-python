@@ -25,6 +25,7 @@ class ModePopup(Popup):
 
         buttons.add_widget(KeypadButton(text="ELS", return_value=2, on_release=self.confirm))
         buttons.add_widget(KeypadButton(text="JOG", return_value=3, on_release=self.confirm))
+        buttons.add_widget(KeypadButton(text="DRO", return_value=4, on_release=self.confirm))
         self.add_widget(buttons)
         self.callback_fn = None
 

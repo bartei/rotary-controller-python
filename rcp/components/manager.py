@@ -56,6 +56,10 @@ class Manager(ScreenManager):
         from rcp.components.screens.servo_screen import ServoScreen
         self.add_widget(ServoScreen(name="servo", servo=self.app.servo))
 
+        # Add screen for ELS setup
+        from rcp.components.screens.els_setup_screen import ElsSetupScreen
+        self.add_widget(ElsSetupScreen(name="els_setup", els=self.app.els))
+
         from rcp.components.screens.update_screen import UpdateScreen
         self.add_widget(UpdateScreen(name="update"))
 

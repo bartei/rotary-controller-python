@@ -9,6 +9,7 @@ log = Logger.getChild(__name__)
 from rcp.components.appsettings import config
 from rcp.dispatchers.axis import AxisDispatcher
 from rcp.dispatchers.board import Board
+from rcp.dispatchers.els import ElsDispatcher
 from rcp.dispatchers.formats import FormatsDispatcher
 from rcp.dispatchers.scale import ScaleDispatcher
 from rcp.dispatchers.servo import ServoDispatcher
@@ -39,6 +40,8 @@ class MainApp(App):
     scales: list[ScaleDispatcher] = ListProperty()
 
     axes: list[AxisDispatcher] = ListProperty()
+
+    els: ElsDispatcher = ObjectProperty()
 
     current_mode = ConfigParserProperty(
         defaultvalue=1, section="device", key="current_mode", config=config, val_type=int
@@ -102,6 +105,8 @@ class MainApp(App):
         self.servo = self.board.servo
         self.scales = list(self.board.scales)
         self.axes = list(self.board.axes)
+
+        self.els = ElsDispatcher(id_override="0")
 
         self.beep()
 

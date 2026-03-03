@@ -1,0 +1,34 @@
+#: import ScreenHeader components.widgets.screen_header
+#: import DropDownItem rcp.components.widgets.dropdown_item
+#: import TitleItem rcp.components.widgets.title_item
+
+<ElsSetupScreen>:
+  BoxLayout:
+    orientation: "vertical"
+    padding: 10
+    ScreenHeader:
+      text: "ELS Setup"
+
+    ScrollView:
+      do_scroll_x: False
+      do_scroll_y: True
+      GridLayout:
+        cols: 1
+        spacing: 1
+        size_hint_y: None
+        height: self.minimum_height
+
+        TitleItem:
+          name: "Axis Roles"
+        DropDownItem:
+          id: spindle_dropdown
+          name: "Spindle Axis"
+          on_value: root.on_spindle_selected(self, self.value)
+        DropDownItem:
+          id: z_dropdown
+          name: "Saddle Axis (Z)"
+          on_value: root.on_z_selected(self, self.value)
+        DropDownItem:
+          id: x_dropdown
+          name: "Cross Slide Axis (X)"
+          on_value: root.on_x_selected(self, self.value)

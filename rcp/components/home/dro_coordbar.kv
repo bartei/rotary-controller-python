@@ -1,0 +1,43 @@
+<DroCoordBar>:
+  orientation: "horizontal"
+  size_hint_y: 1
+  Button:
+    width: 96
+    size_hint_x: None
+    text: root.axis.axis_name if root.axis else "?"
+    font_size: min(self.height / 1.5, self.width/1.5)
+    background_color: [0.3, 0.3, 0.3, 1]
+
+  BoxLayout:
+    orientation: "vertical"
+    Button:
+      background_color: (0, 0, 0, 1)
+      size_hint_y: 0.7
+      font_name: app.formats.font_name
+      font_size: min(self.height / 1.1, self.width/5)
+      font_style: "bold"
+      color: app.formats.display_color
+      text: root.axis.formattedPosition if root.axis else "--"
+      text_size: self.size
+      halign: 'right'
+      valign: 'center'
+      on_release: root.update_position()
+    Label:
+      size_hint_y: 0.3
+      font_name: app.formats.font_name
+      font_size: self.height / 1.5
+      font_style: "bold"
+      color: app.formats.display_color
+      text: root.axis.formattedSpeed if root.axis else "--"
+      text_size: self.size
+      halign: 'right'
+      valign: 'top'
+
+  Button:
+    text: "Zero"
+    font_size: 24
+    font_style: "bold"
+    background_color: [0.5, 0.5, 0.5, 1]
+    width: self.height
+    size_hint_x: None
+    on_release: root.zero_position()

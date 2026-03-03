@@ -27,6 +27,8 @@ class HomeToolbar(BoxLayout):
             self.current_mode_desc = "ELS"
         if self.app.current_mode == 3:
             self.current_mode_desc = "JOG"
+        if self.app.current_mode == 4:
+            self.current_mode_desc = "DRO"
 
     def popup_mode(self, *_):
         ModePopup().show_with_callback(self.app.set_mode, self.app.current_mode)

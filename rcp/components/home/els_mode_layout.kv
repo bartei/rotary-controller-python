@@ -1,0 +1,47 @@
+<ElsSpindleInfo>:
+  orientation: "horizontal"
+
+  # Direction icon (matches axis name button: 96px wide, gray background)
+  Button:
+    width: 96
+    size_hint_x: None
+    font_name: "fonts/Font Awesome 6 Free-Solid-900.otf"
+    font_size: min(self.height / 2, self.width / 2)
+    background_color: [0.3, 0.3, 0.3, 1]
+    color: app.formats.display_color
+    text: root.direction_icon
+
+  # Main content: RPM (large, 70%) over position in degrees (small, 30%)
+  BoxLayout:
+    orientation: "vertical"
+    Button:
+      background_color: (0, 0, 0, 1)
+      size_hint_y: 0.7
+      font_name: app.formats.font_name
+      font_size: min(self.height / 1.1, self.width / 5)
+      font_style: "bold"
+      color: app.formats.display_color
+      text: root.spindle_rpm
+      text_size: self.size
+      halign: 'right'
+      valign: 'center'
+    Label:
+      size_hint_y: 0.3
+      font_name: app.formats.font_name
+      font_size: self.height / 1.5
+      font_style: "bold"
+      color: app.formats.display_color
+      text: root.spindle_position
+      text_size: self.size
+      halign: 'right'
+      valign: 'top'
+
+  # Zero button (square, matches CoordBar/DroCoordBar)
+  Button:
+    text: "Zero"
+    font_size: 24
+    font_style: "bold"
+    background_color: [0.5, 0.5, 0.5, 1]
+    width: self.height
+    size_hint_x: None
+    on_release: root.zero_spindle()
