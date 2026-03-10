@@ -2,7 +2,7 @@
 
 [![Discord](https://img.shields.io/discord/1386014070632878100?style=social)](https://discord.gg/EDtgj7Yayr) [![Shop at Provvedo](https://img.shields.io/badge/Shop-Provvedo-blue?logo=shopify&style=flat-square)](https://www.provvedo.com/shop)
 
-A **Kivy-based Digital Read-Out (DRO) and single-axis controller UI** for rotary tables and similar devices, designed to run on Raspberry Pi or desktop environments (Windows, macOS, Linux). Interfaces via RS-485 with a dedicated STM32-based control board.
+A **Kivy-based Digital Read-Out (DRO) and single-axis controller UI** for rotary tables and similar devices, designed to run on Raspberry Pi or desktop environments (Windows, macOS, Linux). Interfaces via RS-485/Modbus RTU with a dedicated STM32-based control board.
 
 🛒 **Purchase all boards from our shop:** [Provvedo Shop](https://www.provvedo.com/shop)
 
@@ -11,9 +11,15 @@ A **Kivy-based Digital Read-Out (DRO) and single-axis controller UI** for rotary
 ## 🚀 Features
 
 * Responsive touch-capable UI built with **Kivy**
-* Communicates over **RS-485** with an STM32 controller for stepper/encoder control ([github.com][1])
-* Works on Raspberry Pi 3/4, Windows, macOS, and Linux
-* Runs headless on Pi using the custom **OSPI** OS with pre-installed RCP ([github.com][1])
+* Communicates over **RS-485 Modbus RTU** with an STM32 controller ([rotary-controller-f4](https://github.com/bartei/rotary-controller-f4))
+* **Configurable axes** — add/remove axes, assign hardware scale inputs, apply transforms (identity, scaling, weighted sum, angle cos/sin)
+* **Electronic Lead Screw (ELS)** mode for synchronized threading and power feed on manual lathes
+* **Sync mode** with configurable gear ratios for spindle-synchronized movement
+* **Circle pattern calculator** for bolt hole patterns
+* Customizable display: fonts, colors, digit formats (metric/imperial/angle)
+* **Contextual help** — info button on every setting field with documentation and examples
+* Works on Raspberry Pi 3/4/5, Windows, macOS, and Linux
+* Runs headless on Pi using the custom **OSPI** OS with pre-installed RCP ([ospi](https://github.com/bartei/ospi))
 
 ---
 
@@ -21,15 +27,14 @@ A **Kivy-based Digital Read-Out (DRO) and single-axis controller UI** for rotary
 
 * **Hardware**
 
-  * Rotary controller board (STM32 firmware from `bartei/rotary-controller-f4`)
+  * Rotary controller board (STM32 firmware from [rotary-controller-f4](https://github.com/bartei/rotary-controller-f4))
   * RS-485 interface (e.g. via Power Hat)
-  * Raspberry Pi 3/4 for Pi deployments
+  * Raspberry Pi 3/4/5 for Pi deployments
 
 * **Software**
 
-  * Python 3.8+
-  * `uv` virtual environment manager
-  * `kivy`, `pyserial`, and other dependencies from `pyproject.toml`
+  * Python 3.10+
+  * [`uv`](https://docs.astral.sh/uv/) package manager
 
 ---
 
@@ -50,19 +55,24 @@ Install `uv` (Linux/macOS):
 curl -LsSf https://astral.sh/uv/install.sh | sh
 ```
 
-For Windows, follow instructions on the \[Astral uv docs].
+For Windows, see the [uv installation docs](https://docs.astral.sh/uv/getting-started/installation/).
 
-### 3. Create & Sync Virtual Environment
+### 3. Install Dependencies
 
 ```bash
-uv venv       # creates .venv/
-uv sync       # installs required dependencies
+uv sync
 ```
 
 ### 4. Run the App
 
 ```bash
-uv run python ./rcp/main.py
+uv run python -m rcp.main
+```
+
+### 5. Run Tests
+
+```bash
+uv run pytest
 ```
 
 ---
@@ -71,9 +81,9 @@ uv run python ./rcp/main.py
 
 ### Windows/macOS/Linux
 
-* Use Python >=3.8
-* Virtual environment recommended via `uv`
-* Ensure `pyserial` can access your RS-485 adapter (permissions on Linux/macOS)
+* Python >= 3.10
+* Virtual environment managed automatically by `uv`
+* Ensure your RS-485 adapter is accessible (check serial port permissions on Linux/macOS)
 
 ### Raspberry Pi & OSPI
 
@@ -98,18 +108,47 @@ uv run python ./rcp/main.py
 
 ---
 
+## 📂 Project Structure
+
+```
+rcp/
+├── main.py                    # Entry point (asyncio + Kivy event loop)
+├── app.py                     # MainApp class
+├── feeds.py                   # Feed/thread pitch configurations
+├── help/                      # Contextual help documents (markdown)
+├── components/                # UI layer
+│   ├── home/                  # Home screen (coordbar, servobar, elsbar, statusbar)
+│   ├── screens/               # Full-screen views (setup, scale, servo, formats, etc.)
+│   ├── widgets/               # Reusable form widgets with help button support
+│   ├── popups/                # Modal dialogs (keypad, help, feeds table, etc.)
+│   ├── toolbars/              # Toolbar buttons
+│   └── plot/                  # Plot/visualization
+├── dispatchers/               # Event dispatchers and state management
+│   ├── saving_dispatcher.py   # Auto-persisting properties to YAML
+│   ├── formats.py             # Display format settings
+│   ├── circle_pattern.py      # Circle pattern calculator
+│   └── board.py               # Board/device event dispatcher
+└── utils/                     # Hardware communication layer
+    ├── communication.py       # ConnectionManager (Modbus RTU)
+    ├── base_device.py         # C typedef parser and register I/O
+    └── devices.py             # Device type definitions
+```
+
+---
+
 ## 🛠️ Troubleshooting
 
 * **Serial issues**: Verify RS-485 wiring, correct serial port, and permissions
-* **Service failures (Pi)**: Check `journalctl` logs and Kivy log files, check the /var/log folder for OSPI release
+* **Service failures (Pi)**: Check `journalctl` logs and Kivy log files under `/var/log/`
+* **Display issues**: Adjust font size and display format in the Formats setup screen
 
 ---
 
 ## 📚 References & Related Projects
 
-* **Firmware & hardware:** \[rotary-controller-f4] ([github.com][3])
-* **PCB design & BOM:** \[rotary-controller-pcb] ([github.com][4])
-* **OSPI OS with pre-installed RCP:** \[ospi] ([github.com][2])
+* **Firmware & hardware:** [rotary-controller-f4](https://github.com/bartei/rotary-controller-f4)
+* **PCB design & BOM:** [rotary-controller-pcb](https://github.com/bartei/rotary-controller-pcb)
+* **OSPI OS with pre-installed RCP:** [ospi](https://github.com/bartei/ospi)
 
 ---
 
@@ -131,21 +170,10 @@ Contributions are welcome! Please:
 
 ## 🏆 Support
 
-Join our Discord community for support, collaboration, and updates.
+Join our [Discord community](https://discord.gg/EDtgj7Yayr) for support, collaboration, and updates.
 
 ---
 
 ## 📄 License
 
 Licensed under MIT. See `LICENSE` for full terms.
-
----
-
-*README last updated: June 23, 2025*
-
----
-
-[1]: https://github.com/bartei/rotary-controller-python"
-[2]: https://github.com/bartei/ospi"
-[3]: https://github.com/bartei/rotary-controller-f4"
-[4]: https://github.com/bartei/rotary-controller-pcb"

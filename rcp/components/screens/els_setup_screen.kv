@@ -23,12 +23,15 @@
         DropDownItem:
           id: spindle_dropdown
           name: "Spindle Axis"
+          help_file: "els_axis_roles.md"
           on_value: root.on_spindle_selected(self, self.value)
         DropDownItem:
           id: z_dropdown
           name: "Saddle Axis (Z)"
+          help_file: "els_axis_roles.md"
           on_value: root.on_z_selected(self, self.value)
         DropDownItem:
           id: x_dropdown
           name: "Cross Slide Axis (X)"
+          help_file: "els_axis_roles.md"
           on_value: root.on_x_selected(self, self.value)

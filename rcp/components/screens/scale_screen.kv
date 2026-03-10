@@ -22,10 +22,11 @@
           name: "Ratio Numerator"
           value: root.scale.ratioNum
           integer: True
+          help_file: "scales.md"
           on_value: root.scale.ratioNum = int(self.value)
         NumberItem:
           name: "Ratio Denominator"
           value: root.scale.ratioDen
           integer: True
-          help_file: "scales.rst"
+          help_file: "scales.md"
           on_value: root.scale.ratioDen = int(self.value)

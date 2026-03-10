@@ -1,5 +1,6 @@
 from kivy.logger import Logger
 from kivy.properties import StringProperty, BooleanProperty
+from rcp.components.popups.help_popup import HelpPopup  # noqa: F401
 from kivy.uix.boxlayout import BoxLayout
 
 from rcp.utils.kv_loader import load_kv
@@ -11,3 +12,4 @@ load_kv(__file__)
 class BooleanItem(BoxLayout):
     name = StringProperty("")
     value = BooleanProperty(False)
+    help_file = StringProperty("")

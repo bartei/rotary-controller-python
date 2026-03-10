@@ -29,12 +29,14 @@
           name: "Ratio Numerator"
           value: root.servo.ratioNum
           integer: True
+          help_file: "servo_gearing.md"
           on_value: root.servo.ratioNum = int(self.value)
         NumberItem:
           disabled: root.servo.elsMode
           name: "Ratio Denominator"
           value: root.servo.ratioDen
           integer: True
+          help_file: "servo_gearing.md"
           on_value: root.servo.ratioDen = int(self.value)
 
         TitleItem:
@@ -43,12 +45,14 @@
           name: "Maximum Speed (Steps/s)"
           value: root.servo.maxSpeed
           integer: True
+          help_file: "servo_max_speed.md"
           on_value: root.servo.maxSpeed = int(self.value)
 
         NumberItem:
           name: "Acceleration (Steps/s^2)"
           value: root.servo.acceleration
           integer: True
+          help_file: "servo_acceleration.md"
           on_value: root.servo.acceleration = int(self.value)
 
 
@@ -59,6 +63,7 @@
           name: "Units per 1 turn of the axis [360]"
           value: root.servo.unitsPerTurn
           integer: True
+          help_file: "units_per_turn.md"
           on_value: root.servo.unitsPerTurn = int(self.value)
 
 
@@ -67,20 +72,24 @@
         BooleanItem:
           name: "ELS Mode"
           value: root.servo.elsMode
+          help_file: "els_mode.md"
           on_value: root.servo.elsMode = self.value
         NumberItem:
           disabled: not root.servo.elsMode
           name: "Lead Screw Pitch in IN" if root.servo.leadScrewPitchIn else "Lead Screw Pitch in MM"
           value: root.servo.leadScrewPitch
+          help_file: "lead_screw_pitch.md"
           on_value: root.servo.leadScrewPitch = self.value
         BooleanItem:
           disabled: not root.servo.elsMode
           name: "Pitch in Inch"
           value: root.servo.leadScrewPitchIn
+          help_file: "lead_screw_pitch.md"
           on_value: root.servo.leadScrewPitchIn = self.value
         NumberItem:
           disabled: not root.servo.elsMode
           name: "Lead Screw Pitch Steps"
           value: root.servo.leadScrewPitchSteps
           integer: True
+          help_file: "lead_screw_pitch.md"
           on_value: root.servo.leadScrewPitchSteps = self.value

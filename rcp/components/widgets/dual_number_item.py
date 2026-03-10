@@ -1,5 +1,6 @@
 from kivy.logger import Logger
 from kivy.properties import StringProperty, NumericProperty
+from rcp.components.popups.help_popup import HelpPopup  # noqa: F401
 from kivy.uix.boxlayout import BoxLayout
 
 from rcp.utils.kv_loader import load_kv
@@ -11,6 +12,7 @@ load_kv(__file__)
 class DualNumberItem(BoxLayout):
     name = StringProperty("")
     value = NumericProperty(0.0)
+    help_file = StringProperty("")
     ratio = NumericProperty(1.0)
     scaled_value = NumericProperty(0.0)
 

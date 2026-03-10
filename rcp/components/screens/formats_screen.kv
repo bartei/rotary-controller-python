@@ -27,47 +27,56 @@
           name: "Metric Position Digits"
           value: int(root.formats.metric_position.replace("{:+0.", "").replace("f}", ""))
           integer: True
+          help_file: "format_digits.md"
           on_value: root.formats.metric_position = "{:+0." + str(self.value) + "f}"
         NumberItem:
           name: "Metric Speed Digits"
           value: int(root.formats.metric_speed.replace("{:+0.", "").replace("f}", ""))
           integer: True
+          help_file: "format_digits.md"
           on_value: root.formats.metric_speed = "{:+0." + str(self.value) + "f}"
         NumberItem:
           name: "Imperial Position Digits"
           value: int(root.formats.imperial_position.replace("{:+0.", "").replace("f}", ""))
           integer: True
+          help_file: "format_digits.md"
           on_value: root.formats.imperial_position = "{:+0." + str(self.value) + "f}"
         NumberItem:
           name: "Imperial Speed Digits"
           value: int(root.formats.imperial_speed.replace("{:+0.", "").replace("f}", ""))
           integer: True
+          help_file: "format_digits.md"
           on_value: root.formats.imperial_speed = "{:+0." + str(self.value) + "f}"
         NumberItem:
           name: "Angle Format Digits"
           value: int(root.formats.angle_format.replace("{:+0.", "").replace("f}", ""))
           integer: True
+          help_file: "format_digits.md"
           on_value: root.formats.angle_format = "{:+0." + str(self.value) + "f}"
         NumberItem:
           name: "Angle Speed (RPM) Format Digits"
           value: int(root.formats.angle_speed_format.replace("{:+0.", "").replace("f}", ""))
           integer: True
+          help_file: "format_digits.md"
           on_value: root.formats.angle_speed_format = "{:+0." + str(self.value) + "f}"
 
         NumberItem:
           name: "Default Font Size"
           value: int(root.formats.font_size)
           integer: True
+          help_file: "font_size.md"
           on_value: root.formats.font_size = int(self.value)
 
         FontItem:
           name: "Display Font"
           font_path: app.formats.font_name
+          help_file: "display_font.md"
           on_font_path: app.formats.font_name = self.font_path
 
         NumberItem:
           name: "Position Tolerance (mm)"
           value: root.formats.position_tolerance
+          help_file: "position_tolerance.md"
           on_value: root.formats.position_tolerance = self.value
 
         TitleItem:
@@ -98,24 +107,29 @@
         ColorItem:
           name: "Home Screen Digits"
           color: root.formats.display_color
+          help_file: "colors.md"
           on_color: root.formats.display_color = self.color
 
         ColorItem:
           name: "Accept Color"
           color: root.formats.accept_color
+          help_file: "colors.md"
           on_color: root.formats.accept_color = self.color
 
         ColorItem:
           name: "Cancel Color"
           color: root.formats.cancel_color
+          help_file: "colors.md"
           on_color: root.formats.cancel_color = self.color
 
         ColorItem:
           name: "Indicators On Color"
           color: root.formats.color_on
+          help_file: "colors.md"
           on_color: root.formats.color_on = self.color
 
         ColorItem:
           name: "Indicators Off Color"
           color: root.formats.color_off
+          help_file: "colors.md"
           on_color: root.formats.color_off = self.color

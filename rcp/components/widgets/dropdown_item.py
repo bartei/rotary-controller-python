@@ -1,5 +1,6 @@
 from kivy.logger import Logger
 from kivy.properties import StringProperty, ListProperty, ObjectProperty
+from rcp.components.popups.help_popup import HelpPopup  # noqa: F401
 from kivy.uix.boxlayout import BoxLayout
 from kivy.uix.dropdown import DropDown
 from kivy.uix.button import Button
@@ -14,6 +15,7 @@ class DropDownItem(BoxLayout):
     name = StringProperty("")
     value = StringProperty(False)
     options = ListProperty([])
+    help_file = StringProperty("")
     dropdown = ObjectProperty()
     main_button: Button = ObjectProperty()
 

@@ -1,0 +1,28 @@
+<HelpPopup>:
+  size_hint: 0.85, 0.85
+  auto_dismiss: True
+
+  BoxLayout:
+    orientation: "vertical"
+    padding: 10
+    spacing: 8
+
+    ScrollView:
+      do_scroll_x: False
+      do_scroll_y: True
+
+      Label:
+        text: root.help_text
+        size_hint_y: None
+        height: self.texture_size[1] + 20
+        text_size: self.width, None
+        font_size: 16
+        halign: "left"
+        valign: "top"
+        markup: False
+
+    Button:
+      size_hint_y: None
+      height: 50
+      text: "Close"
+      on_release: root.dismiss()

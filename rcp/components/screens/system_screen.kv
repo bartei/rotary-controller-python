@@ -73,11 +73,13 @@
         ButtonItem:
           name: "Refresh Storage Info"
           value: "Refresh"
+          help_file: "system_storage.md"
           on_release: root.refresh_storage_info()
         ButtonItem:
           name: "Resize Partition"
           value: "Running..." if root.is_running else ("Resize" if root.can_resize else "Already full")
           disabled: not root.can_resize or root.is_running
+          help_file: "system_storage.md"
           on_release: root.prompt_resize()
 
         TitleItem:

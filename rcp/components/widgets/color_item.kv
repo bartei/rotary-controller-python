@@ -11,6 +11,8 @@
       font_name: "fonts/Font Awesome 6 Free-Solid-900.otf"
       font_size: 21
       text: "\uf129"
+      disabled: not root.help_file
+      on_release: Factory.HelpPopup.show_help(root.help_file)
     Label:
       size_hint_x: 0.7
       text: root.name

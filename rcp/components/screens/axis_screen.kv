@@ -24,10 +24,12 @@
         StringItem:
           name: "Axis Name"
           value: root.axis.axis_name if root.axis else "?"
+          help_file: "axis_name.md"
           on_value: root.axis.axis_name = self.value
         BooleanItem:
           name: "Spindle Mode"
           value: root.axis.spindleMode if root.axis else False
+          help_file: "spindle_mode.md"
           on_value: root.axis.spindleMode = self.value
 
         TitleItem:
@@ -36,11 +38,13 @@
           name: "Sync Ratio Numerator"
           value: root.axis.syncRatioNum if root.axis else 360
           integer: True
+          help_file: "sync_ratio.md"
           on_value: root.axis.syncRatioNum = int(self.value)
         NumberItem:
           name: "Sync Ratio Denominator"
           value: root.axis.syncRatioDen if root.axis else 100
           integer: True
+          help_file: "sync_ratio.md"
           on_value: root.axis.syncRatioDen = int(self.value)
 
         TitleItem:
@@ -49,12 +53,14 @@
           name: "Transform Type"
           value: root.transform_type_label
           options: ["Identity", "Scaling", "Weighted Sum", "Angle Cos", "Angle Sin"]
+          help_file: "transform_type.md"
           on_value: root.transform_type_label = self.value
 
         DropDownItem:
           name: "Scale Input"
           options: root.input_0_options
           value: root.input_0
+          help_file: "scale_input.md"
           on_value: root.input_0 = self.value
 
         # Scaling params
@@ -63,12 +69,14 @@
           name: "Weight Numerator"
           value: root.weight_num
           integer: True
+          help_file: "weights.md"
           on_value: root.weight_num = int(self.value)
         NumberItem:
           disabled: root.transform_type_label not in ["Scaling", "Weighted Sum"]
           name: "Weight Denominator"
           value: root.weight_den
           integer: True
+          help_file: "weights.md"
           on_value: root.weight_den = int(self.value)
 
         # Weighted Sum second input
@@ -77,18 +85,21 @@
           name: "Second Scale Input"
           options: root.input_1_options
           value: root.input_1
+          help_file: "scale_input.md"
           on_value: root.input_1 = self.value
         NumberItem:
           disabled: root.transform_type_label != "Weighted Sum"
           name: "Second Weight Numerator"
           value: root.weight_1_num
           integer: True
+          help_file: "weights.md"
           on_value: root.weight_1_num = int(self.value)
         NumberItem:
           disabled: root.transform_type_label != "Weighted Sum"
           name: "Second Weight Denominator"
           value: root.weight_1_den
           integer: True
+          help_file: "weights.md"
           on_value: root.weight_1_den = int(self.value)
 
         # Angle params
@@ -96,6 +107,7 @@
           disabled: root.transform_type_label not in ["Angle Cos", "Angle Sin"]
           name: "Angle (degrees)"
           value: root.angle_degrees
+          help_file: "angle_degrees.md"
           on_value: root.angle_degrees = self.value
 
     BoxLayout:
