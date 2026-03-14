@@ -246,8 +246,8 @@ class BaseDevice:
 
                 self.dm.connected = True
             except Exception as e:
-                log.debug(str(e))
                 self.dm.connected = False
+                self.dm._log_error_once(str(e))
                 return
 
         with kev("struct"):

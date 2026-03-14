@@ -17,11 +17,34 @@ class ConnectionManager:
         self.address = address
         self.debug = debug
         self.device: minimalmodbus.Instrument | None = None
-        self.connected = False
+        self._connected = False
+
+        self._last_error_message: str | None = None
 
         self.definitions = []
         self.structures = dict()
         self._load_structures()
+
+    @property
+    def connected(self) -> bool:
+        return self._connected
+
+    @connected.setter
+    def connected(self, value: bool):
+        if value == self._connected:
+            return
+        self._connected = value
+        if value:
+            self._last_error_message = None
+            log.info(f"Communication restored with {self.serial_device}")
+        else:
+            log.warning(f"Communication lost with {self.serial_device}")
+
+    def _log_error_once(self, message: str):
+        """Log an error message only if it differs from the last one logged."""
+        if message != self._last_error_message:
+            self._last_error_message = message
+            log.error(message)
 
     def connect(self):
         if self.connected:
@@ -34,7 +57,6 @@ class ConnectionManager:
             self.device.serial.write_timeout = 0.1
             self.device.serial.baudrate = self.baudrate
             self.connected = True
-            log.info(f"Connected to {self.serial_device}")
         except Exception as e:
             self.device = None
             self.connected = False
@@ -94,7 +116,7 @@ def read_float(dm: ConnectionManager, address) -> float:
         return value
     except Exception as e:
         dm.connected = False
-        log.error(str(e))
+        dm._log_error_once(str(e))
         return 0
 
 
@@ -107,7 +129,7 @@ def write_float(dm, address, value, variable_name: Optional[str] = ""):
         log.info(f"Write {variable_name}: float {value} to address {address}")
     except Exception as e:
         dm.connected = False
-        log.error(str(e))
+        dm._log_error_once(str(e))
 
 
 def read_long(dm, address) -> int:
@@ -119,7 +141,7 @@ def read_long(dm, address) -> int:
         return value
     except Exception as e:
         dm.connected = False
-        log.error(str(e))
+        dm._log_error_once(str(e))
         return 0
 
 
@@ -135,7 +157,7 @@ def write_long(dm, address, value, variable_name: Optional[str] = ""):
         log.info(f"Write {variable_name}: long {value} to address {address}")
     except Exception as e:
         dm.connected = False
-        log.error(str(e))
+        dm._log_error_once(str(e))
 
 
 def read_unsigned(dm, address):
@@ -145,7 +167,7 @@ def read_unsigned(dm, address):
         return value
     except Exception as e:
         dm.connected = False
-        log.error(str(e))
+        dm._log_error_once(str(e))
         return 0
 
 
@@ -156,7 +178,7 @@ def write_unsigned(dm, address, value, variable_name: Optional[str] = ""):
         log.info(f"Write {variable_name}: unsigned {value} to address {address}")
     except Exception as e:
         dm.connected = False
-        log.error(str(e))
+        dm._log_error_once(str(e))
 
 
 def read_signed(dm, address):
@@ -166,7 +188,7 @@ def read_signed(dm, address):
         return value
     except Exception as e:
         dm.connected = False
-        log.error(str(e))
+        dm._log_error_once(str(e))
         return 0
 
 
@@ -177,7 +199,7 @@ def write_signed(dm, address, value, variable_name: Optional[str] = ""):
         log.info(f"Write {variable_name}: signed {value} to address {address}")
     except Exception as e:
         dm.connected = False
-        log.error(str(e))
+        dm._log_error_once(str(e))
 
 
 if __name__ == "__main__":
