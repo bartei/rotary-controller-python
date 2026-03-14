@@ -67,7 +67,6 @@ class ScaleDispatcher(SavingDispatcher):
         self.board.bind(connected=self.init_connection)
         self.board.bind(update_tick=self.on_update_tick)
         self.bind(position=self.update_scaledPosition)
-        self.bind(speed=self.update_scaledPosition)
         self.bind(ratioNum=self.update_scaledPosition)
         self.bind(ratioDen=self.update_scaledPosition)
         self.bind(syncRatioDen=self.set_sync_ratio)
@@ -143,16 +142,10 @@ class ScaleDispatcher(SavingDispatcher):
             if self.scaledPosition < 0:
                 self.scaledPosition += self.ratioNum
                 self.position += self.ratioDen
-
-            self.formattedPosition = self.formats.angle_speed_format.format(self.speed)
-            self.formattedSpeed = self.formats.position_format.format(self.scaledPosition)
         else:
             self.scaledPosition = float(
                 self.position * Fraction(self.ratioNum, self.ratioDen) + self.offsets[current_offset]
             ) * self.formats.factor
-
-            self.formattedPosition = self.formats.position_format.format(self.scaledPosition)
-            self.formattedSpeed = self.formats.speed_format.format(self.speed)
 
     def set_current_position(self, value):
         current_offset = self.offset_provider.currentOffset

@@ -163,13 +163,18 @@ class AxisDispatcher(SavingDispatcher):
             if primary_idx < len(self.scales):
                 self.speed = self.scales[primary_idx].speed
 
-            # Format
+            # Format — only update StringProperty when text actually changes
+            # to avoid triggering Kivy texture regeneration on every tick
             if self.spindleMode:
-                self.formattedPosition = self.formats.angle_speed_format.format(self.speed)
-                self.formattedSpeed = self.formats.position_format.format(self.scaledPosition)
+                fp = self.formats.angle_speed_format.format(self.speed)
+                fs = self.formats.position_format.format(self.scaledPosition)
             else:
-                self.formattedPosition = self.formats.position_format.format(self.scaledPosition)
-                self.formattedSpeed = self.formats.speed_format.format(self.speed)
+                fp = self.formats.position_format.format(self.scaledPosition)
+                fs = self.formats.speed_format.format(self.speed)
+            if fp != self.formattedPosition:
+                self.formattedPosition = fp
+            if fs != self.formattedSpeed:
+                self.formattedSpeed = fs
         except Exception as e:
             log.error(f"Error updating axis {self.axis_name}: {e}")
 
