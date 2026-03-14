@@ -143,11 +143,15 @@ class ServoDispatcher(SavingDispatcher):
 
             self.encoderPrevious = self.encoderCurrent
             self.encoderCurrent = self.board.fast_data_values['servoCurrent']
-            self.servoEnable = self.board.fast_data_values['servoEnable']
+            servoEnable = self.board.fast_data_values['servoEnable']
+            if servoEnable != self.servoEnable:
+                self.servoEnable = servoEnable
 
             steps_per_second = self.board.fast_data_values['servoSpeed']
             self.speed_history.append(steps_per_second)
-            self.speed = (sum(self.speed_history) / len(self.speed_history))
+            speed = sum(self.speed_history) / len(self.speed_history)
+            if speed != self.speed:
+                self.speed = speed
 
             delta = uint32_subtract_to_int32(self.encoderCurrent, self.encoderPrevious)
             self.position += delta
@@ -167,10 +171,12 @@ class ServoDispatcher(SavingDispatcher):
 
         if self.elsMode is False and self.unitsPerTurn > 0:
             self.scaledPosition = float(self.position * ratio) % self.unitsPerTurn
-            self.formattedPosition = self.formats.angle_format.format(self.scaledPosition)
+            fp = self.formats.angle_format.format(self.scaledPosition)
         else:
             self.scaledPosition = float(self.position * ratio) * self.formats.factor
-            self.formattedPosition = self.formats.position_format.format(self.scaledPosition)
+            fp = self.formats.position_format.format(self.scaledPosition)
+        if fp != self.formattedPosition:
+            self.formattedPosition = fp
 
     def go_next(self):
         self.preferredDirection = 1

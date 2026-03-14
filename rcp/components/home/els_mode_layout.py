@@ -32,20 +32,30 @@ class ElsSpindleInfo(BoxLayout):
     def _update_spindle(self, *args):
         axis = self.app.els.get_spindle_axis()
         if axis is None:
-            self.spindle_rpm = "--"
-            self.spindle_position = "--"
-            self.direction_icon = ICON_STOP
+            if self.spindle_rpm != "--":
+                self.spindle_rpm = "--"
+            if self.spindle_position != "--":
+                self.spindle_position = "--"
+            if self.direction_icon != ICON_STOP:
+                self.direction_icon = ICON_STOP
             return
 
-        self.spindle_rpm = axis.formattedPosition
-        self.spindle_position = self.app.formats.position_format.format(axis.scaledPosition) + "\u00b0"
+        rpm = axis.formattedPosition
+        if rpm != self.spindle_rpm:
+            self.spindle_rpm = rpm
+
+        pos = self.app.formats.position_format.format(axis.scaledPosition) + "\u00b0"
+        if pos != self.spindle_position:
+            self.spindle_position = pos
 
         if axis.speed > 0.5:
-            self.direction_icon = ICON_CW
+            icon = ICON_CW
         elif axis.speed < -0.5:
-            self.direction_icon = ICON_CCW
+            icon = ICON_CCW
         else:
-            self.direction_icon = ICON_STOP
+            icon = ICON_STOP
+        if icon != self.direction_icon:
+            self.direction_icon = icon
 
     def zero_spindle(self):
         axis = self.app.els.get_spindle_axis()
