@@ -3,6 +3,8 @@ import io
 import pstats
 import time
 from collections import deque
+from datetime import datetime
+from pathlib import Path
 
 from kivy.clock import Clock
 from kivy.logger import Logger
@@ -15,6 +17,7 @@ log = Logger.getChild(__name__)
 load_kv(__file__)
 
 FRAME_HISTORY_SIZE = 300  # ~10 seconds at 30fps
+PROFILE_DIR = Path.home() / ".config" / "rotary-controller-python" / "profiles"
 
 
 class ProfilingPanel(BoxLayout):
@@ -103,12 +106,36 @@ class ProfilingPanel(BoxLayout):
         stats2.sort_stats(pstats.SortKey.TIME)
         stats2.print_stats(self.top_n)
 
-        self.profile_results = (
+        text_report = (
             "=== Sorted by CUMULATIVE time ===\n"
             + result
             + "\n=== Sorted by INTERNAL time ===\n"
             + stream2.getvalue()
         )
+
+        saved_path = self._save_profile(text_report)
+        self.profile_results = text_report
+        if saved_path:
+            self.status_text = f"Saved to {saved_path}"
+
+    def _save_profile(self, text_report: str) -> Path | None:
+        try:
+            PROFILE_DIR.mkdir(parents=True, exist_ok=True)
+            timestamp = datetime.now().strftime("%Y%m%d_%H%M%S")
+
+            # Save binary .prof (for snakeviz / PyCharm / cProfile viewers)
+            prof_path = PROFILE_DIR / f"profile_{timestamp}.prof"
+            self._profiler.dump_stats(str(prof_path))
+
+            # Save human-readable text report
+            txt_path = PROFILE_DIR / f"profile_{timestamp}.txt"
+            txt_path.write_text(text_report)
+
+            log.info(f"Profile saved: {prof_path} and {txt_path}")
+            return PROFILE_DIR
+        except OSError as e:
+            log.error(f"Failed to save profile: {e}")
+            return None
 
     def reset_stats(self):
         """Reset all collected stats."""
