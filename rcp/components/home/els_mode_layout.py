@@ -1,5 +1,4 @@
-import time
-
+from kivy.clock import Clock
 from kivy.properties import StringProperty
 from kivy.uix.boxlayout import BoxLayout
 from kivy.uix.widget import Widget
@@ -29,7 +28,7 @@ class ElsSpindleInfo(BoxLayout):
     def __init__(self, **kwargs):
         from rcp.app import MainApp
         self.app: MainApp = MainApp.get_running_app()
-        self._zero_press_time = 0
+        self._long_press_event = None
         super().__init__(**kwargs)
         self.app.board.bind(update_tick=self._update_spindle)
 
@@ -62,16 +61,21 @@ class ElsSpindleInfo(BoxLayout):
             self.direction_icon = icon
 
     def on_zero_press(self):
-        self._zero_press_time = time.monotonic()
+        self._long_press_event = Clock.schedule_once(self._do_undo_zero, LONG_PRESS_THRESHOLD)
 
     def on_zero_release(self):
+        if self._long_press_event is not None:
+            self._long_press_event.cancel()
+            self._long_press_event = None
+            axis = self.app.els.get_spindle_axis()
+            if axis is not None:
+                axis.zero_position()
+
+    def _do_undo_zero(self, dt):
+        self._long_press_event = None
         axis = self.app.els.get_spindle_axis()
-        if axis is None:
-            return
-        if time.monotonic() - self._zero_press_time >= LONG_PRESS_THRESHOLD:
+        if axis is not None:
             axis.undo_zero()
-        else:
-            axis.zero_position()
 
 
 class ElsModeLayout(ModeLayout):

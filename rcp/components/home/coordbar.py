@@ -1,5 +1,4 @@
-import time
-
+from kivy.clock import Clock
 from kivy.properties import ObjectProperty
 from kivy.uix.boxlayout import BoxLayout
 
@@ -16,7 +15,7 @@ class CoordBar(BoxLayout):
 
     def __init__(self, **kwargs):
         super().__init__(**kwargs)
-        self._zero_press_time = 0
+        self._long_press_event = None
 
     def update_position(self):
         if self.axis is not None:
@@ -29,12 +28,16 @@ class CoordBar(BoxLayout):
             self.axis.toggle_sync(all_axes=list(app.axes))
 
     def on_zero_press(self):
-        self._zero_press_time = time.monotonic()
+        self._long_press_event = Clock.schedule_once(self._do_undo_zero, LONG_PRESS_THRESHOLD)
 
     def on_zero_release(self):
-        if self.axis is None:
-            return
-        if time.monotonic() - self._zero_press_time >= LONG_PRESS_THRESHOLD:
+        if self._long_press_event is not None:
+            self._long_press_event.cancel()
+            self._long_press_event = None
+            if self.axis is not None:
+                self.axis.zero_position()
+
+    def _do_undo_zero(self, dt):
+        self._long_press_event = None
+        if self.axis is not None:
             self.axis.undo_zero()
-        else:
-            self.axis.zero_position()
