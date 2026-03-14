@@ -66,16 +66,13 @@
 
 ## Performance (profiled on RPi3 — 5.7s capture)
 
-### PERF-1. Scene canvas full rebuild on every tick (39% CPU) 🔴
-- **Files:** `rcp/components/plot/float_view.py`, `rcp/components/plot/scene.py`
-- **Issue:** `FloatView.update_tick()` runs at 30Hz even when the plot screen is not visible. It sets `tool_x`/`tool_y` which trigger `Scene.update_points()`, clearing and rebuilding the entire canvas (grid, axes, points, tool marker) every tick. Measured at **2.225s internal time** (39% of total CPU).
-- **Action (a):** Guard `update_tick()` — skip when `app.manager.current != "plot"`.
-- **Action (b):** Split `Scene.update_points()` into static (grid, axes, pattern) and dynamic (tool marker) canvas groups. Only rebuild static on `points`/`zoom`/`size`/`selected_point` changes; update only the tool InstructionGroup on `tool_x`/`tool_y` changes.
+### ~~PERF-1. Scene canvas full rebuild on every tick (39% CPU)~~ RESOLVED
+- Guarded `FloatView.update_tick()` with screen visibility check
+- Split `Scene.update_points()` into `_update_static()` (grid, axes, pattern) and `_update_tool()` (tool marker) using separate `InstructionGroup`s
 
-### PERF-2. CoordsOverlay updates when plot not visible (contributes to text rendering)
-- **File:** `rcp/components/plot/coords_overlay.py`
-- **Issue:** `CoordsOverlay.update_tick()` runs at 30Hz regardless of screen visibility, updating multiple label texts and triggering `text_sdl2.get_extents()` calls.
-- **Action:** Guard with screen visibility check. Guard label text writes to skip when unchanged.
+### ~~PERF-2. CoordsOverlay updates when plot not visible~~ RESOLVED
+- Guarded `CoordsOverlay.update_tick()` with screen visibility check
+- Added unchanged-text guards to skip redundant label writes
 
 ### PERF-3. BaseDevice sub-instances recreated on every refresh (82 parse calls)
 - **File:** `rcp/utils/base_device.py`
@@ -142,8 +139,8 @@
 
 | Priority | Items | Effort | Impact |
 |----------|-------|--------|--------|
-| P0 - Performance | PERF-1 (scene rebuild — 39% CPU) | Low | Critical |
-| P0 - Performance | PERF-2 (coords overlay visibility) | Low | High |
+| ~~P0 - Performance~~ | ~~PERF-1 (scene rebuild — 39% CPU)~~ | ~~Low~~ | ~~Critical~~ |
+| ~~P0 - Performance~~ | ~~PERF-2 (coords overlay visibility)~~ | ~~Low~~ | ~~High~~ |
 | P1 - Performance | PERF-3 (BaseDevice cache) | Low | Medium |
 | P1 - Performance | PERF-4 (text rendering guards) | Low | Medium |
 | P1 - Performance | PERF-5 (Fraction caching) | Medium | Medium |

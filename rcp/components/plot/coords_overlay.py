@@ -61,6 +61,8 @@ class CoordsOverlay(BoxLayout):
             self._tool_labels.append((i, a, tool))
 
     def update_tick(self, *arg, **kv):
+        if self.app.manager.current != "plot":
+            return
         self._update_values()
 
     def _update_values(self, *args):
@@ -69,21 +71,27 @@ class CoordsOverlay(BoxLayout):
 
         for i, axis, lbl in self._tool_labels:
             pos = axis.scaledPosition
-            lbl.text = f"{axis.axis_name}: {pos:0.3f}"
+            text = f"{axis.axis_name}: {pos:0.3f}"
+            if lbl.text != text:
+                lbl.text = text
 
         for i, axis, lbl in self._sel_labels:
             if i == h_idx:
-                lbl.text = f"{axis.axis_name}: {self.selected_x:0.3f}"
+                text = f"{axis.axis_name}: {self.selected_x:0.3f}"
             elif i == v_idx:
-                lbl.text = f"{axis.axis_name}: {self.selected_y:0.3f}"
+                text = f"{axis.axis_name}: {self.selected_y:0.3f}"
             else:
-                lbl.text = f"{axis.axis_name}: --"
+                text = f"{axis.axis_name}: --"
+            if lbl.text != text:
+                lbl.text = text
 
         for i, axis, lbl in self._dtg_labels:
             tool_pos = axis.scaledPosition
             if i == h_idx:
-                lbl.text = f"{axis.axis_name}: {self.selected_x - tool_pos:0.3f}"
+                text = f"{axis.axis_name}: {self.selected_x - tool_pos:0.3f}"
             elif i == v_idx:
-                lbl.text = f"{axis.axis_name}: {self.selected_y - tool_pos:0.3f}"
+                text = f"{axis.axis_name}: {self.selected_y - tool_pos:0.3f}"
             else:
-                lbl.text = f"{axis.axis_name}: --"
+                text = f"{axis.axis_name}: --"
+            if lbl.text != text:
+                lbl.text = text
