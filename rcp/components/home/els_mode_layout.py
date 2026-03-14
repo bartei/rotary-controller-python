@@ -1,3 +1,5 @@
+import time
+
 from kivy.properties import StringProperty
 from kivy.uix.boxlayout import BoxLayout
 from kivy.uix.widget import Widget
@@ -15,6 +17,7 @@ ICON_CCW = "\uf0e2"  # rotate-left
 ICON_STOP = "\uf04d"  # stop
 
 MAX_ROW_HEIGHT = 150
+LONG_PRESS_THRESHOLD = 1.0
 
 
 class ElsSpindleInfo(BoxLayout):
@@ -26,6 +29,7 @@ class ElsSpindleInfo(BoxLayout):
     def __init__(self, **kwargs):
         from rcp.app import MainApp
         self.app: MainApp = MainApp.get_running_app()
+        self._zero_press_time = 0
         super().__init__(**kwargs)
         self.app.board.bind(update_tick=self._update_spindle)
 
@@ -57,9 +61,16 @@ class ElsSpindleInfo(BoxLayout):
         if icon != self.direction_icon:
             self.direction_icon = icon
 
-    def zero_spindle(self):
+    def on_zero_press(self):
+        self._zero_press_time = time.monotonic()
+
+    def on_zero_release(self):
         axis = self.app.els.get_spindle_axis()
-        if axis is not None:
+        if axis is None:
+            return
+        if time.monotonic() - self._zero_press_time >= LONG_PRESS_THRESHOLD:
+            axis.undo_zero()
+        else:
             axis.zero_position()
 
 

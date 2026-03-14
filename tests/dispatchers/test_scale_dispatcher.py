@@ -119,7 +119,7 @@ class TestZeroPosition:
         scale.zero_position()
         assert scale.position == pytest.approx(0.0)
 
-    def test_zero_toggle_restores_previous(self, scale):
+    def test_undo_zero_restores_previous(self, scale):
         scale.offset_provider.currentOffset = 0
         scale.formats.factor = Fraction(1, 1)
         scale.ratioNum = 1
@@ -127,12 +127,12 @@ class TestZeroPosition:
         scale.position = 100
         scale.update_scaledPosition()
 
-        # First zero
+        # Zero the position
         scale.zero_position()
         assert scale.position == pytest.approx(0.0)
 
-        # Toggle back (motion_detected is False after set_current_position)
-        scale.zero_position()
+        # Undo restores previous position
+        scale.undo_zero()
         assert scale.position == pytest.approx(100.0)
 
 

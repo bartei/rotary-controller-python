@@ -58,7 +58,6 @@ class ScaleDispatcher(SavingDispatcher):
 
         self.speed_history = collections.deque(maxlen=25)
         self.previous_position = 0
-        self.motion_detected = True
         self.previous_axis_time: float = 0
         self.previous_axis_pos: Decimal = Decimal(0)
         self.offset_provider.bind(currentOffset=self.update_scaledPosition)
@@ -150,7 +149,6 @@ class ScaleDispatcher(SavingDispatcher):
     def set_current_position(self, value):
         current_offset = self.offset_provider.currentOffset
         self.previous_position = self.scaledPosition
-        self.motion_detected = False
         if current_offset == 0:
             self.position = float(value / self.formats.factor / Fraction(self.ratioNum, self.ratioDen))
             self.offsets[current_offset] = 0
@@ -167,10 +165,10 @@ class ScaleDispatcher(SavingDispatcher):
             Keypad().show_with_callback(self.set_current_position, self.scaledPosition)
 
     def zero_position(self):
-        if self.motion_detected:
-            self.set_current_position(0)
-        else:
-            self.set_current_position(self.previous_position)
+        self.set_current_position(0)
+
+    def undo_zero(self):
+        self.set_current_position(self.previous_position)
 
     def speed_task(self, *args, **kv):
         if self.board.fast_data_values is None:
@@ -183,9 +181,6 @@ class ScaleDispatcher(SavingDispatcher):
         steps_per_second = self.board.fast_data_values.get('scaleSpeed', [0] * SCALES_COUNT)[self.inputIndex]
         self.speed_history.append(steps_per_second)
         avg_steps_per_second = (sum(self.speed_history) / len(self.speed_history))
-
-        if steps_per_second > 0:
-            self.motion_detected = True
 
         if self.spindleMode:
             self.speed = (avg_steps_per_second / self.ratioDen) * 60

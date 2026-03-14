@@ -250,8 +250,6 @@ class AxisDispatcher(SavingDispatcher):
     def set_current_position(self, value):
         """Set the axis to display the given value by adjusting offsets."""
         current_offset = self.offset_provider.currentOffset
-        self._previous_position = self.scaledPosition
-        self._motion_detected = False
 
         if current_offset == 0:
             # For offset 0: reverse through the transform to set scale positions
@@ -282,17 +280,11 @@ class AxisDispatcher(SavingDispatcher):
             Keypad().show_with_callback(self.set_current_position, self.scaledPosition)
 
     def zero_position(self):
-        """Zero the axis, or restore previous position on second press."""
-        if not hasattr(self, '_motion_detected'):
-            self._motion_detected = True
-        if not hasattr(self, '_previous_position'):
-            self._previous_position = 0
+        """Zero the axis, saving the current position for undo."""
+        self._previous_position = self.scaledPosition
+        self.set_current_position(0)
 
-        if self._motion_detected:
-            self.set_current_position(0)
-        else:
+    def undo_zero(self):
+        """Restore the position saved before the last zero operation."""
+        if hasattr(self, '_previous_position'):
             self.set_current_position(self._previous_position)
-
-    # This is checked by speed_task on scales to set motion_detected
-    def notify_motion(self):
-        self._motion_detected = True

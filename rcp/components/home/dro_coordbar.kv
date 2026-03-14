@@ -40,4 +40,5 @@
     background_color: [0.5, 0.5, 0.5, 1]
     width: self.height
     size_hint_x: None
-    on_release: root.zero_position()
+    on_press: root.on_zero_press()
+    on_release: root.on_zero_release()
