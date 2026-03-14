@@ -83,6 +83,13 @@
           on_release: root.prompt_resize()
 
         TitleItem:
+          name: "System"
+        ButtonItem:
+          name: "Reboot System"
+          value: "Reboot"
+          on_release: root.prompt_reboot()
+
+        TitleItem:
           name: "Operation Output"
         TextInput:
           size_hint_y: None

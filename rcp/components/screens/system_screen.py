@@ -85,6 +85,35 @@ class SystemScreen(Screen):
         log.info(message)
         self.status += f"{message}\n"
 
+    def prompt_reboot(self):
+        content = BoxLayout(orientation="vertical", spacing=10, padding=10)
+
+        btn_cancel = Button(text="Cancel", font_size=22)
+        btn_confirm = Button(text="Reboot Now", font_size=22)
+
+        content.add_widget(btn_confirm)
+        content.add_widget(btn_cancel)
+
+        popup = Popup(
+            title="Reboot the system?",
+            content=content,
+            size_hint=(0.6, 0.4),
+            auto_dismiss=False,
+        )
+
+        btn_cancel.bind(on_release=popup.dismiss)
+        btn_confirm.bind(on_release=lambda _: self._do_reboot(popup))
+
+        popup.open()
+
+    def _do_reboot(self, popup):
+        popup.dismiss()
+        self.log("Rebooting...")
+        try:
+            subprocess.Popen(["sudo", "reboot"])
+        except Exception as e:
+            self.log(f"Reboot failed: {e}")
+
     def prompt_resize(self):
         content = BoxLayout(orientation="vertical", spacing=10, padding=10)
 
