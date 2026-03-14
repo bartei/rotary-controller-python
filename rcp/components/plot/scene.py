@@ -3,7 +3,7 @@ import math
 from kivy.logger import Logger
 from kivy.uix.floatlayout import FloatLayout
 from kivy.properties import BooleanProperty, NumericProperty, ListProperty
-from kivy.graphics import Color, Line, Ellipse, Rectangle
+from kivy.graphics import Color, Line, Ellipse, Rectangle, InstructionGroup
 from kivy.uix.stencilview import StencilView
 
 from rcp.utils.kv_loader import load_kv
@@ -37,16 +37,23 @@ class Scene(FloatLayout, StencilView):
     def __init__(self, **kwargs):
         from rcp.app import MainApp
         self.app: MainApp = MainApp.get_running_app()
+        self._static_group = InstructionGroup()
+        self._tool_group = InstructionGroup()
         super(Scene, self).__init__(**kwargs)
-        self.bind(size=self.update_points)
-        self.bind(zoom=self.update_points)
-        self.bind(points=self.update_points)
-        self.bind(tool_x=self.update_points)
-        self.bind(tool_y=self.update_points)
-        self.bind(selected_point=self.update_points)
-        self.bind(at_position=self.update_points)
+        self.canvas.add(self._static_group)
+        self.canvas.add(self._tool_group)
+        self.bind(size=self._update_static)
+        self.bind(zoom=self._update_static)
+        self.bind(points=self._update_static)
+        self.bind(selected_point=self._update_static)
+        self.bind(at_position=self._update_static)
+        self.bind(size=self._update_tool)
+        self.bind(zoom=self._update_tool)
+        self.bind(tool_x=self._update_tool)
+        self.bind(tool_y=self._update_tool)
+        self.bind(at_position=self._update_tool)
 
-    def update_points(self, *args):
+    def _update_static(self, *args):
         self.scaled_points = [
             [
                 item[0] * self.zoom,
@@ -57,79 +64,85 @@ class Scene(FloatLayout, StencilView):
         cx = self.width / 2
         cy = self.height / 2
 
-        self.canvas.clear()
-        with self.canvas:
-            # 1. Background fill
-            Color(*BG_COLOR)
-            Rectangle(pos=(0, 0), size=(self.width, self.height))
+        self._static_group.clear()
 
-            # 2. Grid lines at GRID_SPACING world-space intervals
-            Color(*GRID_COLOR)
-            spacing = GRID_SPACING * self.zoom
-            if spacing > 2:  # skip grid when zoomed out too far
-                # Vertical grid lines
-                n_left = math.ceil(-cx / spacing)
-                n_right = math.floor((self.width - cx) / spacing)
-                for n in range(n_left, n_right + 1):
-                    if n == 0:
-                        continue  # axis drawn separately
-                    x = n * spacing + cx
-                    Line(points=[x, 0, x, self.height], width=1)
+        # 1. Background fill
+        self._static_group.add(Color(*BG_COLOR))
+        self._static_group.add(Rectangle(pos=(0, 0), size=(self.width, self.height)))
 
-                # Horizontal grid lines
-                n_bottom = math.ceil(-cy / spacing)
-                n_top = math.floor((self.height - cy) / spacing)
-                for n in range(n_bottom, n_top + 1):
-                    if n == 0:
-                        continue
-                    y = n * spacing + cy
-                    Line(points=[0, y, self.width, y], width=1)
+        # 2. Grid lines at GRID_SPACING world-space intervals
+        self._static_group.add(Color(*GRID_COLOR))
+        spacing = GRID_SPACING * self.zoom
+        if spacing > 2:  # skip grid when zoomed out too far
+            # Vertical grid lines
+            n_left = math.ceil(-cx / spacing)
+            n_right = math.floor((self.width - cx) / spacing)
+            for n in range(n_left, n_right + 1):
+                if n == 0:
+                    continue  # axis drawn separately
+                x = n * spacing + cx
+                self._static_group.add(Line(points=[x, 0, x, self.height], width=1))
 
-            # 3. Axes — teal, full widget span
-            Color(*AXIS_COLOR)
-            Line(points=[cx, 0, cx, self.height], width=1)
-            Line(points=[0, cy, self.width, cy], width=1)
+            # Horizontal grid lines
+            n_bottom = math.ceil(-cy / spacing)
+            n_top = math.floor((self.height - cy) / spacing)
+            for n in range(n_bottom, n_top + 1):
+                if n == 0:
+                    continue
+                y = n * spacing + cy
+                self._static_group.add(Line(points=[0, y, self.width, y], width=1))
 
-            # 4. Origin marker — teal cross (±15px)
-            Color(*ORIGIN_COLOR)
-            arm = 15
-            Line(points=[cx - arm, cy, cx + arm, cy], width=1.5)
-            Line(points=[cx, cy - arm, cx, cy + arm], width=1.5)
+        # 3. Axes — teal, full widget span
+        self._static_group.add(Color(*AXIS_COLOR))
+        self._static_group.add(Line(points=[cx, 0, cx, self.height], width=1))
+        self._static_group.add(Line(points=[0, cy, self.width, cy], width=1))
 
-            # 5. Pattern points — crosshair + dot markers
-            for i, p in enumerate(self.scaled_points):
-                px = p[0] + cx
-                py = p[1] + cy
-                if i == self.selected_point:
-                    Color(*SELECTED_COLOR)
-                    arm = 12
-                    w = 1.5
-                else:
-                    Color(*UNSELECTED_COLOR)
-                    arm = 8
-                    w = 1
-                # Center dot
-                Ellipse(pos=(px - 3, py - 3), size=(6, 6))
-                # Horizontal arm
-                Line(points=[px - arm, py, px + arm, py], width=w)
-                # Vertical arm
-                Line(points=[px, py - arm, px, py + arm], width=w)
+        # 4. Origin marker — teal cross (±15px)
+        self._static_group.add(Color(*ORIGIN_COLOR))
+        arm = 15
+        self._static_group.add(Line(points=[cx - arm, cy, cx + arm, cy], width=1.5))
+        self._static_group.add(Line(points=[cx, cy - arm, cx, cy + arm], width=1.5))
 
-            # 6. Tool position — diamond (green when at position, coral red otherwise)
-            Color(*(AT_POSITION_COLOR if self.at_position else TOOL_COLOR))
-            tx = self.tool_x * self.zoom + cx
-            ty = self.tool_y * self.zoom + cy
-            r = self.dot_size * 0.7  # diamond half-size
-            Line(
-                points=[
-                    tx, ty + r,       # top
-                    tx + r, ty,       # right
-                    tx, ty - r,       # bottom
-                    tx - r, ty,       # left
-                ],
-                close=True,
-                width=1.5,
-            )
+        # 5. Pattern points — crosshair + dot markers
+        for i, p in enumerate(self.scaled_points):
+            px = p[0] + cx
+            py = p[1] + cy
+            if i == self.selected_point:
+                self._static_group.add(Color(*SELECTED_COLOR))
+                arm = 12
+                w = 1.5
+            else:
+                self._static_group.add(Color(*UNSELECTED_COLOR))
+                arm = 8
+                w = 1
+            # Center dot
+            self._static_group.add(Ellipse(pos=(px - 3, py - 3), size=(6, 6)))
+            # Horizontal arm
+            self._static_group.add(Line(points=[px - arm, py, px + arm, py], width=w))
+            # Vertical arm
+            self._static_group.add(Line(points=[px, py - arm, px, py + arm], width=w))
+
+    def _update_tool(self, *args):
+        cx = self.width / 2
+        cy = self.height / 2
+
+        self._tool_group.clear()
+
+        # 6. Tool position — diamond (green when at position, coral red otherwise)
+        self._tool_group.add(Color(*(AT_POSITION_COLOR if self.at_position else TOOL_COLOR)))
+        tx = self.tool_x * self.zoom + cx
+        ty = self.tool_y * self.zoom + cy
+        r = self.dot_size * 0.7  # diamond half-size
+        self._tool_group.add(Line(
+            points=[
+                tx, ty + r,       # top
+                tx + r, ty,       # right
+                tx, ty - r,       # bottom
+                tx - r, ty,       # left
+            ],
+            close=True,
+            width=1.5,
+        ))
 
     def on_touch_up(self, touch):
         touch_x = touch.x - self.width / 2

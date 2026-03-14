@@ -1,5 +1,6 @@
 #: import StringItem rcp.components.widgets.string_item
 #: import NumberItem rcp.components.widgets.number_item
+#: import BooleanItem rcp.components.widgets.boolean_item
 #: import ColorItem rcp.components.widgets.color_item
 #: import FontItem rcp.components.widgets.font_item
 
@@ -78,6 +79,14 @@
           value: root.formats.position_tolerance
           help_file: "position_tolerance.md"
           on_value: root.formats.position_tolerance = self.value
+
+        TitleItem:
+          name: "Display"
+        BooleanItem:
+          name: "Hide Mouse Cursor"
+          value: root.formats.hide_mouse_cursor
+          help_file: "hide_mouse_cursor.md"
+          on_value: root.formats.hide_mouse_cursor = self.value
 
         TitleItem:
           name: "Sound Settings"

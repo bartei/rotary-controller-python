@@ -2,6 +2,7 @@ import os
 
 import sentry_sdk
 from kivy.app import App
+from kivy.config import Config
 from kivy.properties import ObjectProperty, ConfigParserProperty, NumericProperty, ListProperty, StringProperty
 from kivy.logger import Logger
 log = Logger.getChild(__name__)
@@ -113,6 +114,17 @@ class MainApp(App):
         import importlib.metadata
         self.version = "v" + importlib.metadata.version("rcp")
 
+        self._apply_mouse_cursor()
+        self.formats.bind(hide_mouse_cursor=lambda *_: self._apply_mouse_cursor())
+
         from rcp.components.manager import Manager
         self.manager = Manager()
         return self.manager
+
+    def _apply_mouse_cursor(self):
+        if self.formats.hide_mouse_cursor:
+            Config.set('graphics', 'show_cursor', '0')
+        else:
+            Config.set('graphics', 'show_cursor', '1')
+        from kivy.core.window import Window
+        Window.show_cursor = not self.formats.hide_mouse_cursor

@@ -52,6 +52,8 @@ class FloatView(FloatLayout):
         self.app.board.bind(update_tick=self.update_tick)
 
     def update_tick(self, *arg, **kv):
+        if self.app.manager.current != "plot":
+            return
         axes = self.app.axes
         h = int(self.plane_h_index)
         v = int(self.plane_v_index)

@@ -64,22 +64,63 @@
 
 ---
 
-## Performance
+## Performance (profiled on RPi3 — 5.7s capture)
 
-### 12. Redundant Device Writes from Multiple Bindings
+### PERF-1. Scene canvas full rebuild on every tick (39% CPU) 🔴
+- **Files:** `rcp/components/plot/float_view.py`, `rcp/components/plot/scene.py`
+- **Issue:** `FloatView.update_tick()` runs at 30Hz even when the plot screen is not visible. It sets `tool_x`/`tool_y` which trigger `Scene.update_points()`, clearing and rebuilding the entire canvas (grid, axes, points, tool marker) every tick. Measured at **2.225s internal time** (39% of total CPU).
+- **Action (a):** Guard `update_tick()` — skip when `app.manager.current != "plot"`.
+- **Action (b):** Split `Scene.update_points()` into static (grid, axes, pattern) and dynamic (tool marker) canvas groups. Only rebuild static on `points`/`zoom`/`size`/`selected_point` changes; update only the tool InstructionGroup on `tool_x`/`tool_y` changes.
+
+### PERF-2. CoordsOverlay updates when plot not visible (contributes to text rendering)
+- **File:** `rcp/components/plot/coords_overlay.py`
+- **Issue:** `CoordsOverlay.update_tick()` runs at 30Hz regardless of screen visibility, updating multiple label texts and triggering `text_sdl2.get_extents()` calls.
+- **Action:** Guard with screen visibility check. Guard label text writes to skip when unchanged.
+
+### PERF-3. BaseDevice sub-instances recreated on every refresh (82 parse calls)
+- **File:** `rcp/utils/base_device.py`
+- **Issue:** `set_fast_data()` calls `item.type.read_function(self.dm, addr)` which creates new BaseDevice instances on every `refresh()`. Each `__init__` parses C typedef strings. 82 unnecessary parse operations per 5.7s window.
+- **Action:** Cache sub-device instances after first creation.
+
+### PERF-4. Text rendering overhead (7% CPU — 9642 get_extents calls)
+- **Files:** `rcp/dispatchers/servo.py`, `rcp/components/plot/coords_overlay.py`
+- **Issue:** Every Label text change triggers `text_sdl2.get_extents()` for font measurement. ServoDispatcher doesn't guard `formattedPosition` writes.
+- **Action:** Guard `formattedPosition` in servo.py (same pattern as axis.py). Guard label text in coords_overlay.
+
+### PERF-5. Fraction arithmetic in hot paths
+- **Files:** `rcp/dispatchers/scale.py`, `rcp/dispatchers/servo.py`, `rcp/dispatchers/axis_transform.py`
+- **Issue:** `Fraction(ratioNum, ratioDen)` constructed at 30Hz per scale/servo. Each involves GCD computation.
+- **Action:** Cache ratio as float, recompute only when ratioNum/ratioDen change. Pre-compute float weight in `ScaleWeight`. Keep Fraction in `set_sync_ratio()` where precision matters.
+
+### PERF-6. No Save Debouncing
+- **File:** `rcp/dispatchers/saving_dispatcher.py:69-85`
+- **Issue:** Every property change triggers an immediate synchronous file write via `save_settings()`. Changing multiple properties in rapid succession writes the file multiple times.
+- **Action:** Add a debounce mechanism (e.g., `Clock.schedule_once` with a short delay).
+
+### PERF-7. Redundant property writes in ServoDispatcher
+- **File:** `rcp/dispatchers/servo.py`
+- **Issue:** `on_update_tick()` writes `self.servoEnable` and `self.speed` every tick even when unchanged. Each triggers Kivy property dispatch chain.
+- **Action:** Compare before writing.
+
+### PERF-8. Duplicate factor bindings
+- **Files:** `rcp/dispatchers/scale.py`, `rcp/dispatchers/axis.py`
+- **Issue:** Both bind `formats.factor` to two separate callbacks. A single factor change fires both.
+- **Action:** Bind to one handler that calls both.
+
+### PERF-9. Redundant Device Writes from Multiple Bindings
 - **File:** `rcp/dispatchers/scale.py:73-74, 126-129`
-- **Issue:** `syncRatioDen` and `syncRatioNum` each trigger `set_sync_ratio` twice per change — once via `self.bind()` and once via `on_syncRatioNum`/`on_syncRatioDen` handlers. Writing to the device also re-triggers these callbacks.
-- **Action:** Remove the duplicate bindings (keep either `bind()` or `on_*` handlers, not both). Add debouncing or guard against re-entrant calls.
+- **Issue:** `syncRatioDen` and `syncRatioNum` each trigger `set_sync_ratio` twice per change — once via `self.bind()` and once via `on_syncRatioNum`/`on_syncRatioDen` handlers.
+- **Action:** Remove the duplicate bindings (keep either `bind()` or `on_*` handlers, not both).
 
-### 13. Separate Speed Polling Loop
+### PERF-10. Separate Speed Polling Loop
 - **File:** `rcp/dispatchers/scale.py:76`
 - **Issue:** `speed_task` runs at 25fps via its own `Clock.schedule_interval`, independently from the main `update_tick` loop. Creates unnecessary overhead.
 - **Action:** Consolidate speed calculation into the main `update_tick` handler.
 
-### 14. No Save Debouncing
-- **File:** `rcp/dispatchers/saving_dispatcher.py:69-85`
-- **Issue:** Every property change triggers an immediate synchronous file write via `save_settings()`. Changing multiple properties in rapid succession writes the file multiple times.
-- **Action:** Add a debounce mechanism (e.g., `Clock.schedule_once` with a short delay).
+### PERF-11. Identity transform fast path
+- **File:** `rcp/dispatchers/axis.py`
+- **Issue:** `_update_position()` allocates a dict every tick, even for identity transforms (single scale, weight=1).
+- **Action:** Short-circuit for single-contribution transforms.
 
 ---
 
@@ -99,9 +140,15 @@
 
 ## Priority Order
 
-| Priority | Items | Effort |
-|----------|-------|--------|
-| P1 - Cleanup | #8 (dead code, TraceOutput bug) | Low |
-| P3 - Architecture | #5 (circular imports), #6 (comm methods), #7 (parser duplication) | High |
-| P3 - Performance | #12 (redundant writes), #13 (speed loop), #14 (save debouncing) | Medium |
-| P4 - Quality | #15 (test coverage gaps) | Medium |
+| Priority | Items | Effort | Impact |
+|----------|-------|--------|--------|
+| P0 - Performance | PERF-1 (scene rebuild — 39% CPU) | Low | Critical |
+| P0 - Performance | PERF-2 (coords overlay visibility) | Low | High |
+| P1 - Performance | PERF-3 (BaseDevice cache) | Low | Medium |
+| P1 - Performance | PERF-4 (text rendering guards) | Low | Medium |
+| P1 - Performance | PERF-5 (Fraction caching) | Medium | Medium |
+| P2 - Performance | PERF-6 (save debouncing) | Low | Medium |
+| P2 - Performance | PERF-7 to PERF-11 (misc) | Medium | Low-Medium |
+| P1 - Cleanup | #8 (dead code, TraceOutput bug) | Low | - |
+| P3 - Architecture | #5, #6, #7 | High | - |
+| P4 - Quality | #15 (test coverage gaps) | Medium | - |

@@ -1,0 +1,1 @@
+Hide the mouse cursor. Enable this when running on a Raspberry Pi with a touchscreen to prevent the cursor from appearing on screen.
