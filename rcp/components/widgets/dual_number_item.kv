@@ -15,13 +15,16 @@
     Label:
       size_hint_x: 0.6
       text: root.name
+      font_size: app.formats.font_size
     Button:
       size_hint_x: None
       width: 125
       text: "{: 0.4f}".format(root.value / root.ratio)
+      font_size: app.formats.font_size
       on_release: Factory.Keypad().show(root, 'scaled_value')
     Button:
       size_hint_x: None
       width: 125
       text: "{: 0.4f}".format(root.value)
+      font_size: app.formats.font_size
       on_release: Factory.Keypad().show(root, 'value')

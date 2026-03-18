@@ -49,6 +49,8 @@ class ConnectionManager:
     def connect(self):
         if self.connected:
             return
+        if self.device is not None:
+            return
         try:
             self.device = minimalmodbus.Instrument(
                 port=self.serial_device, slaveaddress=self.address, debug=self.debug
@@ -56,11 +58,10 @@ class ConnectionManager:
             self.device.serial.timeout = 0.1
             self.device.serial.write_timeout = 0.1
             self.device.serial.baudrate = self.baudrate
-            self.connected = True
         except Exception as e:
             self.device = None
             self.connected = False
-            log.error(f"Failed to connect to {self.serial_device}: {str(e)}")
+            self._log_error_once(f"Failed to connect to {self.serial_device}: {str(e)}")
 
     def _load_structures(self):
         from rcp.utils import devices

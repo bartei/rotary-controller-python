@@ -13,12 +13,14 @@
         text: root.text
         text_size: root.size
         bold: True
+        font_size: app.formats.font_size
         valign: root.valign
         halign: root.halign
       Button:
         size_hint_x: None
         width: 250
         text: "Back"
+        font_size: app.formats.font_size
         on_release:
           app.manager.back()
     Widget:

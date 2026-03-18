@@ -14,11 +14,12 @@
     Label:
       size_hint_x: 0.7
       text: root.name
+      font_size: app.formats.font_size
     ToggleButton:
       size_hint_x: None
       width: 250
       multiline: False
-      font_size: 22
+      font_size: app.formats.font_size
       text: 'ON' if root.value else 'OFF'
       state: 'down' if root.value else 'normal'
       on_release: root.value = True if self.state == 'down' else False

@@ -158,10 +158,10 @@ class Board(EventDispatcher):
         return filtered[0]
 
     def update(self, *args):
-        if not self.connection_manager.connected:
+        if self.connection_manager.device is None:
             self.connection_manager.connect()
 
-        if not self.connection_manager.connected:
+        if self.connection_manager.device is None:
             self.connected = False
             self.task_update.timeout = 2.0
             self.update_tick = (self.update_tick + 1) % 100
@@ -170,18 +170,20 @@ class Board(EventDispatcher):
         try:
             self.fast_data_values = self.device['fastData'].refresh()
         except Exception as e:
-            log.error(f"No connection: {str(e)}")
+            self.connection_manager._log_error_once(str(e))
             self.connection_manager.connected = False
             self.connected = False
-            self.task_update.timeout = 2.0
+            self.task_update.timeout = 1.0
             self.update_tick = (self.update_tick + 1) % 100
             return
 
-        # Handle state change disconnected -> connected
-        if not self.connected and self.connection_manager.connected:
+        was_disconnected = not self.connected
+        self.connection_manager.connected = True
+        self.connected = True
+
+        if was_disconnected:
             self.task_update.timeout = 1.0 / 30
 
-        self.connected = self.connection_manager.connected
         self.update_tick = (self.update_tick + 1) % 100
 
     def blinker(self, *args):
