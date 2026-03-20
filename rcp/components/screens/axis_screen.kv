@@ -1,5 +1,5 @@
-#: import NumberItem rcp.components.widgets.number_item
 #: import StringItem rcp.components.widgets.string_item
+#: import NumberItem rcp.components.widgets.number_item
 #: import DropDownItem rcp.components.widgets.dropdown_item
 #: import BooleanItem rcp.components.widgets.boolean_item
 #: import TitleItem rcp.components.widgets.title_item
@@ -52,7 +52,7 @@
         DropDownItem:
           name: "Transform Type"
           value: root.transform_type_label
-          options: ["Identity", "Scaling", "Weighted Sum", "Angle Cos", "Angle Sin"]
+          options: ["Identity", "Sum"]
           help_file: "transform_type.md"
           on_value: root.transform_type_label = self.value
 
@@ -63,52 +63,13 @@
           help_file: "scale_input.md"
           on_value: root.input_0 = self.value
 
-        # Scaling params
-        NumberItem:
-          disabled: root.transform_type_label not in ["Scaling", "Weighted Sum"]
-          name: "Weight Numerator"
-          value: root.weight_num
-          integer: True
-          help_file: "weights.md"
-          on_value: root.weight_num = int(self.value)
-        NumberItem:
-          disabled: root.transform_type_label not in ["Scaling", "Weighted Sum"]
-          name: "Weight Denominator"
-          value: root.weight_den
-          integer: True
-          help_file: "weights.md"
-          on_value: root.weight_den = int(self.value)
-
-        # Weighted Sum second input
         DropDownItem:
-          disabled: root.transform_type_label != "Weighted Sum"
+          disabled: root.transform_type_label != "Sum"
           name: "Second Scale Input"
           options: root.input_1_options
           value: root.input_1
           help_file: "scale_input.md"
           on_value: root.input_1 = self.value
-        NumberItem:
-          disabled: root.transform_type_label != "Weighted Sum"
-          name: "Second Weight Numerator"
-          value: root.weight_1_num
-          integer: True
-          help_file: "weights.md"
-          on_value: root.weight_1_num = int(self.value)
-        NumberItem:
-          disabled: root.transform_type_label != "Weighted Sum"
-          name: "Second Weight Denominator"
-          value: root.weight_1_den
-          integer: True
-          help_file: "weights.md"
-          on_value: root.weight_1_den = int(self.value)
-
-        # Angle params
-        NumberItem:
-          disabled: root.transform_type_label not in ["Angle Cos", "Angle Sin"]
-          name: "Angle (degrees)"
-          value: root.angle_degrees
-          help_file: "angle_degrees.md"
-          on_value: root.angle_degrees = self.value
 
     BoxLayout:
       orientation: "horizontal"
@@ -118,11 +79,11 @@
       padding: [36, 0, 36, 10]
       Button:
         text: "Apply Transform"
-        font_size: 22
+        font_size: app.formats.font_size
         background_color: [0.2, 0.6, 0.2, 1]
         on_release: root.apply_transform()
       Button:
         text: "Remove Axis"
-        font_size: 22
+        font_size: app.formats.font_size
         background_color: [0.8, 0.2, 0.2, 1]
         on_release: root.remove_axis()

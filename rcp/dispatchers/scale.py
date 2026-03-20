@@ -32,6 +32,7 @@ class ScaleDispatcher(SavingDispatcher):
     stepsPerMM = NumericProperty(1000)
     offsets = ListProperty([0 for item in range(100)])
     syncButtonColor = ListProperty([0.3, 0.3, 0.3, 1])
+    basePosition = NumericProperty(0)
     scaledPosition = NumericProperty(0)
     formattedPosition = StringProperty("--")
     formattedSpeed = StringProperty("--")
@@ -40,6 +41,7 @@ class ScaleDispatcher(SavingDispatcher):
         "position",
         "syncEnable",
         "speed",
+        "basePosition",
         "scaledPosition",
         "encoderPrevious",
         "encoderCurrent",
@@ -54,6 +56,7 @@ class ScaleDispatcher(SavingDispatcher):
         self.formats = formats
         self.servo = servo
         self.offset_provider = offset_provider
+        self._updating_scaled = False
         super().__init__(**kv)
 
         self.speed_history = collections.deque(maxlen=25)
@@ -121,30 +124,37 @@ class ScaleDispatcher(SavingDispatcher):
         self.board.device['scales'][self.inputIndex]['syncRatioNum'] = final_ratio.numerator
         self.board.device['scales'][self.inputIndex]['syncRatioDen'] = final_ratio.denominator
 
-    def on_syncRatioNum(self, instance, value):
-        self.set_sync_ratio()
-
-    def on_syncRatioDen(self, instance, value):
-        self.set_sync_ratio()
-
     def update_scaledPosition(self, instance=None, value=None):
-        current_offset = self.offset_provider.currentOffset
-        if self.spindleMode:
-            self.scaledPosition = float(
-                self.position * Fraction(self.ratioNum, self.ratioDen) + self.offsets[current_offset]
-            )
+        if self._updating_scaled:
+            return
+        self._updating_scaled = True
+        try:
+            current_offset = self.offset_provider.currentOffset
+            ratio = Fraction(self.ratioNum, self.ratioDen)
+            if self.spindleMode:
+                base = float(self.position * ratio)
+                scaled = float(self.position * ratio + self.offsets[current_offset])
 
-            if self.scaledPosition > self.ratioNum:
-                self.scaledPosition -= self.ratioNum
-                self.position -= self.ratioDen
+                # Wrap into [0, ratioNum) using modular arithmetic so we
+                # adjust self.position at most once (no recursive re-entry).
+                if self.ratioNum > 0:
+                    wrapped = scaled % self.ratioNum
+                    if wrapped != scaled:
+                        n = round((scaled - wrapped) / self.ratioNum)
+                        self.position -= n * self.ratioDen
+                        scaled = wrapped
+                        base = float(self.position * ratio)
 
-            if self.scaledPosition < 0:
-                self.scaledPosition += self.ratioNum
-                self.position += self.ratioDen
-        else:
-            self.scaledPosition = float(
-                self.position * Fraction(self.ratioNum, self.ratioDen) + self.offsets[current_offset]
-            ) * self.formats.factor
+                self.basePosition = base
+                self.scaledPosition = scaled
+            else:
+                base = float(self.position * ratio) * self.formats.factor
+                self.basePosition = base
+                self.scaledPosition = float(
+                    self.position * ratio + self.offsets[current_offset]
+                ) * self.formats.factor
+        finally:
+            self._updating_scaled = False
 
     def set_current_position(self, value):
         current_offset = self.offset_provider.currentOffset

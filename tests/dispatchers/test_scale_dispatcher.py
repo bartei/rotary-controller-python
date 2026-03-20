@@ -215,3 +215,56 @@ class TestScaledPosition:
         scale.offset_provider.currentOffset = 0
         scale.update_scaledPosition()
         assert scale.scaledPosition == pytest.approx(500 * Fraction(360, 1000))
+
+
+class TestSpindleWrapping:
+    def test_large_position_wraps_without_recursion(self, scale):
+        """Setting a large position in spindle mode must not cause RecursionError."""
+        scale.spindleMode = True
+        scale.ratioNum = 360
+        scale.ratioDen = 1000
+        scale.offset_provider.currentOffset = 0
+        scale.position = 100_000
+        scale.update_scaledPosition()
+        assert 0 <= scale.scaledPosition < 360
+
+    def test_negative_position_wraps_correctly(self, scale):
+        scale.spindleMode = True
+        scale.ratioNum = 360
+        scale.ratioDen = 1000
+        scale.offset_provider.currentOffset = 0
+        scale.position = -5000
+        scale.update_scaledPosition()
+        assert 0 <= scale.scaledPosition < 360
+
+    def test_wrap_position_exact_multiple(self, scale):
+        """Position that is an exact multiple of the wrap period."""
+        scale.spindleMode = True
+        scale.ratioNum = 360
+        scale.ratioDen = 1000
+        scale.offset_provider.currentOffset = 0
+        # 1000 * 360/1000 = 360.0 → should wrap to 0
+        scale.position = 1000
+        scale.update_scaledPosition()
+        assert scale.scaledPosition == pytest.approx(0.0)
+
+    def test_wrap_small_ratio(self, scale):
+        """Small ratioNum with large position — the original recursion trigger."""
+        scale.spindleMode = True
+        scale.ratioNum = 1
+        scale.ratioDen = 1
+        scale.offset_provider.currentOffset = 0
+        scale.position = 100
+        scale.update_scaledPosition()
+        assert scale.scaledPosition == pytest.approx(0.0)
+
+    def test_position_within_range_unchanged(self, scale):
+        """Position already in range should not be modified."""
+        scale.spindleMode = True
+        scale.ratioNum = 360
+        scale.ratioDen = 1000
+        scale.offset_provider.currentOffset = 0
+        scale.position = 500  # 500 * 360/1000 = 180 — in range
+        scale.update_scaledPosition()
+        assert scale.scaledPosition == pytest.approx(180.0)
+        assert scale.position == 500  # unchanged

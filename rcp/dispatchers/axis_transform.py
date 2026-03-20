@@ -1,45 +1,26 @@
 """
 Pure-data axis transform layer.
 
-All transforms are linear combinations of scale inputs, making them
-trivially invertible. No Kivy dependencies — easy to test in isolation.
+Two modes:
+- IDENTITY: axis mirrors a single scale input.
+- SUM: axis = scale[idx0] + scale[idx1].
+
+No Kivy dependencies — easy to test in isolation.
 """
 
 from __future__ import annotations
 
-import math
-from dataclasses import dataclass, field
+from dataclasses import dataclass
 from enum import Enum
-from fractions import Fraction
+
+from kivy.logger import Logger
+
+log = Logger.getChild(__name__)
 
 
 class TransformType(str, Enum):
     IDENTITY = "identity"
-    SCALING = "scaling"
-    WEIGHTED_SUM = "weighted_sum"
-    ANGLE_COS = "angle_cos"
-    ANGLE_SIN = "angle_sin"
-
-
-@dataclass(frozen=True)
-class ScaleWeight:
-    """A single term in the linear combination: weight * scale[input_index]."""
-    input_index: int
-    weight: Fraction
-
-    def to_dict(self) -> dict:
-        return {
-            "input_index": self.input_index,
-            "weight_num": self.weight.numerator,
-            "weight_den": self.weight.denominator,
-        }
-
-    @classmethod
-    def from_dict(cls, d: dict) -> ScaleWeight:
-        return cls(
-            input_index=d["input_index"],
-            weight=Fraction(d["weight_num"], d["weight_den"]),
-        )
+    SUM = "sum"
 
 
 @dataclass(frozen=True)
@@ -47,122 +28,78 @@ class AxisTransform:
     """
     Defines how an axis value is derived from physical scale inputs.
 
-    axis_value = sum(contribution.weight * scale_position[contribution.input_index])
-
-    Because this is a linear combination, the inverse operations
-    (sync ratio decomposition, position set) are straightforward.
+    IDENTITY: axis_value = scale[contributions[0]]
+    SUM:      axis_value = scale[contributions[0]] + scale[contributions[1]]
     """
-    contributions: tuple[ScaleWeight, ...]
+    contributions: tuple[int, ...]
     transform_type: TransformType = TransformType.IDENTITY
-    angle_degrees: float = 0.0
 
     @property
     def primary_input(self) -> int:
         """The first (or only) contributing scale input index."""
-        return self.contributions[0].input_index
+        return self.contributions[0]
 
     @property
     def input_indices(self) -> set[int]:
         """All scale input indices used by this transform."""
-        return {c.input_index for c in self.contributions}
+        return set(self.contributions)
 
     # ── Factory methods ──────────────────────────────────────────────
 
     @classmethod
     def identity(cls, idx: int) -> AxisTransform:
         return cls(
-            contributions=(ScaleWeight(idx, Fraction(1)),),
+            contributions=(idx,),
             transform_type=TransformType.IDENTITY,
         )
 
     @classmethod
-    def scaling(cls, idx: int, factor: Fraction) -> AxisTransform:
+    def sum(cls, idx0: int, idx1: int) -> AxisTransform:
         return cls(
-            contributions=(ScaleWeight(idx, factor),),
-            transform_type=TransformType.SCALING,
-        )
-
-    @classmethod
-    def weighted_sum(cls, weights: list[tuple[int, Fraction]]) -> AxisTransform:
-        return cls(
-            contributions=tuple(ScaleWeight(idx, w) for idx, w in weights),
-            transform_type=TransformType.WEIGHTED_SUM,
-        )
-
-    @classmethod
-    def angle_projection(cls, idx: int, degrees: float, use_cos: bool) -> AxisTransform:
-        radians = math.radians(degrees)
-        trig_value = math.cos(radians) if use_cos else math.sin(radians)
-        weight = Fraction(trig_value).limit_denominator(10000)
-        return cls(
-            contributions=(ScaleWeight(idx, weight),),
-            transform_type=TransformType.ANGLE_COS if use_cos else TransformType.ANGLE_SIN,
-            angle_degrees=degrees,
+            contributions=(idx0, idx1),
+            transform_type=TransformType.SUM,
         )
 
     # ── Forward computation ──────────────────────────────────────────
 
     def compute(self, scale_positions: dict[int, float]) -> float:
-        """Compute axis value from scale positions: axis = sum(w_i * scale_i)."""
+        """Compute axis value from scale positions."""
         total = 0.0
-        for c in self.contributions:
-            total += float(c.weight) * scale_positions.get(c.input_index, 0.0)
+        for idx in self.contributions:
+            total += scale_positions.get(idx, 0.0)
         return total
-
-    # ── Reverse operations ───────────────────────────────────────────
-
-    def decompose_sync_ratio(self, desired: Fraction) -> dict[int, Fraction]:
-        """
-        Reverse: given the user's desired sync ratio for this axis,
-        compute the hardware sync ratio needed per contributing scale.
-
-        For each scale: hw_ratio = weight * desired_ratio
-        Only the primary scale actually drives sync (hardware constraint),
-        so for multi-input transforms we return the primary's ratio.
-        """
-        result: dict[int, Fraction] = {}
-        for c in self.contributions:
-            result[c.input_index] = c.weight * desired
-        return result
-
-    def reverse_position_set(
-        self, desired_value: float, current_positions: dict[int, float]
-    ) -> dict[int, float]:
-        """
-        Reverse: compute new scale positions so that
-        compute(new_positions) == desired_value.
-
-        Strategy: adjust the primary input to achieve the desired value,
-        keeping all other inputs at their current positions.
-        """
-        primary = self.contributions[0]
-        other_contribution = 0.0
-        for c in self.contributions[1:]:
-            other_contribution += float(c.weight) * current_positions.get(c.input_index, 0.0)
-
-        if primary.weight == 0:
-            return dict(current_positions)
-
-        new_primary = (desired_value - other_contribution) / float(primary.weight)
-        result = dict(current_positions)
-        result[primary.input_index] = new_primary
-        return result
 
     # ── Serialization ────────────────────────────────────────────────
 
     def to_dict(self) -> dict:
         return {
             "transform_type": self.transform_type.value,
-            "angle_degrees": self.angle_degrees,
-            "contributions": [c.to_dict() for c in self.contributions],
+            "contributions": list(self.contributions),
         }
 
     @classmethod
     def from_dict(cls, d: dict) -> AxisTransform:
-        return cls(
-            transform_type=TransformType(d["transform_type"]),
-            angle_degrees=d.get("angle_degrees", 0.0),
-            contributions=tuple(
-                ScaleWeight.from_dict(c) for c in d["contributions"]
-            ),
-        )
+        raw_type = d.get("transform_type", "identity")
+        contributions = d.get("contributions", [])
+
+        # Backward compatibility: old format used dicts with input_index/weight_num/weight_den
+        if contributions and isinstance(contributions[0], dict):
+            contributions = [c["input_index"] for c in contributions]
+
+        if not contributions:
+            return cls.identity(0)
+
+        # Map old transform types to IDENTITY or SUM
+        if raw_type in ("identity", "scaling", "angle_cos", "angle_sin"):
+            if raw_type != "identity":
+                log.info(f"Migrating transform type '{raw_type}' → identity")
+            return cls.identity(contributions[0])
+        elif raw_type in ("sum", "weighted_sum"):
+            if len(contributions) < 2:
+                return cls.identity(contributions[0])
+            if raw_type == "weighted_sum":
+                log.info("Migrating transform type 'weighted_sum' → sum")
+            return cls.sum(contributions[0], contributions[1])
+        else:
+            log.warning(f"Unknown transform type '{raw_type}', falling back to identity")
+            return cls.identity(contributions[0])

@@ -1,7 +1,5 @@
-from fractions import Fraction
-
 from kivy.logger import Logger
-from kivy.properties import ObjectProperty, StringProperty, NumericProperty, ListProperty
+from kivy.properties import ObjectProperty, StringProperty, ListProperty
 from kivy.uix.screenmanager import Screen
 
 from rcp.dispatchers.axis_transform import AxisTransform, TransformType
@@ -12,10 +10,7 @@ load_kv(__file__)
 
 TRANSFORM_TYPE_LABELS = {
     TransformType.IDENTITY: "Identity",
-    TransformType.SCALING: "Scaling",
-    TransformType.WEIGHTED_SUM: "Weighted Sum",
-    TransformType.ANGLE_COS: "Angle Cos",
-    TransformType.ANGLE_SIN: "Angle Sin",
+    TransformType.SUM: "Sum",
 }
 
 LABEL_TO_TRANSFORM_TYPE = {v: k for k, v in TRANSFORM_TYPE_LABELS.items()}
@@ -30,11 +25,6 @@ class AxisScreen(Screen):
     input_1 = StringProperty("Input 1")
     input_0_options = ListProperty()
     input_1_options = ListProperty()
-    weight_num = NumericProperty(1)
-    weight_den = NumericProperty(1)
-    weight_1_num = NumericProperty(1)
-    weight_1_den = NumericProperty(1)
-    angle_degrees = NumericProperty(45)
 
     def __init__(self, **kv):
         from rcp.app import MainApp
@@ -55,7 +45,7 @@ class AxisScreen(Screen):
     def _update_input_options(self, *args):
         all_labels = self._all_scale_labels()
         self.input_0_options = all_labels
-        if self.transform_type_label == "Weighted Sum":
+        if self.transform_type_label == "Sum":
             self.input_1_options = [l for l in all_labels if l != self.input_0]
             if self.input_1 not in self.input_1_options and self.input_1_options:
                 self.input_1 = self.input_1_options[0]
@@ -69,16 +59,9 @@ class AxisScreen(Screen):
         t = self.axis.transform
         self.transform_type_label = TRANSFORM_TYPE_LABELS.get(t.transform_type, "Identity")
         if t.contributions:
-            c0 = t.contributions[0]
-            self.input_0 = f"Input {c0.input_index}"
-            self.weight_num = c0.weight.numerator
-            self.weight_den = c0.weight.denominator
+            self.input_0 = f"Input {t.contributions[0]}"
         if len(t.contributions) > 1:
-            c1 = t.contributions[1]
-            self.input_1 = f"Input {c1.input_index}"
-            self.weight_1_num = c1.weight.numerator
-            self.weight_1_den = c1.weight.denominator
-        self.angle_degrees = t.angle_degrees
+            self.input_1 = f"Input {t.contributions[1]}"
         self._update_input_options()
 
     def apply_transform(self):
@@ -87,22 +70,8 @@ class AxisScreen(Screen):
         idx0 = self._label_to_index(self.input_0)
         idx1 = self._label_to_index(self.input_1)
 
-        if tt == TransformType.IDENTITY:
-            transform = AxisTransform.identity(idx0)
-        elif tt == TransformType.SCALING:
-            den = int(self.weight_den) or 1
-            transform = AxisTransform.scaling(idx0, Fraction(int(self.weight_num), den))
-        elif tt == TransformType.WEIGHTED_SUM:
-            den0 = int(self.weight_den) or 1
-            den1 = int(self.weight_1_den) or 1
-            transform = AxisTransform.weighted_sum([
-                (idx0, Fraction(int(self.weight_num), den0)),
-                (idx1, Fraction(int(self.weight_1_num), den1)),
-            ])
-        elif tt == TransformType.ANGLE_COS:
-            transform = AxisTransform.angle_projection(idx0, float(self.angle_degrees), use_cos=True)
-        elif tt == TransformType.ANGLE_SIN:
-            transform = AxisTransform.angle_projection(idx0, float(self.angle_degrees), use_cos=False)
+        if tt == TransformType.SUM:
+            transform = AxisTransform.sum(idx0, idx1)
         else:
             transform = AxisTransform.identity(idx0)
 

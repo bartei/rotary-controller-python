@@ -16,21 +16,19 @@
   - `tests/utils/test_platform.py`
 - Still missing test coverage for: `utils/ctype_calc.py`, `feeds.py`, `utils/base_device.py`, `utils/devices.py`, `dispatchers/circle_pattern.py`, `dispatchers/line_pattern.py`, `dispatchers/rect_pattern.py`
 
-### ~~New: Dev Branch Installation~~ RESOLVED
-- Update screen now supports installing the `dev` branch for testing pre-release features
-- Gated behind "Allow installation of experimental versions" toggle
-- Warning confirmation dialog before dev install
-- Tested with 11 dedicated tests in `tests/screens/test_update_screen.py`
+---
 
-### ~~New: Font Selection~~ RESOLVED
-- Added font picker screen (`rcp/components/screens/font_picker_screen.py`) following the ColorPickerScreen pattern
-- Added `FontItem` widget (`rcp/components/widgets/font_item.py`) following the ColorItem pattern
-- Font selection persisted via `font_name` property in `FormatsDispatcher`
-- Custom font applies to: `coordbar.kv`, `servobar.kv`, `elsbar.kv`, `jogbar.kv`
-- All other UI elements (global Label/Button rules, coords_overlay, formats_screen) remain hardcoded to iosevka
+## Refactoring
 
-### ~~New: Color/Font Picker Registration~~ RESOLVED
-- Fixed `color_picker` and `font_picker` screen references — stored on `self.app` (MainApp) instead of `self` (Manager) so KV `app.color_picker` / `app.font_picker` references work correctly
+### REFACTOR-1. Redesign Input/Axis Architecture
+- **Files:** `rcp/dispatchers/scale.py`, `rcp/dispatchers/axis.py`, `rcp/dispatchers/axis_transform.py`
+- **Issue:** The current split between ScaleDispatcher and AxisDispatcher is convoluted. ScaleDispatcher mixes raw encoder tracking with scaling, offsets, and formatting. AxisDispatcher then re-implements its own offset system on top, leading to double-offset bugs and tangled position-setting logic. The basePosition/scaledPosition distinction is a band-aid. Sync ratio computation is duplicated across both layers.
+- **Plan:**
+  1. Create a clean **InputDispatcher** that owns: raw encoder position tracking, ratio (ratioNum/ratioDen), unit scaling (formats.factor), and computes a single scaled value — no offsets, no formatting.
+  2. **AxisDispatcher** becomes the sole owner of: offsets, position formatting, sync ratio, spindle mode, speed display. It reads from one or more InputDispatchers via AxisTransform (identity or sum).
+  3. Remove ScaleDispatcher or reduce it to a thin backward-compat wrapper.
+  4. Rewrite tests for the new layering.
+- **Benefit:** Single source of truth for offsets, no double-counting, simpler position-set logic, clearer separation of concerns.
 
 ---
 
@@ -66,34 +64,6 @@
 
 ## Performance (profiled on RPi3 — 5.7s capture)
 
-### ~~PERF-1. Scene canvas full rebuild on every tick (39% CPU)~~ RESOLVED
-- Guarded `FloatView.update_tick()` with screen visibility check
-- Split `Scene.update_points()` into `_update_static()` (grid, axes, pattern) and `_update_tool()` (tool marker) using separate `InstructionGroup`s
-
-### ~~PERF-2. CoordsOverlay updates when plot not visible~~ RESOLVED
-- Guarded `CoordsOverlay.update_tick()` with screen visibility check
-- Added unchanged-text guards to skip redundant label writes
-
-### PERF-3. BaseDevice sub-instances recreated on every refresh (82 parse calls)
-- **File:** `rcp/utils/base_device.py`
-- **Issue:** `set_fast_data()` calls `item.type.read_function(self.dm, addr)` which creates new BaseDevice instances on every `refresh()`. Each `__init__` parses C typedef strings. 82 unnecessary parse operations per 5.7s window.
-- **Action:** Cache sub-device instances after first creation.
-
-### PERF-4. Text rendering overhead (7% CPU — 9642 get_extents calls)
-- **Files:** `rcp/dispatchers/servo.py`, `rcp/components/plot/coords_overlay.py`
-- **Issue:** Every Label text change triggers `text_sdl2.get_extents()` for font measurement. ServoDispatcher doesn't guard `formattedPosition` writes.
-- **Action:** Guard `formattedPosition` in servo.py (same pattern as axis.py). Guard label text in coords_overlay.
-
-### PERF-5. Fraction arithmetic in hot paths
-- **Files:** `rcp/dispatchers/scale.py`, `rcp/dispatchers/servo.py`, `rcp/dispatchers/axis_transform.py`
-- **Issue:** `Fraction(ratioNum, ratioDen)` constructed at 30Hz per scale/servo. Each involves GCD computation.
-- **Action:** Cache ratio as float, recompute only when ratioNum/ratioDen change. Pre-compute float weight in `ScaleWeight`. Keep Fraction in `set_sync_ratio()` where precision matters.
-
-### PERF-6. No Save Debouncing
-- **File:** `rcp/dispatchers/saving_dispatcher.py:69-85`
-- **Issue:** Every property change triggers an immediate synchronous file write via `save_settings()`. Changing multiple properties in rapid succession writes the file multiple times.
-- **Action:** Add a debounce mechanism (e.g., `Clock.schedule_once` with a short delay).
-
 ### PERF-7. Redundant property writes in ServoDispatcher
 - **File:** `rcp/dispatchers/servo.py`
 - **Issue:** `on_update_tick()` writes `self.servoEnable` and `self.speed` every tick even when unchanged. Each triggers Kivy property dispatch chain.
@@ -103,11 +73,6 @@
 - **Files:** `rcp/dispatchers/scale.py`, `rcp/dispatchers/axis.py`
 - **Issue:** Both bind `formats.factor` to two separate callbacks. A single factor change fires both.
 - **Action:** Bind to one handler that calls both.
-
-### PERF-9. Redundant Device Writes from Multiple Bindings
-- **File:** `rcp/dispatchers/scale.py:73-74, 126-129`
-- **Issue:** `syncRatioDen` and `syncRatioNum` each trigger `set_sync_ratio` twice per change — once via `self.bind()` and once via `on_syncRatioNum`/`on_syncRatioDen` handlers.
-- **Action:** Remove the duplicate bindings (keep either `bind()` or `on_*` handlers, not both).
 
 ### PERF-10. Separate Speed Polling Loop
 - **File:** `rcp/dispatchers/scale.py:76`
@@ -146,6 +111,7 @@
 | P1 - Performance | PERF-5 (Fraction caching) | Medium | Medium |
 | P2 - Performance | PERF-6 (save debouncing) | Low | Medium |
 | P2 - Performance | PERF-7 to PERF-11 (misc) | Medium | Low-Medium |
+| **P0 - Refactor** | **REFACTOR-1 (Input/Axis redesign)** | **High** | **Critical** |
 | P1 - Cleanup | #8 (dead code, TraceOutput bug) | Low | - |
 | P3 - Architecture | #5, #6, #7 | High | - |
 | P4 - Quality | #15 (test coverage gaps) | Medium | - |

@@ -72,6 +72,10 @@ class SavingDispatcher(EventDispatcher):
         kwargs = {item: partial(self.save_settings, triggering_property=item) for item in prop_names}
         self.bind(**kwargs)
 
+    def _get_extra_save_data(self) -> dict:
+        """Override in subclasses to include additional data in save files."""
+        return {}
+
     def save_settings(self, *args, **kv):
         triggering_property = kv.pop("triggering_property", "")
         props = self.get_our_properties()
@@ -82,6 +86,7 @@ class SavingDispatcher(EventDispatcher):
             if isinstance(data[item], ObservableList):
                 data[item] = list(data[item])
 
+        data.update(self._get_extra_save_data())
         write_settings(self.filename, data, triggered_by=triggering_property)
 
 
