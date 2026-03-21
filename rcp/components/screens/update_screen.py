@@ -49,10 +49,10 @@ class UpdateScreen(Screen):
                         log.error(f"Failed to fetch releases: {response.status} - {text}")
                         return
 
-                    releases = (await response.json())[:10]
+                    releases = await response.json()
 
-            # Get only official releases
-            official = [item['tag_name'] for item in releases if item['prerelease'] == False]
+            # Get only official releases (filter first, then limit)
+            official = [item['tag_name'] for item in releases if item['prerelease'] == False][:10]
             self._set_releases(official)
             self.selected_release = official[0] if official else ""
         except Exception as e:
