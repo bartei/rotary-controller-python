@@ -24,7 +24,7 @@ class InputsSetupScreen(Screen):
         container = self.ids.inputs_container
         container.clear_widgets()
 
-        items = list(enumerate(self.app.scales))
+        items = list(enumerate(self.app.inputs))
         total_pages = max(1, (len(items) + ITEMS_PER_PAGE - 1) // ITEMS_PER_PAGE)
         self._page = min(self._page, total_pages - 1)
 
@@ -59,7 +59,7 @@ class InputsSetupScreen(Screen):
         self._rebuild_buttons()
 
     def _goto_input(self, index):
-        screen_name = f"scale_{index}"
+        screen_name = f"input_{index}"
         if self.app.manager.has_screen(screen_name):
             self.app.manager.goto(screen_name)
         else:

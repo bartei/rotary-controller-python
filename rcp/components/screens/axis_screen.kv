@@ -55,6 +55,7 @@
           options: ["Identity", "Sum"]
           help_file: "transform_type.md"
           on_value: root.transform_type_label = self.value
+          disabled: root.axis.spindleMode if root.axis else False
 
         DropDownItem:
           name: "Scale Input"
@@ -64,7 +65,7 @@
           on_value: root.input_0 = self.value
 
         DropDownItem:
-          disabled: root.transform_type_label != "Sum"
+          disabled: root.transform_type_label != "Sum" or (root.axis.spindleMode if root.axis else False)
           name: "Second Scale Input"
           options: root.input_1_options
           value: root.input_1

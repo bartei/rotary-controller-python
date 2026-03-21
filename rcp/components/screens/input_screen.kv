@@ -1,0 +1,73 @@
+#: import NumberItem rcp.components.widgets.number_item
+#: import DualNumberItem rcp.components.widgets.dual_number_item
+#: import BooleanItem rcp.components.widgets.boolean_item
+
+<InputScreen>:
+  BoxLayout:
+    orientation: "vertical"
+    padding: 10
+    ScreenHeader:
+      text: "Scale Input {}".format(root.input.inputIndex)
+
+    ScrollView:
+      do_scroll_x: False
+      do_scroll_y: True
+      GridLayout:
+        id: grid_layout
+        cols: 1
+        spacing: 1
+        size_hint_y: None
+        height: self.minimum_height
+
+        BooleanItem:
+          name: "Spindle Mode"
+          value: root.input.spindleMode
+          help_file: "spindle_mode.md"
+          on_value: root.input.spindleMode = self.value
+
+        NumberItem:
+          name: "Ratio Numerator"
+          value: root.input.ratioNum
+          integer: True
+          help_file: "scales.md"
+          on_value: root.input.ratioNum = int(self.value)
+          opacity: 0 if root.input.spindleMode else 1
+          height: 0 if root.input.spindleMode else 60
+          disabled: root.input.spindleMode
+        NumberItem:
+          name: "Ratio Denominator"
+          value: root.input.ratioDen
+          integer: True
+          help_file: "scales.md"
+          on_value: root.input.ratioDen = int(self.value)
+          opacity: 0 if root.input.spindleMode else 1
+          height: 0 if root.input.spindleMode else 60
+          disabled: root.input.spindleMode
+
+        NumberItem:
+          name: "Encoder PPR"
+          value: root.input.encoder_ppr
+          integer: True
+          help_file: "spindle_mode.md"
+          on_value: root.input.encoder_ppr = int(self.value)
+          opacity: 1 if root.input.spindleMode else 0
+          height: 60 if root.input.spindleMode else 0
+          disabled: not root.input.spindleMode
+        NumberItem:
+          name: "Gear Ratio Num"
+          value: root.input.gear_ratio_num
+          integer: True
+          help_file: "spindle_mode.md"
+          on_value: root.input.gear_ratio_num = int(self.value)
+          opacity: 1 if root.input.spindleMode else 0
+          height: 60 if root.input.spindleMode else 0
+          disabled: not root.input.spindleMode
+        NumberItem:
+          name: "Gear Ratio Den"
+          value: root.input.gear_ratio_den
+          integer: True
+          help_file: "spindle_mode.md"
+          on_value: root.input.gear_ratio_den = int(self.value)
+          opacity: 1 if root.input.spindleMode else 0
+          height: 60 if root.input.spindleMode else 0
+          disabled: not root.input.spindleMode

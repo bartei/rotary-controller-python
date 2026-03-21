@@ -33,8 +33,8 @@ class AxisScreen(Screen):
         self.bind(input_0=self._update_input_options)
         self.bind(transform_type_label=self._update_input_options)
 
-    def _all_scale_labels(self):
-        return [f"Input {i}" for i in range(len(self.app.scales))]
+    def _all_input_labels(self):
+        return [f"Input {i}" for i in range(len(self.app.inputs))]
 
     def _label_to_index(self, label):
         try:
@@ -43,19 +43,34 @@ class AxisScreen(Screen):
             return 0
 
     def _update_input_options(self, *args):
-        all_labels = self._all_scale_labels()
-        self.input_0_options = all_labels
+        if self.axis and self.axis.spindleMode:
+            # Spindle axis: only spindle-mode inputs, force Identity
+            filtered = [
+                f"Input {i}" for i, inp in enumerate(self.app.inputs)
+                if inp.spindleMode
+            ]
+            self.input_0_options = filtered if filtered else self._all_input_labels()
+            self.transform_type_label = "Identity"
+        else:
+            # Non-spindle axis: exclude spindle-mode inputs
+            filtered = [
+                f"Input {i}" for i, inp in enumerate(self.app.inputs)
+                if not inp.spindleMode
+            ]
+            self.input_0_options = filtered if filtered else self._all_input_labels()
+
         if self.transform_type_label == "Sum":
-            self.input_1_options = [l for l in all_labels if l != self.input_0]
+            self.input_1_options = [l for l in self.input_0_options if l != self.input_0]
             if self.input_1 not in self.input_1_options and self.input_1_options:
                 self.input_1 = self.input_1_options[0]
         else:
-            self.input_1_options = all_labels
+            self.input_1_options = self.input_0_options
 
     def on_pre_enter(self, *args):
         """Sync UI fields from the current axis transform when entering."""
         if self.axis is None:
             return
+        self.axis.bind(spindleMode=self._update_input_options)
         t = self.axis.transform
         self.transform_type_label = TRANSFORM_TYPE_LABELS.get(t.transform_type, "Identity")
         if t.contributions:
@@ -63,6 +78,10 @@ class AxisScreen(Screen):
         if len(t.contributions) > 1:
             self.input_1 = f"Input {t.contributions[1]}"
         self._update_input_options()
+
+    def on_pre_leave(self, *args):
+        if self.axis is not None:
+            self.axis.unbind(spindleMode=self._update_input_options)
 
     def apply_transform(self):
         """Build an AxisTransform from the current UI field values and apply it."""

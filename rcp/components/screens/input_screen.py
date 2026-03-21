@@ -8,5 +8,5 @@ log = Logger.getChild(__name__)
 load_kv(__file__)
 
 
-class ScaleScreen(Screen):
-    scale = ObjectProperty()
+class InputScreen(Screen):
+    input = ObjectProperty()

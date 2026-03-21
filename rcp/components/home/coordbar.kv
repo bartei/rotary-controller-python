@@ -17,29 +17,49 @@
     BoxLayout:
       size_hint_x: 0.5
       orientation: "vertical"
-      Button:
-        background_color: (0, 0, 0, 1)
-        id: pos_label
+      BoxLayout:
+        orientation: "horizontal"
         size_hint_y: 0.7
-        font_name: app.formats.font_name
-        font_size: min(self.height / 1.1, self.width/5)
-        font_style: "bold"
-        color: app.formats.display_color
-        text: root.axis.formattedPosition if root.axis else "--"
-        text_size: self.size
-        halign: 'right'
-        valign: 'center'
-        on_release: root.update_position()
-      Label:
+        Button:
+          background_color: (0, 0, 0, 1)
+          id: pos_label
+          font_name: app.formats.font_name
+          font_size: min(self.height / 1.1, self.parent.width/5)
+          font_style: "bold"
+          color: app.formats.display_color
+          text: root.axis.formattedPosition if root.axis else "--"
+          text_size: self.size
+          halign: 'right'
+          valign: 'center'
+          on_release: root.update_position()
+        Label:
+          size_hint_x: None
+          width: self.texture_size[0] + 4
+          font_name: app.formats.font_name
+          font_size: pos_label.font_size / 4
+          color: app.formats.display_color
+          text: root.axis.position_unit if root.axis else ""
+          valign: 'center'
+      BoxLayout:
+        orientation: "horizontal"
         size_hint_y: 0.3
-        font_name: app.formats.font_name
-        font_size: self.height / 1.5
-        font_style: "bold"
-        color: app.formats.display_color
-        text: root.axis.formattedSpeed if root.axis else "--"
-        text_size: self.size
-        halign: 'right'
-        valign: 'top'
+        Label:
+          font_name: app.formats.font_name
+          font_size: self.height / 1.5
+          font_style: "bold"
+          color: app.formats.display_color
+          text: root.axis.formattedSpeed if root.axis else "--"
+          text_size: self.size
+          halign: 'right'
+          valign: 'top'
+        Label:
+          size_hint_x: None
+          width: self.texture_size[0] + 4
+          font_name: app.formats.font_name
+          font_size: self.height / 1.5 / 4
+          color: app.formats.display_color
+          text: root.axis.speed_unit if root.axis else ""
+          valign: 'top'
 
     BoxLayout:
       size_hint_x: None

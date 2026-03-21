@@ -21,6 +21,12 @@
 
   ToolbarButton:
     width: root.width
+    text: "ABS" if app.abs_mode else "INC"
+    background_color: (list(app.formats.color_on) if app.board.blink else [1, 1, 1, 1]) if app.abs_mode else [1, 1, 1, 1]
+    on_release: app.abs_mode = not app.abs_mode
+
+  ToolbarButton:
+    width: root.width
     font_name: "fonts/Font Awesome 6 Free-Solid-900.otf"
     text: "\ue2ca"
     on_press: app.manager.goto("plot")

@@ -5,8 +5,8 @@ import pytest
 from tests.dispatchers.conftest import MockFormats, MockOffsetProvider
 from rcp.dispatchers.axis import AxisDispatcher
 from rcp.dispatchers.board import Board
+from rcp.dispatchers.input import InputDispatcher
 from rcp.dispatchers.servo import ServoDispatcher
-from rcp.dispatchers.scale import ScaleDispatcher
 
 
 @pytest.fixture
@@ -38,36 +38,19 @@ class TestBoardCreation:
     def test_creates_servo_dispatcher(self, board):
         assert isinstance(board.servo, ServoDispatcher)
 
-    def test_creates_four_scale_dispatchers(self, board):
-        assert len(board.scales) == 4
-        for s in board.scales:
-            assert isinstance(s, ScaleDispatcher)
+    def test_creates_four_input_dispatchers(self, board):
+        assert len(board.inputs) == 4
+        for inp in board.inputs:
+            assert isinstance(inp, InputDispatcher)
 
-    def test_scales_have_correct_input_indices(self, board):
-        for i, s in enumerate(board.scales):
-            assert s.inputIndex == i
+    def test_inputs_have_correct_input_indices(self, board):
+        for i, inp in enumerate(board.inputs):
+            assert inp.inputIndex == i
 
     def test_creates_four_axis_dispatchers(self, board):
         assert len(board.axes) == 4
         for a in board.axes:
             assert isinstance(a, AxisDispatcher)
-
-
-class TestGetSpindleScale:
-    def test_returns_none_when_no_spindle(self, board):
-        for s in board.scales:
-            s.spindleMode = False
-        assert board.get_spindle_scale() is None
-
-    def test_returns_spindle_scale(self, board):
-        board.scales[2].spindleMode = True
-        result = board.get_spindle_scale()
-        assert result is board.scales[2]
-
-    def test_returns_none_when_multiple_spindles(self, board):
-        board.scales[0].spindleMode = True
-        board.scales[1].spindleMode = True
-        assert board.get_spindle_scale() is None
 
 
 class TestGetSpindleAxis:
@@ -86,6 +69,8 @@ class TestGetSpindleAxis:
         board.axes[1].spindleMode = True
         assert board.get_spindle_axis() is None
 
-    def test_spindle_propagates_to_primary_scale(self, board):
-        board.axes[2].spindleMode = True
-        assert board.scales[2].spindleMode is True
+    def test_input_spindle_mode_independent_of_axis(self, board):
+        """Input owns its spindleMode — setting on axis does not propagate to input."""
+        board.inputs[2].spindleMode = True
+        assert board.inputs[2].spindleMode is True
+        assert board.axes[2].spindleMode is False  # axis spindleMode is independent

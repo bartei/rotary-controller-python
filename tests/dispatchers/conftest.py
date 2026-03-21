@@ -26,3 +26,4 @@ class MockFormats(EventDispatcher):
 
 class MockOffsetProvider(EventDispatcher):
     currentOffset = NumericProperty(0)
+    abs_mode = BooleanProperty(False)

@@ -40,9 +40,9 @@ class Manager(ScreenManager):
         from rcp.components.screens.inputs_setup_screen import InputsSetupScreen
         self.add_widget(InputsSetupScreen(name="inputs_setup"))
 
-        from rcp.components.screens.scale_screen import ScaleScreen
-        for i in range(len(self.app.scales)):
-            self.add_widget(ScaleScreen(name=f"scale_{i}", scale=self.app.scales[i]))
+        from rcp.components.screens.input_screen import InputScreen
+        for i in range(len(self.app.inputs)):
+            self.add_widget(InputScreen(name=f"input_{i}", input=self.app.inputs[i]))
 
         # Add axes configuration screens
         from rcp.components.screens.axes_setup_screen import AxesSetupScreen

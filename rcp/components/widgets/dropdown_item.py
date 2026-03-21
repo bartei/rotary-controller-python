@@ -36,8 +36,12 @@ class DropDownItem(BoxLayout):
         # Clean any existing
         self.delete_all_dropdown_options()
 
+        from rcp.app import MainApp
+        app = MainApp.get_running_app()
+        font_size = app.formats.font_size if app else 24
+
         for item in self.options:
-            btn = Button(text=item, size_hint_y=None, height=44)
+            btn = Button(text=item, size_hint_y=None, height=60, font_size=font_size)
             btn.bind(on_release=lambda btn: self.dropdown.select(btn.text))
             self.dropdown.add_widget(btn)
             self._options.append(btn)

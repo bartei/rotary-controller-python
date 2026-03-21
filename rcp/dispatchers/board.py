@@ -8,8 +8,8 @@ from kivy.properties import NumericProperty, BooleanProperty, ObjectProperty, Li
 from rcp.components.appsettings import config
 from rcp.dispatchers.axis import AxisDispatcher
 from rcp.dispatchers.axis_transform import AxisTransform
+from rcp.dispatchers.input import InputDispatcher
 from rcp.dispatchers.saving_dispatcher import read_settings
-from rcp.dispatchers.scale import ScaleDispatcher
 from rcp.dispatchers.servo import ServoDispatcher
 from rcp.utils.communication import ConnectionManager
 
@@ -23,7 +23,7 @@ class Board(EventDispatcher):
     blink = BooleanProperty(False)
     device = ObjectProperty(None, allownone=True)
     servo = ObjectProperty(None, allownone=True)
-    scales = ListProperty()
+    inputs = ListProperty()
     axes = ListProperty()
 
     def __init__(self, formats, offset_provider, **kv):
@@ -46,10 +46,8 @@ class Board(EventDispatcher):
 
         self.servo = ServoDispatcher(board=self, formats=formats, id_override="0")
         for i in range(4):
-            self.scales.append(ScaleDispatcher(
-                board=self, formats=formats, servo=self.servo,
-                offset_provider=offset_provider,
-                inputIndex=i, id_override=f"{i}",
+            self.inputs.append(InputDispatcher(
+                board=self, inputIndex=i, id_override=f"{i}",
             ))
 
         self._create_axes()
@@ -69,7 +67,6 @@ class Board(EventDispatcher):
         if axis_files:
             # Load existing axes from YAML files
             for f in axis_files:
-                # Extract the id_override from filename: "Axis-{id}.yaml"
                 axis_id = f.stem.replace("Axis-", "")
                 try:
                     max_id = max(max_id, int(axis_id))
@@ -78,27 +75,34 @@ class Board(EventDispatcher):
                 ax = AxisDispatcher(
                     board=self, formats=self.formats, servo=self.servo,
                     offset_provider=self.offset_provider,
-                    scales=list(self.scales),
+                    inputs=list(self.inputs),
                     id_override=axis_id,
                 )
                 self.axes.append(ax)
         else:
-            # Migration: create 4 identity axes from existing scale configs
-            log.info("No Axis YAML files found — migrating from scale configs")
+            # Migration: create 4 identity axes from existing CoordBar configs
+            log.info("No Axis YAML files found — migrating from input configs")
             for i in range(4):
-                scale = self.scales[i]
+                # Read the CoordBar YAML to extract migration data
+                coordbar_file = settings_folder / f"CoordBar-{i}.yaml"
+                migration_data = read_settings(coordbar_file) or {}
+
                 ax = AxisDispatcher(
                     board=self, formats=self.formats, servo=self.servo,
                     offset_provider=self.offset_provider,
-                    scales=list(self.scales),
+                    inputs=list(self.inputs),
                     transform=AxisTransform.identity(i),
                     id_override=f"{i}",
-                    axis_name=scale.axisName,
+                    axis_name=migration_data.get("axisName", "?"),
                     axis_index=i,
-                    syncRatioNum=scale.syncRatioNum,
-                    syncRatioDen=scale.syncRatioDen,
-                    spindleMode=scale.spindleMode,
+                    syncRatioNum=migration_data.get("syncRatioNum", 360),
+                    syncRatioDen=migration_data.get("syncRatioDen", 100),
+                    spindleMode=migration_data.get("spindleMode", False),
                 )
+                # Migrate offsets if present
+                migrated_offsets = migration_data.get("offsets")
+                if migrated_offsets:
+                    ax.offsets = migrated_offsets
                 ax._save_transform_config()
                 self.axes.append(ax)
             max_id = 3
@@ -111,18 +115,17 @@ class Board(EventDispatcher):
         self._next_axis_id += 1
 
         if transform is None:
-            # Pick first unused scale input
             used_inputs = set()
             for ax in self.axes:
                 used_inputs |= ax.transform.input_indices
-            available = [i for i in range(len(self.scales)) if i not in used_inputs]
+            available = [i for i in range(len(self.inputs)) if i not in used_inputs]
             input_idx = available[0] if available else 0
             transform = AxisTransform.identity(input_idx)
 
         ax = AxisDispatcher(
             board=self, formats=self.formats, servo=self.servo,
             offset_provider=self.offset_provider,
-            scales=list(self.scales),
+            inputs=list(self.inputs),
             transform=transform,
             id_override=f"{axis_id}",
             axis_name=axis_name,
@@ -143,12 +146,6 @@ class Board(EventDispatcher):
         if config_file.exists():
             os.remove(config_file)
             log.info(f"Removed axis config: {config_file}")
-
-    def get_spindle_scale(self):
-        filtered = [s for s in self.scales if s.spindleMode is True]
-        if len(filtered) != 1:
-            return None
-        return filtered[0]
 
     def get_spindle_axis(self):
         """Find the axis with spindleMode=True."""

@@ -58,12 +58,6 @@ class ElsBar(BoxLayout, SavingDispatcher):
         if spindle_axis is not None:
             spindle_axis.syncRatioNum = ratio.numerator
             spindle_axis.syncRatioDen = ratio.denominator
-        else:
-            # Fallback to direct scale write if no axis found
-            spindle_scale = self.app.board.get_spindle_scale()
-            if spindle_scale is not None:
-                spindle_scale.syncRatioNum = ratio.numerator
-                spindle_scale.syncRatioDen = ratio.denominator
         self.feed_name = self.current_feeds_table[self.current_feeds_index].name
         log.info(f"Configured ratio is: {ratio.numerator}/{ratio.denominator}")
 
