@@ -1,11 +1,12 @@
 <LogsPanel>:
   orientation: "vertical"
+
   BoxLayout:
     orientation: "horizontal"
     size_hint_y: None
     height: 48
     Label:
-      text: root.log_file_path
+      text: root.log_file_path or "Select a log file"
       font_size: 16
       text_size: self.size
       halign: "left"
@@ -14,11 +15,30 @@
     Button:
       size_hint_x: None
       width: 200
-      text: "Refresh"
-      font_size: 22
-      on_release: root.refresh_logs()
+      text: "Back" if root.log_content else "Refresh"
+      font_size: app.formats.font_size
+      on_release: root.go_back_to_list() if root.log_content else root.refresh_logs()
 
+  # File list view (shown when no log is selected)
   ScrollView:
+    opacity: 0 if root.log_content else 1
+    disabled: bool(root.log_content)
+    size_hint_y: 1 if not root.log_content else 0
+    do_scroll_x: False
+    do_scroll_y: True
+    BoxLayout:
+      id: file_list
+      orientation: "vertical"
+      size_hint_y: None
+      height: self.minimum_height
+      spacing: 4
+      padding: 10
+
+  # Log content view (shown when a log is selected)
+  ScrollView:
+    opacity: 1 if root.log_content else 0
+    disabled: not root.log_content
+    size_hint_y: 1 if root.log_content else 0
     do_scroll_x: False
     do_scroll_y: True
     Label:
