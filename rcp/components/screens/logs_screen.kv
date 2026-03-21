@@ -8,13 +8,4 @@
     ScreenHeader:
       text: "Logs"
 
-    Label:
-      text: "Logs are only available on Raspberry Pi"
-      size_hint_y: None
-      height: self.texture_size[1] + 20
-      font_size: 20
-      opacity: 0 if root.is_pi else 1
-
     LogsPanel:
-      opacity: 1 if root.is_pi else 0
-      disabled: not root.is_pi

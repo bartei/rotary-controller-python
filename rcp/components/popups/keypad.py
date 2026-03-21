@@ -27,13 +27,19 @@ class Keypad(Popup):
 
         layout = BoxLayout(orientation="vertical")
 
-        # Label to display the value
+        # Label to display the value with load button
+        value_row = BoxLayout(orientation="horizontal")
         value_label = Label(
             font_name="fonts/Manrope-Bold.ttf",
             font_size=48
         )
         self.ids['value'] = value_label
-        layout.add_widget(value_label)
+        value_row.add_widget(value_label)
+        value_row.add_widget(KeypadButton(
+            text="OLD", size_hint_x=None, width=80,
+            on_release=self.load_old_value,
+        ))
+        layout.add_widget(value_row)
 
         row1 = BoxLayout(orientation="horizontal")
         row1.add_widget(KeypadButton(text="7",on_release=self.add_text,background_color=[1, 1, 1, 1]))
@@ -167,6 +173,9 @@ class Keypad(Popup):
 
     def delete_text(self, button):
         self.ids['value'].text = self.ids['value'].text[:-1]
+
+    def load_old_value(self, *args):
+        self.ids['value'].text = str(self.current_value)
 
     def halve_value(self, button):
         self.ids['value'].text = str(self.current_value / 2)
