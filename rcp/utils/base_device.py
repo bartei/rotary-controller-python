@@ -36,6 +36,7 @@ class BaseDevice:
         self.dm: ConnectionManager = connection_manager
         self.variables: List[VariableDefinition or BaseDevice] = []
         self._variable_index: dict[str, VariableDefinition] = {}
+        self._sub_device_cache: dict[tuple, "BaseDevice"] = {}
         self.parse_addresses_from_definition()
 
     def __getitem__(self, key):
@@ -193,6 +194,12 @@ class BaseDevice:
         self._variable_index = {v.name: v for v in self.variables}
         self.size = current_address
 
+    def _get_sub_device(self, device_class, address: int) -> "BaseDevice":
+        cache_key = (device_class, address)
+        if cache_key not in self._sub_device_cache:
+            self._sub_device_cache[cache_key] = device_class(self.dm, address)
+        return self._sub_device_cache[cache_key]
+
     def set_fast_data(self, values: List):
         self.fast_data = dict()
         sorted_keys: List[VariableDefinition] = sorted(self.variables, key=lambda v: v.address)
@@ -201,12 +208,12 @@ class BaseDevice:
                 if item.count > 1:
                     fd_list = list()
                     for i in range(item.count):
-                        fd_list.append(
-                            item.type.read_function(self.dm, item.address + item.type.length * i).set_fast_data(values)
-                        )
+                        sub = self._get_sub_device(item.type.read_function, item.address + item.type.length * i)
+                        fd_list.append(sub.set_fast_data(values))
                     self.fast_data[item.name] = fd_list
                 else:
-                    self.fast_data[item.name] = item.type.read_function(self.dm, item.address).set_fast_data(values)
+                    sub = self._get_sub_device(item.type.read_function, item.address)
+                    self.fast_data[item.name] = sub.set_fast_data(values)
             else:
                 if item.count > 1:
                     fd_list = list()

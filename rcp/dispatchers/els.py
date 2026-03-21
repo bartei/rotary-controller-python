@@ -28,6 +28,8 @@ class ElsDispatcher(SavingDispatcher):
     def _apply_spindle_mode(self, *args):
         """Set spindleMode=True on the selected spindle axis, False on all others."""
         idx = int(self.spindle_axis_index)
+        if idx < 0:
+            return
         for i, axis in enumerate(self.app.axes):
             axis.spindleMode = (i == idx)
 

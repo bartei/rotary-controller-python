@@ -24,7 +24,7 @@
       text_size: self.size
       size_hint_y: 0.15
       font_size: 16
-      color: app.display_color
+      color: app.formats.display_color
       halign: 'center'
       valign: 'top'
     Button:
@@ -34,7 +34,7 @@
       font_style: "bold"
       background_color: [0.2, 0.2, 0.2, 1]
       color: app.formats.display_color
-      text: app.servo.formattedPosition + " deg"
+      text: app.servo.formattedPosition + "\u00b0"
       text_size: self.size
       halign: 'center'
       valign: 'middle'

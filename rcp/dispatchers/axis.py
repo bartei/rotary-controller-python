@@ -179,7 +179,7 @@ class AxisDispatcher(SavingDispatcher):
             # to avoid triggering Kivy texture regeneration on every tick
             if self.spindleMode:
                 fp = self.formats.angle_speed_format.format(self.speed)
-                fs = self.formats.angle_format.format(self.scaledPosition) + " deg"
+                fs = self.formats.angle_format.format(self.scaledPosition) + "\u00b0"
                 pu = "RPM"
                 su = ""
             else:
