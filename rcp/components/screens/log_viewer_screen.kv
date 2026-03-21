@@ -1,0 +1,21 @@
+#: import ScreenHeader components.widgets.screen_header
+
+<LogViewerScreen>:
+  BoxLayout:
+    orientation: "vertical"
+    padding: 10
+    ScreenHeader:
+      text: root.log_file_name
+
+    ScrollView:
+      do_scroll_x: False
+      do_scroll_y: True
+      Label:
+        text: root.log_content
+        size_hint_y: None
+        height: self.texture_size[1]
+        text_size: self.width, None
+        padding: 10, 10
+        font_size: 14
+        halign: "left"
+        valign: "top"

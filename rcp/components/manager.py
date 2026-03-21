@@ -69,6 +69,10 @@ class Manager(ScreenManager):
         from rcp.components.screens.logs_screen import LogsScreen
         self.add_widget(LogsScreen(name="logs"))
 
+        from rcp.components.screens.log_viewer_screen import LogViewerScreen
+        self.app.log_viewer = LogViewerScreen(name="log_viewer")
+        self.add_widget(self.app.log_viewer)
+
         from rcp.components.screens.profiling_screen import ProfilingScreen
         self.add_widget(ProfilingScreen(name="profiling"))
 

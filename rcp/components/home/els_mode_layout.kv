@@ -1,3 +1,5 @@
+#: import AutoSizeButton rcp.components.widgets.auto_size_button
+
 <ElsSpindleInfo>:
   orientation: "horizontal"
 
@@ -14,11 +16,11 @@
   # Main content: RPM (large, 70%) over position in degrees (small, 30%)
   BoxLayout:
     orientation: "vertical"
-    Button:
+    AutoSizeButton:
       background_color: (0, 0, 0, 1)
       size_hint_y: 0.7
       font_name: app.formats.font_name
-      font_size: min(self.height / 1.1, self.width / 5)
+      max_font_size: min(self.height / 1.1, self.width / 5)
       font_style: "bold"
       color: app.formats.display_color
       text: root.spindle_rpm

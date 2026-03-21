@@ -1,3 +1,5 @@
+#: import AutoSizeButton rcp.components.widgets.auto_size_button
+
 <DroCoordBar>:
   orientation: "horizontal"
   size_hint_y: 1
@@ -13,11 +15,11 @@
     BoxLayout:
       orientation: "horizontal"
       size_hint_y: 0.7
-      Button:
+      AutoSizeButton:
         id: pos_label
         background_color: (0, 0, 0, 1)
         font_name: app.formats.font_name
-        font_size: min(self.height / 1.1, self.parent.width/5)
+        max_font_size: min(self.height / 1.1, self.parent.width/5)
         font_style: "bold"
         color: app.formats.display_color
         text: root.axis.formattedPosition if root.axis else "--"
