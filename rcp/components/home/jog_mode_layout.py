@@ -1,6 +1,7 @@
 from rcp.components.home.coordbar import CoordBar
 from rcp.components.home.jogbar import JogBar
 from rcp.components.home.mode_layout import ModeLayout
+from kivy.uix.widget import Widget
 
 
 class JogModeLayout(ModeLayout):
@@ -10,7 +11,13 @@ class JogModeLayout(ModeLayout):
         super().__init__(**kwargs)
         self.jog_bar = JogBar()
         self.build_axis_bars()
+        self.spacer = Widget()
+        self.add_widget(self.spacer)
         self.add_widget(self.jog_bar)
+
+        self.app.formats.bind(max_row_height=lambda *_: self._update_row_heights())
+        self.bind(height=self._update_row_heights)
+        self._update_row_heights()
 
     def build_axis_bars(self):
         for axis_disp in self.app.axes:
@@ -22,3 +29,17 @@ class JogModeLayout(ModeLayout):
         self.remove_widget(self.jog_bar)
         super().rebuild_axes()
         self.add_widget(self.jog_bar)
+    
+    def _update_row_heights(self, *args):
+        num_rows = len(self.axis_bars)
+        if num_rows == 0:
+            return
+
+        available = self.height - self.jog_bar.height
+        row_height = min(available / num_rows, self.app.formats.max_row_height)
+
+        for bar in self.axis_bars:
+            bar.size_hint_y = None
+            bar.height = row_height
+
+        # spacer absorbs remaining space (size_hint_y defaults to 1)

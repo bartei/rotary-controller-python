@@ -51,6 +51,8 @@ class FormatsDispatcher(SavingDispatcher):
 
     hide_mouse_cursor = BooleanProperty(False)
 
+    max_row_height = NumericProperty(150)
+
     def __init__(self, **kv):
         super().__init__(**kv)
         self.angle_speed_format = self.angle_speed_format.replace("RPM", "").replace(" ", "")
