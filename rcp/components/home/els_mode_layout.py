@@ -98,6 +98,7 @@ class ElsModeLayout(ModeLayout):
         )
 
         self.app.formats.bind(max_row_height=lambda *_: self._update_row_heights())
+        self.app.formats.bind(show_speeds=lambda *_: self.rebuild_axes())
         self.bind(height=self._update_row_heights)
         self._update_row_heights()
 

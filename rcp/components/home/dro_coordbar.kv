@@ -37,7 +37,13 @@
         valign: 'center'
     BoxLayout:
       orientation: "horizontal"
-      size_hint_y: 0.3
+
+      # Hide speed display if show_speeds is False
+      size_hint_y: 0.3 if app.formats.show_speeds else None
+      height: self.height if app.formats.show_speeds else 0
+      opacity: 1 if app.formats.show_speeds else 0
+      disabled: not app.formats.show_speeds
+
       Label:
         font_name: app.formats.font_name
         font_size: self.height / 1.5

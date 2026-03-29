@@ -14,6 +14,7 @@ class DroModeLayout(ModeLayout):
         self.add_widget(self.spacer)
 
         self.app.formats.bind(max_row_height=lambda *_: self._update_row_heights())
+        self.app.formats.bind(show_speeds=lambda *_: self.rebuild_axes())
         self.bind(height=self._update_row_heights)
         self._update_row_heights()
 
@@ -35,3 +36,9 @@ class DroModeLayout(ModeLayout):
             cb = DroCoordBar(axis=axis_disp)
             self.axis_bars.append(cb)
             self.add_widget(cb)
+
+    def rebuild_axes(self):
+        self.remove_widget(self.spacer)
+        super().rebuild_axes()
+        self.add_widget(self.spacer)
+        self._update_row_heights()
