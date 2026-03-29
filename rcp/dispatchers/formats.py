@@ -53,6 +53,8 @@ class FormatsDispatcher(SavingDispatcher):
 
     max_row_height = NumericProperty(150)
 
+    show_speeds = BooleanProperty(True)
+
     def __init__(self, **kv):
         super().__init__(**kv)
         self.angle_speed_format = self.angle_speed_format.replace("RPM", "").replace(" ", "")
