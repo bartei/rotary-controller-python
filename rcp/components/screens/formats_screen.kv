@@ -87,6 +87,10 @@
           value: root.formats.hide_mouse_cursor
           help_file: "hide_mouse_cursor.md"
           on_value: root.formats.hide_mouse_cursor = self.value
+        NumberItem:
+          name: "Max axis row height (px)"
+          value: root.formats.max_row_height
+          on_value: root.formats.max_row_height = self.value
 
         TitleItem:
           name: "Sound Settings"

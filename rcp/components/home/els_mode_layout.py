@@ -15,9 +15,7 @@ ICON_CW = "\uf01e"   # rotate-right
 ICON_CCW = "\uf0e2"  # rotate-left
 ICON_STOP = "\uf04d"  # stop
 
-MAX_ROW_HEIGHT = 150
 LONG_PRESS_THRESHOLD = 1.0
-
 
 class ElsSpindleInfo(BoxLayout):
     """Displays spindle speed with direction icon and absolute position with zero button."""
@@ -99,6 +97,7 @@ class ElsModeLayout(ModeLayout):
             x_axis_index=lambda *a: self.rebuild_axes(),
         )
 
+        self.app.formats.bind(max_row_height=lambda *_: self._update_row_heights())
         self.bind(height=self._update_row_heights)
         self._update_row_heights()
 
@@ -108,7 +107,7 @@ class ElsModeLayout(ModeLayout):
             return
 
         available = self.height - self.els_bar.height
-        row_height = min(available / num_rows, MAX_ROW_HEIGHT)
+        row_height = min(available / num_rows, self.app.formats.max_row_height)
 
         self.spindle_info.size_hint_y = None
         self.spindle_info.height = row_height
