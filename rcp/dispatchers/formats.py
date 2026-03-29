@@ -55,6 +55,8 @@ class FormatsDispatcher(SavingDispatcher):
 
     show_speeds = BooleanProperty(True)
 
+    show_wizard = BooleanProperty(True)
+
     def __init__(self, **kv):
         super().__init__(**kv)
         self.angle_speed_format = self.angle_speed_format.replace("RPM", "").replace(" ", "")

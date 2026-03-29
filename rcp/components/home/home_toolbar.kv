@@ -13,35 +13,52 @@
     width: root.width
     text: app.formats.current_format
     on_release: app.formats.toggle()
+    size_hint_y: 1
+    font_size: min(self.height/3, self.width/3)
 
   ToolbarButton:
     width: root.width
     text: "P{:d}".format(app.currentOffset)
     on_release: Factory.Keypad().show(app, 'currentOffset')
+    size_hint_y: 1
+    font_size: min(self.height/3, self.width/3)
 
   ToolbarButton:
     width: root.width
     text: "ABS" if app.abs_mode else "INC"
     background_color: (list(app.formats.color_on) if app.board.blink else [1, 1, 1, 1]) if app.abs_mode else [1, 1, 1, 1]
     on_release: app.abs_mode = not app.abs_mode
+    size_hint_y: 1
+    font_size: min(self.height/3, self.width/3)
 
   ToolbarButton:
     width: root.width
     font_name: "fonts/Font Awesome 6 Free-Solid-900.otf"
     text: "\ue2ca"
     on_press: app.manager.goto("plot")
+    font_size: min(self.height/3, self.width/3)
+
+    # Hide wizard button if show_wizard is False
+    size_hint_y: 1 if app.formats.show_wizard else None
+    height: self.height if app.formats.show_wizard else 0
+    opacity: 1 if app.formats.show_wizard else 0
+    disabled: not app.formats.show_wizard
 
   ToolbarButton:
     width: root.width
     text: root.current_mode_desc
     on_release:
       Factory.ModePopup().show_with_callback(app.set_mode, app.current_mode)
+    size_hint_y: 1
+    font_size: min(self.height/3, self.width/3)
 
   ToolbarButton:
     width: root.width
     font_name: "fonts/Font Awesome 6 Free-Solid-900.otf"
     text: "\uf085"
     on_press: app.manager.goto("setup_screen")
-
-  Widget:
     size_hint_y: 1
+    font_size: min(self.height/3, self.width/3)
+
+  #Widget:
+  #  size_hint_y: 1
