@@ -24,12 +24,14 @@
         text: "Cancel"
         font_size: app.formats.font_size
         background_color: app.formats.cancel_color
+        on_press: app.beep()
         on_release: app.manager.back()
 
       Button:
         text: "Apply"
         font_size: app.formats.font_size
         background_color: app.formats.accept_color
+        on_press: app.beep()
         on_release:
           root.callback(root.font_path)
           app.manager.back()

@@ -82,10 +82,6 @@ class HomePage(Screen):
         if self.current_layout is not None:
             self.bars_container.add_widget(self.current_layout)
 
-    def on_touch_down(self, touch):
-        self.app.beep()
-        return super().on_touch_down(touch)
-
     def _keyboard_closed(self):
         self._keyboard.unbind(on_key_down=self._on_keyboard_down)
         self._keyboard = None

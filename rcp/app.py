@@ -1,5 +1,7 @@
 import os
 
+import pygame
+
 import sentry_sdk
 from kivy.app import App
 from kivy.config import Config
@@ -58,6 +60,8 @@ class MainApp(App):
 
     manager = ObjectProperty()
 
+    sound = ObjectProperty()
+
     version = StringProperty()
 
     def __init__(self, **kv):
@@ -65,9 +69,9 @@ class MainApp(App):
 
 
     def beep(self, *args, **kv):
-        pass
-        # self.sound.volume = self.formats.volume
-        # self.sound.play()
+        if self.sound and hasattr(self, "formats"):
+            self.sound.set_volume(self.formats.volume)
+            self.sound.play()
 
     @staticmethod
     def load_help(help_file_name):
@@ -94,6 +98,14 @@ class MainApp(App):
     def build(self):
         self.formats = FormatsDispatcher(id_override="0")
         self.board = Board(formats=self.formats, offset_provider=self)
+
+        # Load beep sound
+        sound_path = os.path.join(os.path.dirname(__file__), "sounds", "beep.mp3")
+        pygame.mixer.pre_init(frequency=44100, size=-16, channels=1, buffer=512)
+        pygame.init()
+        self.sound = pygame.mixer.Sound(sound_path)
+        if self.sound is None:
+            log.warning(f"Failed to load sound from {sound_path}")
 
         if not self.formats.disable_error_reporting:
             log.info("Error reporting is enabled, configuring Sentry")

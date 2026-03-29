@@ -82,9 +82,11 @@
         text: "Apply Transform"
         font_size: app.formats.font_size
         background_color: [0.2, 0.6, 0.2, 1]
+        on_press: app.beep()
         on_release: root.apply_transform()
       Button:
         text: "Remove Axis"
         font_size: app.formats.font_size
         background_color: [0.8, 0.2, 0.2, 1]
+        on_press: app.beep()
         on_release: root.remove_axis()

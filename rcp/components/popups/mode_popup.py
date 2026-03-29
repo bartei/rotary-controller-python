@@ -29,10 +29,6 @@ class ModePopup(Popup):
         self.add_widget(buttons)
         self.callback_fn = None
 
-    def on_touch_down(self, touch):
-        self.app.beep()
-        return super().on_touch_down(touch)
-
     def show_with_callback(self, callback_fn, current_value=None):
         if current_value is not None:
             # Use the specified current value if passed

@@ -11,6 +11,7 @@
       font_size: 21
       text: "\uf129"
       disabled: not root.help_file
+      on_press: app.beep()
       on_release: Factory.HelpPopup.show_help(root.help_file)
     Label:
       size_hint_x: 0.6
@@ -21,10 +22,12 @@
       width: 125
       text: "{: 0.4f}".format(root.value / root.ratio)
       font_size: app.formats.font_size
+      on_press: app.beep()
       on_release: Factory.Keypad().show(root, 'scaled_value')
     Button:
       size_hint_x: None
       width: 125
       text: "{: 0.4f}".format(root.value)
       font_size: app.formats.font_size
+      on_press: app.beep()
       on_release: Factory.Keypad().show(root, 'value')

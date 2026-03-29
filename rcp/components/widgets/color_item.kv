@@ -12,6 +12,7 @@
       font_size: 21
       text: "\uf129"
       disabled: not root.help_file
+      on_press: app.beep()
       on_release: Factory.HelpPopup.show_help(root.help_file)
     Label:
       size_hint_x: 0.7
@@ -29,6 +30,7 @@
           Rectangle:
             pos: self.pos[0] + 4, self.pos[1] + 4
             size: self.size[0] - 9, self.size[1] - 8
+        on_press: app.beep()
         on_release:
           app.color_picker.callback = root.set_color
           app.color_picker.color = root.color

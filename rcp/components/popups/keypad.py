@@ -81,10 +81,6 @@ class Keypad(Popup):
     def on_current_value(self, instance, value):
         self.title = f"Old Value: {value}"
 
-    def on_touch_down(self, touch):
-        self.app.beep()
-        return super().on_touch_down(touch)
-
     def _keyboard_closed(self):
         self._keyboard.unbind(on_key_down=self._on_keyboard_down)
         self._keyboard = None

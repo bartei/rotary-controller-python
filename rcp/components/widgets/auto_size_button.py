@@ -2,8 +2,10 @@ from kivy.core.text import Label as CoreLabel
 from kivy.properties import NumericProperty
 from kivy.uix.button import Button
 
+from rcp.components.widgets.beep_mixin import BeepMixin
 
-class AutoSizeButton(Button):
+
+class AutoSizeButton(BeepMixin, Button):
     """Button that automatically scales font_size down to prevent text wrapping.
 
     Set max_font_size to the desired font size. The actual font_size will be
