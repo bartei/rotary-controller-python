@@ -49,10 +49,12 @@
       text: "Stop Profiling" if root.is_profiling else "Start Profiling"
       font_size: 22
       background_color: (0.8, 0.2, 0.2, 1) if root.is_profiling else (0.2, 0.6, 0.2, 1)
+      on_press: app.beep()
       on_release: root.toggle_profiling()
     Button:
       text: "Reset Stats"
       font_size: 22
+      on_press: app.beep()
       on_release: root.reset_stats()
 
   # Status

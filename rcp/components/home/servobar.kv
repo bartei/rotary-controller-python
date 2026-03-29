@@ -13,6 +13,7 @@
     font_size: min(self.height / 1.5, self.width/1.5)
     font_style: "bold"
     background_color: [0.2, 1, 0.2, 1] if app.servo.servoEnable else [0.3, 0.3, 0.3, 1]
+    on_press: app.beep()
     on_release: app.servo.toggle_enable()
   BoxLayout:
     orientation: "vertical"
@@ -66,6 +67,7 @@
       halign: 'center'
       valign: 'middle'
       disabled: app.servo.disableControls
+      on_press: app.beep()
       on_release: Factory.Keypad().show(app.servo, 'offset')
 
     Label:
@@ -88,6 +90,7 @@
       halign: 'center'
       valign: 'middle'
       disabled: app.servo.disableControls
+      on_press: app.beep()
       on_release: Factory.Keypad(integer=True).show(app.servo, 'divisions')
 
   BoxLayout:
@@ -102,6 +105,7 @@
         font_name: "fonts/Font Awesome 6 Free-Solid-900.otf"
         text: "\uf060"
         disabled: app.servo.disableControls
+        on_press: app.beep()
         on_release: app.servo.go_previous()
       Button:
         font_size: 24
@@ -109,6 +113,7 @@
         font_name: "fonts/Font Awesome 6 Free-Solid-900.otf"
         text: "\uf061"
         disabled: app.servo.disableControls
+        on_press: app.beep()
         on_release: app.servo.go_next()
     BoxLayout:
       orientation: "vertical"
@@ -132,4 +137,5 @@
         halign: 'center'
         valign: 'middle'
         disabled: app.servo.disableControls
+        on_press: app.beep()
         on_release: Factory.Keypad(integer=True).show(app.servo, 'index')

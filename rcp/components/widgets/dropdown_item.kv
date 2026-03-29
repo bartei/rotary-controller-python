@@ -11,6 +11,7 @@
       font_size: 21
       text: "\uf129"
       disabled: not root.help_file
+      on_press: app.beep()
       on_release: Factory.HelpPopup.show_help(root.help_file)
     Label:
       size_hint_x: 0.7
@@ -24,4 +25,5 @@
 #      multiline: False
 #      text: 'ON' if root.value else 'OFF'
 #      state: 'down' if root.value else 'normal'
+      on_press: app.beep()
       on_release: root.dropdown.open(self)

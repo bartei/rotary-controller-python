@@ -54,9 +54,11 @@
           Button:
             text: "Install Selected Release"
             disabled: not root.enable_update_button
+            on_press: app.beep()
             on_release: root.install_release()
           Button:
             text: "Exit Application"
+            on_press: app.beep()
             on_release: app.stop()
 
         TitleItem:

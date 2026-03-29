@@ -22,6 +22,7 @@
         size_hint_x: 0.3
         text: "Scan"
         disabled: root.scanning
+        on_press: app.beep()
         on_release: root.schedule_scan()
 
     ScrollView:
@@ -44,10 +45,12 @@
         text: "Cancel"
         font_size: app.formats.font_size
         back_layer_color: app.formats.cancel_color
+        on_press: app.beep()
         on_release: root.dismiss()
 
       Button:
         text: "Apply"
         font_size: app.formats.font_size
         back_layer_color: app.formats.accept_color
+        on_press: app.beep()
         on_release: root.apply()

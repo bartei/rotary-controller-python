@@ -12,6 +12,7 @@
     font_size: self.height / 1.5
     font_style: "bold"
     background_color: [0.2, 1, 0.2, 1] if app.servo.servoEnable else [0.3, 0.3, 0.3, 1]
+    on_press: app.beep()
     on_release: app.servo.toggle_enable()
     disabled: root.enable_jog
 
@@ -36,6 +37,7 @@
       text_size: self.size
       halign: 'center'
       valign: 'middle'
+      on_press: app.beep()
       on_release: Factory.Keypad().show(root, 'desired_speed')
     Label:
       text: "Max: {}".format(app.servo.maxSpeed)
@@ -105,7 +107,9 @@
     font_style: "bold"
     halign: "center"
     disabled: not app.servo.servoEnable
-    on_press: root.enable_jog_reverse = True
+    on_press:
+      app.beep()
+      root.enable_jog_reverse = True
     on_release: root.enable_jog_reverse = False
 
   Button:
@@ -118,6 +122,7 @@
     halign: "center"
     background_color: app.formats.cancel_color if root.enable_jog else app.formats.accept_color
     disabled: not app.servo.servoEnable
+    on_press: app.beep()
     on_release: root.enable_jog = not root.enable_jog
 
   Button:
@@ -129,5 +134,7 @@
     font_style: "bold"
     halign: "center"
     disabled: not app.servo.servoEnable
-    on_press: root.enable_jog = True
+    on_press:
+      app.beep()
+      root.enable_jog = True
     on_release: root.enable_jog = False

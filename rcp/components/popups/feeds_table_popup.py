@@ -6,11 +6,12 @@ from kivy.uix.button import Button
 from kivy.uix.tabbedpanel import TabbedPanel, TabbedPanelItem
 
 from rcp import feeds
+from rcp.components.widgets.beep_mixin import BeepMixin
 
 log = Logger.getChild(__name__)
 
 
-class FeedButton(Button):
+class FeedButton(BeepMixin, Button):
     text_halign = "center"
     font_style = "bold"
     font_name = StringProperty("fonts/Manrope-Bold.ttf")
@@ -53,10 +54,6 @@ class FeedsTablePopup(Popup):
         self.add_widget(panel)
         self.callback_fn = None
         self.current_value = None
-
-    def on_touch_down(self, touch):
-        self.app.beep()
-        return super().on_touch_down(touch)
 
     def show_with_callback(self, callback_fn, current_value=None):
         if current_value is not None:
