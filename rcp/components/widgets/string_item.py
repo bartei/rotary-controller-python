@@ -14,3 +14,9 @@ class StringItem(BoxLayout):
     value = StringProperty("")
     disabled = BooleanProperty(False)
     help_file = StringProperty("")
+
+    def set_value_from_text(self, text: str):
+        try:
+            self.value = text.encode("raw_unicode_escape").decode("unicode_escape")
+        except (UnicodeDecodeError, UnicodeEncodeError):
+            self.value = text

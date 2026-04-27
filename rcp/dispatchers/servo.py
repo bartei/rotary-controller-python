@@ -116,7 +116,7 @@ class ServoDispatcher(SavingDispatcher):
                 self.encoderPrevious = self.board.fast_data_values['servoCurrent']
                 self.encoderCurrent = self.board.fast_data_values['servoCurrent']
                 self.servoEnable = self.board.fast_data_values['servoEnable']
-                self.board.device['servo']['maxSpeed'] = self.maxSpeed
+                self.set_max_speed(self.maxSpeed)
                 self.board.device['servo']['acceleration'] = self.acceleration
 
                 if self.servoEnable == 0:
@@ -192,6 +192,9 @@ class ServoDispatcher(SavingDispatcher):
     def go_previous(self):
         self.preferredDirection = -1
         self.index = (self.index - 1) % self.divisions
+    
+    def set_max_speed(self, value):
+        self.board.device['servo']['maxSpeed'] = self.maxSpeed
 
     def on_index(self, instance, value):
         ratio = Fraction(self.ratioNum, self.ratioDen)
@@ -233,7 +236,7 @@ class ServoDispatcher(SavingDispatcher):
             self.oldOffset = value
 
     def on_maxSpeed(self, instance, value):
-        self.board.device['servo']['maxSpeed'] = self.maxSpeed
+        self.set_max_speed(self.maxSpeed)
 
     def on_jogSpeed(self, instance, value):
         self.board.device['servo']['jogSpeed'] = self.jogSpeed

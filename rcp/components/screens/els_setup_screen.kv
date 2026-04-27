@@ -35,3 +35,72 @@
           name: "Cross Slide Axis (X)"
           help_file: "els_axis_roles.md"
           on_value: root.on_x_selected(self, self.value)
+
+        TitleItem:
+          name: "Assisted Threading"
+        BooleanItem:
+          name: "Cross Slide Diameter Mode"
+          help_file: "at_cross_slide_diameter_mode.md"
+          value: app.els.at_cross_slide_diameter_mode
+          on_value: app.els.at_cross_slide_diameter_mode = self.value
+
+        TitleItem:
+          name: "Assisted Threading: Speed"
+        NumberItem:
+          name: "Reversing Speed (Steps/s)"
+          help_file: "at_reversing_speed.md"
+          value: app.els.at_reversing_speed
+          on_value: root.set_at_reversing_speed(self.value)
+        NumberItem:
+          name: "Preload/Adjust Speed (Steps/s)"
+          help_file: "at_preload_adjust_speed.md"
+          value: app.els.at_preload_adjust_speed
+          on_value: root.set_at_preload_adjust_speed(self.value)
+        NumberItem:
+          name: "Threading Max Speed (Steps/s)"
+          help_file: "at_threading_max_speed.md"
+          value: app.els.at_threading_max_speed
+          on_value: root.set_at_threading_max_speed(self.value)
+        NumberItem:
+          name: "Reversing/Adjusting Acceleration (Steps/s^2)"
+          help_file: "at_reversing_adjusting_acceleration.md"
+          value: app.els.at_reversing_adjusting_acceleration
+          on_value: root.set_at_reversing_adjusting_acceleration(self.value)
+        NumberItem:
+          name: "Threading Acceleration (Steps/s^2)"
+          help_file: "at_threading_acceleration.md"
+          value: app.els.at_threading_acceleration
+          on_value: root.set_at_threading_acceleration(self.value)
+
+        TitleItem:
+          name: "Assisted Threading: Tolerances"
+        NumberItem:
+          name: "Rotary Encoder sync tolerance (Steps)"
+          help_file: "at_rotary_encoder_sync_tolerance.md"
+          value: app.els.at_rotary_encoder_sync_tolerance
+          on_value: app.els.at_rotary_encoder_sync_tolerance = self.value
+        NumberItem:
+          name: "Saddle Encoder stability tolerance (Steps)"
+          help_file: "at_saddle_encoder_stability_tolerance.md"
+          value: app.els.at_saddle_encoder_stability_tolerance
+          on_value: app.els.at_saddle_encoder_stability_tolerance = int(self.value)
+        NumberItem:
+          name: "Saddle Encoder stability samples"
+          help_file: "at_saddle_encoder_stability_samples.md"
+          value: app.els.at_saddle_encoder_stability_samples
+          on_value: app.els.at_saddle_encoder_stability_samples = int(self.value)
+        BooleanItem:
+          name: "Metric Distances"
+          help_file: "at_metric_distances.md"
+          value: app.els.at_metric_distances
+          on_value: app.els.at_metric_distances = self.value
+        NumberItem:
+          name: "Saddle backlash distance (MM)" if app.els.at_metric_distances else "Saddle backlash distance (IN)"
+          help_file: "at_saddle_backlash_distance.md"
+          value: app.els.at_saddle_backlash_distance
+          on_value: app.els.at_saddle_backlash_distance = self.value
+        NumberItem:
+          name: "Saddle backlash cushion (MM)" if app.els.at_metric_distances else "Saddle backlash cushion (IN)"
+          help_file: "at_backlash_cushion.md"
+          value: app.els.at_backlash_cushion
+          on_value: app.els.at_backlash_cushion = self.value

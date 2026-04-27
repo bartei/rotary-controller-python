@@ -103,6 +103,23 @@ typedef struct {
 } fastData_t;
 """
 
+class AssistedThreadingData(BaseDevice):
+    definition = """
+typedef struct {
+  uint16_t threadRequest;
+  uint16_t threadReset;
+  uint16_t spindleScaleIndex;
+  uint16_t threadPhaseActive;
+  uint16_t threadEnabled;
+  uint16_t spindlePhaseTolerance;
+  int32_t threadRemainingSteps;
+  uint32_t threadStartSteps;
+  uint32_t spindleCountsPerRev;
+  int32_t threadPhaseRef;
+  int32_t currentThreadPhase;
+} assistedThreadingData_t;
+"""
+
 
 class Global(BaseDevice):
     root_structure = True
@@ -114,6 +131,7 @@ typedef struct {
   uint32_t executionCycles;
   servo_t servo;
   input_t scales[4];
+  assistedThreadingData_t assistedThreadingData;
   fastData_t fastData;
 } rampsSharedData_t;
 """

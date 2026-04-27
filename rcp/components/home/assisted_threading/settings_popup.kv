@@ -1,0 +1,82 @@
+<AssistedThreadingSettingsPopup>:
+    title: "Assisted Threading Settings"
+    size_hint_x: 0.8
+    size_hint_y: None
+    height: 450
+    auto_dismiss: True
+
+    ScrollView:
+        do_scroll_x: False
+        do_scroll_y: True
+        GridLayout:
+            id: grid_layout
+            cols: 1
+            spacing: 1
+            size_hint_y: None
+            height: self.minimum_height
+
+            BooleanItem:
+                name: "Metric Mode"
+                help_file: "at_metric_mode.md"
+                value: root.assistedThreadingBar.metric_mode
+                on_value: root.on_metric_mode_changed(self.value)
+
+            DropDownItem:
+                id: pitches_dropdown
+                height: 60
+                name: "Pitch in MM" if root.assistedThreadingBar.metric_mode else "Pitch in IN"
+                help_file: "at_pitch.md"
+                options: root.get_pitches()
+                value: str(root.assistedThreadingBar.selected_pitch) if root.assistedThreadingBar.selected_pitch is not None else ""
+                on_value: root.on_pitch_selected(self.selected_index, self.value)
+
+            DropDownItem:
+                id: thread_type_dropdown
+                height: 60
+                name: "Thread Type"
+                help_file: "at_thread_type.md"
+                options: root.get_thread_types()
+                value: root.assistedThreadingBar.thread_profile_type
+                on_value: root.on_thread_type_selected(self.value)
+
+            BooleanItem:
+                name: "Left Hand Thread"
+                help_file: "at_left_hand_thread.md"
+                value: root.assistedThreadingBar.left_hand_thread
+                on_value: root.assistedThreadingBar.left_hand_thread = self.value
+
+            BooleanItem:
+                name: "Inner Thread"
+                help_file: "at_inner_thread.md"
+                value: root.assistedThreadingBar.inner_thread
+                on_value: root.assistedThreadingBar.inner_thread = self.value
+
+            BooleanItem:
+                name: "Compound Infeed"
+                help_file: "at_compound_infeed.md"
+                value: root.assistedThreadingBar.compound_infeed_mode
+                on_value: root.on_compound_infeed_mode_changed(self.value)
+
+            BoxLayout:
+                size_hint_y: None
+                height: 60 if root.assistedThreadingBar.compound_infeed_mode else 0
+                opacity: 1 if root.assistedThreadingBar.compound_infeed_mode else 0
+                disabled: not root.assistedThreadingBar.compound_infeed_mode
+                orientation: "horizontal"
+                Label:
+                    size_hint_x: 0.45
+                    text: "Compound Offset"
+                    font_name: "fonts/iosevka-regular.ttf"
+                    font_size: 24
+                Slider:
+                    size_hint_x: 0.40
+                    min: 0
+                    max: 5
+                    step: 1
+                    value: root.assistedThreadingBar.compound_infeed_offset_degrees
+                    on_value: root.assistedThreadingBar.compound_infeed_offset_degrees = self.value
+                Label:
+                    size_hint_x: 0.15
+                    text: "{}°".format(int(root.assistedThreadingBar.compound_infeed_offset_degrees))
+                    font_name: "fonts/iosevka-regular.ttf"
+                    font_size: 28

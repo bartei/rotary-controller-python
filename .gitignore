@@ -140,3 +140,4 @@ cython_debug/
 /.idea/
 config.ini
 /rcp/settings/
+.claude/settings.local.json

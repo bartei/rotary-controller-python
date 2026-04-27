@@ -41,12 +41,14 @@ class InputDispatcher(SavingDispatcher):
     position = NumericProperty(0)
     scaled_value = NumericProperty(0)
     steps_per_second = NumericProperty(0)
+    encoderCurrent = NumericProperty(0)
 
     _skip_save = [
         "position",
         "scaled_value",
         "steps_per_second",
         "_spindle_wrap_steps",
+        "encoderCurrent",
     ]
 
     def __init__(self, board, **kv):
@@ -57,7 +59,6 @@ class InputDispatcher(SavingDispatcher):
 
         # Encoder tracking state
         self.encoderPrevious = 0
-        self.encoderCurrent = 0
 
         # Bindings
         self.board.bind(update_tick=self._on_update_tick)

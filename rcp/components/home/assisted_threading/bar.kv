@@ -1,0 +1,72 @@
+<AssistedThreadingBar>:
+  orientation: "horizontal"
+  size_hint_y: None
+  height: 128
+
+  Button:
+    width: 96
+    size_hint_x: None
+    text: "Stop" if root.is_running else "Start"
+    font_size: self.height / 4
+    font_style: "bold"
+    background_color: [1, 0.2, 0.2, 1] if root.is_running else [0.3, 0.3, 0.3, 1]
+    on_release: root.toggle_is_running()
+
+  BoxLayout:
+    id: wizard_area
+    orientation: "vertical"
+    size_hint_x: 0.8
+
+    # Default display when NOT running
+    Label:
+      id: label_instruction
+      text: root.label_text
+      text_size: self.size
+      size_hint_y: 0.15
+      font_size: 16
+      color: app.display_color
+      halign: 'center'
+      valign: 'top'
+
+    Button:
+      id: btn_value
+      size_hint_y: 0.30
+      font_name: "fonts/iosevka-regular.ttf"
+      font_size: self.height / 2
+      font_style: "bold"
+      background_color: [0.2, 0.2, 0.2, 1]
+      color: app.formats.display_color
+      text: root.display_value
+      text_size: self.size
+      halign: 'center'
+      valign: 'middle'
+
+    ProgressBar:
+      id: progress_servo
+      size_hint_y: 0.20
+      max: int(app.servo.maxSpeed)
+      value: int(abs(app.servo.speed))
+
+  Button:
+    id: btn_action
+    width: self.height
+    size_hint_x: None
+    font_name: "fonts/iosevka-regular.ttf" if root.is_running else "fonts/Font Awesome 6 Free-Solid-900.otf"
+    text: root.next_button_text if root.is_running else "\uf013"
+    font_size: self.height / 4
+    halign: "center"
+    on_release: root.on_action_button_clicked()
+    disabled: not root.action_button_enabled
+
+  HoldButton:
+    id: btn_retract
+    font_name: "fonts/iosevka-regular.ttf"
+    size_hint_x: None if root.retract_button_visible else 0
+    width: self.height if root.retract_button_visible else 0
+    opacity: 1 if root.retract_button_visible else 0
+    disabled: not root.retract_button_enabled
+    text: 'Retract'
+    font_size: self.height / 4
+    halign: "center"
+    on_press: root.on_retract_button_pressed()
+    on_release: root.on_retract_button_released()

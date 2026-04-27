@@ -19,6 +19,9 @@ class FormatsDispatcher(SavingDispatcher):
         'color_on',
         'color_off'
     ]
+    
+    MM_FRACTION = Fraction(1, 1)
+    INCHES_FRACTION = Fraction(10, 254)
 
     metric_position = StringProperty("{:+0.3f}")
     metric_speed = StringProperty("{:+0.3f}")
@@ -35,7 +38,7 @@ class FormatsDispatcher(SavingDispatcher):
     current_format = StringProperty("MM")
     speed_format = StringProperty()
     position_format = StringProperty()
-    factor = ObjectProperty(Fraction(1, 1))
+    factor = ObjectProperty(MM_FRACTION)
 
     display_color = ColorProperty("#ffcc35ff")
     accept_color = ColorProperty("#32ff32ff")
@@ -57,6 +60,8 @@ class FormatsDispatcher(SavingDispatcher):
     show_speeds = BooleanProperty(True)
     show_wizard = BooleanProperty(True)
 
+    max_row_height = NumericProperty(150)
+
     def __init__(self, **kv):
         super().__init__(**kv)
         self.angle_speed_format = self.angle_speed_format.replace("RPM", "").replace(" ", "")
@@ -69,11 +74,11 @@ class FormatsDispatcher(SavingDispatcher):
         if self.current_format == "MM":
             self.speed_format = f"{self.metric_speed} {self.metric_speed_unit}"
             self.position_format = self.metric_position
-            self.factor = Fraction(1, 1)
+            self.factor = self.MM_FRACTION
         else:
             self.speed_format = f"{self.imperial_speed} {self.imperial_speed_unit}"
             self.position_format = self.imperial_position
-            self.factor = Fraction(10, 254)
+            self.factor = self.INCHES_FRACTION
 
     def toggle(self, *_):
         if self.current_format == "MM":

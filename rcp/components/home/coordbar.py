@@ -25,6 +25,8 @@ class CoordBar(BoxLayout):
         if self.axis is not None:
             from rcp.app import MainApp
             app = MainApp.get_running_app()
+            if app.current_mode == 5:
+                return
             self.axis.toggle_sync(all_axes=list(app.axes))
 
     def on_zero_press(self):

@@ -41,7 +41,13 @@ class ElsBar(BoxLayout, SavingDispatcher):
             self.mode_name = next(iter(feeds.table.keys()))
         self.current_feeds_table = feeds.table[self.mode_name]
         self.update_feeds_ratio(self, None)
+        
+        self.app.bind(current_mode=self.on_mode_change)
         self.bind(current_feeds_index=self.update_feeds_ratio)
+        
+    def on_mode_change(self, instance, mode):
+        if mode == 2:
+            self.update_feeds_ratio(None, None)
 
     def update_current_position(self):
         Factory.Keypad().show_with_callback(self.app.servo.set_current_position, self.app.servo.scaledPosition)
@@ -53,6 +59,9 @@ class ElsBar(BoxLayout, SavingDispatcher):
         self.current_feeds_index = index
 
     def update_feeds_ratio(self, instance, value):
+        if self.app.current_mode != 2:
+            return  # only sync in ELS mode
+    
         ratio = self.current_feeds_table[self.current_feeds_index].ratio
         spindle_axis = self.app.board.get_spindle_axis()
         if spindle_axis is not None:

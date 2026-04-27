@@ -9,11 +9,16 @@ class FeedConfiguration(BaseModel):
     ratio: Optional[Fraction] = None
 
 THREAD_MM = [
+    FeedConfiguration(name="0.20", ratio=Fraction("0.2"), mode=1),
+    FeedConfiguration(name="0.25", ratio=Fraction("0.25"), mode=1),
+    FeedConfiguration(name="0.30", ratio=Fraction("0.3"), mode=1),
     FeedConfiguration(name="0.35", ratio=Fraction("0.35"), mode=1),
     FeedConfiguration(name="0.40", ratio=Fraction("0.4"), mode=1),
     FeedConfiguration(name="0.45", ratio=Fraction("0.45"), mode=1),
     FeedConfiguration(name="0.50", ratio=Fraction("0.5"), mode=1),
+    FeedConfiguration(name="0.60", ratio=Fraction("0.6"), mode=1),
     FeedConfiguration(name="0.70", ratio=Fraction("0.7"), mode=1),
+    FeedConfiguration(name="0.75", ratio=Fraction("0.75"), mode=1),
     FeedConfiguration(name="0.80", ratio=Fraction("0.8"), mode=1),
     FeedConfiguration(name="1.00", ratio=Fraction("1"), mode=1),
     FeedConfiguration(name="1.25", ratio=Fraction("1.25"), mode=1),
@@ -24,6 +29,10 @@ THREAD_MM = [
     FeedConfiguration(name="3.00", ratio=Fraction("3"), mode=1),
     FeedConfiguration(name="3.50", ratio=Fraction("3.5"), mode=1),
     FeedConfiguration(name="4.00", ratio=Fraction("4"), mode=1),
+    FeedConfiguration(name="4.50", ratio=Fraction("4.5"), mode=1),
+    FeedConfiguration(name="5.00", ratio=Fraction("5"), mode=1),
+    FeedConfiguration(name="5.50", ratio=Fraction("5.5"), mode=1),
+    FeedConfiguration(name="6.00", ratio=Fraction("6"), mode=1),
 ]
 
 THREAD_IN = [

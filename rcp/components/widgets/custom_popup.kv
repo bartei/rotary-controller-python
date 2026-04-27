@@ -1,0 +1,21 @@
+<CustomPopup>:
+    orientation: "vertical"
+    padding: dp(20)
+    spacing: dp(10)
+
+    Label:
+        id: lbl_message
+        text: root.message
+        halign: "center"
+        valign: "middle"
+        text_size: self.size
+        color: [1, 1, 1, 1]
+        font_size: "18sp"
+
+    Button:
+        id: btn_close
+        text: root.button_text
+        size_hint_y: None
+        height: dp(48)
+        background_color: [0.2, 0.2, 0.2, 1]
+        on_release: root.on_button_press()

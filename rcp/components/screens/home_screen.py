@@ -5,6 +5,8 @@ from kivy.properties import ObjectProperty
 from kivy.clock import Clock
 from kivy.uix.screenmanager import Screen
 
+from rcp.components.home.assisted_threading.bar import AssistedThreadingBar
+from rcp.components.home.at_mode_layout import AtModeLayout
 from rcp.components.home.dro_mode_layout import DroModeLayout
 from rcp.components.home.els_mode_layout import ElsModeLayout
 from rcp.components.home.elsbar import ElsBar
@@ -33,12 +35,16 @@ class HomePage(Screen):
         # Create shared ElsBar (has SavingDispatcher state)
         self.els_bar = ElsBar(id_override="0")
 
+        # Create shared AssistedThreadingBar (has SavingDispatcher state)
+        self.at_bar = AssistedThreadingBar(id_override="0")
+
         # Create all mode layouts once
         self.mode_layouts = {
             1: IndexModeLayout(),
             2: ElsModeLayout(els_bar=self.els_bar),
             3: JogModeLayout(),
             4: DroModeLayout(),
+            5: AtModeLayout(at_bar=self.at_bar),
         }
 
         # Configure initial mode, disable Indexing if servo is in ELS mode
@@ -73,6 +79,10 @@ class HomePage(Screen):
         jog_layout = self.mode_layouts[3]
         jog_layout.jog_bar.enable_jog = False
         self.app.servo.servoEnable = 0
+
+        # Stop AT wizard if leaving AT mode
+        if self.current_layout is self.mode_layouts[5]:
+            self.at_bar.stop_wizard()
 
         # Swap the entire mode layout
         if self.current_layout is not None:

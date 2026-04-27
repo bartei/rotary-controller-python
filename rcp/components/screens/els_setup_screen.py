@@ -39,6 +39,42 @@ class ElsSetupScreen(Screen):
     def on_x_selected(self, instance, value):
         self.els.x_axis_index = self._name_to_index(value)
 
+    def set_at_reversing_speed(self, val):
+        try:
+            self.app.els.at_reversing_speed = min(int(val), self.app.servo.maxSpeed)
+        except ValueError:
+            pass
+
+    def set_at_preload_adjust_speed(self, val):
+        try:
+            self.app.els.at_preload_adjust_speed = min(int(val), self.app.servo.maxSpeed)
+        except ValueError:
+            pass
+
+    def set_at_threading_max_speed(self, val):
+        try:
+            speed = min(int(val), self.app.servo.maxSpeed)
+            if speed > 0:
+                self.app.els.at_threading_max_speed = speed
+        except (ValueError, TypeError):
+            pass
+
+    def set_at_reversing_adjusting_acceleration(self, val):
+        try:
+            acc = int(val)
+            if acc > 0:
+                self.app.els.at_reversing_adjusting_acceleration = acc
+        except ValueError:
+            pass
+
+    def set_at_threading_acceleration(self, val):
+        try:
+            acc = int(val)
+            if acc > 0:
+                self.app.els.at_threading_acceleration = acc
+        except ValueError:
+            pass
+
     def _name_to_index(self, name: str) -> int:
         if name == NONE_LABEL:
             return -1
