@@ -16,14 +16,14 @@ dependencies = [
     "nmcli>=1.5.0",
     "pydantic>=2.10.3",
     "pyyaml>=6.0.2",
-    "aiohttp>=3.9.0",
+    "aiohttp>=3.13.4",
     "sentry-sdk>=2.32.0",
 ]
 
 [dependency-groups]
 dev = [
     "coverage>=7.6.9",
-    "pytest>=8.3.4",
+    "pytest>=9.0.3",
     "python-semantic-release>=9.15.2",
 ]
 
