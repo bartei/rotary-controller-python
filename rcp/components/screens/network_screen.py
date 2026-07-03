@@ -40,10 +40,13 @@ class NetworkScreen(Screen):
     def __init__(self, **kv):
         super().__init__(**kv)
         self.ids['grid_layout'].bind(minimum_height=self.ids['grid_layout'].setter('height'))
-        self.wifi_enabled = nmcli.radio().wifi
+        try:
+            self.wifi_enabled = nmcli.radio().wifi
+        except:
+            self.wifi_enabled = False
+            Clock.schedule_once(lambda dt: asyncio.ensure_future(self.refresh()))
+            self.status_update_task = Clock.schedule_interval(lambda dt: asyncio.ensure_future(self.status_update()), timeout=1)
 
-        Clock.schedule_once(lambda dt: asyncio.ensure_future(self.refresh()))
-        self.status_update_task = Clock.schedule_interval(lambda dt: asyncio.ensure_future(self.status_update()), timeout=1)
 
     def log(self, message: str):
         log.info(message)
